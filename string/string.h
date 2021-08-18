@@ -20,14 +20,15 @@ struct __string__
     char *(*get)(string *);
     void (*append)(string *, const char *);
     int (*empty)(string *);
-    void (*replace)(string *, const char, const char); /* Linear time complexity, O(n), where n is the length of the char array. */
+    void (*replace_char)(string *, const char, const char); /* Linear time complexity, O(n), where n is the length of the char array. */
     void (*char_set)(string *, const char, size_t);
     char (*char_get)(string *, size_t);
     size_t (*length)(string *);
     long double (*mem_used)(string *); /* returns memory used in mB (Mebibyte(s)) */
     int (*compare)(string *, const char *);
     void (*print)(string *, int);
-    
+    void (*replace)(string *, const char *, const char *);
+
 } __string__;
 
 void _set(string *a, const char *src)
@@ -68,7 +69,7 @@ int _empty(string *a)
     return false;
 }
 
-void _replace(string *a, const char old, const char new_)
+void _replace_char(string *a, const char old, const char new_)
 {
     if (a)
     {
@@ -133,20 +134,52 @@ void _print(string *a, int add_next_line)
     }
 }
 
+void _replace(string *a, const char *old, const char *new_)
+{
+    char *r;
+    size_t i, count_old = 0, len_o = strlen(old), len_n = strlen(new_);
+    for (i = 0; a->str.src[i] != '\0'; ++i)
+    {
+        if (strstr((const char *)&a->str.src[i], old) == &a->str.src[i])
+        {
+            count_old++;
+            i += len_o - 1;
+        }
+    }
+    r = (char *)malloc(i + count_old * (len_n - len_o) + 1);
+
+    i = 0;
+    while (*a->str.src)
+    {
+        if (strstr(a->str.src, old) == a->str.src)
+        {
+            strcpy(&r[i], new_);
+            i += len_n;
+            a->str.src += len_o;
+        }
+        else
+            r[i++] = *a->str.src++;
+    }
+    r[i] = '\0';
+    a->str.src = (char *)malloc(strlen(r));
+    strcpy(a->str.src, r);
+    free(r);
+}
+
 void init_str(string *a)
 {
-    a->set = _set;           // working
-    a->get = _get;           // working
-    a->append = _append;     // working
-    a->empty = _empty;       // working
-    a->replace = _replace;   // working
-    a->char_set = _char_set; // working
-    a->char_get = _char_get; // working
-    a->length = _length;     // working
-    a->mem_used = _mem_used; // working
-    a->compare = _compare;   // working
-    a->print = _print;       // working
-
+    a->set = _set;                   // working
+    a->get = _get;                   // working
+    a->append = _append;             // working
+    a->empty = _empty;               // working
+    a->replace_char = _replace_char; // working
+    a->char_set = _char_set;         // working
+    a->char_get = _char_get;         // working
+    a->length = _length;             // working
+    a->mem_used = _mem_used;         // working
+    a->compare = _compare;           // working
+    a->print = _print;               // working
+    a->replace = _replace;           // working
     // You can add more function to it
-    a->str.src = "\0"; // default init instead of some `garbage value`
+    a->str.src = "\0";               // default init instead of some `garbage value`
 }
