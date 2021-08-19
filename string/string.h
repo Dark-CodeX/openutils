@@ -36,6 +36,7 @@ struct __string__
     int (*clear)(string *);
     void (*to_upper)(string *);
     void (*to_lower)(string *);
+    void (*compress)(string *);
 } __string__;
 
 void _set(string *a, const char *src)
@@ -273,6 +274,33 @@ void _to_lower(string *a)
     }
 }
 
+void _compress(string *a)
+{
+    if (a)
+    {
+        char num[20] = "\0";
+        size_t len = strlen((const char *)a->str.src);
+        char *buff = (char *)malloc(sizeof(char) * (len * 2 + 1));
+        size_t q = 0, cnt = 0;
+        for (size_t i = 0; i < len; ++i)
+        {
+            buff[q++] = a->str.src[i];
+            cnt = 1;
+            while (i + 1 < len && a->str.src[i] == a->str.src[i + 1])
+                cnt++, i++;
+            sprintf(num, "%llu", cnt);
+
+            for (size_t k = 0; *(num + k); ++k, ++q)
+                buff[q] = num[k];
+        }
+        buff[q] = '\0';
+        a->str.src = "\0";
+        a->str.src = (char *)malloc(strlen((const char *)buff) + 1);
+        strcpy(a->str.src, (const char *)buff);
+        free(buff);
+    }
+}
+
 void init_str(string *a)
 {
     a->set = _set;                   // working
@@ -294,6 +322,7 @@ void init_str(string *a)
     a->clear = _clear;               // working
     a->to_upper = _to_upper;         // working
     a->to_lower = _to_lower;         // working
+    a->compress = _compress;         // working
     // You can add more function to it
     a->str.src = "\0"; // default init instead of some `garbage value`
 }
