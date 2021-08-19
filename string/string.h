@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 #define true 0
 #define false 1
@@ -26,7 +27,7 @@ struct __string__
     size_t (*length)(string *);
     size_t (*mem_used)(string *); /* returns memory used in B (Bytes) */
     int (*compare)(string *, const char *);
-    void (*print)(string *, int);
+    void (*print)(string *, int, const char *, ...);
     void (*replace)(string *, const char *, const char *);
     int (*destructor)(string *);
     const char *(*c_str)(string *);
@@ -134,14 +135,19 @@ int _compare(string *a, const char *T1)
     return false;
 }
 
-void _print(string *a, int add_next_line)
+void _print(string *a, int add_next_line, const char *__format__, ...)
 {
     if (a)
     {
+        va_list ar;
+        va_start(ar, (const char *)__format__);
         if (add_next_line == true)
             printf("%s\n", a->str.src);
         else
             printf("%s", a->str.src);
+        vprintf((const char *)__format__, ar);
+        va_end(ar);
+        fflush(stdout);
     }
 }
 
@@ -289,5 +295,5 @@ void init_str(string *a)
     a->to_upper = _to_upper;         // working
     a->to_lower = _to_lower;         // working
     // You can add more function to it
-    a->str.src = "\0";               // default init instead of some `garbage value`
+    a->str.src = "\0"; // default init instead of some `garbage value`
 }
