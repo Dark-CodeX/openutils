@@ -13,7 +13,7 @@ int main(int argc, char const *argv[])
         if (i < argc - 1)
             a.append(&a, " ");
     }
-    a.print(&a, true);
+    a.print(&a, true, "");
     a.destructor(&a);
     return 0;
 }
