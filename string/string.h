@@ -10,33 +10,71 @@
 
 typedef struct __str__
 {
-    char *src; // Do not modify it directly (segfault), most probably and use 'str.destructor(&str);' at the end
+    /* Do not modify it directly (segfault), most probably and use 'str.destructor(&str);' at the end */
+    char *src;
 } __str__;
 
 typedef struct __string__ string;
 struct __string__
 {
-    __str__ str;
-    void (*set)(string *, const char *);
-    char *(*get)(string *);
-    void (*append)(string *, const char *);
-    int (*empty)(string *);
-    void (*replace_char)(string *, const char, const char); /* Linear time complexity, O(n), where n is the length of the char array. */
-    void (*char_set)(string *, const char, size_t);
-    char (*char_get)(string *, size_t);
-    size_t (*length)(string *);
-    size_t (*mem_used)(string *); /* returns memory used in B (Bytes) */
-    int (*compare)(string *, const char *);
-    void (*print)(string *, int, const char *, ...);
-    void (*replace)(string *, const char *, const char *);
-    int (*destructor)(string *);
-    const char *(*c_str)(string *);
-    int (*save)(string *, const char *);
-    int (*open)(string *, const char *);
-    int (*clear)(string *);
-    void (*to_upper)(string *);
-    void (*to_lower)(string *);
-    void (*compress)(string *);
+    /* Do not use this. */
+    __str__ str; 
+
+
+    /** Sets `src` to `a`.
+     * @param a pointer to struct string
+     * @param src string to assign
+     */
+    void (*set)(string *a, const char *src);
+
+
+    /** Returns `a` as `char *`.
+     * @param a pointer to struct string
+     * @returns return `a` as `char *`
+     */
+    char *(*get)(string *a);
+
+
+    /** Appends `src` to `a`.
+     * @param a pointer to struct string
+     * @param src string to append
+     */
+    void (*append)(string *a, const char *src);
+
+
+    /** Checks wether `a` is empty or not.
+     * @param a pointer to struct string
+     * @returns return 0 if empty, otherwise return 1
+     */
+    int (*empty)(string *a);
+
+
+    /** Linear time complexity, O(n), where n is the length of the char array.
+     * Replaces `old` to `new`.
+     * @param a pointer to struct string
+     * @param old old character (character to be replaced)
+     * @param new_ new character (character to be replaced with)
+    */
+    void (*replace_char)(string *a, const char old, const char new_); 
+
+    /**
+     * 
+     */
+    void (*char_set)(string *a, const char, size_t);
+    char (*char_get)(string *a, size_t);
+    size_t (*length)(string *a);
+    size_t (*mem_used)(string *a); /* returns memory used in B (Bytes) */
+    int (*compare)(string *a, const char *);
+    void (*print)(string *a, int, const char *, ...);
+    void (*replace)(string *a, const char *, const char *);
+    int (*destructor)(string *a);
+    const char *(*c_str)(string *a);
+    int (*save)(string *a, const char *);
+    int (*open)(string *a, const char *);
+    int (*clear)(string *a);
+    void (*to_upper)(string *a);
+    void (*to_lower)(string *a);
+    void (*compress)(string *a);
 } __string__;
 
 void _set(string *a, const char *src)
