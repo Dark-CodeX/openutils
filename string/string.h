@@ -18,8 +18,7 @@ typedef struct __string__ string;
 struct __string__
 {
     /* Do not use this. */
-    __str__ str; 
-
+    __str__ str;
 
     /** Sets `src` to `a`.
      * @param a pointer to struct string
@@ -27,13 +26,11 @@ struct __string__
      */
     void (*set)(string *a, const char *src);
 
-
     /** Returns `a` as `char *`.
      * @param a pointer to struct string
      * @returns return `a` as `char *`
      */
     char *(*get)(string *a);
-
 
     /** Appends `src` to `a`.
      * @param a pointer to struct string
@@ -41,13 +38,11 @@ struct __string__
      */
     void (*append)(string *a, const char *src);
 
-
     /** Checks wether `a` is empty or not.
      * @param a pointer to struct string
      * @returns return 0 if empty, otherwise return 1
      */
     int (*empty)(string *a);
-
 
     /** Linear time complexity, O(n), where n is the length of the char array.
      * Replaces `old` to `new`.
@@ -55,25 +50,117 @@ struct __string__
      * @param old old character (character to be replaced)
      * @param new_ new character (character to be replaced with)
     */
-    void (*replace_char)(string *a, const char old, const char new_); 
+    void (*replace_char)(string *a, const char old, const char new_);
 
     /**
-     * 
+     * Sets `what` at `where` in `a`.
+     * Only sets if `where` is less than size of `a`.
+     * @param a pointer to struct string
+     * @param what character to set
+     * @param where sets `what` at a fixed position
      */
-    void (*char_set)(string *a, const char, size_t);
-    char (*char_get)(string *a, size_t);
+    void (*char_set)(string *a, const char what, size_t where);
+
+    /**
+     * Returns character from `a` at `where`.
+     * Only returns if `where` is less than size of `a`.
+     * @param a pointer to struct string
+     * @param where get an element from where in `a`
+     * @returns character from `a` at `where`.
+     */
+    char (*char_get)(string *a, size_t where);
+
+    /**
+     * Returns length of `a`, if `a` != NULL.
+     * @param a pointer to struct string
+     * @returns length of `a`
+     */
     size_t (*length)(string *a);
-    size_t (*mem_used)(string *a); /* returns memory used in B (Bytes) */
-    int (*compare)(string *a, const char *);
-    void (*print)(string *a, int, const char *, ...);
-    void (*replace)(string *a, const char *, const char *);
+
+    /**
+     * Returns memory used in Bytes.
+     * @param a pointer to struct string
+     * @returns memory used in Bytes
+     */
+    size_t (*mem_used)(string *a);
+
+    /**
+     * Compares `a` against `T1`.
+     * @param a pointer to struct string
+     * @param T1 string to compare with
+     * @returns return 0 if true, otherwise return 1
+     */
+    int (*compare)(string *a, const char *T1);
+
+    /**
+    * Prints `a`.
+    * @param a pointer to struct string
+    * @param add_next_line set 0 if append next line, otherwise set 1
+    * @param __format__ arguments for ...
+     */
+    void (*print)(string *a, int add_next_line, const char *__format__, ...);
+
+    /**
+     * Replaces `old` in `a` with `new_`.
+     * @param a pointer to struct string
+     * @param old what to replace
+     * @param new_ replace with
+     */
+    void (*replace)(string *a, const char *old, const char *new_);
+
+    /**
+     * Free `a->str.src`.
+     * Do not forget to use this function at the end.
+     * @param a pointer to struct string
+     */
     int (*destructor)(string *a);
+
+    /** 
+     * Returns `a` as `const char *`.
+     * @param a pointer to struct string
+     * @returns return `a` as `const char *`
+     */
     const char *(*c_str)(string *a);
-    int (*save)(string *a, const char *);
-    int (*open)(string *a, const char *);
+
+    /**
+     * Saves `a` at `location`.
+     * @param a pointer to struct string
+     * @param location where to save
+     * @returns 0 if save successfully, otherwise return 1
+     */
+    int (*save)(string *a, const char *location);
+
+    /**
+     * Opens file at `location` and then sets `a` the contents of the file.
+     * @param a pointer to struct string
+     * @param location file to open
+     * @returns 0 if opened successfully, otherwise return 1
+     */
+    int (*open)(string *a, const char *location);
+
+    /**
+     * Clears `a` using calloc function.
+     * @param a pointer to struct string
+     * @returns 0 if cleared successfully, otherwise return 1
+     */
     int (*clear)(string *a);
+
+    /**
+     * Converts `a` to upper case.
+     * @param a pointer to struct string
+     */
     void (*to_upper)(string *a);
+
+    /**
+     * Converts `a` to lower case.
+     * @param a pointer to struct string
+     */
     void (*to_lower)(string *a);
+
+    /**
+     * Compresses `a` using Run Length Encoding.
+     * @param a pointer to struct string
+     */
     void (*compress)(string *a);
 } __string__;
 
