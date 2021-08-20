@@ -44,7 +44,7 @@ void _set(string *a, const char *src)
     if (a)
     {
         a->str.src = "\0";
-        a->str.src = (char *)malloc(strlen(src) + 1);
+        a->str.src = (char *)malloc(sizeof(char) * (strlen(src) + 1));
         strcpy(a->str.src, src);
     }
 }
@@ -63,12 +63,12 @@ void _append(string *a, const char *src)
         if (strlen((const char *)a->str.src) == 0) // string is empty
         {
             a->str.src = "\0";
-            a->str.src = (char *)malloc(strlen(src) + 1);
+            a->str.src = (char *)malloc(sizeof(char) * (strlen(src) + 1));
             strcpy(a->str.src, src); // copy `src` it.
         }
         else
         {
-            a->str.src = (char *)realloc(a->str.src, strlen(src) + strlen(a->str.src) + 1);
+            a->str.src = (char *)realloc(a->str.src, sizeof(char) * (strlen(src) + strlen(a->str.src) + 1));
             strcat(a->str.src, src);
         }
     }
@@ -164,7 +164,7 @@ void _replace(string *a, const char *old, const char *new_)
             i += len_o - 1;
         }
     }
-    r = (char *)malloc(i + count_old * (len_n - len_o) + 1);
+    r = (char *)malloc(sizeof(char) * (i + count_old * (len_n - len_o) + 1));
 
     i = 0;
     while (*a->str.src)
@@ -180,7 +180,7 @@ void _replace(string *a, const char *old, const char *new_)
     }
     r[i] = '\0';
     a->str.src = "\0";
-    a->str.src = (char *)malloc(strlen((const char *)r) + 1);
+    a->str.src = (char *)malloc(sizeof(char) * (strlen((const char *)r) + 1));
     strcpy(a->str.src, (const char *)r);
     free(r);
 }
@@ -295,7 +295,7 @@ void _compress(string *a)
         }
         buff[q] = '\0';
         a->str.src = "\0";
-        a->str.src = (char *)malloc(strlen((const char *)buff) + 1);
+        a->str.src = (char *)malloc(sizeof(char) * (strlen((const char *)buff) + 1));
         strcpy(a->str.src, (const char *)buff);
         free(buff);
     }
