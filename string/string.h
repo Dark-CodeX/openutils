@@ -473,7 +473,7 @@ void init_str(string *a)
         a->is_initialized = _is_initialized; // working
         // You can add more function to it
         a->str.src = "\0";  // default init instead of some `garbage value`
-        a->str.init = true; // initialized properly}
+        a->str.init = true; // initialized properly
     }
 }
 void init_str_array(string *a[], size_t len)
