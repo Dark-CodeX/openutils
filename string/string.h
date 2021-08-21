@@ -4,6 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString
 * You can use this header file. Do not modify it locally, instead commit it on github.com
 */
+
 #pragma once
 
 #include <stdio.h>
