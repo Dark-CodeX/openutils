@@ -12,6 +12,8 @@ typedef struct __str__
 {
     /* Do not modify it directly (segfault), most probably and use 'str.destructor(&str);' at the end */
     char *src;
+    /* Do not change this value. */
+    int init;
 } __str__;
 
 typedef struct __string__ string;
@@ -38,7 +40,7 @@ struct __string__
      */
     void (*append)(string *a, const char *src);
 
-    /** Checks wether `a` is empty or not.
+    /** Checks whether `a` is empty or not.
      * @param a pointer to struct string
      * @returns return 0 if empty, otherwise return 1
      */
@@ -162,11 +164,18 @@ struct __string__
      * @param a pointer to struct string
      */
     void (*compress)(string *a);
+
+    /**
+     * Returns whether `a` is initialized or not using `init_str` function.
+     * @param a pointer to struct string
+     * @returns 0 if initialized, otherwise return nothing because this method have to be initialized using `init_str` function.
+     */
+    int (*is_initialized)(string *a);
 } __string__;
 
 void _set(string *a, const char *src)
 {
-    if (a)
+    if (a && a->str.init == true)
     {
         a->str.src = "\0";
         a->str.src = (char *)malloc(sizeof(char) * (strlen(src) + 1));
@@ -176,14 +185,14 @@ void _set(string *a, const char *src)
 
 char *_get(string *a)
 {
-    if (a)
+    if (a && a->str.init == true)
         return a->str.src;
     return (char *)NULL;
 }
 
 void _append(string *a, const char *src)
 {
-    if (a)
+    if (a && a->str.init == true)
     {
         if (strlen((const char *)a->str.src) == 0) // string is empty
         {
@@ -201,7 +210,7 @@ void _append(string *a, const char *src)
 
 int _empty(string *a)
 {
-    if (a)
+    if (a && a->str.init == true)
         if (strlen((const char *)a->str.src) == 0)
             return true;
     return false;
@@ -209,7 +218,7 @@ int _empty(string *a)
 
 void _replace_char(string *a, const char old, const char new_)
 {
-    if (a)
+    if (a && a->str.init == true)
     {
         size_t len = strlen((const char *)a->str.src);
         for (size_t i = 0; i < len; ++i)
@@ -220,7 +229,7 @@ void _replace_char(string *a, const char old, const char new_)
 
 void _char_set(string *a, const char what, size_t where)
 {
-    if (a)
+    if (a && a->str.init == true)
     {
         if (strlen((const char *)a->str.src) > where)
             a->str.src[where] = what;
@@ -229,7 +238,7 @@ void _char_set(string *a, const char what, size_t where)
 
 char _char_get(string *a, size_t where)
 {
-    if (a)
+    if (a && a->str.init == true)
     {
         if (strlen((const char *)a->str.src) > where)
             return a->str.src[where];
@@ -239,21 +248,21 @@ char _char_get(string *a, size_t where)
 
 size_t _length(string *a)
 {
-    if (a)
+    if (a && a->str.init == true)
         return strlen((const char *)a->str.src);
     return (size_t)0;
 }
 
 size_t _mem_used(string *a)
 {
-    if (a)
+    if (a && a->str.init == true)
         return ((strlen((const char *)a->str.src)) * (sizeof(__string__)));
     return (long double)0.0f;
 }
 
 int _compare(string *a, const char *T1)
 {
-    if (a)
+    if (a && a->str.init == true)
     {
         if (strcmp((const char *)a->str.src, T1) == true)
             return true;
@@ -263,7 +272,7 @@ int _compare(string *a, const char *T1)
 
 void _print(string *a, int add_next_line, const char *__format__, ...)
 {
-    if (a)
+    if (a && a->str.init == true)
     {
         va_list ar;
         va_start(ar, (const char *)__format__);
@@ -279,40 +288,43 @@ void _print(string *a, int add_next_line, const char *__format__, ...)
 
 void _replace(string *a, const char *old, const char *new_)
 {
-    char *r;
-    size_t i, count_old = 0, len_o = strlen(old), len_n = strlen(new_);
-    for (i = 0; a->str.src[i] != '\0'; ++i)
+    if (a && a->str.init == true)
     {
-        if (strstr((const char *)&a->str.src[i], old) == &a->str.src[i])
+        char *r;
+        size_t i, count_old = 0, len_o = strlen(old), len_n = strlen(new_);
+        for (i = 0; a->str.src[i] != '\0'; ++i)
         {
-            count_old++;
-            i += len_o - 1;
+            if (strstr((const char *)&a->str.src[i], old) == &a->str.src[i])
+            {
+                count_old++;
+                i += len_o - 1;
+            }
         }
-    }
-    r = (char *)malloc(sizeof(char) * (i + count_old * (len_n - len_o) + 1));
+        r = (char *)malloc(sizeof(char) * (i + count_old * (len_n - len_o) + 1));
 
-    i = 0;
-    while (*a->str.src)
-    {
-        if (strstr(a->str.src, old) == a->str.src)
+        i = 0;
+        while (*a->str.src)
         {
-            strcpy(&r[i], new_);
-            i += len_n;
-            a->str.src += len_o;
+            if (strstr(a->str.src, old) == a->str.src)
+            {
+                strcpy(&r[i], new_);
+                i += len_n;
+                a->str.src += len_o;
+            }
+            else
+                r[i++] = *a->str.src++;
         }
-        else
-            r[i++] = *a->str.src++;
+        r[i] = '\0';
+        a->str.src = "\0";
+        a->str.src = (char *)malloc(sizeof(char) * (strlen((const char *)r) + 1));
+        strcpy(a->str.src, (const char *)r);
+        free(r);
     }
-    r[i] = '\0';
-    a->str.src = "\0";
-    a->str.src = (char *)malloc(sizeof(char) * (strlen((const char *)r) + 1));
-    strcpy(a->str.src, (const char *)r);
-    free(r);
 }
 
 int _destructor(string *a)
 {
-    if (a && a->str.src)
+    if (a && a->str.src && a->str.init == true)
     {
         free(a->str.src);
         return true;
@@ -322,14 +334,14 @@ int _destructor(string *a)
 
 const char *_c_str(string *a)
 {
-    if (a)
+    if (a && a->str.init == true)
         return (const char *)a->str.src;
     return (const char *)NULL;
 }
 
 int _save(string *a, const char *location)
 {
-    if (a && a->str.src && location)
+    if (a && a->str.src && location && a->str.init == true)
     {
         FILE *f = fopen(location, "w");
         if (f)
@@ -346,7 +358,7 @@ int _save(string *a, const char *location)
 
 int _open(string *a, const char *location)
 {
-    if (a && location)
+    if (a && location && a->str.init == true)
     {
         FILE *f = fopen(location, "r");
         if (f)
@@ -367,7 +379,7 @@ int _open(string *a, const char *location)
 
 int _clear(string *a)
 {
-    if (a)
+    if (a && a->str.init == true)
     {
         a->str.src = (char *)calloc(1, sizeof(char));
         return true;
@@ -377,7 +389,7 @@ int _clear(string *a)
 
 void _to_upper(string *a)
 {
-    if (a)
+    if (a && a->str.init == true)
     {
         for (size_t i = 0; i < strlen((const char *)a->str.src); ++i)
         {
@@ -389,7 +401,7 @@ void _to_upper(string *a)
 
 void _to_lower(string *a)
 {
-    if (a)
+    if (a && a->str.init == true)
     {
         for (size_t i = 0; i < strlen((const char *)a->str.src); ++i)
         {
@@ -401,7 +413,7 @@ void _to_lower(string *a)
 
 void _compress(string *a)
 {
-    if (a)
+    if (a && a->str.init == true)
     {
         char num[20] = "\0";
         size_t len = strlen((const char *)a->str.src);
@@ -426,28 +438,49 @@ void _compress(string *a)
     }
 }
 
+int _is_initialized(string *a)
+{
+    if (a)
+        if (a->str.init == true)
+            return true;
+    return false;
+}
+
 void init_str(string *a)
 {
-    a->set = _set;                   // working
-    a->get = _get;                   // working
-    a->append = _append;             // working
-    a->empty = _empty;               // working
-    a->replace_char = _replace_char; // working
-    a->char_set = _char_set;         // working
-    a->char_get = _char_get;         // working
-    a->length = _length;             // working
-    a->mem_used = _mem_used;         // working
-    a->compare = _compare;           // working
-    a->print = _print;               // working
-    a->replace = _replace;           // working
-    a->destructor = _destructor;     // working
-    a->c_str = _c_str;               // working
-    a->save = _save;                 // working
-    a->open = _open;                 // working
-    a->clear = _clear;               // working
-    a->to_upper = _to_upper;         // working
-    a->to_lower = _to_lower;         // working
-    a->compress = _compress;         // working
-    // You can add more function to it
-    a->str.src = "\0"; // default init instead of some `garbage value`
+    if (a)
+    {
+        a->set = _set;                       // working
+        a->get = _get;                       // working
+        a->append = _append;                 // working
+        a->empty = _empty;                   // working
+        a->replace_char = _replace_char;     // working
+        a->char_set = _char_set;             // working
+        a->char_get = _char_get;             // working
+        a->length = _length;                 // working
+        a->mem_used = _mem_used;             // working
+        a->compare = _compare;               // working
+        a->print = _print;                   // working
+        a->replace = _replace;               // working
+        a->destructor = _destructor;         // working
+        a->c_str = _c_str;                   // working
+        a->save = _save;                     // working
+        a->open = _open;                     // working
+        a->clear = _clear;                   // working
+        a->to_upper = _to_upper;             // working
+        a->to_lower = _to_lower;             // working
+        a->compress = _compress;             // working
+        a->is_initialized = _is_initialized; // working
+        // You can add more function to it
+        a->str.src = "\0";  // default init instead of some `garbage value`
+        a->str.init = true; // initialized properly}
+    }
+}
+void init_str_array(string *a[], size_t len)
+{
+    if (a)
+    {
+        for (size_t i = 0; i < len; ++i)
+            init_str(a[i]);
+    }
 }
