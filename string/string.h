@@ -139,7 +139,7 @@ struct __string__
     int (*open)(string *a, const char *location);
 
     /**
-     * Clears `a` using calloc function defined in <stdlib.h> header.
+     * Clears `a` using `calloc` function defined in <stdlib.h> header.
      * @param a pointer to struct string
      * @returns 0 if cleared successfully, otherwise return 1
      */
