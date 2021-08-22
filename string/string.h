@@ -1,6 +1,6 @@
 /** This header file is written to manage string data safely under C programming language.
 * Copyright Tushar Chaurasia 2021 - 2022.
-* Commit to this repository at https://github.com/Dark-CodeX/SafeString
+* Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on github.com
 */
 
@@ -120,6 +120,7 @@ struct __string__
      * Free `a->str.src`.
      * Do not forget to use this function at the end.
      * @param a pointer to struct string
+     * @returns 0 if freed successfully, otherwise return 1
      */
     int (*destructor)(string *a);
 
@@ -181,7 +182,7 @@ struct __string__
 
 void _set(string *a, const char *src)
 {
-    if (a && src && a->str.init == true)
+    if (a && src && a->str.init == true && a->str.src)
     {
         a->str.src = "\0";
         a->str.src = (char *)malloc(sizeof(char) * (strlen(src) + 1));
@@ -191,14 +192,14 @@ void _set(string *a, const char *src)
 
 char *_get(string *a)
 {
-    if (a && a->str.init == true)
+    if (a && a->str.init == true && a->str.src)
         return a->str.src;
     return (char *)NULL;
 }
 
 void _append(string *a, const char *src)
 {
-    if (a && src && a->str.init == true)
+    if (a && src && a->str.init == true && a->str.src)
     {
         if (strlen((const char *)a->str.src) == 0) // string is empty
         {
@@ -262,13 +263,13 @@ size_t _length(string *a)
 size_t _mem_used(string *a)
 {
     if (a && a->str.init == true)
-        return ((strlen((const char *)a->str.src)) * (sizeof(__string__)));
-    return (long double)0.0f;
+        return ((strlen((const char *)a->str.src)) * (sizeof(__string__) * sizeof(char)));
+    return (size_t)0;
 }
 
 int _compare(string *a, const char *T1)
 {
-    if (a && T1 && a->str.init == true)
+    if (a && T1 && a->str.init == true && a->str.src)
     {
         if (strcmp((const char *)a->str.src, T1) == true)
             return true;
@@ -294,7 +295,7 @@ void _print(string *a, int add_next_line, const char *__format__, ...)
 
 void _replace(string *a, const char *old, const char *new_)
 {
-    if (a && old && new_ && a->str.init == true)
+    if (a && old && new_ && a->str.init == true && a->str.src)
     {
         char *r;
         size_t i, count_old = 0, len_o = strlen(old), len_n = strlen(new_);
@@ -340,7 +341,7 @@ int _destructor(string *a)
 
 const char *_c_str(string *a)
 {
-    if (a && a->str.init == true)
+    if (a && a->str.init == true && a->str.src)
         return (const char *)a->str.src;
     return (const char *)NULL;
 }
@@ -449,7 +450,7 @@ int _is_initialized(string *a)
     if (a)
         if (a->str.init == true)
             return true;
-    return false;
+    return false; // never reaches this point
 }
 
 void init_str(string *a)
@@ -482,6 +483,7 @@ void init_str(string *a)
         a->str.init = true; // initialized properly
     }
 }
+
 void init_str_array(string *a[], size_t len)
 {
     if (a)
