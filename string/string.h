@@ -181,7 +181,7 @@ struct __string__
 
 void _set(string *a, const char *src)
 {
-    if (a && a->str.init == true)
+    if (a && src && a->str.init == true)
     {
         a->str.src = "\0";
         a->str.src = (char *)malloc(sizeof(char) * (strlen(src) + 1));
@@ -198,7 +198,7 @@ char *_get(string *a)
 
 void _append(string *a, const char *src)
 {
-    if (a && a->str.init == true)
+    if (a && src && a->str.init == true)
     {
         if (strlen((const char *)a->str.src) == 0) // string is empty
         {
@@ -268,7 +268,7 @@ size_t _mem_used(string *a)
 
 int _compare(string *a, const char *T1)
 {
-    if (a && a->str.init == true)
+    if (a && T1 && a->str.init == true)
     {
         if (strcmp((const char *)a->str.src, T1) == true)
             return true;
@@ -278,7 +278,7 @@ int _compare(string *a, const char *T1)
 
 void _print(string *a, int add_next_line, const char *__format__, ...)
 {
-    if (a && a->str.init == true)
+    if (a && __format__ && a->str.init == true)
     {
         va_list ar;
         va_start(ar, (const char *)__format__);
@@ -294,7 +294,7 @@ void _print(string *a, int add_next_line, const char *__format__, ...)
 
 void _replace(string *a, const char *old, const char *new_)
 {
-    if (a && a->str.init == true)
+    if (a && old && new_ && a->str.init == true)
     {
         char *r;
         size_t i, count_old = 0, len_o = strlen(old), len_n = strlen(new_);
