@@ -350,7 +350,7 @@ int _save(string *a, const char *location)
 {
     if (a && a->str.src && location && a->str.init == true)
     {
-        FILE *f = fopen(location, "w");
+        FILE *f = fopen(location, "wb");
         if (f)
         {
             fwrite((const char *)a->str.src, strlen((const char *)a->str.src), sizeof(char), f);
@@ -367,7 +367,7 @@ int _open(string *a, const char *location)
 {
     if (a && location && a->str.init == true)
     {
-        FILE *f = fopen(location, "r");
+        FILE *f = fopen(location, "rb");
         if (f)
         {
             fseek(f, 0, SEEK_END);
