@@ -1,12 +1,18 @@
 # SafeString
-Safe string implementation in C.
+**Safe string implementation in C.**
+
 This string struct is memory safe means that it will not cause memory leak.
-This header file is cross-platform, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also).
+This header file is cross-platform, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using valgrind in which (21/22) functions passed.*
+
 Documents are added in the header file itself.
 Be sure to suggest any changes.
 
-Compiled using MSYS2 GCC(10.3.0) -x64_64 compiler.
+Compiled using cmake.
 
-Compilation command = `gcc -O2 main.c -o main`
+Compilation command = `cmake ./CMakeLists.txt && make`
 
-**Watch my youtube video https://youtu.be/q9DUJ3hz24o**
+To install on arch linux use **`PKGBUILD`**.
+
+To install on any OS just copy and paste **`sstring`** folder in `include` directory of `gcc`.
+
+**Watch my youtube video [YT Video](https://youtu.be/q9DUJ3hz24o)**
