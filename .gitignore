@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+#Cmake Build Ignore
+build
+
+#VS Code Settings Folder
+.vscode
