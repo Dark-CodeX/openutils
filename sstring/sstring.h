@@ -40,11 +40,17 @@ struct __string__
      */
     char *(*get)(string *a);
 
-    /** Appends `src` to `a`.
+    /** Appends `src` to `a` at end.
      * @param a pointer to struct string
      * @param src string to append
      */
     void (*append)(string *a, const char *src);
+
+    /** Appends `src` to `a` at start.
+     * @param a pointer to struct string
+     * @param src string to append
+     */
+    void (*append_start)(string *a, const char *src);
 
     /** Checks whether `a` is empty or not.
      * @param a pointer to struct string
@@ -218,6 +224,29 @@ void _append(string *a, const char *src)
         {
             a->str.src = (char *)realloc(a->str.src, sizeof(char) * (strlen(src) + strlen(a->str.src) + 1));
             strcat(a->str.src, src);
+        }
+    }
+}
+
+void _append_start(string *a, const char *src)
+{
+    if (a && src && a->str.init == true && a->str.src)
+    {
+        if (strlen((const char *)a->str.src) == 0) // string is empty
+        {
+            free(a->str.src); // used malloc in `init_str` function
+            a->str.src = (char *)malloc(sizeof(char) * (strlen(src) + 1));
+            strcpy(a->str.src, src); // copy `src` it.
+        }
+        else
+        {
+            char *buff = (char *)malloc(sizeof(char) * (strlen(src) + strlen(a->str.src) + 1));
+            strcpy(buff, src);
+            strcat(buff, (const char *)a->str.src);
+            free(a->str.src);
+            a->str.src = (char *)malloc((sizeof(char) * strlen((const char *)buff)) + 1);
+            strcpy(a->str.src, (const char *)buff);
+            free(buff);
         }
     }
 }
@@ -516,6 +545,7 @@ void init_str(string *a)
         a->set = _set;                       // working 1
         a->get = _get;                       // working 1
         a->append = _append;                 // working 1
+        a->append_start = _append_start;     // working 1
         a->empty = _empty;                   // working 1
         a->replace_char = _replace_char;     // working 1
         a->char_set = _char_set;             // working 1
