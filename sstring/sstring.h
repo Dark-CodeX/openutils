@@ -327,6 +327,7 @@ void _replace(string *a, const char *old, const char *new_)
                 r[i++] = *a->str.src++;
         }
         r[i] = '\0';
+        free(a->str.src);
         a->str.src = (char *)malloc(sizeof(char) * (strlen((const char *)r) + 1));
         strcpy(a->str.src, (const char *)r);
         free(r);
