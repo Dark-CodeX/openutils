@@ -7,6 +7,9 @@ This header file is cross-platform, but tested only on Windows 10, Windows 11, A
 Documents are added in the header file itself.
 Be sure to suggest any changes.
 
+
+## BUILD AND INSTALL
+
 Compiled using cmake.
 
 Compilation command = `cmake ./CMakeLists.txt && make`
