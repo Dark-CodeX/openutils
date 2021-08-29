@@ -8,7 +8,7 @@ Documents are added in the header file itself.
 Be sure to suggest any changes.
 
 
-## BUILD AND INSTALL
+### BUILD AND INSTALL
 
 Compiled using cmake.
 
