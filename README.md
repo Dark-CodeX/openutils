@@ -11,7 +11,7 @@ Compiled using cmake.
 
 Compilation command = `cmake ./CMakeLists.txt && make`
 
-To install on arch linux use **`PKGBUILD`**.
+To install on arch linux use **`PKGBUILD`** same goes for MSYS2 on Winodws **`makepkg-mingw`**.
 
 To install on any OS just copy and paste **`sstring`** folder in `include` directory of `gcc`.
 
