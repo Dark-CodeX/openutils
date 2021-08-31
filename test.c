@@ -11,7 +11,8 @@ int main(int argc, char const *argv[])
         a.append(&a, argv[i]);
         if (i < argc - 1)
             a.append(&a, " ");
-    }
+    };
+    printf("Entropy = %Lf\n", a.entropy(&a));
     a.print(&a, true, "");
     a.destructor(&a);
     return 0;
