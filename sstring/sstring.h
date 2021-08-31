@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <math.h>
 
 #define true 0
 #define false 1
@@ -191,6 +192,13 @@ struct __string__
      * @param a pointer to struct string
     */
     void (*from_binary)(string *a);
+
+    /**
+     * Calculates the entropy using `Shannon's entropy` formula, which was introduced in his 1948 paper "A Mathematical Theory of Communication". For more information https://en.wikipedia.org/wiki/Entropy_(information_theory)
+     * @param a pointer to struct string
+     * @returns entropy of `a`.
+     */
+    long double (*entropy)(string *a);
 } __string__;
 
 void _set(string *a, const char *src)
@@ -318,12 +326,19 @@ void _print(string *a, int add_next_line, const char *__format__, ...)
     {
         va_list ar;
         va_start(ar, (const char *)__format__);
-        if (add_next_line == true)
-            printf("%s\n", a->str.src);
-        else
-            printf("%s", a->str.src);
+        printf("%s", a->str.src);
         vprintf((const char *)__format__, ar);
         va_end(ar);
+        if (add_next_line == true)
+        {
+#ifdef _WIN32
+            printf("\r\n");
+#elif defined __unix__
+            printf("\n");
+#elif defined __APPLE__
+            printf("\n");
+#endif
+        }
         fflush(stdout);
     }
 }
@@ -341,12 +356,11 @@ void _replace(string *a, const char *old, const char *new_)
                 i += len_o - 1;
             }
         }
-        char *r = (char *)malloc(sizeof(char) * (i + count_old * (len_n - len_o) + 1));
-        r[0] = '\0';
+        char *r = (char *)calloc(sizeof(char) * (i + count_old * (len_n - len_o) + 1), sizeof(char));
         i = 0;
         while (*a->str.src)
         {
-            if (strcmp((const char *)strstr(a->str.src, old), (const char *)a->str.src) == true)
+            if (strstr(a->str.src, old)==a->str.src)
             {
                 strcpy(&r[i], new_);
                 i += len_n;
@@ -356,7 +370,7 @@ void _replace(string *a, const char *old, const char *new_)
                 r[i++] = *a->str.src++;
         }
         r[i] = '\0';
-        a->str.src = (char *)malloc(sizeof(char) * (strlen((const char *)r) + 1));
+        a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)r) + 1), sizeof(char));
         strcpy(a->str.src, (const char *)r);
         free(r);
     }
@@ -479,7 +493,8 @@ void _to_binary(string *a)
                 else
                     strcat(buff, "0");
             }
-            strcat(buff, " ");
+            if (i < len - 1)
+                strcat(buff, " ");
         }
         free(a->str.src);
         a->str.src = (char *)malloc(sizeof(char) * (strlen((const char *)buff) + 1));
@@ -524,6 +539,12 @@ void _from_binary(string *a)
                     strncat(buff, &c, 1);
                     j = 0;
                 }
+                if (i == len - 1)
+                {
+                    bin[j] = a->str.src[i]; // append last character
+                    c = strtol(bin, (char **)NULL, 2);
+                    strncat(buff, &c, 1);
+                }
                 bin[j] = a->str.src[i];
             }
             free(a->str.src);
@@ -532,6 +553,49 @@ void _from_binary(string *a)
             free(buff);
         }
     }
+}
+
+long double _entropy(string *a)
+{
+    if (a && a->str.src && a->str.init == true)
+    {
+        size_t len = strlen((const char *)a->str.src);
+        size_t cnt = 0, map_append = 0, o = 0;
+        int check = false;
+        char *map_char = (char *)calloc((sizeof(char) * len) + 1, sizeof(char));
+        size_t *map_cnt = (size_t *)calloc((sizeof(size_t) * len) + 1, sizeof(size_t));
+        for (cnt = 0; cnt < len; cnt++)
+        {
+            check = false;
+            for (o = 0; map_char[o] != '\0'; o++)
+            {
+                if (map_char[o] == a->str.src[cnt])
+                {
+                    check = true;
+                    break;
+                }
+            }
+            if (check == false)
+            {
+                map_char[map_append] = a->str.src[cnt];
+                map_cnt[map_append] = 1;
+                map_append++;
+            }
+            else
+                map_cnt[o] += 1;
+        }
+        long double result = 0.0f;
+        long double freq = 0.0f;
+        for (size_t i = 0; map_char[i] != '\0'; i++)
+        {
+            freq = (long double)map_cnt[i] / len;
+            result -= freq * (log10l(freq) / log10l(2.0f));
+        }
+        free(map_char);
+        free(map_cnt);
+        return result;
+    }
+    return 0.0f;
 }
 
 void init_str(string *a)
@@ -565,7 +629,7 @@ void init_str(string *a)
         a->is_initialized = _is_initialized; // working 1
         a->to_binary = _to_binary;           // working 1
         a->from_binary = _from_binary;       // working 1
-
+        a->entropy = _entropy;               // working 1
         a->str.src = (char *)malloc(1 * sizeof(char));
         strcpy(a->str.src, "\0"); // default init instead of some `garbage value`
         a->str.init = true;       // initialized properly
