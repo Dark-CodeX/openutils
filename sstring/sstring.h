@@ -11,6 +11,8 @@
 #include <string.h>
 #include <stdarg.h>
 #include <math.h>
+#include <unistd.h>
+#include <time.h>
 
 #define true 0
 #define false 1
@@ -34,6 +36,24 @@ struct __string__
      * @param src string to assign
      */
     void (*set)(string *a, const char *src);
+
+    /** Sets random data to `a`. Note: length should be greater than 0, (not equal to 0). Well, no error and result if assigned 0.
+     * @param a pointer to struct string
+     * @param len size of random string
+     */
+    void (*set_random)(string *a, const long long int len);
+
+    /** @brief Sets `src` array to `a`. Note: `from`, `till` belongs to [0, sizeof(`src`)]. 
+     * Set `char_between` to 0 if you want nothing to append in-between. 
+     * Note: `src[till]` is not included in resultant string.
+     * @param a pointer to struct string
+     * @param src string array to assign
+     * @param char_between character to append between `src[x]` and `src[x + 1]`
+     * @param from point to start assigning `src[from]`
+     * @param till assign till `src[till]`
+     * @param len length of `src` array
+     */
+    void (*set_array)(string *a, const char *src[], char char_between, size_t from, size_t till, size_t len);
 
     /** Returns `a` as `char *`.
      * @param a pointer to struct string
@@ -91,13 +111,6 @@ struct __string__
      * @returns length of `a`
      */
     size_t (*length)(string *a);
-
-    /**
-     * Returns memory used in Bytes.
-     * @param a pointer to struct string
-     * @returns memory used in Bytes
-     */
-    size_t (*mem_used)(string *a);
 
     /**
      * Compares `a` against `T1`.
@@ -187,11 +200,10 @@ struct __string__
     void (*to_binary)(string *a);
 
     /** 
-     * Converts `a` from base 2 (as binary) to string.
-     * Not executed if `a` is not in binary form i.e, [1, 0].
+     * Converts `a` from base 2 (as binary) to string. Not executed if `a` is not in binary form i.e, [1, 0].
      * @param a pointer to struct string
     */
-    void (*from_binary)(string *a);
+    int (*from_binary)(string *a);
 
     /**
      * Calculates the entropy using `Shannon's entropy` formula, which was introduced in his 1948 paper "A Mathematical Theory of Communication". For more information https://en.wikipedia.org/wiki/Entropy_(information_theory)
@@ -208,6 +220,67 @@ void _set(string *a, const char *src)
         free(a->str.src);
         a->str.src = (char *)malloc(sizeof(char) * (strlen(src) + 1));
         strcpy(a->str.src, src);
+    }
+}
+
+void _set_random(string *a, const long long int len)
+{
+    if (a && a->str.init == true && a->str.src && len > 0)
+    {
+        char *buff = (char *)calloc((sizeof(char) * len) + 1, sizeof(char));
+        strcpy(buff, "\0");
+        srand((unsigned int)(time(NULL) * getpid() * getpid() + getpid())); // getpid() is used to generate a random number so that if process runs rapidly is should produce a random number.
+        // random ascii character betweem 32 and 126, inclusive
+        for (size_t i = 0; i < len; i++)
+            buff[i] = (rand() % (126 - 32 + 1)) + 32;
+        free(a->str.src);
+        a->str.src = (char *)malloc((sizeof(char) * len) + 1);
+        strcpy(a->str.src, (const char *)buff);
+        free(buff);
+    }
+}
+
+void _set_array(string *a, const char *src[], char char_between, size_t from, size_t till, size_t len)
+{
+    if (a && src && a->str.init == true && a->str.src)
+    {
+        int valid = true;
+        if (from < 0 || till > len)
+        {
+            valid = false;
+            return;
+        }
+        size_t cnt_t = 0;
+        if (valid == true)
+        {
+            for (size_t i = from; i < till; i++)
+            {
+                if (src[i] == NULL)
+                {
+                    valid = false;
+                    break;
+                }
+                else
+                    cnt_t += strlen(src[i]);
+            }
+        }
+        if (valid == true)
+        {
+            if (char_between != '\0')
+                cnt_t += len + 1;
+            char *buff = (char *)malloc((sizeof(char) * cnt_t) + 1);
+            strcpy(buff, "\0");
+            for (size_t i = from; i < till; i++)
+            {
+                strcat(buff, src[i]);
+                if (i < till - 1 && char_between != '\0')
+                    strncat(buff, &char_between, 1);
+            }
+            free(a->str.src);
+            a->str.src = (char *)malloc(sizeof(char) * (strlen((const char *)buff) + 1));
+            strcpy(a->str.src, (const char *)buff);
+            free(buff);
+        }
     }
 }
 
@@ -303,13 +376,6 @@ size_t _length(string *a)
     return (size_t)0;
 }
 
-size_t _mem_used(string *a)
-{
-    if (a && a->str.src && a->str.init == true)
-        return ((strlen((const char *)a->str.src)) * (sizeof(__string__) * sizeof(char)));
-    return (size_t)0;
-}
-
 int _compare(string *a, const char *T1)
 {
     if (a && T1 && a->str.init == true && a->str.src)
@@ -360,9 +426,9 @@ void _replace(string *a, const char *old, const char *new_)
         i = 0;
         while (*a->str.src)
         {
-            if (strstr(a->str.src, old)==a->str.src)
+            if (strstr(a->str.src, old) == a->str.src)
             {
-                strcpy(&r[i], new_);
+                strncpy(&r[i], new_, len_n + 1);
                 i += len_n;
                 a->str.src += len_o;
             }
@@ -398,14 +464,12 @@ int _save(string *a, const char *location)
     if (a && a->str.src && location && a->str.init == true)
     {
         FILE *f = fopen(location, "wb");
-        if (f)
+        if (f != NULL)
         {
             fwrite((const char *)a->str.src, strlen((const char *)a->str.src), sizeof(char), f);
             fclose(f);
             return true;
         }
-        fclose(f);
-        return false;
     }
     return false;
 }
@@ -415,7 +479,7 @@ int _open(string *a, const char *location)
     if (a && location && a->str.init == true)
     {
         FILE *f = fopen(location, "rb");
-        if (f)
+        if (f != NULL)
         {
             fseek(f, 0, SEEK_END);
             size_t len = ftell(f);
@@ -426,15 +490,13 @@ int _open(string *a, const char *location)
             fclose(f);
             return true;
         }
-        fclose(f);
-        return false;
     }
     return false;
 }
 
 int _clear(string *a)
 {
-    if (a && a->str.init == true)
+    if (a && a->str.src && a->str.init == true)
     {
         free(a->str.src);
         a->str.src = (char *)calloc(1, sizeof(char));
@@ -447,7 +509,7 @@ void _to_upper(string *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        for (size_t i = 0; i < a->str.src[i] != '\0'; ++i)
+        for (size_t i = 0; a->str.src[i] != '\0'; ++i)
         {
             if (a->str.src[i] <= 122 && a->str.src[i] >= 97)
                 a->str.src[i] -= 32;
@@ -459,7 +521,7 @@ void _to_lower(string *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        for (size_t i = 0; i < a->str.src[i] != '\0'; ++i)
+        for (size_t i = 0; a->str.src[i] != '\0'; ++i)
         {
             if (a->str.src[i] <= 90 && a->str.src[i] >= 65)
                 a->str.src[i] += 32;
@@ -472,7 +534,7 @@ int _is_initialized(string *a)
     if (a)
         if (a->str.init == true)
             return true;
-    return false; // never reaches this point
+    return false; // never reaches this point by the way
 }
 
 void _to_binary(string *a)
@@ -503,12 +565,13 @@ void _to_binary(string *a)
     }
 }
 
-void _from_binary(string *a)
+int _from_binary(string *a)
 {
+    int valid = true;
     if (a && a->str.src && a->str.init == true)
     {
         size_t len = strlen((const char *)a->str.src);
-        int valid = true;
+        // test 1 for checking binary input format
         for (size_t i = 0; i < len; i++)
         {
             switch (a->str.src[i])
@@ -524,6 +587,20 @@ void _from_binary(string *a)
             }
             if (valid == false)
                 break;
+        }
+        // test 2 for checking binary input format
+        if (valid == true)
+        {
+            size_t cnt = 0;
+            for (size_t i = 0; i < len; i++)
+            {
+                if (a->str.src[i] == ' ')
+                    cnt++;
+            }
+            if ((len - cnt) % 8 == 0 && ((len - cnt) / 8) == (cnt + 1))
+                valid = true;
+            else
+                valid = false;
         }
         if (valid == true)
         {
@@ -553,6 +630,7 @@ void _from_binary(string *a)
             free(buff);
         }
     }
+    return valid;
 }
 
 long double _entropy(string *a)
@@ -606,30 +684,31 @@ void init_str(string *a)
     */
     if (a)
     {
-        a->set = _set;                       // working 1
-        a->get = _get;                       // working 1
-        a->append = _append;                 // working 1
-        a->append_start = _append_start;     // working 1
-        a->empty = _empty;                   // working 1
-        a->replace_char = _replace_char;     // working 1
-        a->char_set = _char_set;             // working 1
-        a->char_get = _char_get;             // working 1
-        a->length = _length;                 // working 1
-        a->mem_used = _mem_used;             // working 1
-        a->compare = _compare;               // working 1
-        a->print = _print;                   // working 1
-        a->replace = _replace;               // working 0
-        a->destructor = _destructor;         // working 1
-        a->c_str = _c_str;                   // working 1
-        a->save = _save;                     // working 1
-        a->open = _open;                     // working 1
-        a->clear = _clear;                   // working 1
-        a->to_upper = _to_upper;             // working 1
-        a->to_lower = _to_lower;             // working 1
-        a->is_initialized = _is_initialized; // working 1
-        a->to_binary = _to_binary;           // working 1
-        a->from_binary = _from_binary;       // working 1
-        a->entropy = _entropy;               // working 1
+        a->set = _set;                       /// working 1
+        a->set_random = _set_random;         /// working 1
+        a->set_array = _set_array;           /// working 1
+        a->get = _get;                       /// working 1
+        a->append = _append;                 /// working 1
+        a->append_start = _append_start;     /// working 1
+        a->empty = _empty;                   /// working 1
+        a->replace_char = _replace_char;     /// working 1
+        a->char_set = _char_set;             /// working 1
+        a->char_get = _char_get;             /// working 1
+        a->length = _length;                 /// working 1
+        a->compare = _compare;               /// working 1
+        a->print = _print;                   /// working 1
+        a->replace = _replace;               /// working 0
+        a->destructor = _destructor;         /// working 1
+        a->c_str = _c_str;                   /// working 1
+        a->save = _save;                     /// working 1
+        a->open = _open;                     /// working 1
+        a->clear = _clear;                   /// working 1
+        a->to_upper = _to_upper;             /// working 1
+        a->to_lower = _to_lower;             /// working 1
+        a->is_initialized = _is_initialized; /// working 1
+        a->to_binary = _to_binary;           /// working 1
+        a->from_binary = _from_binary;       /// working 1
+        a->entropy = _entropy;               /// working 1
         a->str.src = (char *)malloc(1 * sizeof(char));
         strcpy(a->str.src, "\0"); // default init instead of some `garbage value`
         a->str.init = true;       // initialized properly
