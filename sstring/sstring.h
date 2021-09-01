@@ -2,6 +2,7 @@
 * Copyright Tushar Chaurasia 2021 - 2022.
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on github.com
+* File: "sstring.h" under "sstring" directory
 */
 
 #pragma once
