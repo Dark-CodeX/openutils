@@ -1,11 +1,16 @@
-/** This header file is written to manage string data safely under C programming language.
+/**
+* This header file is written to manage string data safely under C programming language.
+* Author: Tushar Chaurasia 
 * Copyright Tushar Chaurasia 2021 - 2022.
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on github.com
 * File: "sstring.h" under "sstring" directory
+* sstring: version 2.3.1
 */
 
 #pragma once
+
+#define sstring_version "2.3.1"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,195 +31,195 @@ typedef struct __str__
     int init;
 } __str__;
 
-typedef struct __string__ string;
+typedef struct __string__ sstring;
 struct __string__
 {
     /* Do not use this. */
     __str__ str;
 
     /** Sets `src` to `a`.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @param src string to assign
      */
-    void (*set)(string *a, const char *src);
+    void (*set)(sstring *a, const char *src);
 
     /** Sets random data to `a`. Note: length should be greater than 0, (not equal to 0). Well, no error and result if assigned 0.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @param len size of random string
      */
-    void (*set_random)(string *a, const long long int len);
+    void (*set_random)(sstring *a, const long long int len);
 
     /** @brief Sets `src` array to `a`. Note: `from`, `till` belongs to [0, sizeof(`src`)]. 
      * Set `char_between` to 0 if you want nothing to append in-between. 
      * Note: `src[till]` is not included in resultant string.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @param src string array to assign
      * @param char_between character to append between `src[x]` and `src[x + 1]`
      * @param from point to start assigning `src[from]`
      * @param till assign till `src[till]`
      * @param len length of `src` array
      */
-    void (*set_array)(string *a, const char *src[], char char_between, size_t from, size_t till, size_t len);
+    void (*set_array)(sstring *a, const char *src[], char char_between, size_t from, size_t till, size_t len);
 
     /** Returns `a` as `char *`.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @returns return `a` as `char *`
      */
-    char *(*get)(string *a);
+    char *(*get)(sstring *a);
 
     /** Appends `src` to `a` at end.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @param src string to append
      */
-    void (*append)(string *a, const char *src);
+    void (*append)(sstring *a, const char *src);
 
     /** Appends `src` to `a` at start.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @param src string to append
      */
-    void (*append_start)(string *a, const char *src);
+    void (*append_start)(sstring *a, const char *src);
 
     /** Checks whether `a` is empty or not.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @returns return 0 if empty, otherwise return 1
      */
-    int (*empty)(string *a);
+    int (*empty)(sstring *a);
 
     /** Linear time complexity, O(n), where n is the length of the char array.
      * Replaces `old` to `new`.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @param old old character (character to be replaced)
      * @param new_ new character (character to be replaced with)
     */
-    void (*replace_char)(string *a, const char old, const char new_);
+    void (*replace_char)(sstring *a, const char old, const char new_);
 
     /**
      * Sets `what` at `where` in `a`.
      * Only sets if `where` is less than size of `a`.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @param what character to set
      * @param where sets `what` at a fixed position
      */
-    void (*char_set)(string *a, const char what, size_t where);
+    void (*char_set)(sstring *a, const char what, size_t where);
 
     /**
      * Returns character from `a` at `where`.
      * Only returns if `where` is less than size of `a`.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @param where get an element from where in `a`
      * @returns character from `a` at `where`.
      */
-    char (*char_get)(string *a, size_t where);
+    char (*char_get)(sstring *a, size_t where);
 
     /**
      * Returns length of `a`, if `a` != NULL.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @returns length of `a`
      */
-    size_t (*length)(string *a);
+    size_t (*length)(sstring *a);
 
     /**
      * Compares `a` against `T1`.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @param T1 string to compare with
      * @returns return 0 if true, otherwise return 1
      */
-    int (*compare)(string *a, const char *T1);
+    int (*compare)(sstring *a, const char *T1);
 
     /**
     * Prints `a`.
-    * @param a pointer to struct string
+    * @param a pointer to struct sstring
     * @param add_next_line set 0 if append next line, otherwise set 1
     * @param __format__ arguments for ...
      */
-    void (*print)(string *a, int add_next_line, const char *__format__, ...);
+    void (*print)(sstring *a, int add_next_line, const char *__format__, ...);
 
     /**
      * Replaces `old` in `a` with `new_`.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @param old what to replace
      * @param new_ replace with
      */
-    void (*replace)(string *a, const char *old, const char *new_);
+    void (*replace)(sstring *a, const char *old, const char *new_);
 
     /**
      * Free `a->str.src`.
      * Do not forget to use this function at the end.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @returns 0 if freed successfully, otherwise return 1
      */
-    int (*destructor)(string *a);
+    int (*destructor)(sstring *a);
 
     /** 
      * Returns `a` as `const char *`.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @returns return `a` as `const char *`
      */
-    const char *(*c_str)(string *a);
+    const char *(*c_str)(sstring *a);
 
     /**
      * Saves `a` at `location`.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @param location where to save
      * @returns 0 if save successfully, otherwise return 1
      */
-    int (*save)(string *a, const char *location);
+    int (*save)(sstring *a, const char *location);
 
     /**
      * Opens file at `location` and then sets `a` the contents of the file.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @param location file to open
      * @returns 0 if opened successfully, otherwise return 1
      */
-    int (*open)(string *a, const char *location);
+    int (*open)(sstring *a, const char *location);
 
     /**
      * Clears `a` using `calloc` function defined in <stdlib.h> header.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @returns 0 if cleared successfully, otherwise return 1
      */
-    int (*clear)(string *a);
+    int (*clear)(sstring *a);
 
     /**
      * Converts `a` to upper case.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      */
-    void (*to_upper)(string *a);
+    void (*to_upper)(sstring *a);
 
     /**
      * Converts `a` to lower case.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      */
-    void (*to_lower)(string *a);
+    void (*to_lower)(sstring *a);
 
     /**
      * Returns whether `a` is initialized or not using `init_str` function.
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @returns 0 if initialized, otherwise return nothing because this method have to be initialized using `init_str` function.
      */
-    int (*is_initialized)(string *a);
+    int (*is_initialized)(sstring *a);
 
     /** 
      * Converts `a` (as string) to base 2 (as binary).
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
     */
-    void (*to_binary)(string *a);
+    void (*to_binary)(sstring *a);
 
     /** 
      * Converts `a` from base 2 (as binary) to string. Not executed if `a` is not in binary form i.e, [1, 0].
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
     */
-    int (*from_binary)(string *a);
+    int (*from_binary)(sstring *a);
 
     /**
      * Calculates the entropy using `Shannon's entropy` formula, which was introduced in his 1948 paper "A Mathematical Theory of Communication". For more information https://en.wikipedia.org/wiki/Entropy_(information_theory)
-     * @param a pointer to struct string
+     * @param a pointer to struct sstring
      * @returns entropy of `a`.
      */
-    long double (*entropy)(string *a);
+    long double (*entropy)(sstring *a);
 } __string__;
 
-void _set(string *a, const char *src)
+void _set(sstring *a, const char *src)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
@@ -224,7 +229,7 @@ void _set(string *a, const char *src)
     }
 }
 
-void _set_random(string *a, const long long int len)
+void _set_random(sstring *a, const long long int len)
 {
     if (a && a->str.init == true && a->str.src && len > 0)
     {
@@ -241,7 +246,7 @@ void _set_random(string *a, const long long int len)
     }
 }
 
-void _set_array(string *a, const char *src[], char char_between, size_t from, size_t till, size_t len)
+void _set_array(sstring *a, const char *src[], char char_between, size_t from, size_t till, size_t len)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
@@ -285,14 +290,14 @@ void _set_array(string *a, const char *src[], char char_between, size_t from, si
     }
 }
 
-char *_get(string *a)
+char *_get(sstring *a)
 {
     if (a && a->str.init == true && a->str.src)
         return a->str.src;
     return (char *)NULL;
 }
 
-void _append(string *a, const char *src)
+void _append(sstring *a, const char *src)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
@@ -310,7 +315,7 @@ void _append(string *a, const char *src)
     }
 }
 
-void _append_start(string *a, const char *src)
+void _append_start(sstring *a, const char *src)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
@@ -333,7 +338,7 @@ void _append_start(string *a, const char *src)
     }
 }
 
-int _empty(string *a)
+int _empty(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
         if (strlen((const char *)a->str.src) == 0)
@@ -341,7 +346,7 @@ int _empty(string *a)
     return false;
 }
 
-void _replace_char(string *a, const char old, const char new_)
+void _replace_char(sstring *a, const char old, const char new_)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -351,7 +356,7 @@ void _replace_char(string *a, const char old, const char new_)
     }
 }
 
-void _char_set(string *a, const char what, size_t where)
+void _char_set(sstring *a, const char what, size_t where)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -360,7 +365,7 @@ void _char_set(string *a, const char what, size_t where)
     }
 }
 
-char _char_get(string *a, size_t where)
+char _char_get(sstring *a, size_t where)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -370,14 +375,14 @@ char _char_get(string *a, size_t where)
     return (char)'\0';
 }
 
-size_t _length(string *a)
+size_t _length(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
         return strlen((const char *)a->str.src);
     return (size_t)0;
 }
 
-int _compare(string *a, const char *T1)
+int _compare(sstring *a, const char *T1)
 {
     if (a && T1 && a->str.init == true && a->str.src)
     {
@@ -387,7 +392,7 @@ int _compare(string *a, const char *T1)
     return false;
 }
 
-void _print(string *a, int add_next_line, const char *__format__, ...)
+void _print(sstring *a, int add_next_line, const char *__format__, ...)
 {
     if (a && __format__ && a->str.init == true && a->str.src)
     {
@@ -410,7 +415,7 @@ void _print(string *a, int add_next_line, const char *__format__, ...)
     }
 }
 
-void _replace(string *a, const char *old, const char *new_)
+void _replace(sstring *a, const char *old, const char *new_)
 {
     if (a && old && new_ && a->str.init == true && a->str.src)
     {
@@ -443,7 +448,7 @@ void _replace(string *a, const char *old, const char *new_)
     }
 }
 
-int _destructor(string *a)
+int _destructor(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -453,14 +458,14 @@ int _destructor(string *a)
     return false;
 }
 
-const char *_c_str(string *a)
+const char *_c_str(sstring *a)
 {
     if (a && a->str.init == true && a->str.src)
         return (const char *)a->str.src;
     return (const char *)NULL;
 }
 
-int _save(string *a, const char *location)
+int _save(sstring *a, const char *location)
 {
     if (a && a->str.src && location && a->str.init == true)
     {
@@ -475,7 +480,7 @@ int _save(string *a, const char *location)
     return false;
 }
 
-int _open(string *a, const char *location)
+int _open(sstring *a, const char *location)
 {
     if (a && location && a->str.init == true)
     {
@@ -495,7 +500,7 @@ int _open(string *a, const char *location)
     return false;
 }
 
-int _clear(string *a)
+int _clear(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -506,7 +511,7 @@ int _clear(string *a)
     return false;
 }
 
-void _to_upper(string *a)
+void _to_upper(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -518,7 +523,7 @@ void _to_upper(string *a)
     }
 }
 
-void _to_lower(string *a)
+void _to_lower(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -530,7 +535,7 @@ void _to_lower(string *a)
     }
 }
 
-int _is_initialized(string *a)
+int _is_initialized(sstring *a)
 {
     if (a)
         if (a->str.init == true)
@@ -538,7 +543,7 @@ int _is_initialized(string *a)
     return false; // never reaches this point by the way
 }
 
-void _to_binary(string *a)
+void _to_binary(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -566,7 +571,7 @@ void _to_binary(string *a)
     }
 }
 
-int _from_binary(string *a)
+int _from_binary(sstring *a)
 {
     int valid = true;
     if (a && a->str.src && a->str.init == true)
@@ -634,7 +639,7 @@ int _from_binary(string *a)
     return valid;
 }
 
-long double _entropy(string *a)
+long double _entropy(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -677,7 +682,7 @@ long double _entropy(string *a)
     return 0.0f;
 }
 
-void init_str(string *a)
+void init_str(sstring *a)
 {
     /** 
      * Here 1 means no memory leak, and 0 means memory leak was found.
@@ -716,7 +721,7 @@ void init_str(string *a)
     }
 }
 
-void init_str_array(string *a[], size_t len)
+void init_str_array(sstring *a[], size_t len)
 {
     if (a)
     {
