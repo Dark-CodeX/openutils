@@ -47,7 +47,7 @@ struct __string__
      * @param a pointer to struct sstring
      * @param len size of random string
      */
-    void (*set_random)(sstring *a, const long long int len);
+    void (*set_random)(sstring *a, const size_t len);
 
     /** @brief Sets `src` array to `a`. Note: `from`, `till` belongs to [0, sizeof(`src`)]. 
      * Set `char_between` to 0 if you want nothing to append in-between. 
@@ -243,6 +243,8 @@ struct __string__
     long double (*entropy)(sstring *a);
 } __string__;
 
+#include "prototype_err.h"
+
 void _set(sstring *a, const char *src)
 {
     if (a && src && a->str.init == true && a->str.src)
@@ -253,7 +255,7 @@ void _set(sstring *a, const char *src)
     }
 }
 
-void _set_random(sstring *a, const long long int len)
+void _set_random(sstring *a, const size_t len)
 {
     if (a && a->str.init == true && a->str.src && len > 0)
     {
@@ -799,7 +801,7 @@ long double _entropy(sstring *a)
     return 0.0f;
 }
 
-void init_str(sstring *a)
+void init_sstr(sstring *a)
 {
     /** 
      * Here 1 means no memory leak, and 0 means memory leak was found.
@@ -840,11 +842,11 @@ void init_str(sstring *a)
     }
 }
 
-void init_str_array(sstring *a[], size_t len)
+void init_sstr_array(sstring *a[], size_t len)
 {
     if (a)
     {
         for (size_t i = 0; i < len; ++i)
-            init_str(a[i]);
+            init_sstr(a[i]);
     }
 }
