@@ -7,17 +7,6 @@ This header file is cross-platform, but tested only on Windows 10, Windows 11, A
 Documents are added in the header(`"sstring/sstring.h"`) file itself.
 Be sure to suggest any changes.
 
-
-### BUILD AND INSTALL
-
-Compiled using cmake.
-
-Compilation command = `cmake ./CMakeLists.txt && make`
-
-To install on arch linux use **`PKGBUILD`**.
-
-To install on any OS just copy and paste **`sstring`** folder in `include` directory of `gcc`.
-
 # Functions Defined
 
 <code>set</code>
@@ -73,5 +62,15 @@ To install on any OS just copy and paste **`sstring`** folder in `include` direc
 <code>from_binary</code>
 
 <code>entropy</code>
+
+# BUILD AND INSTALL
+
+Compiled using cmake.
+
+Compilation command = `cmake ./CMakeLists.txt && make`
+
+To install on arch linux use **`PKGBUILD`**.
+
+To install on any OS just copy and paste **`sstring`** folder in `include` directory of `gcc`.
 
 **Watch my youtube video [YT Video](https://youtu.be/q9DUJ3hz24o)**
