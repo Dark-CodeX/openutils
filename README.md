@@ -18,7 +18,7 @@ To install on arch linux use **`PKGBUILD`**.
 
 To install on any OS just copy and paste **`sstring`** folder in `include` directory of `gcc`.
 
-## Functions Defined
+# Functions Defined
 
 <code>set</code>
 
