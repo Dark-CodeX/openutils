@@ -5,12 +5,12 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 3.0.1
+* sstring: version 3.1.1
 */
 
 #pragma once
 
-#define sstring_version "3.0.1"
+#define sstring_version "3.1.1"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -277,7 +277,7 @@ void _set_array(sstring *a, const char *src[], char char_between, size_t from, s
     if (a && src && a->str.init == true && a->str.src)
     {
         int valid = true;
-        if (from < 0 || till > len || from > len || till < 0)
+        if (till > len || from > len)
         {
             valid = false;
             return;
@@ -369,7 +369,7 @@ void _append_array(sstring *a, const char *src[], char char_between, size_t from
     if (a && src && a->str.init == true && a->str.src)
     {
         int valid = true;
-        if (from < 0 || till > len || from > len || till < 0)
+        if (till > len || from > len)
         {
             valid = false;
             return;
@@ -415,7 +415,7 @@ void _append_start_array(sstring *a, const char *src[], char char_between, size_
     if (a && src && a->str.init == true && a->str.src)
     {
         int valid = true;
-        if (from < 0 || till > len || from > len || till < 0)
+        if (till > len || from > len)
         {
             valid = false;
             return;
