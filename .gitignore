@@ -31,8 +31,8 @@
 *.out
 *.app
 
-#Cmake Build Ignore
+# Cmake Build Ignore
 build
 
-#VS Code Settings Folder
+# VS Code Settings Folder
 .vscode
