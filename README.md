@@ -19,61 +19,59 @@ To install on arch linux use **`PKGBUILD`**.
 To install on any OS just copy and paste **`sstring`** folder in `include` directory of `gcc`.
 
 ## Functions Defined
-<code>
 
-set
+<code>set</code>
 
-set_random
+<code>set_random</code>
 
-set_array
+<code>set_array</code>
 
-get
+<code>get</code>
 
-append
+<code>append</code>
 
-append_start
+<code>append_start</code>
 
-append_array
+<code>append_array</code>
 
-append_start_array
+<code>append_start_array</code>
 
-empty
+<code>empty</code>
 
-replace_char
+<code>replace_char</code>
 
-char_set
+<code>char_set</code>
 
-char_get
+<code>char_get</code>
 
-length
+<code>length</code>
 
-compare
+<code>compare</code>
 
-print
+<code>print</code>
 
-replace
+<code>replace</code>
 
-destructor
+<code>destructor</code>
 
-c_str
+<code>c_str</code>
 
-save
+<code>save</code>
 
-open
+<code>open</code>
 
-clear
+<code>clear</code>
 
-to_upper
+<code>to_upper</code>
 
-to_lower
+<code>to_lower</code>
 
-is_initialized
+<code>is_initialized</code>
 
-to_binary
+<code>to_binary</code>
 
-from_binary
+<code>from_binary</code>
 
-entropy
-</code>
+<code>entropy</code>
 
 **Watch my youtube video [YT Video](https://youtu.be/q9DUJ3hz24o)**
