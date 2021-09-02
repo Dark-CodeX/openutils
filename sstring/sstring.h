@@ -1,16 +1,16 @@
 /**
 * This header file is written to manage string data safely under C programming language.
-* Author: Tushar Chaurasia 
+* Author: Tushar Chaurasia (https://github.com/Dark-CodeX/)
 * Copyright Tushar Chaurasia 2021 - 2022.
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 2.3.1
+* sstring: version 3.0.1
 */
 
 #pragma once
 
-#define sstring_version "2.3.1"
+#define sstring_version "3.0.1"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -67,17 +67,41 @@ struct __string__
      */
     char *(*get)(sstring *a);
 
-    /** Appends `src` to `a` at end.
+    /** Appends `src` to `a` at the end.
      * @param a pointer to struct sstring
      * @param src string to append
      */
     void (*append)(sstring *a, const char *src);
 
-    /** Appends `src` to `a` at start.
+    /** Appends `src` to `a` at the starting.
      * @param a pointer to struct sstring
      * @param src string to append
      */
     void (*append_start)(sstring *a, const char *src);
+
+    /** @brief Appends `src` array to `a` at the end. Note: `from`, `till` belongs to [0, sizeof(`src`)]. 
+     * Set `char_between` to 0 if you want nothing to append in-between. 
+     * Note: `src[till]` is not included in resultant string.
+     * @param a pointer to struct sstring
+     * @param src string array to append
+     * @param char_between character to append between `src[x]` and `src[x + 1]`
+     * @param from point to start appending `src[from]`
+     * @param till append till `src[till]`
+     * @param len length of `src` array
+     */
+    void (*append_array)(sstring *a, const char *src[], char char_between, size_t from, size_t till, size_t len);
+
+    /** @brief Appends `src` array to `a` at the starting. Note: `from`, `till` belongs to [0, sizeof(`src`)]. 
+     * Set `char_between` to 0 if you want nothing to append in-between. 
+     * Note: `src[till]` is not included in resultant string.
+     * @param a pointer to struct sstring
+     * @param src string array to append
+     * @param char_between character to append between `src[x]` and `src[x + 1]`
+     * @param from point to start appending `src[from]`
+     * @param till append till `src[till]`
+     * @param len length of `src` array
+     */
+    void (*append_start_array)(sstring *a, const char *src[], char char_between, size_t from, size_t till, size_t len);
 
     /** Checks whether `a` is empty or not.
      * @param a pointer to struct sstring
@@ -251,7 +275,7 @@ void _set_array(sstring *a, const char *src[], char char_between, size_t from, s
     if (a && src && a->str.init == true && a->str.src)
     {
         int valid = true;
-        if (from < 0 || till > len)
+        if (from < 0 || till > len || from > len || till < 0)
         {
             valid = false;
             return;
@@ -332,6 +356,99 @@ void _append_start(sstring *a, const char *src)
             strcat(buff, (const char *)a->str.src);
             free(a->str.src);
             a->str.src = (char *)malloc((sizeof(char) * strlen((const char *)buff)) + 1);
+            strcpy(a->str.src, (const char *)buff);
+            free(buff);
+        }
+    }
+}
+
+void _append_array(sstring *a, const char *src[], char char_between, size_t from, size_t till, size_t len)
+{
+    if (a && src && a->str.init == true && a->str.src)
+    {
+        int valid = true;
+        if (from < 0 || till > len || from > len || till < 0)
+        {
+            valid = false;
+            return;
+        }
+        size_t cnt_t = 0;
+        if (valid == true)
+        {
+            for (size_t i = from; i < till; i++)
+            {
+                if (src[i] == NULL)
+                {
+                    valid = false;
+                    break;
+                }
+                else
+                    cnt_t += strlen(src[i]);
+            }
+        }
+        if (valid == true)
+        {
+            if (char_between != '\0')
+                cnt_t += len + 1;
+            char *buff = (char *)malloc((sizeof(char) * cnt_t) + strlen((const char *)a->str.src) + 1);
+            strcpy(buff, (const char *)a->str.src);
+            if (strlen((const char *)a->str.src) > 0 && char_between != '\0')
+                strncat(buff, &char_between, 1);
+            for (size_t i = from; i < till; i++)
+            {
+                strcat(buff, src[i]);
+                if (i < till - 1 && char_between != '\0')
+                    strncat(buff, &char_between, 1);
+            }
+            free(a->str.src);
+            a->str.src = (char *)malloc(sizeof(char) * (strlen((const char *)buff) + 1));
+            strcpy(a->str.src, (const char *)buff);
+            free(buff);
+        }
+    }
+}
+
+void _append_start_array(sstring *a, const char *src[], char char_between, size_t from, size_t till, size_t len)
+{
+    if (a && src && a->str.init == true && a->str.src)
+    {
+        int valid = true;
+        if (from < 0 || till > len || from > len || till < 0)
+        {
+            valid = false;
+            return;
+        }
+        size_t cnt_t = 0;
+        if (valid == true)
+        {
+            for (size_t i = from; i < till; i++)
+            {
+                if (src[i] == NULL)
+                {
+                    valid = false;
+                    break;
+                }
+                else
+                    cnt_t += strlen(src[i]);
+            }
+        }
+        if (valid == true)
+        {
+            if (char_between != '\0')
+                cnt_t += len + 1;
+            char *buff = (char *)malloc((sizeof(char) * cnt_t) + strlen((const char *)a->str.src) + 1);
+            strcpy(buff, "\0");
+            for (size_t i = from; i < till; i++)
+            {
+                strcat(buff, src[i]);
+                if (i < till - 1 && char_between != '\0')
+                    strncat(buff, &char_between, 1);
+            }
+            if (cnt_t > 2 && char_between != '\0')
+                strncat(buff, &char_between, 1);
+            strcat(buff, (const char *)a->str.src);
+            free(a->str.src);
+            a->str.src = (char *)malloc(sizeof(char) * (strlen((const char *)buff) + 1));
             strcpy(a->str.src, (const char *)buff);
             free(buff);
         }
@@ -690,31 +807,33 @@ void init_str(sstring *a)
     */
     if (a)
     {
-        a->set = _set;                       /// working 1
-        a->set_random = _set_random;         /// working 1
-        a->set_array = _set_array;           /// working 1
-        a->get = _get;                       /// working 1
-        a->append = _append;                 /// working 1
-        a->append_start = _append_start;     /// working 1
-        a->empty = _empty;                   /// working 1
-        a->replace_char = _replace_char;     /// working 1
-        a->char_set = _char_set;             /// working 1
-        a->char_get = _char_get;             /// working 1
-        a->length = _length;                 /// working 1
-        a->compare = _compare;               /// working 1
-        a->print = _print;                   /// working 1
-        a->replace = _replace;               /// working 0
-        a->destructor = _destructor;         /// working 1
-        a->c_str = _c_str;                   /// working 1
-        a->save = _save;                     /// working 1
-        a->open = _open;                     /// working 1
-        a->clear = _clear;                   /// working 1
-        a->to_upper = _to_upper;             /// working 1
-        a->to_lower = _to_lower;             /// working 1
-        a->is_initialized = _is_initialized; /// working 1
-        a->to_binary = _to_binary;           /// working 1
-        a->from_binary = _from_binary;       /// working 1
-        a->entropy = _entropy;               /// working 1
+        a->set = _set;                               /// working 1
+        a->set_random = _set_random;                 /// working 1
+        a->set_array = _set_array;                   /// working 1
+        a->get = _get;                               /// working 1
+        a->append = _append;                         /// working 1
+        a->append_start = _append_start;             /// working 1
+        a->append_array = _append_array;             /// working 1
+        a->append_start_array = _append_start_array; /// working 1
+        a->empty = _empty;                           /// working 1
+        a->replace_char = _replace_char;             /// working 1
+        a->char_set = _char_set;                     /// working 1
+        a->char_get = _char_get;                     /// working 1
+        a->length = _length;                         /// working 1
+        a->compare = _compare;                       /// working 1
+        a->print = _print;                           /// working 1
+        a->replace = _replace;                       /// working 0
+        a->destructor = _destructor;                 /// working 1
+        a->c_str = _c_str;                           /// working 1
+        a->save = _save;                             /// working 1
+        a->open = _open;                             /// working 1
+        a->clear = _clear;                           /// working 1
+        a->to_upper = _to_upper;                     /// working 1
+        a->to_lower = _to_lower;                     /// working 1
+        a->is_initialized = _is_initialized;         /// working 1
+        a->to_binary = _to_binary;                   /// working 1
+        a->from_binary = _from_binary;               /// working 1
+        a->entropy = _entropy;                       /// working 1
         a->str.src = (char *)malloc(1 * sizeof(char));
         strcpy(a->str.src, "\0"); // default init instead of some `garbage value`
         a->str.init = true;       // initialized properly
