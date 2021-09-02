@@ -7,7 +7,7 @@ conflicts=('sstring')
 depends=(gcc)
 license=("MIT")
 source=("https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/sstring.h")
-sha512sums=("a30aa7b1f3283ad16908f5e3ae0d576567dd2f1a9ee08e597c36c65f7ded7fb38c906161070f2e6906d08b35a2cae841e94e587ee116b4acb08fa15593835748")
+sha512sums=("4fd02e0c5826e06efe6148f99f4afd7f6eb4f0c25e6c6afa2889498e7363ec3fc856ac6b74ea75aa3bbd6964cbd0759eed5eed47cc436c7fe9052ab0c0291c53")
 
 package() {
   echo "Memory Safe String Library in C language."
