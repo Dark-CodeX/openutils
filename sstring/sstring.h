@@ -5,12 +5,12 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 3.1.1
+* sstring: version 3.5.1
 */
 
 #pragma once
 
-#define sstring_version "3.1.1"
+#define sstring_version "3.5.1"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,7 +43,9 @@ struct __string__
      */
     void (*set)(sstring *a, const char *src);
 
-    /** Sets random data to `a`. Note: length should be greater than 0, (not equal to 0). Well, no error and result if assigned 0.
+    /** Sets random data to `a`. Note: length should be greater than 0, (not equal to 0). Well, no error and result if assigned 0. 
+     * Note: use srand function before calling this function.
+     * `srand((unsigned int)(time(NULL) * getpid() * getpid() + getpid()));`
      * @param a pointer to struct sstring
      * @param len size of random string
      */
@@ -61,7 +63,7 @@ struct __string__
      */
     void (*set_array)(sstring *a, const char *src[], char char_between, size_t from, size_t till, size_t len);
 
-    /** Returns `a` as `char *`.
+    /** Returns `a` as `char *`. 
      * @param a pointer to struct sstring
      * @returns return `a` as `char *`
      */
@@ -105,7 +107,7 @@ struct __string__
 
     /** Checks whether `a` is empty or not.
      * @param a pointer to struct sstring
-     * @returns return 0 if empty, otherwise return 1
+     * @returns return true if empty, otherwise return false
      */
     int (*empty)(sstring *a);
 
@@ -146,7 +148,7 @@ struct __string__
      * Compares `a` against `T1`.
      * @param a pointer to struct sstring
      * @param T1 string to compare with
-     * @returns return 0 if true, otherwise return 1
+     * @returns return true if true, otherwise return false
      */
     int (*compare)(sstring *a, const char *T1);
 
@@ -170,7 +172,7 @@ struct __string__
      * Free `a->str.src`.
      * Do not forget to use this function at the end.
      * @param a pointer to struct sstring
-     * @returns 0 if freed successfully, otherwise return 1
+     * @returns true if freed successfully, otherwise return false
      */
     int (*destructor)(sstring *a);
 
@@ -185,7 +187,7 @@ struct __string__
      * Saves `a` at `location`.
      * @param a pointer to struct sstring
      * @param location where to save
-     * @returns 0 if save successfully, otherwise return 1
+     * @returns true if save successfully, otherwise return false
      */
     int (*save)(sstring *a, const char *location);
 
@@ -193,14 +195,14 @@ struct __string__
      * Opens file at `location` and then sets `a` the contents of the file.
      * @param a pointer to struct sstring
      * @param location file to open
-     * @returns 0 if opened successfully, otherwise return 1
+     * @returns true if opened successfully, otherwise return false
      */
     int (*open)(sstring *a, const char *location);
 
     /**
      * Clears `a` using `calloc` function defined in <stdlib.h> header.
      * @param a pointer to struct sstring
-     * @returns 0 if cleared successfully, otherwise return 1
+     * @returns true if cleared successfully, otherwise return false
      */
     int (*clear)(sstring *a);
 
@@ -219,7 +221,7 @@ struct __string__
     /**
      * Returns whether `a` is initialized or not using `init_str` function.
      * @param a pointer to struct sstring
-     * @returns 0 if initialized, otherwise return nothing because this method have to be initialized using `init_str` function.
+     * @returns true if initialized, otherwise return nothing because this method have to be initialized using `init_str` function.
      */
     int (*is_initialized)(sstring *a);
 
@@ -241,6 +243,28 @@ struct __string__
      * @returns entropy of `a`.
      */
     long double (*entropy)(sstring *a);
+
+    /** 
+     * Returns true if contains `str`, otherwise returns false.
+     * @param a pointer to struct sstring
+     * @param str string to be tested
+     * @returns true if contains, otherwise return false
+    */
+    int (*contains)(sstring *a, const char *str);
+
+    /** 
+     * Assigns `a` as a set. (From Set Theory) 
+     * @param a pointer to struct sstring
+    */
+    void (*to_set)(sstring *a);
+
+    /** 
+     * Copies `a` to `dest`. If copied successfully then, returns true otherwise false.
+     * @param a pointer to struct sstring
+     * @param dest pointer to struct sstring
+     * @returns If copied successfully then, returns true otherwise false.
+    */
+    int (*copy)(sstring *a, sstring *dest);
 } __string__;
 
 #include "prototype_err.h"
@@ -250,7 +274,7 @@ void _set(sstring *a, const char *src)
     if (a && src && a->str.init == true && a->str.src)
     {
         free(a->str.src);
-        a->str.src = (char *)malloc(sizeof(char) * (strlen(src) + 1));
+        a->str.src = (char *)calloc(sizeof(char) * (strlen(src) + 1), sizeof(char));
         strcpy(a->str.src, src);
     }
 }
@@ -260,13 +284,11 @@ void _set_random(sstring *a, const size_t len)
     if (a && a->str.init == true && a->str.src && len > 0)
     {
         char *buff = (char *)calloc((sizeof(char) * len) + 1, sizeof(char));
-        strcpy(buff, "\0");
-        srand((unsigned int)(time(NULL) * getpid() * getpid() + getpid())); // getpid() is used to generate a random number so that if process runs rapidly is should produce a random number.
         // random ascii character betweem 32 and 126, inclusive
         for (size_t i = 0; i < len; i++)
             buff[i] = (rand() % (126 - 32 + 1)) + 32;
         free(a->str.src);
-        a->str.src = (char *)malloc((sizeof(char) * len) + 1);
+        a->str.src = (char *)calloc((sizeof(char) * len) + 1, sizeof(char));
         strcpy(a->str.src, (const char *)buff);
         free(buff);
     }
@@ -300,8 +322,7 @@ void _set_array(sstring *a, const char *src[], char char_between, size_t from, s
         {
             if (char_between != '\0')
                 cnt_t += len + 1;
-            char *buff = (char *)malloc((sizeof(char) * cnt_t) + 1);
-            strcpy(buff, "\0");
+            char *buff = (char *)calloc((sizeof(char) * cnt_t) + 1, sizeof(char));
             for (size_t i = from; i < till; i++)
             {
                 strcat(buff, src[i]);
@@ -309,7 +330,7 @@ void _set_array(sstring *a, const char *src[], char char_between, size_t from, s
                     strncat(buff, &char_between, 1);
             }
             free(a->str.src);
-            a->str.src = (char *)malloc(sizeof(char) * (strlen((const char *)buff) + 1));
+            a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
             strcpy(a->str.src, (const char *)buff);
             free(buff);
         }
@@ -329,8 +350,8 @@ void _append(sstring *a, const char *src)
     {
         if (strlen((const char *)a->str.src) == 0) // string is empty
         {
-            free(a->str.src); // used malloc in `init_str` function
-            a->str.src = (char *)malloc(sizeof(char) * (strlen(src) + 1));
+            free(a->str.src); // used calloc in `init_str` function
+            a->str.src = (char *)calloc(sizeof(char) * (strlen(src) + 1), sizeof(char));
             strcpy(a->str.src, src); // copy `src` it.
         }
         else
@@ -347,17 +368,17 @@ void _append_start(sstring *a, const char *src)
     {
         if (strlen((const char *)a->str.src) == 0) // string is empty
         {
-            free(a->str.src); // used malloc in `init_str` function
-            a->str.src = (char *)malloc(sizeof(char) * (strlen(src) + 1));
+            free(a->str.src); // used calloc in `init_str` function
+            a->str.src = (char *)calloc(sizeof(char) * (strlen(src) + 1), sizeof(char));
             strcpy(a->str.src, src); // copy `src` it.
         }
         else
         {
-            char *buff = (char *)malloc(sizeof(char) * (strlen(src) + strlen(a->str.src) + 1));
+            char *buff = (char *)calloc(sizeof(char) * (strlen(src) + strlen(a->str.src) + 1), sizeof(char));
             strcpy(buff, src);
             strcat(buff, (const char *)a->str.src);
             free(a->str.src);
-            a->str.src = (char *)malloc((sizeof(char) * strlen((const char *)buff)) + 1);
+            a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
             strcpy(a->str.src, (const char *)buff);
             free(buff);
         }
@@ -392,7 +413,7 @@ void _append_array(sstring *a, const char *src[], char char_between, size_t from
         {
             if (char_between != '\0')
                 cnt_t += len + 1;
-            char *buff = (char *)malloc((sizeof(char) * cnt_t) + strlen((const char *)a->str.src) + 1);
+            char *buff = (char *)calloc((sizeof(char) * cnt_t) + strlen((const char *)a->str.src) + 1, sizeof(char));
             strcpy(buff, (const char *)a->str.src);
             if (strlen((const char *)a->str.src) > 0 && char_between != '\0')
                 strncat(buff, &char_between, 1);
@@ -403,7 +424,7 @@ void _append_array(sstring *a, const char *src[], char char_between, size_t from
                     strncat(buff, &char_between, 1);
             }
             free(a->str.src);
-            a->str.src = (char *)malloc(sizeof(char) * (strlen((const char *)buff) + 1));
+            a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
             strcpy(a->str.src, (const char *)buff);
             free(buff);
         }
@@ -438,8 +459,7 @@ void _append_start_array(sstring *a, const char *src[], char char_between, size_
         {
             if (char_between != '\0')
                 cnt_t += len + 1;
-            char *buff = (char *)malloc((sizeof(char) * cnt_t) + strlen((const char *)a->str.src) + 1);
-            strcpy(buff, "\0");
+            char *buff = (char *)calloc((sizeof(char) * cnt_t) + strlen((const char *)a->str.src) + 1, sizeof(char));
             for (size_t i = from; i < till; i++)
             {
                 strcat(buff, src[i]);
@@ -450,7 +470,7 @@ void _append_start_array(sstring *a, const char *src[], char char_between, size_
                 strncat(buff, &char_between, 1);
             strcat(buff, (const char *)a->str.src);
             free(a->str.src);
-            a->str.src = (char *)malloc(sizeof(char) * (strlen((const char *)buff) + 1));
+            a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
             strcpy(a->str.src, (const char *)buff);
             free(buff);
         }
@@ -516,9 +536,9 @@ void _print(sstring *a, int add_next_line, const char *__format__, ...)
     if (a && __format__ && a->str.init == true && a->str.src)
     {
         va_list ar;
-        va_start(ar, (const char *)__format__);
+        va_start(ar, __format__);
         printf("%s", a->str.src);
-        vprintf((const char *)__format__, ar);
+        vprintf(__format__, ar);
         va_end(ar);
         if (add_next_line == true)
         {
@@ -560,7 +580,6 @@ void _replace(sstring *a, const char *old, const char *new_)
             else
                 r[i++] = *a->str.src++;
         }
-        r[i] = '\0';
         a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)r) + 1), sizeof(char));
         strcpy(a->str.src, (const char *)r);
         free(r);
@@ -667,8 +686,7 @@ void _to_binary(sstring *a)
     if (a && a->str.src && a->str.init == true)
     {
         size_t len = strlen((const char *)a->str.src);
-        char *buff = (char *)malloc(((2 * (len * 8)) + 1) * sizeof(char));
-        strcpy(buff, "\0");
+        char *buff = (char *)calloc(((2 * (len * 8)) + 1) * sizeof(char), sizeof(char));
         char c = '\0';
         for (size_t i = 0; i < len; ++i)
         {
@@ -684,7 +702,7 @@ void _to_binary(sstring *a)
                 strcat(buff, " ");
         }
         free(a->str.src);
-        a->str.src = (char *)malloc(sizeof(char) * (strlen((const char *)buff) + 1));
+        a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
         strcpy(a->str.src, (const char *)buff);
         free(buff);
     }
@@ -729,9 +747,8 @@ int _from_binary(sstring *a)
         }
         if (valid == true)
         {
-            char *buff = (char *)malloc((len / 8) + 1);
+            char *buff = (char *)calloc((len / 8) + 1, sizeof(char));
             char bin[9] = "\0";
-            strcpy(buff, "\0");
             char c = '\0';
             for (size_t i = 0, j = 0; i < len; ++i, ++j)
             {
@@ -750,7 +767,7 @@ int _from_binary(sstring *a)
                 bin[j] = a->str.src[i];
             }
             free(a->str.src);
-            a->str.src = (char *)malloc(sizeof(char) * (strlen((const char *)buff) + 1));
+            a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
             strcpy(a->str.src, (const char *)buff);
             free(buff);
         }
@@ -801,6 +818,58 @@ long double _entropy(sstring *a)
     return 0.0f;
 }
 
+int _contains(sstring *a, const char *str)
+{
+    if (a && a->str.src && a->str.init == true && str)
+        if (strstr((const char *)a->str.src, str) != NULL)
+            return true;
+    return false;
+}
+
+void _to_set(sstring *a)
+{
+    if (a && a->str.src && a->str.init == true)
+    {
+        size_t len = strlen((const char *)a->str.src);
+        size_t cnt = 0, map_append = 0, o = 0;
+        int check = false;
+        char *set_char = (char *)calloc((sizeof(char) * len) + 1, sizeof(char));
+        for (cnt = 0; cnt < len; cnt++)
+        {
+            check = false;
+            for (o = 0; set_char[o] != '\0'; o++)
+            {
+                if (set_char[o] == a->str.src[cnt])
+                {
+                    check = true;
+                    break;
+                }
+            }
+            if (check == false)
+            {
+                set_char[map_append] = a->str.src[cnt];
+                map_append++;
+            }
+        }
+        free(a->str.src);
+        a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)set_char) + 1), sizeof(char));
+        strcpy(a->str.src, (const char *)set_char);
+        free(set_char);
+    }
+}
+
+int _copy(sstring *a, sstring *dest)
+{
+    if (a && dest && dest->str.src && dest->str.init == true && a->str.src && a->str.init == true)
+    {
+        free(dest->str.src);
+        dest->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)a->str.src) + 1), sizeof(char));
+        strcpy(dest->str.src, (const char *)a->str.src);
+        return true;
+    }
+    return false;
+}
+
 void init_sstr(sstring *a)
 {
     /** 
@@ -836,9 +905,11 @@ void init_sstr(sstring *a)
         a->to_binary = _to_binary;                   /// working 1
         a->from_binary = _from_binary;               /// working 1
         a->entropy = _entropy;                       /// working 1
-        a->str.src = (char *)malloc(1 * sizeof(char));
-        strcpy(a->str.src, "\0"); // default init instead of some `garbage value`
-        a->str.init = true;       // initialized properly
+        a->contains = _contains;                     /// working 1
+        a->to_set = _to_set;                         /// working 1
+        a->copy = _copy;                             /// working 1
+        a->str.src = (char *)calloc(1 * sizeof(char), sizeof(char));
+        a->str.init = true; // initialized properly
     }
 }
 
