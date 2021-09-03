@@ -2,7 +2,7 @@
 **Safe string implementation in C.**
 
 This sstring struct is memory safe means that it will not cause memory leak.
-This header file is cross-platform, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (26/27) functions passed.*
+This header file is cross-platform, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (29/30) functions passed.*
 
 Documents are added in the header(`"sstring/sstring.h"`) file itself.
 Be sure to suggest any changes.
@@ -62,6 +62,12 @@ Be sure to suggest any changes.
 <code>from_binary</code>
 
 <code>entropy</code>
+
+<code>contains</code>
+
+<code>to_set</code>
+
+<code>copy</code>
 
 # BUILD AND INSTALL
 
