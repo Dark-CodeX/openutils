@@ -5,7 +5,7 @@
 int main(int argc, char const *argv[])
 {
     w_sstring a;
-    init_w_sstr(&a); // we need to pass it's refernce as it accepts only pointers to our string { aka __string__ }
+    init_w_sstr(&a); // we need to pass it's refernce as it accepts only pointers to our string { aka w__string__ }
     srand((unsigned int)(time(NULL) * getpid() * getpid() + getpid()));
     a.set_random(&a, 100);
     a.print(&a, true, "");
