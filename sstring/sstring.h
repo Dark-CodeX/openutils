@@ -22,6 +22,7 @@
 
 #define true 0
 #define false 1
+typedef unsigned long long int SIZE_T;
 
 typedef struct __str__
 {
@@ -49,7 +50,7 @@ struct __string__
      * @param a pointer to struct sstring
      * @param len size of random string
      */
-    void (*set_random)(sstring *a, const size_t len);
+    void (*set_random)(sstring *a, const SIZE_T len);
 
     /** @brief Sets `src` array to `a`. Note: `from`, `till` belongs to [0, sizeof(`src`)]. 
      * Set `char_between` to 0 if you want nothing to append in-between. 
@@ -61,7 +62,7 @@ struct __string__
      * @param till assign till `src[till]`
      * @param len length of `src` array
      */
-    void (*set_array)(sstring *a, const char *src[], char char_between, size_t from, size_t till, size_t len);
+    void (*set_array)(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
 
     /** Returns `a` as `char *`. 
      * @param a pointer to struct sstring
@@ -91,7 +92,7 @@ struct __string__
      * @param till append till `src[till]`
      * @param len length of `src` array
      */
-    void (*append_array)(sstring *a, const char *src[], char char_between, size_t from, size_t till, size_t len);
+    void (*append_array)(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
 
     /** @brief Appends `src` array to `a` at the starting. Note: `from`, `till` belongs to [0, sizeof(`src`)]. 
      * Set `char_between` to 0 if you want nothing to append in-between. 
@@ -103,7 +104,7 @@ struct __string__
      * @param till append till `src[till]`
      * @param len length of `src` array
      */
-    void (*append_start_array)(sstring *a, const char *src[], char char_between, size_t from, size_t till, size_t len);
+    void (*append_start_array)(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
 
     /** Checks whether `a` is empty or not.
      * @param a pointer to struct sstring
@@ -126,7 +127,7 @@ struct __string__
      * @param what character to set
      * @param where sets `what` at a fixed position
      */
-    void (*char_set)(sstring *a, const char what, size_t where);
+    void (*char_set)(sstring *a, const char what, SIZE_T where);
 
     /**
      * Returns character from `a` at `where`.
@@ -135,14 +136,15 @@ struct __string__
      * @param where get an element from where in `a`
      * @returns character from `a` at `where`.
      */
-    char (*char_get)(sstring *a, size_t where);
+    char (*char_get)(sstring *a, SIZE_T where);
 
     /**
      * Returns length of `a`, if `a` != NULL.
      * @param a pointer to struct sstring
      * @returns length of `a`
      */
-    size_t (*length)(sstring *a);
+    SIZE_T(*length)
+    (sstring *a);
 
     /**
      * Compares `a` against `T1`.
@@ -279,13 +281,13 @@ void _set(sstring *a, const char *src)
     }
 }
 
-void _set_random(sstring *a, const size_t len)
+void _set_random(sstring *a, const SIZE_T len)
 {
     if (a && a->str.init == true && a->str.src && len > 0)
     {
         char *buff = (char *)calloc((sizeof(char) * len) + 1, sizeof(char));
         // random ascii character betweem 32 and 126, inclusive
-        for (size_t i = 0; i < len; i++)
+        for (SIZE_T i = 0; i < len; i++)
             buff[i] = (rand() % (126 - 32 + 1)) + 32;
         free(a->str.src);
         a->str.src = (char *)calloc((sizeof(char) * len) + 1, sizeof(char));
@@ -294,7 +296,7 @@ void _set_random(sstring *a, const size_t len)
     }
 }
 
-void _set_array(sstring *a, const char *src[], char char_between, size_t from, size_t till, size_t len)
+void _set_array(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
@@ -304,10 +306,10 @@ void _set_array(sstring *a, const char *src[], char char_between, size_t from, s
             valid = false;
             return;
         }
-        size_t cnt_t = 0;
+        SIZE_T cnt_t = 0;
         if (valid == true)
         {
-            for (size_t i = from; i < till; i++)
+            for (SIZE_T i = from; i < till; i++)
             {
                 if (src[i] == NULL)
                 {
@@ -323,7 +325,7 @@ void _set_array(sstring *a, const char *src[], char char_between, size_t from, s
             if (char_between != '\0')
                 cnt_t += len + 1;
             char *buff = (char *)calloc((sizeof(char) * cnt_t) + 1, sizeof(char));
-            for (size_t i = from; i < till; i++)
+            for (SIZE_T i = from; i < till; i++)
             {
                 strcat(buff, src[i]);
                 if (i < till - 1 && char_between != '\0')
@@ -385,7 +387,7 @@ void _append_start(sstring *a, const char *src)
     }
 }
 
-void _append_array(sstring *a, const char *src[], char char_between, size_t from, size_t till, size_t len)
+void _append_array(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
@@ -395,10 +397,10 @@ void _append_array(sstring *a, const char *src[], char char_between, size_t from
             valid = false;
             return;
         }
-        size_t cnt_t = 0;
+        SIZE_T cnt_t = 0;
         if (valid == true)
         {
-            for (size_t i = from; i < till; i++)
+            for (SIZE_T i = from; i < till; i++)
             {
                 if (src[i] == NULL)
                 {
@@ -417,7 +419,7 @@ void _append_array(sstring *a, const char *src[], char char_between, size_t from
             strcpy(buff, (const char *)a->str.src);
             if (strlen((const char *)a->str.src) > 0 && char_between != '\0')
                 strncat(buff, &char_between, 1);
-            for (size_t i = from; i < till; i++)
+            for (SIZE_T i = from; i < till; i++)
             {
                 strcat(buff, src[i]);
                 if (i < till - 1 && char_between != '\0')
@@ -431,7 +433,7 @@ void _append_array(sstring *a, const char *src[], char char_between, size_t from
     }
 }
 
-void _append_start_array(sstring *a, const char *src[], char char_between, size_t from, size_t till, size_t len)
+void _append_start_array(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
@@ -441,10 +443,10 @@ void _append_start_array(sstring *a, const char *src[], char char_between, size_
             valid = false;
             return;
         }
-        size_t cnt_t = 0;
+        SIZE_T cnt_t = 0;
         if (valid == true)
         {
-            for (size_t i = from; i < till; i++)
+            for (SIZE_T i = from; i < till; i++)
             {
                 if (src[i] == NULL)
                 {
@@ -460,7 +462,7 @@ void _append_start_array(sstring *a, const char *src[], char char_between, size_
             if (char_between != '\0')
                 cnt_t += len + 1;
             char *buff = (char *)calloc((sizeof(char) * cnt_t) + strlen((const char *)a->str.src) + 1, sizeof(char));
-            for (size_t i = from; i < till; i++)
+            for (SIZE_T i = from; i < till; i++)
             {
                 strcat(buff, src[i]);
                 if (i < till - 1 && char_between != '\0')
@@ -489,13 +491,13 @@ void _replace_char(sstring *a, const char old, const char new_)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        for (size_t i = 0; a->str.src[i] != '\0'; ++i)
+        for (SIZE_T i = 0; a->str.src[i] != '\0'; ++i)
             if (a->str.src[i] == old)
                 a->str.src[i] = new_;
     }
 }
 
-void _char_set(sstring *a, const char what, size_t where)
+void _char_set(sstring *a, const char what, SIZE_T where)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -504,7 +506,7 @@ void _char_set(sstring *a, const char what, size_t where)
     }
 }
 
-char _char_get(sstring *a, size_t where)
+char _char_get(sstring *a, SIZE_T where)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -514,11 +516,11 @@ char _char_get(sstring *a, size_t where)
     return (char)'\0';
 }
 
-size_t _length(sstring *a)
+SIZE_T _length(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
         return strlen((const char *)a->str.src);
-    return (size_t)0;
+    return (SIZE_T)0;
 }
 
 int _compare(sstring *a, const char *T1)
@@ -558,7 +560,7 @@ void _replace(sstring *a, const char *old, const char *new_)
 {
     if (a && old && new_ && a->str.init == true && a->str.src)
     {
-        size_t i, count_old = 0, len_o = strlen(old), len_n = strlen(new_);
+        SIZE_T i, count_old = 0, len_o = strlen(old), len_n = strlen(new_);
         for (i = 0; a->str.src[i] != '\0'; ++i)
         {
             if (strstr((const char *)&a->str.src[i], old) == &a->str.src[i])
@@ -626,7 +628,7 @@ int _open(sstring *a, const char *location)
         if (f != NULL)
         {
             fseek(f, 0, SEEK_END);
-            size_t len = ftell(f);
+            SIZE_T len = ftell(f);
             fseek(f, 0, SEEK_SET);
             free(a->str.src);
             a->str.src = (char *)calloc(len + 1, sizeof(char));
@@ -653,7 +655,7 @@ void _to_upper(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        for (size_t i = 0; a->str.src[i] != '\0'; ++i)
+        for (SIZE_T i = 0; a->str.src[i] != '\0'; ++i)
         {
             if (a->str.src[i] <= 122 && a->str.src[i] >= 97)
                 a->str.src[i] -= 32;
@@ -665,7 +667,7 @@ void _to_lower(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        for (size_t i = 0; a->str.src[i] != '\0'; ++i)
+        for (SIZE_T i = 0; a->str.src[i] != '\0'; ++i)
         {
             if (a->str.src[i] <= 90 && a->str.src[i] >= 65)
                 a->str.src[i] += 32;
@@ -685,10 +687,10 @@ void _to_binary(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        size_t len = strlen((const char *)a->str.src);
+        SIZE_T len = strlen((const char *)a->str.src);
         char *buff = (char *)calloc(((2 * (len * 8)) + 1) * sizeof(char), sizeof(char));
         char c = '\0';
-        for (size_t i = 0; i < len; ++i)
+        for (SIZE_T i = 0; i < len; ++i)
         {
             c = a->str.src[i];
             for (int j = 7; j >= 0; --j)
@@ -713,9 +715,9 @@ int _from_binary(sstring *a)
     int valid = true;
     if (a && a->str.src && a->str.init == true)
     {
-        size_t len = strlen((const char *)a->str.src);
+        SIZE_T len = strlen((const char *)a->str.src);
         // test 1 for checking binary input format
-        for (size_t i = 0; i < len; i++)
+        for (SIZE_T i = 0; i < len; i++)
         {
             switch (a->str.src[i])
             {
@@ -734,8 +736,8 @@ int _from_binary(sstring *a)
         // test 2 for checking binary input format
         if (valid == true)
         {
-            size_t cnt = 0;
-            for (size_t i = 0; i < len; i++)
+            SIZE_T cnt = 0;
+            for (SIZE_T i = 0; i < len; i++)
             {
                 if (a->str.src[i] == ' ')
                     cnt++;
@@ -750,7 +752,7 @@ int _from_binary(sstring *a)
             char *buff = (char *)calloc((len / 8) + 1, sizeof(char));
             char bin[9] = "\0";
             char c = '\0';
-            for (size_t i = 0, j = 0; i < len; ++i, ++j)
+            for (SIZE_T i = 0, j = 0; i < len; ++i, ++j)
             {
                 if (a->str.src[i] == ' ')
                 {
@@ -779,11 +781,11 @@ long double _entropy(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        size_t len = strlen((const char *)a->str.src);
-        size_t cnt = 0, map_append = 0, o = 0;
+        SIZE_T len = strlen((const char *)a->str.src);
+        SIZE_T cnt = 0, map_append = 0, o = 0;
         int check = false;
         char *map_char = (char *)calloc((sizeof(char) * len) + 1, sizeof(char));
-        size_t *map_cnt = (size_t *)calloc((sizeof(size_t) * len) + 1, sizeof(size_t));
+        SIZE_T *map_cnt = (SIZE_T *)calloc((sizeof(SIZE_T) * len) + 1, sizeof(SIZE_T));
         for (cnt = 0; cnt < len; cnt++)
         {
             check = false;
@@ -806,7 +808,7 @@ long double _entropy(sstring *a)
         }
         long double result = 0.0f;
         long double freq = 0.0f;
-        for (size_t i = 0; map_char[i] != '\0'; i++)
+        for (SIZE_T i = 0; map_char[i] != '\0'; i++)
         {
             freq = (long double)map_cnt[i] / len;
             result -= freq * (log10l(freq) / log10l(2.0f));
@@ -830,8 +832,8 @@ void _to_set(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        size_t len = strlen((const char *)a->str.src);
-        size_t cnt = 0, map_append = 0, o = 0;
+        SIZE_T len = strlen((const char *)a->str.src);
+        SIZE_T cnt = 0, map_append = 0, o = 0;
         int check = false;
         char *set_char = (char *)calloc((sizeof(char) * len) + 1, sizeof(char));
         for (cnt = 0; cnt < len; cnt++)
@@ -913,11 +915,11 @@ void init_sstr(sstring *a)
     }
 }
 
-void init_sstr_array(sstring *a[], size_t len)
+void init_sstr_array(sstring *a[], SIZE_T len)
 {
     if (a)
     {
-        for (size_t i = 0; i < len; ++i)
+        for (SIZE_T i = 0; i < len; ++i)
             init_sstr(a[i]);
     }
 }

@@ -24,6 +24,7 @@
 
 #define true 0
 #define false 1
+typedef unsigned long long int SIZE_T;
 
 typedef struct w__str__
 {
@@ -51,7 +52,7 @@ struct w__string__
      * @param a pointer to struct w_sstring
      * @param len size of random string
      */
-    void (*set_random)(w_sstring *a, const size_t len);
+    void (*set_random)(w_sstring *a, const SIZE_T len);
 
     /** @brief Sets `src` array to `a`. Note: `from`, `till` belongs to [0, sizeof(`src`)]. 
      * Set `char_between` to 0 if you want nothing to append in-between. 
@@ -63,7 +64,7 @@ struct w__string__
      * @param till assign till `src[till]`
      * @param len length of `src` array
      */
-    void (*set_array)(w_sstring *a, const wchar_t *src[], wchar_t char_between, size_t from, size_t till, size_t len);
+    void (*set_array)(w_sstring *a, const wchar_t *src[], wchar_t char_between, SIZE_T from, SIZE_T till, SIZE_T len);
 
     /** Returns `a` as `wchar_t *`. 
      * @param a pointer to struct w_sstring
@@ -93,7 +94,7 @@ struct w__string__
      * @param till append till `src[till]`
      * @param len length of `src` array
      */
-    void (*append_array)(w_sstring *a, const wchar_t *src[], wchar_t char_between, size_t from, size_t till, size_t len);
+    void (*append_array)(w_sstring *a, const wchar_t *src[], wchar_t char_between, SIZE_T from, SIZE_T till, SIZE_T len);
 
     /** @brief Appends `src` array to `a` at the starting. Note: `from`, `till` belongs to [0, sizeof(`src`)]. 
      * Set `char_between` to 0 if you want nothing to append in-between. 
@@ -105,7 +106,7 @@ struct w__string__
      * @param till append till `src[till]`
      * @param len length of `src` array
      */
-    void (*append_start_array)(w_sstring *a, const wchar_t *src[], wchar_t char_between, size_t from, size_t till, size_t len);
+    void (*append_start_array)(w_sstring *a, const wchar_t *src[], wchar_t char_between, SIZE_T from, SIZE_T till, SIZE_T len);
 
     /** Checks whether `a` is empty or not.
      * @param a pointer to struct w_sstring
@@ -128,7 +129,7 @@ struct w__string__
      * @param what character to set
      * @param where sets `what` at a fixed position
      */
-    void (*char_set)(w_sstring *a, const wchar_t what, size_t where);
+    void (*char_set)(w_sstring *a, const wchar_t what, SIZE_T where);
 
     /**
      * Returns character from `a` at `where`.
@@ -137,14 +138,15 @@ struct w__string__
      * @param where get an element from where in `a`
      * @returns character from `a` at `where`.
      */
-    wchar_t (*char_get)(w_sstring *a, size_t where);
+    wchar_t (*char_get)(w_sstring *a, SIZE_T where);
 
     /**
      * Returns length of `a`, if `a` != NULL.
      * @param a pointer to struct w_sstring
      * @returns length of `a`
      */
-    size_t (*length)(w_sstring *a);
+    SIZE_T(*length)
+    (w_sstring *a);
 
     /**
      * Compares `a` against `T1`.
@@ -281,13 +283,13 @@ void _w_set(w_sstring *a, const wchar_t *src)
     }
 }
 
-void _w_set_random(w_sstring *a, const size_t len)
+void _w_set_random(w_sstring *a, const SIZE_T len)
 {
     if (a && a->w_str.init == true && a->w_str.src && len > 0)
     {
         wchar_t *buff = (wchar_t *)calloc((sizeof(wchar_t) * len) + 1, sizeof(wchar_t));
         // random UTF-8 character betweem 32 and 255, inclusive
-        for (size_t i = 0; i < len; i++)
+        for (SIZE_T i = 0; i < len; i++)
             buff[i] = (rand() % (255 - 32 + 1)) + 32;
         free(a->w_str.src);
         a->w_str.src = (wchar_t *)calloc((sizeof(wchar_t) * len) + 1, sizeof(wchar_t));
@@ -296,7 +298,7 @@ void _w_set_random(w_sstring *a, const size_t len)
     }
 }
 
-void _w_set_array(w_sstring *a, const wchar_t *src[], wchar_t char_between, size_t from, size_t till, size_t len)
+void _w_set_array(w_sstring *a, const wchar_t *src[], wchar_t char_between, SIZE_T from, SIZE_T till, SIZE_T len)
 {
     if (a && src && a->w_str.init == true && a->w_str.src)
     {
@@ -306,10 +308,10 @@ void _w_set_array(w_sstring *a, const wchar_t *src[], wchar_t char_between, size
             valid = false;
             return;
         }
-        size_t cnt_t = 0;
+        SIZE_T cnt_t = 0;
         if (valid == true)
         {
-            for (size_t i = from; i < till; i++)
+            for (SIZE_T i = from; i < till; i++)
             {
                 if (src[i] == NULL)
                 {
@@ -325,7 +327,7 @@ void _w_set_array(w_sstring *a, const wchar_t *src[], wchar_t char_between, size
             if (char_between != '\0')
                 cnt_t += len + 1;
             wchar_t *buff = (wchar_t *)calloc((sizeof(wchar_t) * cnt_t) + 1, sizeof(wchar_t));
-            for (size_t i = from; i < till; i++)
+            for (SIZE_T i = from; i < till; i++)
             {
                 wcscat(buff, src[i]);
                 if (i < till - 1 && char_between != '\0')
@@ -387,7 +389,7 @@ void _w_append_start(w_sstring *a, const wchar_t *src)
     }
 }
 
-void _w_append_array(w_sstring *a, const wchar_t *src[], wchar_t char_between, size_t from, size_t till, size_t len)
+void _w_append_array(w_sstring *a, const wchar_t *src[], wchar_t char_between, SIZE_T from, SIZE_T till, SIZE_T len)
 {
     if (a && src && a->w_str.init == true && a->w_str.src)
     {
@@ -397,10 +399,10 @@ void _w_append_array(w_sstring *a, const wchar_t *src[], wchar_t char_between, s
             valid = false;
             return;
         }
-        size_t cnt_t = 0;
+        SIZE_T cnt_t = 0;
         if (valid == true)
         {
-            for (size_t i = from; i < till; i++)
+            for (SIZE_T i = from; i < till; i++)
             {
                 if (src[i] == NULL)
                 {
@@ -419,7 +421,7 @@ void _w_append_array(w_sstring *a, const wchar_t *src[], wchar_t char_between, s
             wcscpy(buff, (const wchar_t *)a->w_str.src);
             if (wcslen((const wchar_t *)a->w_str.src) > 0 && char_between != '\0')
                 wcsncat(buff, &char_between, 1);
-            for (size_t i = from; i < till; i++)
+            for (SIZE_T i = from; i < till; i++)
             {
                 wcscat(buff, src[i]);
                 if (i < till - 1 && char_between != '\0')
@@ -433,7 +435,7 @@ void _w_append_array(w_sstring *a, const wchar_t *src[], wchar_t char_between, s
     }
 }
 
-void _w_append_start_array(w_sstring *a, const wchar_t *src[], wchar_t char_between, size_t from, size_t till, size_t len)
+void _w_append_start_array(w_sstring *a, const wchar_t *src[], wchar_t char_between, SIZE_T from, SIZE_T till, SIZE_T len)
 {
     if (a && src && a->w_str.init == true && a->w_str.src)
     {
@@ -443,10 +445,10 @@ void _w_append_start_array(w_sstring *a, const wchar_t *src[], wchar_t char_betw
             valid = false;
             return;
         }
-        size_t cnt_t = 0;
+        SIZE_T cnt_t = 0;
         if (valid == true)
         {
-            for (size_t i = from; i < till; i++)
+            for (SIZE_T i = from; i < till; i++)
             {
                 if (src[i] == NULL)
                 {
@@ -462,7 +464,7 @@ void _w_append_start_array(w_sstring *a, const wchar_t *src[], wchar_t char_betw
             if (char_between != '\0')
                 cnt_t += len + 1;
             wchar_t *buff = (wchar_t *)calloc((sizeof(wchar_t) * cnt_t) + wcslen((const wchar_t *)a->w_str.src) + 1, sizeof(wchar_t));
-            for (size_t i = from; i < till; i++)
+            for (SIZE_T i = from; i < till; i++)
             {
                 wcscat(buff, src[i]);
                 if (i < till - 1 && char_between != '\0')
@@ -491,13 +493,13 @@ void _w_replace_char(w_sstring *a, const wchar_t old, const wchar_t new_)
 {
     if (a && a->w_str.src && a->w_str.init == true)
     {
-        for (size_t i = 0; a->w_str.src[i] != '\0'; ++i)
+        for (SIZE_T i = 0; a->w_str.src[i] != '\0'; ++i)
             if (a->w_str.src[i] == old)
                 a->w_str.src[i] = new_;
     }
 }
 
-void _w_char_set(w_sstring *a, const wchar_t what, size_t where)
+void _w_char_set(w_sstring *a, const wchar_t what, SIZE_T where)
 {
     if (a && a->w_str.src && a->w_str.init == true)
     {
@@ -506,7 +508,7 @@ void _w_char_set(w_sstring *a, const wchar_t what, size_t where)
     }
 }
 
-wchar_t _w_char_get(w_sstring *a, size_t where)
+wchar_t _w_char_get(w_sstring *a, SIZE_T where)
 {
     if (a && a->w_str.src && a->w_str.init == true)
     {
@@ -516,11 +518,11 @@ wchar_t _w_char_get(w_sstring *a, size_t where)
     return (wchar_t)'\0';
 }
 
-size_t _w_length(w_sstring *a)
+SIZE_T _w_length(w_sstring *a)
 {
     if (a && a->w_str.src && a->w_str.init == true)
         return wcslen((const wchar_t *)a->w_str.src);
-    return (size_t)0;
+    return (SIZE_T)0;
 }
 
 int _w_compare(w_sstring *a, const wchar_t *T1)
@@ -560,7 +562,7 @@ void _w_replace(w_sstring *a, const wchar_t *old, const wchar_t *new_)
 {
     if (a && old && new_ && a->w_str.init == true && a->w_str.src)
     {
-        size_t i, count_old = 0, len_o = wcslen(old), len_n = wcslen(new_);
+        SIZE_T i, count_old = 0, len_o = wcslen(old), len_n = wcslen(new_);
         for (i = 0; a->w_str.src[i] != '\0'; ++i)
         {
             if (wcsstr((const wchar_t *)&a->w_str.src[i], old) == &a->w_str.src[i])
@@ -628,7 +630,7 @@ int _w_open(w_sstring *a, const char *location)
         if (f != NULL)
         {
             fseek(f, 0, SEEK_END);
-            size_t len = ftell(f);
+            SIZE_T len = ftell(f);
             fseek(f, 0, SEEK_SET);
             free(a->w_str.src);
             a->w_str.src = (wchar_t *)calloc(len + 1, sizeof(wchar_t));
@@ -655,7 +657,7 @@ void _w_to_upper(w_sstring *a)
 {
     if (a && a->w_str.src && a->w_str.init == true)
     {
-        for (size_t i = 0; a->w_str.src[i] != '\0'; ++i)
+        for (SIZE_T i = 0; a->w_str.src[i] != '\0'; ++i)
         {
             if (a->w_str.src[i] <= 122 && a->w_str.src[i] >= 97)
                 a->w_str.src[i] -= 32;
@@ -667,7 +669,7 @@ void _w_to_lower(w_sstring *a)
 {
     if (a && a->w_str.src && a->w_str.init == true)
     {
-        for (size_t i = 0; a->w_str.src[i] != '\0'; ++i)
+        for (SIZE_T i = 0; a->w_str.src[i] != '\0'; ++i)
         {
             if (a->w_str.src[i] <= 90 && a->w_str.src[i] >= 65)
                 a->w_str.src[i] += 32;
@@ -687,10 +689,10 @@ void _w_to_binary(w_sstring *a)
 {
     if (a && a->w_str.src && a->w_str.init == true)
     {
-        size_t len = wcslen((const wchar_t *)a->w_str.src);
+        SIZE_T len = wcslen((const wchar_t *)a->w_str.src);
         wchar_t *buff = (wchar_t *)calloc(((2 * (len * 8)) + 1) * sizeof(wchar_t), sizeof(wchar_t));
         wchar_t c = L'\0';
-        for (size_t i = 0; i < len; ++i)
+        for (SIZE_T i = 0; i < len; ++i)
         {
             c = a->w_str.src[i];
             for (int j = 7; j >= 0; --j)
@@ -715,9 +717,9 @@ int _w_from_binary(w_sstring *a)
     int valid = true;
     if (a && a->w_str.src && a->w_str.init == true)
     {
-        size_t len = wcslen((const wchar_t *)a->w_str.src);
+        SIZE_T len = wcslen((const wchar_t *)a->w_str.src);
         // test 1 for checking binary input format
-        for (size_t i = 0; i < len; i++)
+        for (SIZE_T i = 0; i < len; i++)
         {
             switch (a->w_str.src[i])
             {
@@ -736,8 +738,8 @@ int _w_from_binary(w_sstring *a)
         // test 2 for checking binary input format
         if (valid == true)
         {
-            size_t cnt = 0;
-            for (size_t i = 0; i < len; i++)
+            SIZE_T cnt = 0;
+            for (SIZE_T i = 0; i < len; i++)
             {
                 if (a->w_str.src[i] == L' ')
                     cnt++;
@@ -752,7 +754,7 @@ int _w_from_binary(w_sstring *a)
             wchar_t *buff = (wchar_t *)calloc((len / 8) + 1, sizeof(wchar_t));
             wchar_t bin[9] = L"\0";
             wchar_t c = L'\0';
-            for (size_t i = 0, j = 0; i < len; ++i, ++j)
+            for (SIZE_T i = 0, j = 0; i < len; ++i, ++j)
             {
                 if (a->w_str.src[i] == L' ')
                 {
@@ -781,11 +783,11 @@ long double _w_entropy(w_sstring *a)
 {
     if (a && a->w_str.src && a->w_str.init == true)
     {
-        size_t len = wcslen((const wchar_t *)a->w_str.src);
-        size_t cnt = 0, map_append = 0, o = 0;
+        SIZE_T len = wcslen((const wchar_t *)a->w_str.src);
+        SIZE_T cnt = 0, map_append = 0, o = 0;
         int check = false;
         wchar_t *map_char = (wchar_t *)calloc((sizeof(wchar_t) * len) + 1, sizeof(wchar_t));
-        size_t *map_cnt = (size_t *)calloc((sizeof(size_t) * len) + 1, sizeof(size_t));
+        SIZE_T *map_cnt = (SIZE_T *)calloc((sizeof(SIZE_T) * len) + 1, sizeof(SIZE_T));
         for (cnt = 0; cnt < len; cnt++)
         {
             check = false;
@@ -808,7 +810,7 @@ long double _w_entropy(w_sstring *a)
         }
         long double result = 0.0f;
         long double freq = 0.0f;
-        for (size_t i = 0; map_char[i] != '\0'; i++)
+        for (SIZE_T i = 0; map_char[i] != '\0'; i++)
         {
             freq = (long double)map_cnt[i] / len;
             result -= freq * (log10l(freq) / log10l(2.0f));
@@ -832,8 +834,8 @@ void _w_to_set(w_sstring *a)
 {
     if (a && a->w_str.src && a->w_str.init == true)
     {
-        size_t len = wcslen((const wchar_t *)a->w_str.src);
-        size_t cnt = 0, map_append = 0, o = 0;
+        SIZE_T len = wcslen((const wchar_t *)a->w_str.src);
+        SIZE_T cnt = 0, map_append = 0, o = 0;
         int check = false;
         wchar_t *set_char = (wchar_t *)calloc((sizeof(wchar_t) * len) + 1, sizeof(wchar_t));
         for (cnt = 0; cnt < len; cnt++)
@@ -916,11 +918,11 @@ void init_w_sstr(w_sstring *a)
     }
 }
 
-void init_w_sstr_array(w_sstring *a[], size_t len)
+void init_w_sstr_array(w_sstring *a[], SIZE_T len)
 {
     if (a)
     {
-        for (size_t i = 0; i < len; ++i)
+        for (SIZE_T i = 0; i < len; ++i)
             init_w_sstr(a[i]);
     }
 }

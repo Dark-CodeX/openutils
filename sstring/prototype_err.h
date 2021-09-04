@@ -11,18 +11,18 @@
 #pragma once
 
 void _set(sstring *a, const char *src);
-void _set_random(sstring *a, const size_t len);
-void _set_array(sstring *a, const char *src[], char char_between, size_t from, size_t till, size_t len);
+void _set_random(sstring *a, const SIZE_T len);
+void _set_array(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
 char *_get(sstring *a);
 void _append(sstring *a, const char *src);
 void _append_start(sstring *a, const char *src);
-void _append_array(sstring *a, const char *src[], char char_between, size_t from, size_t till, size_t len);
-void _append_start_array(sstring *a, const char *src[], char char_between, size_t from, size_t till, size_t len);
+void _append_array(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
+void _append_start_array(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
 int _empty(sstring *a);
 void _replace_char(sstring *a, const char old, const char new_);
-void _char_set(sstring *a, const char what, size_t where);
-char _char_get(sstring *a, size_t where);
-size_t _length(sstring *a);
+void _char_set(sstring *a, const char what, SIZE_T where);
+char _char_get(sstring *a, SIZE_T where);
+SIZE_T _length(sstring *a);
 int _compare(sstring *a, const char *T1);
 void _print(sstring *a, int add_next_line, const char *__format__, ...);
 void _replace(sstring *a, const char *old, const char *new_);
@@ -42,4 +42,4 @@ void _to_set(sstring *a);
 int _copy(sstring *a, sstring *dest);
 
 void init_sstr(sstring *a);
-void init_sstr_array(sstring *a[], size_t len);
+void init_sstr_array(sstring *a[], SIZE_T len);
