@@ -1,5 +1,0 @@
-cmake_minimum_required(VERSION 3.21.2)
-project(w_test C)
-
-add_executable(w_test w_test.c)
-target_link_libraries(w_test m)
