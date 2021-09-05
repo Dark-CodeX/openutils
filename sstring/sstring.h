@@ -1041,12 +1041,3 @@ void init_sstr(sstring *a)
         a->str.init = true; // initialized properly
     }
 }
-
-void init_sstr_array(sstring *a[], SIZE_T len)
-{
-    if (a)
-    {
-        for (SIZE_T i = 0; i < len; ++i)
-            init_sstr(a[i]);
-    }
-}
