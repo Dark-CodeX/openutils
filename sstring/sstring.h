@@ -237,6 +237,7 @@ struct __string__
     /** 
      * Converts `a` from base 2 (as binary) to string. Not executed if `a` is not in binary form i.e, [1, 0].
      * @param a pointer to struct sstring
+     * @returns true if converted successfully, otherwise returns false.
     */
     int (*from_binary)(sstring *a);
 
@@ -268,6 +269,19 @@ struct __string__
      * @returns If copied successfully then, returns true otherwise false.
     */
     int (*copy)(sstring *a, sstring *dest);
+
+    /** 
+     * Converts `a` (as string) to base 16 (as hexadecimal).
+     * @param a pointer to struct sstring
+    */
+    void (*to_hexadecimal)(sstring *a);
+
+    /** 
+     * Converts `a` from base 16 (as hexadecimal) to string. Not executed if `a` is not in hexadecimal form.
+     * @param a pointer to struct sstring
+     * @returns true if converted successfully, otherwise returns false.
+    */
+    int (*from_hexadecimal)(sstring *a);
 } __string__;
 
 #include "prototype_err.h"
@@ -583,6 +597,7 @@ void _replace(sstring *a, const char *old, const char *new_)
             else
                 buff[i++] = *a->str.src++;
         }
+        buff[i] = 0;
         a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
         strcpy(a->str.src, (const char *)buff);
         free(buff);
@@ -873,6 +888,94 @@ int _copy(sstring *a, sstring *dest)
     return false;
 }
 
+void _to_hexadecimal(sstring *a)
+{
+    if (a && a->str.src && a->str.init == true)
+    {
+        char *buff = (char *)calloc((sizeof(char) * strlen((const char *)a->str.src) * 2) + 1, sizeof(char));
+        SIZE_T i = 0, j = 0;
+        while (a->str.src[i] != '\0')
+        {
+            sprintf((char *)buff + j, "%02X", a->str.src[i]);
+            i++, j += 2;
+        }
+        free(a->str.src);
+        a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
+        strcpy(a->str.src, (const char *)buff);
+        free(buff);
+    }
+}
+
+int _from_hexadecimal(sstring *a)
+{
+    int valid = true;
+    if (a && a->str.src && a->str.init == true)
+    {
+        SIZE_T len = strlen((const char *)a->str.src);
+        // test 1 for checking hexadecimal input format
+        for (SIZE_T i = 0; i < len; i++)
+        {
+            switch (a->str.src[i])
+            {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case 'A':
+            case 'B':
+            case 'C':
+            case 'D':
+            case 'E':
+            case 'F':
+                break;
+
+            default:
+                valid = false;
+                break;
+            }
+            if (valid == false)
+                break;
+        }
+        // test 2 for checking hexadecimal input format
+        if (valid == true)
+            if (len % 2 != 0)
+                valid = false;
+        if (valid == true)
+        {
+            char *buff = (char *)calloc((len) / 2 + 1, sizeof(char));
+            char bin[3] = "\0";
+            char c = '\0';
+            for (SIZE_T i = 0, j = 0; i < len; ++i)
+            {
+                if (i == len - 1)
+                {
+                    bin[j] = a->str.src[i];
+                    c = strtol(bin, (char **)NULL, 16);
+                    strncat(buff, &c, 1);
+                }
+                if (j == 2)
+                {
+                    j = 0;
+                    c = strtol(bin, (char **)NULL, 16);
+                    strncat(buff, &c, 1);
+                }
+                bin[j] = a->str.src[i];
+                j++;
+            }
+            free(a->str.src);
+            a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
+            strcpy(a->str.src, (const char *)buff);
+            free(buff);
+        }
+    }
+    return valid;
+}
 void init_sstr(sstring *a)
 {
     /** 
@@ -911,6 +1014,8 @@ void init_sstr(sstring *a)
         a->contains = _contains;                     /// working 1
         a->to_set = _to_set;                         /// working 1
         a->copy = _copy;                             /// working 1
+        a->to_hexadecimal = _to_hexadecimal;         /// working 1
+        a->from_hexadecimal = _from_hexadecimal;     /// working 1
         a->str.src = (char *)calloc(1 * sizeof(char), sizeof(char));
         a->str.init = true; // initialized properly
     }
