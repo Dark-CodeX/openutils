@@ -86,5 +86,3 @@ Be sure to suggest any changes.
 To install on *arch linux* use **`PKGBUILD`**.
 
 To install on *any OS* just copy and paste **`sstring`** folder in *`include`* directory of *`gcc`*.
-
-**Watch my youtube video [YT Video](https://youtu.be/q9DUJ3hz24o)**
