@@ -43,6 +43,7 @@ void _to_set(sstring *a);
 int _copy(sstring *a, sstring *dest);
 void _to_hexadecimal(sstring *a);
 int _from_hexadecimal(sstring *a);
+signed long long _find(sstring *a, const char *sub);
 
 void init_sstr(sstring *a);
 void init_sstr_array(sstring *a[], SIZE_T len);
