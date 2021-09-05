@@ -41,6 +41,8 @@ long double _entropy(sstring *a);
 int _contains(sstring *a, const char *str);
 void _to_set(sstring *a);
 int _copy(sstring *a, sstring *dest);
+void _to_hexadecimal(sstring *a);
+int _from_hexadecimal(sstring *a);
 
 void init_sstr(sstring *a);
 void init_sstr_array(sstring *a[], SIZE_T len);
