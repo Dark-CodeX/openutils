@@ -991,7 +991,7 @@ signed long long _find(sstring *a, const char *sub)
     {
         char *buff = strstr((const char *)a->str.src, sub);
         if (buff != NULL)
-            return (SIZE_T)strlen((const char *)a->str.src) - strlen((const char *)buff); // buff is always smaller than a
+            return (SIZE_T)strlen((const char *)a->str.src) - strlen((const char *)buff); // buff is subset of a, if buff != NULL
     }
     return -1;
 }
