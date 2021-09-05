@@ -282,6 +282,14 @@ struct __string__
      * @returns true if converted successfully, otherwise returns false.
     */
     int (*from_hexadecimal)(sstring *a);
+
+    /** 
+     * Returns index of first occurrence of sub-string `sub` in `a`. Returns -1 if `sub` was not found in `a`.
+     * @param a pointer to struct sstring
+     * @param sub sub-string to find in `a`
+     * @returns index of first occurrence of sub-string `sub` in `a`
+    */
+    signed long long int (*find)(sstring *a, const char *sub);
 } __string__;
 
 #include "prototype_err.h"
@@ -976,6 +984,18 @@ int _from_hexadecimal(sstring *a)
     }
     return valid;
 }
+
+signed long long _find(sstring *a, const char *sub)
+{
+    if (a && a->str.src && a->str.init == true && sub)
+    {
+        char *buff = strstr((const char *)a->str.src, sub);
+        if (buff != NULL)
+            return (SIZE_T)strlen((const char *)a->str.src) - strlen((const char *)buff); // buff is always smaller than a
+    }
+    return -1;
+}
+
 void init_sstr(sstring *a)
 {
     /** 
@@ -1016,6 +1036,7 @@ void init_sstr(sstring *a)
         a->copy = _copy;                             /// working 1
         a->to_hexadecimal = _to_hexadecimal;         /// working 1
         a->from_hexadecimal = _from_hexadecimal;     /// working 1
+        a->find = _find;                             /// working 1
         a->str.src = (char *)calloc(1 * sizeof(char), sizeof(char));
         a->str.init = true; // initialized properly
     }
