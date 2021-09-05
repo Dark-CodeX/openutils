@@ -9,7 +9,7 @@ int main(int argc, char const *argv[])
     a.set_array(&a, argv, ' ', 1, argc, argc);
     a.print(&a, true, "");
     printf("Entropy = %Lf\n", a.entropy(&a));
-    printf("Length = %lu\n", a.length(&a));
+    printf("Length = %llu\n", a.length(&a));
     a.destructor(&a);
     return 0;
 }
