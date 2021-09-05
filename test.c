@@ -1,7 +1,5 @@
 #include "sstring/sstring.h"
 
-#pragma GCC optimize("O2")
-
 int main(int argc, char const *argv[])
 {
     sstring a;
