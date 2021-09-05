@@ -570,7 +570,7 @@ void _replace(sstring *a, const char *old, const char *new_)
                 i += len_o - 1;
             }
         }
-        char *buff = (char *)malloc(sizeof(char) * (i + count_old * (len_n - len_o) + 1));
+        char *buff = (char *)calloc(sizeof(char) * (i + count_old * (len_n - len_o) + 1), sizeof(char));
         i = 0;
         while (*a->str.src)
         {
