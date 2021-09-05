@@ -1,13 +1,14 @@
 /**
 * This header file is written to manage string data safely under C programming language.
 * Author: Tushar Chaurasia (https://github.com/Dark-CodeX/)
-* Copyright Tushar Chaurasia 2021 - 2022.
+* Copyright: Tushar Chaurasia 2021 - 2022.
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on github.com
 * File: "sstring.h" under "sstring" directory
 * License: MIT
 * sstring: version 3.5.1
 */
+typedef struct __string__ sstring;
 
 #pragma once
 
@@ -33,7 +34,6 @@ typedef struct __str__
     int init;
 } __str__;
 
-typedef struct __string__ sstring;
 struct __string__
 {
     /* Do not use this. */
@@ -570,22 +570,22 @@ void _replace(sstring *a, const char *old, const char *new_)
                 i += len_o - 1;
             }
         }
-        char *r = (char *)calloc(sizeof(char) * (i + count_old * (len_n - len_o) + 1), sizeof(char));
+        char *buff = (char *)malloc(sizeof(char) * (i + count_old * (len_n - len_o) + 1));
         i = 0;
         while (*a->str.src)
         {
             if (strstr(a->str.src, old) == a->str.src)
             {
-                strncpy(&r[i], new_, len_n + 1);
+                strncpy(&buff[i], new_, len_n + 1);
                 i += len_n;
                 a->str.src += len_o;
             }
             else
-                r[i++] = *a->str.src++;
+                buff[i++] = *a->str.src++;
         }
-        a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)r) + 1), sizeof(char));
-        strcpy(a->str.src, (const char *)r);
-        free(r);
+        a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
+        strcpy(a->str.src, (const char *)buff);
+        free(buff);
     }
 }
 
