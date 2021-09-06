@@ -6,13 +6,13 @@
 * You can use this header file. Do not modify it locally, instead commit it on github.com
 * File: "sstring.h" under "sstring" directory
 * License: MIT
-* sstring: version 3.8.5
+* sstring: version 4.0.0
 */
 typedef struct __string__ sstring;
 
 #pragma once
 
-#define sstring_version "3.8.5"
+#define sstring_version "4.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
