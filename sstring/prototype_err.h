@@ -12,11 +12,14 @@
 #pragma once
 
 void _set(sstring *a, const char *src);
+void _set_upto(sstring *a, const char *src, SIZE_T N);
 void _set_random(sstring *a, const SIZE_T len);
 void _set_array(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
 char *_get(sstring *a);
 void _append(sstring *a, const char *src);
+void _append_upto(sstring *a, const char *src, SIZE_T N);
 void _append_start(sstring *a, const char *src);
+void _append_start_upto(sstring *a, const char *src, SIZE_T N);
 void _append_array(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
 void _append_start_array(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
 int _empty(sstring *a);
@@ -25,6 +28,7 @@ void _char_set(sstring *a, const char what, SIZE_T where);
 char _char_get(sstring *a, SIZE_T where);
 SIZE_T _length(sstring *a);
 int _compare(sstring *a, const char *T1);
+int _compare_upto(sstring *a, const char *T1, SIZE_T N);
 void _print(sstring *a, int add_next_line, const char *__format__, ...);
 void _replace(sstring *a, const char *old, const char *new_);
 int _destructor(sstring *a);
@@ -46,4 +50,3 @@ int _from_hexadecimal(sstring *a);
 signed long long _find(sstring *a, const char *sub);
 
 void init_sstr(sstring *a);
-void init_sstr_array(sstring *a[], SIZE_T len);
