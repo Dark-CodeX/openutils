@@ -1116,8 +1116,6 @@ int _in(sstring *a, int get_line, SIZE_T buff_size)
             free(buff);
             return true;
         }
-        else
-            return false;
     }
     return false;
 }
