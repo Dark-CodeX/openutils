@@ -45,6 +45,13 @@ struct __string__
      */
     void (*set)(sstring *a, const char *src);
 
+    /** Sets `src` to `a` upto `N`.
+     * @param a pointer to struct sstring
+     * @param src string to assign
+     * @param N sets upto a number
+     */
+    void (*set_upto)(sstring *a, const char *src, SIZE_T N);
+
     /** Sets random data to `a`. Note: length should be greater than 0, (not equal to 0). Well, no error and result if assigned 0. 
      * Note: use srand function before calling this function.
      * `srand((unsigned int)(time(NULL) * getpid() * getpid() + getpid()));`
@@ -77,11 +84,25 @@ struct __string__
      */
     void (*append)(sstring *a, const char *src);
 
+    /** Appends `src` to `a` at the end upto `N`.
+     * @param a pointer to struct sstring
+     * @param src string to append
+     * @param N append upto a number
+     */
+    void (*append_upto)(sstring *a, const char *src, SIZE_T N);
+
     /** Appends `src` to `a` at the starting.
      * @param a pointer to struct sstring
      * @param src string to append
      */
     void (*append_start)(sstring *a, const char *src);
+
+    /** Appends `src` to `a` at the starting upto `N`.
+     * @param a pointer to struct sstring
+     * @param src string to append
+     * @param N append upto a number
+     */
+    void (*append_start_upto)(sstring *a, const char *src, SIZE_T N);
 
     /** @brief Appends `src` array to `a` at the end. Note: `from`, `till` belongs to [0, sizeof(`src`)]. 
      * Set `char_between` to 0 if you want nothing to append in-between. 
@@ -154,6 +175,15 @@ struct __string__
      * @returns return true if true, otherwise return false
      */
     int (*compare)(sstring *a, const char *T1);
+
+    /**
+     * Compares `a` against `T1` upto `N`.
+     * @param a pointer to struct sstring
+     * @param T1 string to compare with
+     * @param N compare upto a number
+     * @returns return true if true, otherwise return false
+     */
+    int (*compare_upto)(sstring *a, const char *T1, SIZE_T N);
 
     /**
     * Prints `a`.
@@ -304,6 +334,17 @@ void _set(sstring *a, const char *src)
     }
 }
 
+void _set_upto(sstring *a, const char *src, SIZE_T N)
+{
+    if (a && src && a->str.init == true && a->str.src && N <= strlen(src))
+    {
+        free(a->str.src);
+        SIZE_T l = strlen(src);
+        a->str.src = (char *)calloc(((sizeof(char) * l) + 1) + (-l + N), sizeof(char));
+        strncpy(a->str.src, src, N);
+    }
+}
+
 void _set_random(sstring *a, const SIZE_T len)
 {
     if (a && a->str.init == true && a->str.src && len > 0)
@@ -377,12 +418,31 @@ void _append(sstring *a, const char *src)
         {
             free(a->str.src); // used calloc in `init_str` function
             a->str.src = (char *)calloc(sizeof(char) * (strlen(src) + 1), sizeof(char));
-            strcpy(a->str.src, src); // copy `src` it.
+            strcpy(a->str.src, src); // copy `src` to `a`.
         }
         else
         {
             a->str.src = (char *)realloc(a->str.src, sizeof(char) * (strlen(src) + strlen(a->str.src) + 1));
             strcat(a->str.src, src);
+        }
+    }
+}
+
+void _append_upto(sstring *a, const char *src, SIZE_T N)
+{
+    if (a && src && a->str.init == true && a->str.src && N <= strlen(src))
+    {
+        SIZE_T l = strlen(src);
+        if (strlen((const char *)a->str.src) == 0) // string is empty
+        {
+            free(a->str.src); // used calloc in `init_str` function
+            a->str.src = (char *)calloc(((sizeof(char) * l) + 1) + (-l + N), sizeof(char));
+            strncpy(a->str.src, src, N); // copy `src` to `a`.
+        }
+        else
+        {
+            a->str.src = (char *)realloc(a->str.src, sizeof(char) * (l + (-l + N)) + strlen(a->str.src) + 1);
+            strncat(a->str.src, src, N);
         }
     }
 }
@@ -395,12 +455,36 @@ void _append_start(sstring *a, const char *src)
         {
             free(a->str.src); // used calloc in `init_str` function
             a->str.src = (char *)calloc(sizeof(char) * (strlen(src) + 1), sizeof(char));
-            strcpy(a->str.src, src); // copy `src` it.
+            strcpy(a->str.src, src); // copy `src` to `a`.
         }
         else
         {
             char *buff = (char *)calloc(sizeof(char) * (strlen(src) + strlen(a->str.src) + 1), sizeof(char));
             strcpy(buff, src);
+            strcat(buff, (const char *)a->str.src);
+            free(a->str.src);
+            a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
+            strcpy(a->str.src, (const char *)buff);
+            free(buff);
+        }
+    }
+}
+
+void _append_start_upto(sstring *a, const char *src, SIZE_T N)
+{
+    if (a && src && a->str.init == true && a->str.src && N <= strlen(src))
+    {
+        SIZE_T l = strlen(src);
+        if (strlen((const char *)a->str.src) == 0) // string is empty
+        {
+            free(a->str.src); // used calloc in `init_str` function
+            a->str.src = (char *)calloc(((sizeof(char) * l) + 1) + (-l + N), sizeof(char));
+            strncpy(a->str.src, src, N); // copy `src` to `a`.
+        }
+        else
+        {
+            char *buff = (char *)calloc((sizeof(char) * (l + (-l + N)) + strlen(a->str.src)) + 1, sizeof(char));
+            strncpy(buff, src, N);
             strcat(buff, (const char *)a->str.src);
             free(a->str.src);
             a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
@@ -551,6 +635,16 @@ int _compare(sstring *a, const char *T1)
     if (a && T1 && a->str.init == true && a->str.src)
     {
         if (strcmp((const char *)a->str.src, T1) == true)
+            return true;
+    }
+    return false;
+}
+
+int _compare_upto(sstring *a, const char *T1, SIZE_T N)
+{
+    if (a && T1 && a->str.init == true && a->str.src && strlen(T1) >= N)
+    {
+        if (strncmp((const char *)a->str.src, T1, N) == true)
             return true;
     }
     return false;
@@ -1005,11 +1099,14 @@ void init_sstr(sstring *a)
     if (a)
     {
         a->set = _set;                               /// working 1
+        a->set_upto = _set_upto;                     /// working 1
         a->set_random = _set_random;                 /// working 1
         a->set_array = _set_array;                   /// working 1
         a->get = _get;                               /// working 1
         a->append = _append;                         /// working 1
+        a->append_upto = _append_upto;               /// working 1
         a->append_start = _append_start;             /// working 1
+        a->append_start_upto = _append_start_upto;   /// working 1
         a->append_array = _append_array;             /// working 1
         a->append_start_array = _append_start_array; /// working 1
         a->empty = _empty;                           /// working 1
@@ -1018,6 +1115,7 @@ void init_sstr(sstring *a)
         a->char_get = _char_get;                     /// working 1
         a->length = _length;                         /// working 1
         a->compare = _compare;                       /// working 1
+        a->compare_upto = _compare_upto;             /// working 1
         a->print = _print;                           /// working 1
         a->replace = _replace;                       /// working 0
         a->destructor = _destructor;                 /// working 1
