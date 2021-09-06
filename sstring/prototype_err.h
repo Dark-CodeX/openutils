@@ -6,7 +6,7 @@
 * You can use this header file. Do not modify it locally, instead commit it on github.com
 * File: "prototype_err.h" under "sstring" directory
 * License: MIT
-* sstring: version 4.1.0
+* sstring: version 4.1.2
 */
 
 #pragma once
