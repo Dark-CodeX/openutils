@@ -6,13 +6,13 @@
 * You can use this header file. Do not modify it locally, instead commit it on github.com
 * File: "sstring.h" under "sstring" directory
 * License: MIT
-* sstring: version 4.0.0
+* sstring: version 4.1.0
 */
 typedef struct __string__ sstring;
 
 #pragma once
 
-#define sstring_version "4.0.0"
+#define sstring_version "4.1.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -320,6 +320,15 @@ struct __string__
      * @returns index of first occurrence of sub-string `sub` in `a`
     */
     signed long long int (*find)(sstring *a, const char *sub);
+
+    /**
+     * Get input from user and then sets that input to `a`.
+     * @param a pointer to struct sstring
+     * @param get_line set false to break input after SPACE, otherwise set true to break after EOL
+     * @param buff_size memory to allocate for buffer size, data may not be written after `buff_size`, be careful while assigning this value.
+     * @returns true if got input and assigned that to `a`, otherwise returns false
+     */
+    int (*in)(sstring *a, int get_line, SIZE_T buff_size);
 } __string__;
 
 #include "prototype_err.h"
@@ -1090,6 +1099,29 @@ signed long long _find(sstring *a, const char *sub)
     return -1;
 }
 
+int _in(sstring *a, int get_line, SIZE_T buff_size)
+{
+    if (a && a->str.src && a->str.init == true)
+    {
+        char *buff = (char *)calloc((sizeof(char) * buff_size + 1), sizeof(char));
+        if (get_line == false)
+            scanf("%s", buff);
+        else
+            scanf("%[^\n]", buff);
+        if (buff)
+        {
+            free(a->str.src);
+            a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
+            strcpy(a->str.src, (const char *)buff);
+            free(buff);
+            return true;
+        }
+        else
+            return false;
+    }
+    return false;
+}
+
 void init_sstr(sstring *a)
 {
     /** 
@@ -1135,6 +1167,7 @@ void init_sstr(sstring *a)
         a->to_hexadecimal = _to_hexadecimal;         /// working 1
         a->from_hexadecimal = _from_hexadecimal;     /// working 1
         a->find = _find;                             /// working 1
+        a->in = _in;                                 /// working 1
         a->str.src = (char *)calloc(1 * sizeof(char), sizeof(char));
         a->str.init = true; // initialized properly
     }
