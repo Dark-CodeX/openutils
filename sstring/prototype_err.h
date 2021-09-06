@@ -6,7 +6,7 @@
 * You can use this header file. Do not modify it locally, instead commit it on github.com
 * File: "prototype_err.h" under "sstring" directory
 * License: MIT
-* sstring: version 4.0.0
+* sstring: version 4.1.0
 */
 
 #pragma once
@@ -48,5 +48,6 @@ int _copy(sstring *a, sstring *dest);
 void _to_hexadecimal(sstring *a);
 int _from_hexadecimal(sstring *a);
 signed long long _find(sstring *a, const char *sub);
+int _in(sstring *a, int get_line, SIZE_T buff_size);
 
 void init_sstr(sstring *a);
