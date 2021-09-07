@@ -834,7 +834,7 @@ int _is_initialized(sstring *a)
     if (a)
         if (a->str.init == true)
             return true;
-    return false; // never reaches this point by the way
+    return false; // never reaches this point by the way, call this function(_is_initialized) directly to get a value i.e, true or false.
 }
 
 void _to_binary(sstring *a)
