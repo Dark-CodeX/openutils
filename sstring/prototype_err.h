@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "prototype_err.h" under "sstring" directory
-* sstring: version 4.1.5
+* sstring: version 4.2.5
 * 
 * MIT License
 * 
@@ -63,6 +63,7 @@ void _to_binary(sstring *a);
 int _from_binary(sstring *a);
 long double _entropy(sstring *a);
 int _contains(sstring *a, const char *str);
+signed long long int _contains_char(sstring *a, const char c);
 void _to_set(sstring *a);
 int _copy(sstring *a, sstring *dest);
 void _to_hexadecimal(sstring *a);
