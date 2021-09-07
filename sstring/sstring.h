@@ -39,7 +39,6 @@ typedef struct __string__ sstring;
 #include <string.h>
 #include <stdarg.h>
 #include <math.h>
-#include <unistd.h>
 #include <time.h>
 
 #define true 0
