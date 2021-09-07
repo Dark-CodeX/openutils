@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 4.1.5
+* sstring: version 4.2.5
 * 
 * MIT License
 * 
@@ -32,7 +32,7 @@ typedef struct __string__ sstring;
 
 #pragma once
 
-#define sstring_version "4.1.5"
+#define sstring_version "4.2.5"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -305,6 +305,14 @@ struct __string__
      * @returns true if contains, otherwise return false
     */
     int (*contains)(sstring *a, const char *str);
+
+    /** 
+     * If character was found returns it's index (first occurrence only) in `a`, otherwise returns -1.
+     * @param a pointer to struct sstring
+     * @param c character to be tested
+     * @returns If character was found returns it's index (first occurrence only) in `a`, otherwise returns -1.
+    */
+    signed long long int (*contains_char)(sstring *a, const char c);
 
     /** 
      * Assigns `a` as a set. (From Set Theory) 
@@ -637,7 +645,7 @@ void _char_set(sstring *a, const char what, SIZE_T where)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        if (strlen((const char *)a->str.src) > where)
+        if (strlen((const char *)a->str.src) > where && what != '\0')
             a->str.src[where] = what;
     }
 }
@@ -975,6 +983,17 @@ int _contains(sstring *a, const char *str)
     return false;
 }
 
+signed long long int _contains_char(sstring *a, const char c)
+{
+    if (a && a->str.src && a->str.init == true && c != '\0')
+    {
+        for (SIZE_T i = 0; a->str.src[i] != '\0'; i++)
+            if (a->str.src[i] == c)
+                return (SIZE_T)i;
+    }
+    return -1;
+}
+
 void _to_set(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
@@ -1180,6 +1199,7 @@ void init_sstr(sstring *a)
         a->from_binary = _from_binary;               /// working 1
         a->entropy = _entropy;                       /// working 1
         a->contains = _contains;                     /// working 1
+        a->contains_char = _contains_char;           /// working 1
         a->to_set = _to_set;                         /// working 1
         a->copy = _copy;                             /// working 1
         a->to_hexadecimal = _to_hexadecimal;         /// working 1
