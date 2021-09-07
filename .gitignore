@@ -34,5 +34,6 @@
 # Cmake Build Ignore
 build
 
-# VS Code Settings Folder
+# VS Code Settings Folder and Visual Studio Settings Folder
 .vscode
+.vs
