@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 4.2.8
+* sstring: version 4.3.0
 * 
 * MIT License
 * 
@@ -32,7 +32,7 @@ typedef struct __string__ sstring;
 
 #pragma once
 
-#define sstring_version "4.2.8"
+#define sstring_version "4.3.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -356,6 +356,15 @@ struct __string__
      * @returns true if got input and assigned that to `a`, otherwise returns false
      */
     int (*in)(sstring *a, int get_line, SIZE_T buff_size);
+
+    /**
+     * Returns content of `line` from `a`. If `line` does not exists it returns NULL. 
+     * NOTE: free the returned value when not in use, or before exiting the program.
+     * @param a pointer to struct sstring
+     * @param line line number to be returned
+     * @returns content of `line` from `a`. If `line`does not exists it returns NULL
+     */
+    char *(*getline)(sstring *a, SIZE_T line);
 } __string__;
 
 #include "prototype_err.h"
@@ -1158,6 +1167,30 @@ int _in(sstring *a, int get_line, SIZE_T buff_size)
     return false;
 }
 
+char *_getline(sstring *a, SIZE_T line)
+{
+    if (a && a->str.src && a->str.init == true)
+    {
+        // check line exists
+        SIZE_T cnt = 0;
+        for (SIZE_T i = 0; a->str.src[i] != '\0'; i++)
+        {
+            if (a->str.src[i] == '\n')
+                cnt++;
+            if (line == cnt)
+            {
+                if (line != 0)
+                    i++; // goto next character after hitting '\n'
+                char *buff = (char *)calloc((sizeof(char) * strlen((const char *)a->str.src)) + 1, sizeof(char));
+                for (SIZE_T k = 0; a->str.src[i] != '\n' && a->str.src[i] != '\0'; k++, i++)
+                    buff[k] = a->str.src[i];
+                return buff;
+            }
+        }
+    }
+    return (char *)NULL;
+}
+
 void init_sstr(sstring *a)
 {
     /** 
@@ -1205,6 +1238,7 @@ void init_sstr(sstring *a)
         a->from_hexadecimal = _from_hexadecimal;     /// working 1
         a->find = _find;                             /// working 1
         a->in = _in;                                 /// working 1
+        a->getline = _getline;                       /// working 1
         a->str.src = (char *)calloc(1 * sizeof(char), sizeof(char));
         a->str.init = true; // initialized properly
     }
