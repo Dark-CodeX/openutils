@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 4.3.0
+* sstring: version 4.9.0
 * 
 * MIT License
 * 
@@ -32,7 +32,7 @@ typedef struct __string__ sstring;
 
 #pragma once
 
-#define sstring_version "4.3.0"
+#define sstring_version "4.9.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -63,6 +63,12 @@ struct __string__
      * @param src string to assign
      */
     void (*set)(sstring *a, const char *src);
+
+    /** Sets `c` to `a`.
+     * @param a pointer to struct sstring
+     * @param c character to assign
+     */
+    void (*set_char)(sstring *a, const char c);
 
     /** Sets `src` to `a` upto `N`.
      * @param a pointer to struct sstring
@@ -103,6 +109,12 @@ struct __string__
      */
     void (*append)(sstring *a, const char *src);
 
+    /** Appends `c` to `a` at the end.
+     * @param a pointer to struct sstring
+     * @param c character to append
+     */
+    void (*append_char)(sstring *a, const char c);
+
     /** Appends `src` to `a` at the end upto `N`.
      * @param a pointer to struct sstring
      * @param src string to append
@@ -115,6 +127,12 @@ struct __string__
      * @param src string to append
      */
     void (*append_start)(sstring *a, const char *src);
+
+    /** Appends `c` to `a` at the starting.
+     * @param a pointer to struct sstring
+     * @param c character to append
+     */
+    void (*append_start_char)(sstring *a, const char c);
 
     /** Appends `src` to `a` at the starting upto `N`.
      * @param a pointer to struct sstring
@@ -379,6 +397,16 @@ void _set(sstring *a, const char *src)
     }
 }
 
+void _set_char(sstring *a, const char c)
+{
+    if (a && c != '\0' && a->str.init == true && a->str.src)
+    {
+        free(a->str.src);
+        a->str.src = (char *)calloc(sizeof(char) * 2, sizeof(char));
+        strncpy(a->str.src, &c, 1);
+    }
+}
+
 void _set_upto(sstring *a, const char *src, SIZE_T N)
 {
     if (a && src && a->str.init == true && a->str.src && N <= strlen(src))
@@ -473,6 +501,24 @@ void _append(sstring *a, const char *src)
     }
 }
 
+void _append_char(sstring *a, const char c)
+{
+    if (a && c != '\0' && a->str.init == true && a->str.src)
+    {
+        if (strlen((const char *)a->str.src) == 0) // string is empty
+        {
+            free(a->str.src); // used calloc in `init_str` function
+            a->str.src = (char *)calloc(sizeof(char) * 2, sizeof(char));
+            strncpy(a->str.src, &c, 1); // copy `c` to `a`.
+        }
+        else
+        {
+            a->str.src = (char *)realloc(a->str.src, (sizeof(char) * 2) + (strlen(a->str.src) + 1));
+            strncat(a->str.src, &c, 1);
+        }
+    }
+}
+
 void _append_upto(sstring *a, const char *src, SIZE_T N)
 {
     if (a && src && a->str.init == true && a->str.src && N <= strlen(src))
@@ -506,6 +552,29 @@ void _append_start(sstring *a, const char *src)
         {
             char *buff = (char *)calloc(sizeof(char) * (strlen(src) + strlen(a->str.src) + 1), sizeof(char));
             strcpy(buff, src);
+            strcat(buff, (const char *)a->str.src);
+            free(a->str.src);
+            a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
+            strcpy(a->str.src, (const char *)buff);
+            free(buff);
+        }
+    }
+}
+
+void _append_start_char(sstring *a, const char c)
+{
+    if (a && c != '\0' && a->str.init == true && a->str.src)
+    {
+        if (strlen((const char *)a->str.src) == 0) // string is empty
+        {
+            free(a->str.src); // used calloc in `init_str` function
+            a->str.src = (char *)calloc(sizeof(char) * 2, sizeof(char));
+            strncpy(a->str.src, &c, 1); // copy `c` to `a`.
+        }
+        else
+        {
+            char *buff = (char *)calloc((sizeof(char) * 2) + (strlen(a->str.src) + 1), sizeof(char));
+            strncpy(buff, &c, 1);
             strcat(buff, (const char *)a->str.src);
             free(a->str.src);
             a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
@@ -1200,13 +1269,16 @@ void init_sstr(sstring *a)
     if (a)
     {
         a->set = _set;                               /// working 1
+        a->set_char = _set_char;                     /// working 1
         a->set_upto = _set_upto;                     /// working 1
         a->set_random = _set_random;                 /// working 1
         a->set_array = _set_array;                   /// working 1
         a->get = _get;                               /// working 1
         a->append = _append;                         /// working 1
+        a->append_char = _append_char;               /// working 1
         a->append_upto = _append_upto;               /// working 1
         a->append_start = _append_start;             /// working 1
+        a->append_start_char = _append_start_char;   /// working 1
         a->append_start_upto = _append_start_upto;   /// working 1
         a->append_array = _append_array;             /// working 1
         a->append_start_array = _append_start_array; /// working 1
