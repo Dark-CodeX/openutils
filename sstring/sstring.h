@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 4.9.0
+* sstring: version 5.0.0
 * 
 * MIT License
 * 
@@ -32,7 +32,7 @@ typedef struct __string__ sstring;
 
 #pragma once
 
-#define sstring_version "4.9.0"
+#define sstring_version "5.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -915,23 +915,17 @@ int _is_initialized(sstring *a)
     return false; // never reaches this point by the way, call this function(_is_initialized) directly to get a value i.e, true or false.
 }
 
+#include "binary.h"
+
 void _to_binary(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
         SIZE_T len = strlen((const char *)a->str.src);
         char *buff = (char *)calloc(((2 * (len * 8)) + 1) * sizeof(char), sizeof(char));
-        char c = '\0';
         for (SIZE_T i = 0; i < len; ++i)
         {
-            c = a->str.src[i];
-            for (int j = 7; j >= 0; --j)
-            {
-                if (c & (1 << j))
-                    strcat(buff, "1");
-                else
-                    strcat(buff, "0");
-            }
+            strncat(buff, binary_data[(SIZE_T)a->str.src[i]], 8);
             if (i < len - 1)
                 strcat(buff, " ");
         }
