@@ -7,7 +7,7 @@ This header file is cross-platform, but tested only on Windows 10, Windows 11, A
 Documents are added in the header(`"sstring/sstring.h"`) file itself.
 Be sure to suggest any changes.
 
-# Functions Defined v:4.9.0
+# Functions Defined v:5.0.0
 
 <code>set</code>
 
