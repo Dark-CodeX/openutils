@@ -14,5 +14,6 @@ package() {
   mkdir -p "${pkgdir}/usr/include/sstring"
   cp "${srcdir}/sstring.h" "${pkgdir}/usr/include/sstring/sstring.h"
   cp "${srcdir}/prototype_err.h" "${pkgdir}/usr/include/sstring/prototype_err.h"
+  cp "${srcdir}/binary.h" "${pkgdir}/usr/include/sstring/binary.h"
   echo "Done!"
 }
