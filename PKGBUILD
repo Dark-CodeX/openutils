@@ -1,5 +1,5 @@
 pkgname="sstring"
-pkgver="5.1.0"
+pkgver="5.2.0"
 pkgrel="4"
 pkgdesc="Memory Safe String Library in C language."
 arch=("x86_64" "i686")
