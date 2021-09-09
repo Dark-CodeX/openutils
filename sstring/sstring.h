@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 5.2.0
+* sstring: version 5.3.0
 * 
 * MIT License
 * 
@@ -32,7 +32,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "5.2.0"
+#define sstring_version "5.3.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -287,6 +287,12 @@ struct __string__
      * @param a pointer to struct sstring
      */
     void (*to_lower)(sstring *a);
+
+    /**
+     * Converts upper case letters to lower case and vice-versa of `a`.
+     * @param a pointer to struct sstring
+     */
+    void (*swap_case)(sstring *a);
 
     /**
      * Returns whether `a` is initialized or not using `init_str` function.
@@ -907,6 +913,20 @@ void _to_lower(sstring *a)
     }
 }
 
+void _swap_case(sstring *a)
+{
+    if (a && a->str.src && a->str.init == true)
+    {
+        for (SIZE_T i = 0; a->str.src[i] != '\0'; ++i)
+        {
+            if (a->str.src[i] <= 90 && a->str.src[i] >= 65)
+                a->str.src[i] += 32;
+            else if (a->str.src[i] <= 122 && a->str.src[i] >= 97)
+                a->str.src[i] -= 32;
+        }
+    }
+}
+
 int _is_initialized(sstring *a)
 {
     if (a)
@@ -1255,7 +1275,7 @@ char *_getline(sstring *a, SIZE_T line)
 }
 
 #define SSTRING(x) \
-    sstring x; \
+    sstring x;     \
     init_sstr(&x);
 
 void init_sstr(sstring *a)
@@ -1296,6 +1316,7 @@ void init_sstr(sstring *a)
         a->clear = _clear;                           /// working 1
         a->to_upper = _to_upper;                     /// working 1
         a->to_lower = _to_lower;                     /// working 1
+        a->swap_case = _swap_case;                   /// working 1
         a->is_initialized = _is_initialized;         /// working 1
         a->to_binary = _to_binary;                   /// working 1
         a->from_binary = _from_binary;               /// working 1
