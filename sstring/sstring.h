@@ -32,10 +32,6 @@
 */
 typedef struct __string__ sstring;
 
-#define SSTRING(x) \
-    sstring x; \
-    init_sstr(&x);
-
 #define sstring_version "5.1.0"
 
 #include <stdio.h>
@@ -1257,6 +1253,10 @@ char *_getline(sstring *a, SIZE_T line)
     }
     return (char *)NULL;
 }
+
+#define SSTRING(x) \
+    sstring x; \
+    init_sstr(&x);
 
 void init_sstr(sstring *a)
 {
