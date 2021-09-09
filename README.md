@@ -2,12 +2,12 @@
 **Safe string implementation in C.**
 
 This sstring struct is memory safe means that it will not cause memory leak.
-This header file is cross-platform, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (42/43) functions passed.*
+This header file is cross-platform, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (43/44) functions passed.*
 
 Documents are added in the header(`"sstring/sstring.h"`) file itself.
 Be sure to suggest any changes.
 
-# Functions Defined v:5.2.0
+# Functions Defined v:5.3.0
 
 <code>set</code>
 
@@ -66,6 +66,8 @@ Be sure to suggest any changes.
 <code>clear</code>
 
 <code>to_upper</code>
+
+<code>swap_case</code>
 
 <code>to_lower</code>
 
