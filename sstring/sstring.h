@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 5.3.0
+* sstring: version 5.5.0
 * 
 * MIT License
 * 
@@ -32,7 +32,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "5.3.0"
+#define sstring_version "5.5.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -389,6 +389,13 @@ struct __string__
      * @returns content of `line` from `a`. If `line`does not exists it returns NULL
      */
     char *(*getline)(sstring *a, SIZE_T line);
+
+    /**
+     * Reverse a string means "ABCD" -> "DCBA". 
+     * Time complexity: O(N / 2), where N is the length of the `a`.
+     * @param a pointer to struct sstring
+     */
+    void (*reverse)(sstring *a);
 } __string__;
 
 #include "prototype_err.h"
@@ -1274,6 +1281,21 @@ char *_getline(sstring *a, SIZE_T line)
     return (char *)NULL;
 }
 
+void _reverse(sstring *a)
+{
+    if (a && a->str.src && a->str.init == true)
+    {
+        SIZE_T len = strlen((const char *)a->str.src), l = len / 2;
+        char c = '\0';
+        for (SIZE_T i = 0; i < l; i++)
+        {
+            c = a->str.src[i];
+            a->str.src[i] = a->str.src[len - i - 1];
+            a->str.src[len - i - 1] = c;
+        }
+    }
+}
+
 #define SSTRING(x) \
     sstring x;     \
     init_sstr(&x);
@@ -1330,6 +1352,7 @@ void init_sstr(sstring *a)
         a->find = _find;                             /// working 1
         a->in = _in;                                 /// working 1
         a->getline = _getline;                       /// working 1
+        a->reverse = _reverse;                       /// working 1
         a->str.src = (char *)calloc(1 * sizeof(char), sizeof(char));
         a->str.init = true; // initialized properly
     }
