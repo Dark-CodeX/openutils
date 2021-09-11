@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 5.5.0
+* sstring: version 7.0.0
 * 
 * MIT License
 * 
@@ -32,7 +32,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "5.5.0"
+#define sstring_version "7.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -396,6 +396,24 @@ struct __string__
      * @param a pointer to struct sstring
      */
     void (*reverse)(sstring *a);
+
+    /**
+     * Removes characters between `from` and `till`.
+     * @param a pointer to struct sstring
+     * @param from where to start removing characters
+     * @param till when to stop removing characters
+     * @returns true if removed, otherwise false
+     */
+    int (*remove)(sstring *a, SIZE_T from, SIZE_T till);
+
+    /**
+     * Assings characters to `a` between `from` and `till`.
+     * @param a pointer to struct sstring
+     * @param from where to start assigning characters
+     * @param till when to stop assigning characters
+     * @returns true if assigned, otherwise false
+     */
+    int (*intersect)(sstring *a, SIZE_T from, SIZE_T till);
 } __string__;
 
 #include "prototype_err.h"
@@ -1296,6 +1314,55 @@ void _reverse(sstring *a)
     }
 }
 
+int _remove(sstring *a, SIZE_T from, SIZE_T till)
+{
+    if (a && a->str.src && a->str.init == true)
+    {
+        SIZE_T len = strlen((const char *)a->str.src);
+        if (till > len || from > len || from > till)
+            return false;
+        char *buff = (char *)calloc(sizeof(char) * (len - (till - from) + 1), sizeof(char));
+        for (SIZE_T i = 0, k = 0; i < len; i++)
+        {
+            if (i == from)
+                i += till - from;
+            if (i < from || i > from)
+            {
+                buff[k] = a->str.src[i];
+                k++;
+            }
+        }
+        free(a->str.src);
+        a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
+        strcpy(a->str.src, (const char *)buff);
+        free(buff);
+        return true;
+    }
+    return false;
+}
+
+int _intersect(sstring *a, SIZE_T from, SIZE_T till)
+{
+    if (a && a->str.src && a->str.init == true)
+    {
+        SIZE_T len = strlen((const char *)a->str.src);
+        if (till > len || from > len || from > till)
+            return false;
+        char *buff = (char *)calloc(sizeof(char) * ((till - from) + 1), sizeof(char));
+        for (SIZE_T i = from, k = 0; i < till; i++)
+        {
+            buff[k] = a->str.src[i];
+            k++;
+        }
+        free(a->str.src);
+        a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
+        strcpy(a->str.src, (const char *)buff);
+        free(buff);
+        return true;
+    }
+    return false;
+}
+
 #define SSTRING(x) \
     sstring x;     \
     init_sstr(&x);
@@ -1353,6 +1420,8 @@ void init_sstr(sstring *a)
         a->in = _in;                                 /// working 1
         a->getline = _getline;                       /// working 1
         a->reverse = _reverse;                       /// working 1
+        a->remove = _remove;                         /// working 1
+        a->intersect = _intersect;                   /// working 1
         a->str.src = (char *)calloc(1 * sizeof(char), sizeof(char));
         a->str.init = true; // initialized properly
     }
