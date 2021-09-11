@@ -1,5 +1,5 @@
 pkgname="sstring"
-pkgver="5.5.0"
+pkgver="7.0.0"
 pkgrel="4"
 pkgdesc="Memory Safe String Library in C language."
 arch=("x86_64" "i686")
@@ -7,7 +7,7 @@ conflicts=('sstring')
 depends=(gcc)
 license=("MIT")
 source=("https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/sstring.h" "https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/prototype_err.h" "https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/binary.h")
-sha512sums=("2eab08538a32f50a39d1cca3d67dbb7beb113d8da2089fcf98bf61266067ec0c64ecf64ac7af7f796e0c472baed5aca8d07de0dfe91b0d15ea95657913180316" "c3b03e355df0a8255f911bcaf79c9d1d763611eb55f674066ea399ee4f1e06b31ef24f6f51aedacb336a1ad24c72c73ef224880d3ec8004c3757f955711ae20d" "cc1f7bd7c54f9831e7a0b0730992dc49ee08227a093c1c2c8d38f4a9ff0d50124889b1d0a6bde2c01b8cfb8826a61cad8ba6646d9b4d6bbc93d7201ac28a7dcd")
+sha512sums=("9d411ac92380f7ad4ae52a92d18f7b144c15dcccd35f0a21c0dd693c160b58e39287624595efb2a1d40aff0d18769da5404b89255d2eafb106a10ce2f703470c" "ab7a04a546c91069fec3d731209802c18880d50f06e0af26662b5464d4f8f81bb2a8ce9607a325a1e827d96e77e588eaa451f9a141c1606c35e7995a6a60f76f" "4230de5772eea4720e02f9454515b0a15c7221456623ee6f7dbae2be3eb7862571ea31442307339d2093839d929eee9e1ab3843534482ae4da4e183ef5a0acf2")
 
 package() {
   echo "Memory Safe String Library in C language."
