@@ -3,13 +3,13 @@
 
 This sstring struct is memory safe means that it will not cause memory leak.
 **This library have most of the functions of a high level language and some functions are not even defined in high level language like `entropy`, `to_binary`, `to_hexadecimal`, `distance` and even more.**
-**This library has 48 pre-defined functions.**
-This header file is *cross-platform*, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (47/48) functions passed.*
+**This library has 50 pre-defined functions.**
+This header file is *cross-platform*, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (49/50) functions passed.*
 
 Documents are added in the header(`"sstring/sstring.h"`) file itself.
 Be sure to suggest any changes.
 
-# Functions Defined v:7.1.1
+# Functions Defined v:7.5.0
 
 <code>set</code>
 
@@ -106,6 +106,10 @@ Be sure to suggest any changes.
 <code>intersect</code>
 
 <code>distance</code>
+
+<code>edit_distance</code>
+
+<code>percentage_matched</code>
 
 # BUILD AND INSTALL
 
