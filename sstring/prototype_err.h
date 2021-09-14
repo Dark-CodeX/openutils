@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "prototype_err.h" under "sstring" directory
-* sstring: version 7.1.1
+* sstring: version 7.5.0
 * 
 * MIT License
 * 
@@ -79,5 +79,7 @@ void _reverse(sstring *a);
 int _remove(sstring *a, SIZE_T from, SIZE_T till);
 int _intersect(sstring *a, SIZE_T from, SIZE_T till);
 signed long long int _distance(sstring *a, const char *src);
+signed long long int _edit_distance(sstring *a, const char *src);
+long double _percentage_matched(sstring *a, const char *src);
 
 void init_sstr(sstring *a);
