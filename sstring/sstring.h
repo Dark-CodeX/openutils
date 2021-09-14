@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 7.1.1
+* sstring: version 7.5.0
 * 
 * MIT License
 * 
@@ -32,7 +32,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "7.1.1"
+#define sstring_version "7.5.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -384,9 +384,8 @@ struct __string__
     /**
      * Returns content of `line` from `a`. If `line` does not exists it returns NULL. 
      * NOTE: free the returned value when not in use, or before exiting the program.
-     * @code cpp
+     * @code {.c}
      * char *line = a.getline(&a, 7);
-     * // your other code
      * free(line);
      * @endcode
      * @param a pointer to struct sstring
@@ -421,16 +420,29 @@ struct __string__
     int (*intersect)(sstring *a, SIZE_T from, SIZE_T till);
 
     /**
-     * Calculates hamming distance between two strings. NOTE: string's length should be same.
-     * @code {.c}
-     * char *line = a.getline(&a, 7);
-     * free(line);
-     * @endcode
+     * Calculates hamming distance (From Information Theory) between two strings. NOTE: string's length should be same.
      * @param a pointer to struct sstring
      * @param src second string to compare with
      * @returns returns -1 if length does not match, otherwise number of characters didn't matched.
      */
     signed long long int (*distance)(sstring *a, const char *src);
+
+    /**
+     * Returns `Levenshtein Distance` (From Information Theory) against `src`.
+     * @param a pointer to struct sstring
+     * @param src string to be matched
+     * @returns edit distance
+     */
+    signed long long int (*edit_distance)(sstring *a, const char *src);
+
+    /**
+     * Returns percentage matched against `src` using `Levenshtein Distance` algorithm (From Information Theory).
+     * @param a pointer to struct sstring
+     * @param src string to be matched
+     * @returns percentage matched, NOTE: returned value belongs to [1, 100]
+     */
+    long double (*percentage_matched)(sstring *a, const char *src);
+
 } __string__;
 
 #include "prototype_err.h"
@@ -1396,6 +1408,55 @@ signed long long int _distance(sstring *a, const char *src)
     return -1;
 }
 
+#define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
+#define MAX2(x, y) ((x > y) ? x : y)
+signed long long int _edit_distance(sstring *a, const char *src)
+{
+    if (a && a->str.src && a->str.init == true && src)
+    {
+        SIZE_T len1 = strlen((const char *)a->str.src), len2 = strlen(src), x, y, last, old;
+        SIZE_T cols[len1 + 1];
+        for (y = 1; y <= len1; y++)
+            cols[y] = y;
+        for (x = 1; x <= len2; x++)
+        {
+            cols[0] = x;
+            for (y = 1, last = x - 1; y <= len1; y++)
+            {
+                old = cols[y];
+                cols[y] = MIN3(cols[y] + 1, cols[y - 1] + 1, last + (a->str.src[y - 1] == src[x - 1] ? 0 : 1));
+                last = old;
+            }
+        }
+        return (SIZE_T)cols[len1];
+    }
+    return -1;
+}
+
+long double _percentage_matched(sstring *a, const char *src)
+{
+    if (a && a->str.src && a->str.init == true && src)
+    {
+        SIZE_T len1 = strlen((const char *)a->str.src), len2 = strlen(src), x, y, last, old;
+        SIZE_T cols[len1 + 1];
+        for (y = 1; y <= len1; y++)
+            cols[y] = y;
+        for (x = 1; x <= len2; x++)
+        {
+            cols[0] = x;
+            for (y = 1, last = x - 1; y <= len1; y++)
+            {
+                old = cols[y];
+                cols[y] = MIN3(cols[y] + 1, cols[y - 1] + 1, last + (a->str.src[y - 1] == src[x - 1] ? 0 : 1));
+                last = old;
+            }
+        }
+        SIZE_T max = MAX2(len1, len2);
+        return (max - cols[len1]) * 100.0f / max;
+    }
+    return (long double)0.0f;
+}
+
 #define SSTRING(x) \
     sstring x;     \
     init_sstr(&x);
@@ -1456,6 +1517,8 @@ void init_sstr(sstring *a)
         a->remove = _remove;                         /// working 1
         a->intersect = _intersect;                   /// working 1
         a->distance = _distance;                     /// working 1
+        a->edit_distance = _edit_distance;           /// working 1
+        a->percentage_matched = _percentage_matched; /// working 1
         a->str.src = (char *)calloc(1 * sizeof(char), sizeof(char));
         a->str.init = true; // initialized properly
     }
