@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 7.0.0
+* sstring: version 7.1.1
 * 
 * MIT License
 * 
@@ -32,7 +32,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "7.0.0"
+#define sstring_version "7.1.1"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -77,17 +77,17 @@ struct __string__
      */
     void (*set_upto)(sstring *a, const char *src, SIZE_T N);
 
-    /** Sets random data to `a`. Note: length should be greater than 0, (not equal to 0). Well, no error and result if assigned 0. 
-     * Note: use srand function before calling this function.
+    /** Sets random data to `a`. NOTE: length should be greater than 0, (not equal to 0). Well, no error and result if assigned 0. 
+     * NOTE: use srand function before calling this function.
      * `srand((unsigned int)(time(NULL) * getpid() * getpid() + getpid()));`
      * @param a pointer to struct sstring
      * @param len size of random string
      */
     void (*set_random)(sstring *a, const SIZE_T len);
 
-    /** @brief Sets `src` array to `a`. Note: `from`, `till` belongs to [0, sizeof(`src`)]. 
+    /** @brief Sets `src` array to `a`. NOTE: `from`, `till` belongs to [0, sizeof(`src`)]. 
      * Set `char_between` to 0 if you want nothing to append in-between. 
-     * Note: `src[till]` is not included in resultant string.
+     * NOTE: `src[till]` is not included in resultant string.
      * @param a pointer to struct sstring
      * @param src string array to assign
      * @param char_between character to append between `src[x]` and `src[x + 1]`
@@ -141,9 +141,9 @@ struct __string__
      */
     void (*append_start_upto)(sstring *a, const char *src, SIZE_T N);
 
-    /** @brief Appends `src` array to `a` at the end. Note: `from`, `till` belongs to [0, sizeof(`src`)]. 
+    /** @brief Appends `src` array to `a` at the end. NOTE: `from`, `till` belongs to [0, sizeof(`src`)]. 
      * Set `char_between` to 0 if you want nothing to append in-between. 
-     * Note: `src[till]` is not included in resultant string.
+     * NOTE: `src[till]` is not included in resultant string.
      * @param a pointer to struct sstring
      * @param src string array to append
      * @param char_between character to append between `src[x]` and `src[x + 1]`
@@ -153,9 +153,9 @@ struct __string__
      */
     void (*append_array)(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
 
-    /** @brief Appends `src` array to `a` at the starting. Note: `from`, `till` belongs to [0, sizeof(`src`)]. 
+    /** @brief Appends `src` array to `a` at the starting. NOTE: `from`, `till` belongs to [0, sizeof(`src`)]. 
      * Set `char_between` to 0 if you want nothing to append in-between. 
-     * Note: `src[till]` is not included in resultant string.
+     * NOTE: `src[till]` is not included in resultant string.
      * @param a pointer to struct sstring
      * @param src string array to append
      * @param char_between character to append between `src[x]` and `src[x + 1]`
@@ -384,6 +384,11 @@ struct __string__
     /**
      * Returns content of `line` from `a`. If `line` does not exists it returns NULL. 
      * NOTE: free the returned value when not in use, or before exiting the program.
+     * @code cpp
+     * char *line = a.getline(&a, 7);
+     * // your other code
+     * free(line);
+     * @endcode
      * @param a pointer to struct sstring
      * @param line line number to be returned
      * @returns content of `line` from `a`. If `line`does not exists it returns NULL
@@ -414,6 +419,18 @@ struct __string__
      * @returns true if assigned, otherwise false
      */
     int (*intersect)(sstring *a, SIZE_T from, SIZE_T till);
+
+    /**
+     * Calculates hamming distance between two strings. NOTE: string's length should be same.
+     * @code {.c}
+     * char *line = a.getline(&a, 7);
+     * free(line);
+     * @endcode
+     * @param a pointer to struct sstring
+     * @param src second string to compare with
+     * @returns returns -1 if length does not match, otherwise number of characters didn't matched.
+     */
+    signed long long int (*distance)(sstring *a, const char *src);
 } __string__;
 
 #include "prototype_err.h"
@@ -1363,6 +1380,22 @@ int _intersect(sstring *a, SIZE_T from, SIZE_T till)
     return false;
 }
 
+signed long long int _distance(sstring *a, const char *src)
+{
+    if (a && a->str.src && a->str.init == true && src)
+    {
+        if (strlen(src) == strlen((const char *)a->str.src))
+        {
+            SIZE_T cnt = 0;
+            for (SIZE_T i = 0; a->str.src[i] != '\0'; i++)
+                if (a->str.src[i] != src[i])
+                    cnt++;
+            return (SIZE_T)cnt;
+        }
+    }
+    return -1;
+}
+
 #define SSTRING(x) \
     sstring x;     \
     init_sstr(&x);
@@ -1422,6 +1455,7 @@ void init_sstr(sstring *a)
         a->reverse = _reverse;                       /// working 1
         a->remove = _remove;                         /// working 1
         a->intersect = _intersect;                   /// working 1
+        a->distance = _distance;                     /// working 1
         a->str.src = (char *)calloc(1 * sizeof(char), sizeof(char));
         a->str.init = true; // initialized properly
     }
