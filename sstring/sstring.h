@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 7.7.3
+* sstring: version 8.0.0
 * 
 * MIT License
 * 
@@ -32,7 +32,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "7.7.3"
+#define sstring_version "8.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -198,7 +198,7 @@ struct __string__
     char (*char_get)(sstring *a, SIZE_T where);
 
     /**
-     * Returns length of `a`, if `a` != NULL.
+     * Returns length of `a`, does not include the count of NUL(0).
      * @param a pointer to struct sstring
      * @returns length of `a`
      */
@@ -402,13 +402,42 @@ struct __string__
     void (*reverse)(sstring *a);
 
     /**
+     * Removes all occurrence of sub-string `sub` from `a`.
+     * @param a pointer to struct sstring
+     * @param sub sub-string to remove
+     * @returns total number of characters removed
+     */
+    SIZE_T(*remove)
+    (sstring *a, const char *sub);
+
+    /**
+     * Removes all occurrence of character `c` from `a`.
+     * @param a pointer to struct sstring
+     * @param c character to remove
+     * @returns total number of characters removed
+     */
+    SIZE_T(*remove_char)
+    (sstring *a, char c);
+
+    /**
+     * Removes all extra occurrence of character `c` from `a`. Eg.: "Hello__1" -> "Hello_1", here `c` was underscore('_'). 
+     * Mainly used to remove extra whitespaces from a string.
+     * @param a pointer to struct sstring
+     * @param c character to remove
+     * @returns total number of characters removed
+     */
+    SIZE_T(*remove_extra_char)
+    (sstring *a, char c);
+
+    /**
      * Removes characters between `from` and `till`.
      * @param a pointer to struct sstring
      * @param from where to start removing characters
      * @param till when to stop removing characters
-     * @returns true if removed, otherwise false
+     * @returns total number of characters removed
      */
-    int (*remove_range)(sstring *a, SIZE_T from, SIZE_T till);
+    SIZE_T(*remove_range)
+    (sstring *a, SIZE_T from, SIZE_T till);
 
     /**
      * Assings characters to `a` between `from` and `till`.
@@ -1365,18 +1394,100 @@ void _reverse(sstring *a)
     }
 }
 
-int _remove_range(sstring *a, SIZE_T from, SIZE_T till)
+SIZE_T _remove(sstring *a, const char *sub)
+{
+    if (a && a->str.src && a->str.init == true && sub && sub[0] != '\0')
+    {
+        char *buff = calloc((sizeof(char) * strlen((const char *)a->str.src)) + 1, sizeof(char));
+        strcpy(buff, (const char *)a->str.src);
+        SIZE_T len_s = strlen(sub), cnt = 0;
+        {
+            char *temp = buff;
+            SIZE_T size = 0;
+            while ((temp = strstr(temp, sub)))
+            {
+                size = (size == 0) ? (temp - buff) + strlen(temp + len_s) + 1 : size - len_s;
+                memmove(temp, temp + len_s, size - (temp - buff));
+                cnt += len_s;
+            }
+            free(temp);
+        }
+        free(a->str.src);
+        a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
+        strcpy(a->str.src, (const char *)buff);
+        free(buff);
+        return cnt;
+    }
+    return 0;
+}
+
+SIZE_T _remove_char(sstring *a, const char c)
+{
+    if (a && a->str.src && a->str.init == true && c != '\0')
+    {
+        char *buff = (char *)calloc((sizeof(char) * strlen((const char *)a->str.src)) + 1, sizeof(char));
+        SIZE_T cnt = 0;
+        for (SIZE_T i = 0, k = 0; a->str.src[i] != '\0'; i++)
+        {
+            if (a->str.src[i] != c)
+            {
+                buff[k] = a->str.src[i];
+                k++;
+            }
+            else
+                cnt++;
+        }
+        free(a->str.src);
+        a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
+        strcpy(a->str.src, (const char *)buff);
+        free(buff);
+        return cnt;
+    }
+    return 0;
+}
+
+SIZE_T _remove_extra_char(sstring *a, const char c)
+{
+    if (a && a->str.src && a->str.init == true && c != '\0')
+    {
+        char *buff = (char *)calloc((sizeof(char) * strlen((const char *)a->str.src)) + 1, sizeof(char));
+        SIZE_T p = 0, i = 0, cnt = 0;
+        while (a->str.src[p] != '\0')
+        {
+            if (!(a->str.src[p] == c && a->str.src[p + 1] == c))
+            {
+                buff[i] = a->str.src[p];
+                i++;
+            }
+            else
+                cnt++;
+            p++;
+        }
+        buff[i] = '\0';
+        free(a->str.src);
+        a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
+        strcpy(a->str.src, (const char *)buff);
+        free(buff);
+        return cnt;
+    }
+    return 0;
+}
+
+SIZE_T _remove_range(sstring *a, SIZE_T from, SIZE_T till)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        SIZE_T len = strlen((const char *)a->str.src);
+        SIZE_T len = strlen((const char *)a->str.src), cnt = 0;
         if (till > len || from > len || from > till)
-            return false;
+            return cnt;
         char *buff = (char *)calloc(sizeof(char) * (len - (till - from) + 1), sizeof(char));
         for (SIZE_T i = 0, k = 0; i < len; i++)
         {
             if (i == from)
+            {
                 i += till - from;
+                cnt += (till - from);
+            }
             if (i < from || i > from)
             {
                 buff[k] = a->str.src[i];
@@ -1387,9 +1498,9 @@ int _remove_range(sstring *a, SIZE_T from, SIZE_T till)
         a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
         strcpy(a->str.src, (const char *)buff);
         free(buff);
-        return true;
+        return cnt;
     }
-    return false;
+    return 0;
 }
 
 int _intersect(sstring *a, SIZE_T from, SIZE_T till)
@@ -1565,6 +1676,9 @@ void init_sstr(sstring *a)
         a->in = _in;                                 /// working 1
         a->getline = _getline;                       /// working 1
         a->reverse = _reverse;                       /// working 1
+        a->remove = _remove;                         /// working 1
+        a->remove_char = _remove_char;               /// working 1
+        a->remove_extra_char = _remove_extra_char;   /// working 1
         a->remove_range = _remove_range;             /// working 1
         a->intersect = _intersect;                   /// working 1
         a->distance = _distance;                     /// working 1
