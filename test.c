@@ -1,6 +1,6 @@
 #include "sstring/sstring.h"
 
-int main(int argc, char const *argv[])
+int main(int argc, char const **argv)
 {
     SSTRING(a);
     a.set_array(&a, argv, ' ', 1, argc, argc);
