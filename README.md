@@ -9,7 +9,7 @@ This header file is *cross-platform*, but tested only on Windows 10, Windows 11,
 Documents are added in the header(`"sstring/sstring.h"`) file itself.
 Be sure to suggest any changes.
 
-# Functions Defined v:7.7.0
+# Functions Defined v:7.7.3
 
 <code>set</code>
 
@@ -101,7 +101,7 @@ Be sure to suggest any changes.
 
 <code>reverse</code>
 
-<code>remove</code>
+<code>remove_range</code>
 
 <code>intersect</code>
 
