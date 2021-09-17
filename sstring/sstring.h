@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 7.7.0
+* sstring: version 7.7.3
 * 
 * MIT License
 * 
@@ -32,7 +32,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "7.7.0"
+#define sstring_version "7.7.3"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -408,7 +408,7 @@ struct __string__
      * @param till when to stop removing characters
      * @returns true if removed, otherwise false
      */
-    int (*remove)(sstring *a, SIZE_T from, SIZE_T till);
+    int (*remove_range)(sstring *a, SIZE_T from, SIZE_T till);
 
     /**
      * Assings characters to `a` between `from` and `till`.
@@ -1365,7 +1365,7 @@ void _reverse(sstring *a)
     }
 }
 
-int _remove(sstring *a, SIZE_T from, SIZE_T till)
+int _remove_range(sstring *a, SIZE_T from, SIZE_T till)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1565,7 +1565,7 @@ void init_sstr(sstring *a)
         a->in = _in;                                 /// working 1
         a->getline = _getline;                       /// working 1
         a->reverse = _reverse;                       /// working 1
-        a->remove = _remove;                         /// working 1
+        a->remove_range = _remove_range;             /// working 1
         a->intersect = _intersect;                   /// working 1
         a->distance = _distance;                     /// working 1
         a->edit_distance = _edit_distance;           /// working 1
