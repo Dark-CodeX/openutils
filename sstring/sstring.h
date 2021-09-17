@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 7.5.0
+* sstring: version 7.7.0
 * 
 * MIT License
 * 
@@ -32,7 +32,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "7.5.0"
+#define sstring_version "7.7.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -443,6 +443,23 @@ struct __string__
      */
     long double (*percentage_matched)(sstring *a, const char *src);
 
+    /**
+     * Counts the number of occurrence of `what` in `a`.
+     * @param a pointer to struct sstring
+     * @param what string to find in `a`
+     * @returns number of occurrence of `what`
+     */
+    SIZE_T(*count)
+    (sstring *a, const char *what);
+
+    /**
+     * Counts the number of occurrence of `what` in `a`.
+     * @param a pointer to struct sstring
+     * @param what character to find in `a`
+     * @returns number of occurrence of `what`
+     */
+    SIZE_T(*count_char)
+    (sstring *a, const char what);
 } __string__;
 
 #include "prototype_err.h"
@@ -1291,7 +1308,12 @@ int _in(sstring *a, int get_line, SIZE_T buff_size)
         if (get_line == false)
             scanf("%s", buff);
         else
-            scanf("%[^\n]", buff);
+        {
+            fgets(buff, buff_size, stdin);
+            SIZE_T l = strlen((const char *)buff);
+            if (l != 0 && buff[l - 1] == '\n')
+                buff[l - 1] = '\0';
+        }
         if (buff)
         {
             free(a->str.src);
@@ -1457,6 +1479,35 @@ long double _percentage_matched(sstring *a, const char *src)
     return (long double)0.0f;
 }
 
+SIZE_T _count(sstring *a, const char *what)
+{
+    if (a && a->str.src && a->str.init == true && what)
+    {
+        SIZE_T cnt = 0, len = strlen(what);
+        const char *sub = (const char *)a->str.src;
+        while ((sub = strstr(sub, what)))
+        {
+            cnt++;
+            sub += len;
+        }
+        return cnt;
+    }
+    return 0;
+}
+
+SIZE_T _count_char(sstring *a, const char what)
+{
+    if (a && a->str.src && a->str.init == true && what != '\0')
+    {
+        SIZE_T cnt = 0;
+        for (SIZE_T i = 0; a->str.src[i] != '\0'; i++)
+            if (a->str.src[i] == what)
+                cnt++;
+        return cnt;
+    }
+    return 0;
+}
+
 #define SSTRING(x) \
     sstring x;     \
     init_sstr(&x);
@@ -1519,6 +1570,8 @@ void init_sstr(sstring *a)
         a->distance = _distance;                     /// working 1
         a->edit_distance = _edit_distance;           /// working 1
         a->percentage_matched = _percentage_matched; /// working 1
+        a->count = _count;                           /// working 1
+        a->count_char = _count_char;                 /// working 1
         a->str.src = (char *)calloc(1 * sizeof(char), sizeof(char));
         a->str.init = true; // initialized properly
     }
