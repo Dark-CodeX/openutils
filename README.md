@@ -3,13 +3,13 @@
 
 This sstring struct is memory safe means that it will not cause memory leak.
 **This library have most of the functions of a high level language and some functions are not even defined in high level language like `entropy`, `to_binary`, `to_hexadecimal`, `distance` and *even more*.**
-**This library has 55 pre-defined functions.**
-This header file is *cross-platform*, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (54/55) functions passed.*
+**This library has 56 pre-defined functions.**
+This header file is *cross-platform*, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (55/56) functions passed.*
 
 Documents are added in the header(`"sstring/sstring.h"`) file itself.
 Be sure to suggest any changes.
 
-# Functions Defined v:8.0.0
+# Functions Defined v:8.1.5
 
 <code>set</code>
 
@@ -121,13 +121,13 @@ Be sure to suggest any changes.
 
 <code>count_char</code>
 
+<code>soundex</code>
+
 # BUILD AND INSTALL
 
-**Compiled using cmake.**
-
-**Cmake command =** `cmake ./CMakeLists.txt && make`
-
 **For testing use:** *`gcc -Os -O2 -s -Wall -ggdb3 -g -std=c17 -Wextra -pedantic -Wmissing-prototypes -Wstrict-prototypes -Wold-style-definition test.c -lm -o test` and then `valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt ./test "Hello World Hello!"`*
+
+## Installation
 
 To install on *arch linux* use **`PKGBUILD`**.
 
