@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 8.1.5
+* sstring: version 8.1.7
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "8.1.5"
+#define sstring_version "8.1.7"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1643,7 +1643,7 @@ char *_soundex(sstring *a)
         for (SIZE_T i = 1; i < len; ++i)
         {
             c = toupper(a->str.src[i]) - 65;
-            if (c >= 0 && c <= 25) // from ACSII table
+            if (c >= 0 && c <= 25) // from ASCII table
             {
                 if (map[(SIZE_T)c] != '\0')
                 {
@@ -1670,10 +1670,20 @@ char *_soundex(sstring *a)
     return (char *)(NULL);
 }
 
+/**
+ * Shortcut for initializing a `sstring` struct.
+ * @param x sstring name or variable name
+ */
 #define SSTRING(x) \
     sstring x;     \
     init_sstr(&x);
 
+/**
+ * Always use this function after any `sstring` declaration. 
+ * This function initializes `a`. 
+ * By the way use `SSTRING(x)` macro for shortcut.
+ * @param a pointer to struct sstring
+ */
 void init_sstr(sstring *a)
 {
     /** 
