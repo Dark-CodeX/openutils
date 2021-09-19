@@ -10,7 +10,6 @@ int main(int argc, char const **argv)
 
     printf("Enter:\t");
     y.in(&y, false, 512);
-    printf("\"%s\"", y.c_str(&y));
     char *r;
     for (SIZE_T i = 0; i < cnt; i++)
     {
@@ -28,7 +27,9 @@ int main(int argc, char const **argv)
             z = p;
         }
     }
-    printf("Best Matched: %s\nAt: %lld\n", x.getline(&x, z), z);
+    r = x.getline(&x, z);
+    printf("Best Matched: %s\nAt: %lld\n", r, z);
+    free(r);
     x.destructor(&x);
     y.destructor(&y);
     return 0;
