@@ -1335,7 +1335,12 @@ signed long long _find(sstring *a, const char *sub)
 {
     if (a && a->str.src && a->str.init == true && sub)
     {
-        char *buff = strstr((const char *)a->str.src, sub);
+        char *buff;
+#ifdef __cplusplus
+        buff = (char *)strstr((const char *)a->str.src, sub);
+#else
+        buff = strstr((const char *)a->str.src, sub);
+#endif
         if (buff != NULL)
             return (SIZE_T)strlen((const char *)a->str.src) - strlen((const char *)buff); // buff is subset of a, if buff != NULL
     }
@@ -1411,7 +1416,7 @@ SIZE_T _remove(sstring *a, const char *sub)
 {
     if (a && a->str.src && a->str.init == true && sub && sub[0] != '\0')
     {
-        char *buff = calloc((sizeof(char) * strlen((const char *)a->str.src)) + 1, sizeof(char));
+        char *buff = (char *)calloc((sizeof(char) * strlen((const char *)a->str.src)) + 1, sizeof(char));
         strcpy(buff, (const char *)a->str.src);
         SIZE_T len_s = strlen(sub), cnt = 0;
         {
