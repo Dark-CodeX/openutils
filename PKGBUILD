@@ -7,7 +7,7 @@ conflicts=('sstring')
 depends=(gcc)
 license=("MIT")
 source=("https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/sstring.h" "https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/prototype_err.h" "https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/binary.h")
-sha512sums=("a3ea4b3a88fe1106d4dd92ac694b23a5fe12bf3fac22735a2cbac974dbfe19d71f7c63e87f549f3d6ab9186c2299baf7e0523fbef982e787957542f0fbe54f05" "15d8cbe008f0205d0f2f469d7e31e1cce0a63af88c4bc58d8b02e49f90026c4794de056e566465494edd2135394920068fc016e8ea5079f7674ba13964931313" "278890ab3942a6c26e4422fbefd31e3170f30b54efe2d9e31a47ad86aa6329523f468c02a49daedee82f433fc7fa5f4f29e709232d702cc4eeda96747394d81d")
+sha512sums=("8fe4b5df23103da49fa8f5453b15e3ea6f8df112d42143bc60bbfc07906fb6fce9d5db3633f2aae402f701e41bfb02b11f3badf3137dabddbef53a370de60ec0" "f8222cbfccfcde8bd5795d8f7c06f025de72b77134e55ba8772c67490551fa16a1c779320fdcaad3abf343837346df437c1cb1acd96f005b0c45215658dd8566" "5a5638b58e9dfe8617a329f5ab8d06762cab7d98b4d9f9dde74fd37bbb353575eabf4441557b1da23ffc414d6eeafc2b5c2f36694fb5d4fd5f49c1a3ff1aea69")
 
 package() {
   echo "Memory Safe String Library in C language."
