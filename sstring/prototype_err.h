@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "prototype_err.h" under "sstring" directory
-* sstring: version 8.2.0
+* sstring: version 10.0.0
 * 
 * MIT License
 * 
@@ -87,5 +87,10 @@ long double _percentage_matched(sstring *a, const char *src);
 SIZE_T _count(sstring *a, const char *what);
 SIZE_T _count_char(sstring *a, const char what);
 char *_soundex(sstring *a);
+char *_most_used(sstring *a);
+char _most_used_char(sstring *a);
+split _split(sstring *a, const char *dl);
 
+int strcmp_void(const void *a1, const void *a2);
+int free_split(split *a);
 void init_sstr(sstring *a);
