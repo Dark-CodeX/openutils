@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 10.0.0
+* sstring: version 11.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "10.0.0"
+#define sstring_version "11.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -61,11 +61,11 @@ typedef struct __str__
  * This struct is made to store double-pointer char and it's length.
  * Use `free_split` function to free this struct.
  */
-typedef struct split
+typedef struct split_t
 {
     char **data;
     SIZE_T len;
-} split;
+} split_t;
 
 struct __string__
 {
@@ -546,7 +546,13 @@ struct __string__
      * @param dl delimiter string
      * @returns splitted string as `split` struct with it's length. 
      */
-    split (*split)(sstring *a, const char *dl);
+    split_t (*split)(sstring *a, const char *dl);
+
+    /**
+     * Sort each character using merge sort algorithm. NOTE: character are sorted in ascending order using ASCII comparison.
+     * @param a pointer to struct sstring
+     */
+    void (*sort)(sstring *a);
 } __string__;
 
 #include "prototype_err.h"
@@ -1816,11 +1822,11 @@ char _most_used_char(sstring *a)
     return '\0';
 }
 
-split _split(sstring *a, const char *dl)
+split_t _split(sstring *a, const char *dl)
 {
     if (a && a->str.src && a->str.init == true && dl && dl[0] != '\0')
     {
-        split x;
+        split_t x;
         x.data = (char **)NULL;
         x.len = 0;
         SIZE_T len = strlen((const char *)a->str.src), cnt = 0;
@@ -1853,10 +1859,71 @@ split _split(sstring *a, const char *dl)
         free(temp);
         return x;
     }
-    split x;
+    split_t x;
     x.data = (char **)NULL;
     x.len = 0;
     return x;
+}
+
+void merge(char *arr, SIZE_T l, SIZE_T m, SIZE_T r)
+{
+    SIZE_T i, j, k;
+    SIZE_T n1 = m - l + 1;
+    SIZE_T n2 = r - m;
+    SIZE_T L[n1], R[n2];
+    for (i = 0; i < n1; i++)
+        L[i] = arr[l + i];
+    for (j = 0; j < n2; j++)
+        R[j] = arr[m + 1 + j];
+    i = 0;
+    j = 0;
+    k = l;
+    while (i < n1 && j < n2)
+    {
+        if (L[i] <= R[j])
+        {
+            arr[k] = L[i];
+            i++;
+        }
+        else
+        {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+    while (i < n1)
+    {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+    while (j < n2)
+    {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+void merge_sort(char *arr, SIZE_T l, SIZE_T r)
+{
+    if (l < r)
+    {
+        SIZE_T m = l + (r - l) / 2;
+        merge_sort(arr, l, m);
+        merge_sort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}
+
+void _sort(sstring *a)
+{
+    if (a && a->str.src && a->str.init == true && a->str.src[0] != '\0')
+    {
+        SIZE_T len = strlen((const char *)a->str.src);
+        merge_sort(a->str.src, 0, len - 1);
+    }
 }
 
 /**
@@ -1864,7 +1931,7 @@ split _split(sstring *a, const char *dl)
  * @param a pointer to struct split
  * @returns true if freed, otherwise false
  */
-int free_split(split *a)
+int free_split(split_t *a)
 {
     if (a)
     {
@@ -1956,6 +2023,7 @@ void init_sstr(sstring *a)
         a->most_used = _most_used;
         a->most_used_char = _most_used_char;
         a->split = _split;
+        a->sort = _sort;
         a->str.src = (char *)calloc(1 * sizeof(char), sizeof(char));
         a->str.init = true; // initialized properly
     }
