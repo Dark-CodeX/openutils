@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "prototype_err.h" under "sstring" directory
-* sstring: version 11.0.0
+* sstring: version 12.0.0
 * 
 * MIT License
 * 
@@ -30,6 +30,8 @@
 */
 
 #pragma once
+
+void fast_strncat(char *dest, const char *src, SIZE_T size);
 
 void _set(sstring *a, const char *src);
 void _set_char(sstring *a, const char c);
