@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 11.0.0
+* sstring: version 12.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,14 +31,13 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "11.0.0"
+#define sstring_version "12.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 #include <math.h>
-#include <time.h>
 #include <ctype.h>
 
 #define true 0
@@ -92,8 +91,10 @@ struct __string__
     void (*set_upto)(sstring *a, const char *src, SIZE_T N);
 
     /** Sets random data to `a`. NOTE: length should be greater than 0, (not equal to 0). Well, no error and result if assigned 0. 
-     * NOTE: use srand function before calling this function.
-     * `srand((unsigned int)(time(NULL) * getpid() * getpid() + getpid()));`
+     * NOTE: use srand function before calling this function. 
+     * @code {.c} 
+     * srand((unsigned int)(time(NULL) * getpid() * getpid() + getpid())); 
+     * @endcode 
      * @param a pointer to struct sstring
      * @param len size of random string
      */
@@ -556,6 +557,19 @@ struct __string__
 } __string__;
 
 #include "prototype_err.h"
+
+/**
+ * Linear time complexity = O(n), where n is the length of `src`. NOTE: `dest` must have enough space for `src`.
+ * @param dest string where `src` is going to append
+ * @param src string to be appended
+ * @param size where to append `src`, make sure to keep a trace
+ */
+void fast_strncat(char *dest, const char *src, SIZE_T size)
+{
+    if (dest && src)
+        while ((dest[size++] = *src++))
+            ;
+}
 
 void _set(sstring *a, const char *src)
 {
@@ -1107,13 +1121,14 @@ void _to_binary(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        SIZE_T len = strlen((const char *)a->str.src);
+        SIZE_T len = strlen((const char *)a->str.src), size = 0;
         char *buff = (char *)calloc(((2 * (len * 8)) + 1) * sizeof(char), sizeof(char));
         for (SIZE_T i = 0; i < len; ++i)
         {
-            strncat(buff, binary_data[(SIZE_T)a->str.src[i]], 8);
+            fast_strncat(buff, binary_data[(SIZE_T)a->str.src[i]], size);
+            size += 8;
             if (i < len - 1)
-                strcat(buff, " ");
+                fast_strncat(buff, " ", size++);
         }
         free(a->str.src);
         a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
@@ -1162,21 +1177,23 @@ int _from_binary(sstring *a)
         if (valid == true)
         {
             char *buff = (char *)calloc((len / 8) + 1, sizeof(char));
-            char bin[9] = "\0";
+            char bin[9] = "\0", store[2] = "\0";
             char c = '\0';
-            for (SIZE_T i = 0, j = 0; i < len; ++i, ++j)
+            for (SIZE_T i = 0, j = 0, z = 0; i < len; ++i, ++j)
             {
                 if (a->str.src[i] == ' ')
                 {
                     c = strtol(bin, (char **)NULL, 2);
-                    strncat(buff, &c, 1);
+                    store[0] = c;
+                    fast_strncat(buff, (const char *)store, z++);
                     j = 0;
                 }
                 if (i == len - 1)
                 {
                     bin[j] = a->str.src[i]; // append last character
                     c = strtol(bin, (char **)NULL, 2);
-                    strncat(buff, &c, 1);
+                    store[0] = c;
+                    fast_strncat(buff, store, z++);
                 }
                 bin[j] = a->str.src[i];
             }
@@ -1356,21 +1373,23 @@ int _from_hexadecimal(sstring *a)
         if (valid == true)
         {
             char *buff = (char *)calloc((len) / 2 + 1, sizeof(char));
-            char bin[3] = "\0";
+            char bin[3] = "\0", store[2] = "\0";
             char c = '\0';
-            for (SIZE_T i = 0, j = 0; i < len; ++i)
+            for (SIZE_T i = 0, j = 0, z = 0; i < len; ++i)
             {
                 if (i == len - 1)
                 {
                     bin[j] = a->str.src[i];
                     c = strtol(bin, (char **)NULL, 16);
-                    strncat(buff, &c, 1);
+                    store[0] = c;
+                    fast_strncat(buff, (const char *)store, z++);
                 }
                 if (j == 2)
                 {
                     j = 0;
                     c = strtol(bin, (char **)NULL, 16);
-                    strncat(buff, &c, 1);
+                    store[0] = c;
+                    fast_strncat(buff, (const char *)store, z++);
                 }
                 bin[j] = a->str.src[i];
                 j++;
