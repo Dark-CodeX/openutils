@@ -1,5 +1,5 @@
-# SafeString
-**Safe string implementation in C.**
+# SSTRING
+**Safe string implementation in C. With huge amount of in-built functions.**
 
 This sstring struct is memory safe means that it will not cause memory leak.
 **This library have most of the functions of a high level language and some functions are not even defined in high level language like `entropy`, `to_binary`, `to_hexadecimal`, `distance` and *even more*.**
