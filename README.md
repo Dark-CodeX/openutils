@@ -1,2 +1,2 @@
-# vector
+# VECTOR
 Vector implementation in C.
