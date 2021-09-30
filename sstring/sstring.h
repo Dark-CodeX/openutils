@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 12.2.0
+* sstring: version 12.2.3
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "12.2.0"
+#define sstring_version "12.2.3"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,7 +45,7 @@ typedef struct __string__ sstring;
 typedef unsigned long long int SIZE_T;
 
 /**
- * This struct is made to store single-pointer char and it's initizaed value.
+ * This struct is made to store single-pointer char and it's initialized value.
  * Do not use this directly, instead use `sstring` struct.
  */
 typedef struct __str__
@@ -254,7 +254,7 @@ struct __string__
     void (*replace)(sstring *a, const char *old, const char *new_);
 
     /**
-     * Free `a->str.src`.
+     * Free `a->str.src`. 
      * Do not forget to use this function at the end.
      * @param a pointer to struct sstring
      * @returns true if freed successfully, otherwise return false
@@ -318,9 +318,9 @@ struct __string__
     void (*swap_case)(sstring *a);
 
     /**
-     * Returns whether `a` is initialized or not using `init_str` function.
+     * Returns whether `a` is initialized or not using `init_sstr` function.
      * @param a pointer to struct sstring
-     * @returns true if initialized, otherwise return nothing because this method have to be initialized using `init_str` function.
+     * @returns true if initialized, otherwise return nothing because this method have to be initialized using `init_sstr` function. Use `_is_initialized` function to get a result i.e, true or false.
      */
     int (*is_initialized)(sstring *a);
 
