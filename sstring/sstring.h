@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 12.0.0
+* sstring: version 12.1.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "12.0.0"
+#define sstring_version "12.1.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1449,22 +1449,25 @@ char *_getline(sstring *a, SIZE_T line)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        // check line exists
-        SIZE_T cnt = 0;
-        for (SIZE_T i = 0; a->str.src[i] != '\0'; i++)
+        SIZE_T len = strlen((const char *)a->str.src), cnt = 0;
+        char *temp = (char *)calloc((sizeof(char) * len) + 1, sizeof(char)), *tok;
+        strcpy(temp, a->str.src);
+        tok = strtok(temp, "\n");
+        while (tok)
         {
-            if (a->str.src[i] == '\n')
-                cnt++;
-            if (line == cnt)
-            {
-                if (line != 0)
-                    i++; // goto next character after hitting '\n'
-                char *buff = (char *)calloc((sizeof(char) * strlen((const char *)a->str.src)) + 1, sizeof(char));
-                for (SIZE_T k = 0; a->str.src[i] != '\n' && a->str.src[i] != '\0'; k++, i++)
-                    buff[k] = a->str.src[i];
-                return buff;
-            }
+            if (cnt++ == line)
+                break;
+            tok = strtok(NULL, "\n");
         }
+        if (cnt == 0 || tok == NULL)
+        {
+            free(temp);
+            return (char *)NULL;
+        }
+        char *res = (char *)calloc((sizeof(char) * strlen((const char *)tok)) + 1, sizeof(char));
+        strcpy(res, (const char *)tok);
+        free(temp);
+        return res;
     }
     return (char *)NULL;
 }
