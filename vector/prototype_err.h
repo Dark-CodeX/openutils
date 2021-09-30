@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/vector.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "prototype_err.h" under "vector" directory
-* vector: version 1.0.0
+* vector: version 4.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -41,5 +41,7 @@ int __is_initialized(vector *v);
 int __destructor(vector *v);
 int __swap(vector *v, SIZE_T x1, SIZE_T x2);
 int __reverse(vector *v);
+signed long long int __find(vector *v, void *data, int (*compare)(void *, void *));
+int __empty(vector *v);
 
 void vec_init(vector *v);
