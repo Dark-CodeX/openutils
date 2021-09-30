@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 12.1.0
+* sstring: version 12.2.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "12.1.0"
+#define sstring_version "12.2.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -272,9 +272,17 @@ struct __string__
      * Saves `a` at `location`.
      * @param a pointer to struct sstring
      * @param location where to save
-     * @returns true if save successfully, otherwise return false
+     * @returns true if saved successfully, otherwise return false
      */
     int (*save)(sstring *a, const char *location);
+
+    /**
+     * Appends `a` at `location`.
+     * @param a pointer to struct sstring
+     * @param location where to append
+     * @returns true if appended successfully, otherwise return false
+     */
+    int (*append_file)(sstring *a, const char *location);
 
     /**
      * Opens file at `location` and then sets `a` the contents of the file.
@@ -1028,6 +1036,21 @@ int _save(sstring *a, const char *location)
     if (a && a->str.src && location && a->str.init == true)
     {
         FILE *f = fopen(location, "wb");
+        if (f != NULL)
+        {
+            fwrite((const char *)a->str.src, strlen((const char *)a->str.src), sizeof(char), f);
+            fclose(f);
+            return true;
+        }
+    }
+    return false;
+}
+
+int _append_file(sstring *a, const char *location)
+{
+    if (a && a->str.src && location && a->str.init == true)
+    {
+        FILE *f = fopen(location, "ab");
         if (f != NULL)
         {
             fwrite((const char *)a->str.src, strlen((const char *)a->str.src), sizeof(char), f);
@@ -2012,6 +2035,7 @@ void init_sstr(sstring *a)
         a->destructor = _destructor;
         a->c_str = _c_str;
         a->save = _save;
+        a->append_file = _append_file;
         a->open = _open;
         a->clear = _clear;
         a->to_upper = _to_upper;
