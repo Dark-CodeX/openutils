@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/vector.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "vector.h" under "vector" directory
-* vector: version 1.0.0
+* vector: version 4.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __vector__ vector;
 
-#define vector_version "1.0.0"
+#define vector_version "4.0.0"
 
 #include <stdlib.h>
 
@@ -39,28 +39,125 @@ typedef struct __vector__ vector;
 #define false 1
 typedef unsigned long long int SIZE_T;
 
+/**
+ * This struct is made to store double-pointer void and it's initialized value.
+ * Do not use this directly, instead use `vector` struct.
+ */
 typedef struct _vec_
 {
+    /* Do not modify it directly (segfault), most probably and use 'v.destructor(&v);' at the end */
     void **src;
+    /* Do not change this value. */
     int init;
+    /* Do not change this value. */
     SIZE_T len;
 } _vec_;
 
 struct __vector__
 {
+    /* Do not use this. */
     _vec_ vec;
+
+    /**
+     * Appends `data` to `v` at the end.
+     * @param v pointer to struct vector
+     * @param data data to append
+     * @returns true if appended successfully, otherwise false
+     */
     int (*append)(vector *v, void *data);
+
+    /**
+     * Appends `data` to `v` at the start.
+     * @param v pointer to struct vector
+     * @param data data to append
+     * @returns true if appended successfully, otherwise false
+     */
     int (*append_start)(vector *v, void *data);
+
+    /**
+     * Returns the length of `v`.
+     * @returns length of `v`.
+     */
     SIZE_T(*length)
     (vector *v);
+
+    /**
+     * Returns data at `index` from `v`.
+     * @param v pointer to struct vector
+     * @param index index of the data
+     * @returns data at `index`
+     */
     void *(*get)(vector *v, SIZE_T index);
+
+    /**
+     * Assigns `data` at `index`.
+     * @param v pointer to struct vector
+     * @param index index of the data
+     * @param data data to assign
+     * @returns true if assigned successfully, otherwise false
+     */
     int (*set)(vector *v, SIZE_T index, void *data);
+
+    /**
+     * Removes data at `index` from `v`.
+     * @param v pointer to struct vector
+     * @param index index of the data to be removed
+     * @returns true if removed successfully, otherwise false
+     */
     int (*remove)(vector *v, SIZE_T index);
+
+    /**
+     * Clears the vector `v`.
+     * @param v pointer to struct vector
+     * @returns true if cleared successfully, otherwise false
+     */
     int (*clear)(vector *v);
+
+    /**
+     * Returns whether `v` is initialized or not using `vec_init` function.
+     * @param v pointer to struct vector
+     * @returns true if initialized successfully, otherwise return nothing because this method have to be initialized using `vec_init` function. Use `__is_initialized` function to get a result i.e, true or false.
+     */
     int (*is_initialized)(vector *v);
+
+    /**
+     * Free `v->vec.src`. Do not forget to use this function at the end.
+     * @param v pointer to struct vector
+     * @returns true if freed successfully, otherwise false
+     */
     int (*destructor)(vector *v);
+
+    /**
+     * Swaps `v[x1]` with `v[x2]` and vice-versa.
+     * @param v pointer to struct vector
+     * @param x1 data to be swaped
+     * @param x2 data to be swaped
+     * @returns true if swaped successfully, otherwise false
+     */
     int (*swap)(vector *v, SIZE_T x1, SIZE_T x2);
+
+    /**
+     * Reverse `v` means `v[0]` = `v[n]`, `v[n]` = `v[0]` and so on. NOTE: n is the length of `v`.
+     * @param v pointer to struct vector
+     * @returns true if reversed successfully, otherwise false
+     */
     int (*reverse)(vector *v);
+
+    /**
+     * Finds `data` in `v` using `compare` function.
+     * @param v pointer to struct vector
+     * @param data data to find
+     * @param compare function to be used to compare `v[i]` and `data`. NOTE: i is the iterator.
+     * @returns index of `data` if found, otherwise -1
+     */
+    signed long long int (*find)(vector *v, void *data, int (*compare)(void *, void *));
+    
+    /**
+     * Returns whether `v` is empty or not.
+     * @param v pointer to struct vector
+     * @returns true if empty, otherwise false
+     */
+    int (*empty)(vector *v);
 } __vector__;
 
 #include "prototype_err.h"
@@ -195,10 +292,39 @@ int __reverse(vector *v)
     return false;
 }
 
+signed long long int __find(vector *v, void *data, int (*compare)(void *, void *))
+{
+    if (v && data && v->vec.init == true && v->vec.src)
+    {
+        for (SIZE_T i = 0; i < v->vec.len; i++)
+            if (compare(v->vec.src[i], data) == true)
+                return (SIZE_T)i;
+    }
+    return -1;
+}
+
+int __empty(vector *v)
+{
+    if (v && v->vec.init == true && v->vec.src)
+        if (v->vec.len == 0)
+            return true;
+    return false;
+}
+
+/**
+ * Shortcut for initializing a `vector` struct.
+ * @param x vector name or variable name
+ */
 #define VECTOR(x) \
     vector x;     \
     vec_init(&x);
 
+/**
+ * Always use this function after any `vector` declaration. 
+ * This function initializes `v`. 
+ * By the way use `VECTOR(x)` macro for shortcut.
+ * @param a pointer to struct vector
+ */
 void vec_init(vector *v)
 {
     v->append = __append;
@@ -212,8 +338,10 @@ void vec_init(vector *v)
     v->destructor = __destructor;
     v->swap = __swap;
     v->reverse = __reverse;
+    v->find = __find;
+    v->empty = __empty;
 
     v->vec.src = (void **)calloc(sizeof(void *) * 1, sizeof(void *));
-    v->vec.len = 0;
-    v->vec.init = true;
+    v->vec.len = 0; // contains nothing
+    v->vec.init = true; // initialized properly
 }
