@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/vector.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "vector.h" under "vector" directory
-* vector: version 4.0.0
+* vector: version 5.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __vector__ vector;
 
-#define vector_version "4.0.0"
+#define vector_version "5.0.0"
 
 #include <stdlib.h>
 
@@ -107,7 +107,7 @@ struct __vector__
     int (*remove)(vector *v, SIZE_T index);
 
     /**
-     * Clears the vector `v`.
+     * Clears the vector `v`. NOTE: if `v`'s elements are pointers then it will not be freed, you will have to free it.
      * @param v pointer to struct vector
      * @returns true if cleared successfully, otherwise false
      */
@@ -121,7 +121,8 @@ struct __vector__
     int (*is_initialized)(vector *v);
 
     /**
-     * Free `v->vec.src`. Do not forget to use this function at the end.
+     * Free `v->vec.src`. Do not forget to use this function at the end. 
+     * NOTE: if `v`'s elements are pointers then it will not be freed, you will have to free it.
      * @param v pointer to struct vector
      * @returns true if freed successfully, otherwise false
      */
@@ -147,17 +148,35 @@ struct __vector__
      * Finds `data` in `v` using `compare` function.
      * @param v pointer to struct vector
      * @param data data to find
-     * @param compare function to be used to compare `v[i]` and `data`. NOTE: i is the iterator.
+     * @param compare function to be used to compare `v[i]` and `data`. NOTE: i is the iterator. NOTE: if `v[i]` and `data` are equal, then `compare` function should return true i.e, 0.
      * @returns index of `data` if found, otherwise -1
      */
     signed long long int (*find)(vector *v, void *data, int (*compare)(void *, void *));
-    
+
     /**
      * Returns whether `v` is empty or not.
      * @param v pointer to struct vector
      * @returns true if empty, otherwise false
      */
     int (*empty)(vector *v);
+
+    /**
+     * Copies `src` data to `dest`.
+     * @param src pointer to struct vector
+     * @param dest pointer to struct vector
+     * @returns true if copied successfully, otherwise false
+     */
+    int (*copy)(vector *src, vector *dest);
+
+    /**
+     * Compares `v` against `v1` iteratively. NOTE: length of both vectors should be same
+     * @param v pointer to struct vector
+     * @param v1 pointer to struct vector
+     * @param compare function to be used to compare `v[i]` and `data`. NOTE: i is the iterator. NOTE: if `v[i]` and `data` are equal, then `compare` function should return true i.e, 0.
+     * @returns number of data did not matched, if returned value is 0 then, `v` and `v1` are same 
+     */
+    SIZE_T(*compare)
+    (vector *v, vector *v1, int (*compare)(void *, void *));
 } __vector__;
 
 #include "prototype_err.h"
@@ -296,9 +315,18 @@ signed long long int __find(vector *v, void *data, int (*compare)(void *, void *
 {
     if (v && data && v->vec.init == true && v->vec.src)
     {
-        for (SIZE_T i = 0; i < v->vec.len; i++)
-            if (compare(v->vec.src[i], data) == true)
-                return (SIZE_T)i;
+        if (compare != NULL)
+        {
+            for (SIZE_T i = 0; i < v->vec.len; i++)
+                if (compare(v->vec.src[i], data) == true)
+                    return (SIZE_T)i;
+        }
+        else
+        {
+            for (SIZE_T i = 0; i < v->vec.len; i++)
+                if (v->vec.src[i] == data)
+                    return (SIZE_T)i;
+        }
     }
     return -1;
 }
@@ -309,6 +337,44 @@ int __empty(vector *v)
         if (v->vec.len == 0)
             return true;
     return false;
+}
+
+int __copy(vector *src, vector *dest)
+{
+    if (src && src->vec.init == true && src->vec.src && dest && dest->vec.init == true && dest->vec.src)
+    {
+        free(dest->vec.src);
+        dest->vec.src = (void **)calloc(sizeof(void *) * src->vec.len, sizeof(void *));
+        for (SIZE_T i = 0; i < src->vec.len; i++)
+        {
+            dest->vec.src[i] = src->vec.src[i];
+            dest->vec.len++;
+        }
+        return true;
+    }
+    return false;
+}
+
+SIZE_T __compare(vector *v, vector *v1, int (*compare)(void *, void *))
+{
+    if (v && v->vec.init == true && v->vec.src && v1 && v1->vec.init == true && v1->vec.src && (v->vec.len == v1->vec.len))
+    {
+        SIZE_T n_cnt = 0;
+        if (compare != NULL)
+        {
+            for (SIZE_T i = 0; i < v->vec.len; i++)
+                if (compare(v->vec.src[i], v1->vec.src[i]) != true)
+                    n_cnt++;
+        }
+        else
+        {
+            for (SIZE_T i = 0; i < v->vec.len; i++)
+                if (v->vec.src[i] != v1->vec.src[i])
+                    n_cnt++;
+        }
+        return n_cnt;
+    }
+    return v->vec.len;
 }
 
 /**
@@ -340,8 +406,10 @@ void vec_init(vector *v)
     v->reverse = __reverse;
     v->find = __find;
     v->empty = __empty;
+    v->copy = __copy;
+    v->compare = __compare;
 
     v->vec.src = (void **)calloc(sizeof(void *) * 1, sizeof(void *));
-    v->vec.len = 0; // contains nothing
+    v->vec.len = 0;     // contains nothing
     v->vec.init = true; // initialized properly
 }
