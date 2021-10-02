@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 12.2.3
+* sstring: version 15.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "12.2.3"
+#define sstring_version "15.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -562,6 +562,41 @@ struct __string__
      * @param a pointer to struct sstring
      */
     void (*sort)(sstring *a);
+
+    /**
+     * Opens file at `location` for binary I/O.
+     * @param a pointer to struct sstring
+     * @param location file to be opened
+     * @returns size of the file in bytes
+     */
+    SIZE_T(*open_binary)
+    (sstring *a, const char *location);
+
+    /**
+     * Saves the content of `a` to the file at `location`.
+     * @param a pointer to struct sstring
+     * @param location file to be saved
+     * @param len length of the data (returned value of `open_binary` function)
+     * @returns true if saved, otherwise false
+     */
+    int (*save_binary)(sstring *a, const char *location, SIZE_T len);
+
+    /**
+     * Appends the content of `a` to the file at `location`.
+     * @param a pointer to struct sstring
+     * @param location file to be appended
+     * @param len length of the data (returned value of `open_binary` function)
+     * @returns true if appended, otherwise false
+     */
+    int (*append_binary)(sstring *a, const char *location, SIZE_T len);
+
+    /**
+     * Prints `a` till `len`.
+     * @param a pointer to struct sstring
+     * @param len length of the data (returned value of `open_binary` function)
+     * @returns true if appended, otherwise false
+     */
+    int (*print_binary)(sstring *a, SIZE_T len);
 } __string__;
 
 #include "prototype_err.h"
@@ -1019,6 +1054,7 @@ int _destructor(sstring *a)
     if (a && a->str.src && a->str.init == true)
     {
         free(a->str.src);
+        a->str.init = false;
         return true;
     }
     return false;
@@ -1971,6 +2007,76 @@ void _sort(sstring *a)
     }
 }
 
+SIZE_T _open_binary(sstring *a, const char *location)
+{
+    if (a && a->str.src && a->str.init == true && location)
+    {
+        FILE *f = fopen(location, "rb");
+        if (f != NULL)
+        {
+            fseek(f, 0, SEEK_END);
+            SIZE_T len = ftell(f);
+            fseek(f, 0, SEEK_SET);
+            unsigned char *_temp_ = (unsigned char *)calloc((sizeof(unsigned char) * len) + 1, sizeof(unsigned char));
+            free(a->str.src);
+            a->str.src = (char *)calloc(len + 1, sizeof(char));
+            fread(_temp_, sizeof(unsigned char), len, f);
+            memcpy(a->str.src, (const void *)_temp_, len);
+            fclose(f);
+            free(_temp_);
+            return len;
+        }
+    }
+    return 0;
+}
+
+int _save_binary(sstring *a, const char *location, SIZE_T len)
+{
+    if (a && a->str.src && a->str.init == true && location)
+    {
+        unsigned char *_temp_ = (unsigned char *)calloc((sizeof(unsigned char) * len) + 1, sizeof(unsigned char));
+        memcpy(_temp_, (const void *)a->str.src, len);
+        FILE *f = fopen(location, "wb");
+        if (f != NULL)
+        {
+            fwrite((unsigned char *)_temp_, len, sizeof(unsigned char), f);
+            fclose(f);
+        }
+        free(_temp_);
+        return true;
+    }
+    return false;
+}
+
+int _append_binary(sstring *a, const char *location, SIZE_T len)
+{
+    if (a && a->str.src && a->str.init == true && location)
+    {
+        unsigned char *_temp_ = (unsigned char *)calloc((sizeof(unsigned char) * len) + 1, sizeof(unsigned char));
+        memcpy(_temp_, (const void *)a->str.src, len);
+        FILE *f = fopen(location, "ab");
+        if (f != NULL)
+        {
+            fwrite((unsigned char *)_temp_, len, sizeof(unsigned char), f);
+            fclose(f);
+        }
+        free(_temp_);
+        return true;
+    }
+    return false;
+}
+
+int _print_binary(sstring *a, SIZE_T len)
+{
+    if (a && a->str.src && a->str.init == true)
+    {
+        while (len != 0)
+            printf("%c", a->str.src[len--]);
+        return true;
+    }
+    return false;
+}
+
 /**
  * Frees `a` carefully. Always use this function when there is not use of `a` or before your program exits.
  * @param a pointer to struct split
@@ -2070,7 +2176,12 @@ void init_sstr(sstring *a)
         a->most_used_char = _most_used_char;
         a->split = _split;
         a->sort = _sort;
+        a->open_binary = _open_binary;
+        a->save_binary = _save_binary;
+        a->append_binary = _append_binary;
+        a->print_binary = _print_binary;
+
         a->str.src = (char *)calloc(1 * sizeof(char), sizeof(char));
-        a->str.init = true; // initialized properly
+        a->str.init = true; // initialized properly}
     }
 }
