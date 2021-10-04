@@ -1,18 +1,17 @@
 pkgname="vector"
-pkgver="5.0.0"
-pkgrel="1"
+pkgver="10.0.0"
+pkgrel="2"
 pkgdesc="Vectors in C language."
 arch=("x86_64" "i686")
 conflicts=('vector')
 depends=(gcc)
 license=("MIT")
-source=("https://raw.githubusercontent.com/Dark-CodeX/vector/main/vector/vector.h" "https://raw.githubusercontent.com/Dark-CodeX/vector/main/vector/prototype_err.h")
-sha512sums=("cc71352125ff0e7d231b414c1a71c4b7797f1bc00072b90f2575a89d9cdb3d2744addbb6742b46c869a2506af368ebe00459f4dcfbe3f4f8f55cfc62884fd7f0" "e12d8144483702c7d663705158133762d82f0f26df4130e81d139ea65747607e7c907d97b692c285668bb7afee5c9a675078417f72c2423f9ee9bb9f41cb04f3")
+source=("https://raw.githubusercontent.com/Dark-CodeX/vector/main/vector/vector.h")
+sha512sums=("4bf32c4ba168b38756eb965bd6dc2bf72e3308088f81c0b06cc62fec6d13ea36c740d172f88b58d017880e693bbd7b27bd2437a9db556c76d573915543db365d")
 
 package() {
   echo "Vectors in C language."
   mkdir -p "${pkgdir}/usr/include/vector"
   cp "${srcdir}/vector.h" "${pkgdir}/usr/include/vector/vector.h"
-  cp "${srcdir}/prototype_err.h" "${pkgdir}/usr/include/vector/prototype_err.h"
   echo "Done!"
 }
