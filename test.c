@@ -3,12 +3,11 @@
 
 int main(int argc, char const **argv)
 {
-    VECTOR(v);
+    vector(x, char *);
     for (SIZE_T i = 1; i < (SIZE_T)argc; i++)
-        v.append(&v, (void *)argv[i]);
-    for (SIZE_T i = 0; i < v.length(&v); i++)
-        printf("v[%llu] = %s\n", i, (const char *)v.get(&v, i));
-    printf("Length = %llu\n", v.length(&v));
-    v.destructor(&v);
+        vector_add(x, (char *)argv[i]);
+    for (SIZE_T i = 0; i < x.length; i++)
+        printf("'%s'\n", vector_get(x, i));
+    vector_destructor(x);
     return 0;
 }
