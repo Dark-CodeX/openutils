@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 15.5.0
+* sstring: version 16.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "15.5.0"
+#define sstring_version "16.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -589,6 +589,16 @@ struct __string__
      * @returns true if appended, otherwise false
      */
     int (*append_binary)(sstring *a, const char *location, SIZE_T len);
+
+    /**
+     * Appends the content of `data` to `a`.
+     * @param a pointer to struct sstring
+     * @param data data to add to `a`
+     * @param len length of the `a` (returned value of `open_binary` function)
+     * @returns size of data written in bytes, if returned value is 0 then no data is written
+     */
+    SIZE_T (*add_binary)
+    (sstring *a, const char *data, SIZE_T len);
 
     /**
      * Prints `a` till `len`.
@@ -2065,6 +2075,18 @@ int _append_binary(sstring *a, const char *location, SIZE_T len)
     return false;
 }
 
+SIZE_T _add_binary(sstring *a, const char *data, SIZE_T len)
+{
+    if (a && a->str.src && a->str.init == true && data)
+    {
+        SIZE_T size = len;
+        a->str.src = (char *)realloc(a->str.src, (sizeof(char) * (len + strlen(data) + 1)));
+        fast_strncat(a->str.src, data, &size);
+        return size - len; // total data written
+    }
+    return 0;
+}
+
 int _print_binary(sstring *a, SIZE_T len)
 {
     if (a && a->str.src && a->str.init == true)
@@ -2178,6 +2200,7 @@ int init_sstr(sstring *a)
         a->open_binary = _open_binary;
         a->save_binary = _save_binary;
         a->append_binary = _append_binary;
+        a->add_binary = _add_binary;
         a->print_binary = _print_binary;
 
         a->str.src = (char *)calloc(1 * sizeof(char), sizeof(char));
