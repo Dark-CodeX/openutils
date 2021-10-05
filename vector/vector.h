@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/vector.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "vector.h" under "vector" directory
-* vector version: 10.0.0
+* vector version: 10.1.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -35,6 +35,8 @@
 #define true 0
 #define false 1
 typedef unsigned long long int SIZE_T;
+
+#define vector_version "10.1.0"
 
 /**
 * Appends `data` to `vec` at the end.
@@ -75,14 +77,14 @@ typedef unsigned long long int SIZE_T;
 
 /**
 * Returns whether `vec` is empty or not.
-* @param vec pointer vector
+* @param vec vector
 * @returns true if empty, otherwise false
 */
 #define vector_empty(vec) (vec.src && vec.init == true && vec.length == 0) ? true : false
 
 /**
 * Clears `vec` (removes all the data). NOTE: if `v`'s elements are pointers then it will not be freed, you will have to free it.
-* @param vec pointer vector
+* @param vec vector
 */
 #define vector_clear(vec)                                       \
     if (vec.init == true && vec.src)                            \
@@ -141,7 +143,7 @@ typedef unsigned long long int SIZE_T;
 
 /**
 * Reverse `vec` means `vec[0]` = `vec[n]`, `vec[n]` = `vec[0]` and so on. NOTE: n is the length of `vec`.
-* @param vec pointer to struct vector
+* @param vec vector
 * @param type data type eg. int, char *, long, float
 */
 #define vector_reverse(vec, type)                     \
