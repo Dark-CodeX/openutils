@@ -12,7 +12,7 @@ int main(int argc, char const *argv[])
             x.destructor(&x);
             return -1;
         }
-        if (argv[2] != "-o")
+        if (strcmp(argv[2], "-o") != true)
         {
             printf("not found `-o` instead found `%s`.\n", argv[2]);
             x.destructor(&x);
@@ -32,6 +32,8 @@ int main(int argc, char const *argv[])
         printf("File saved at `%s`.\n", argv[3]);
         x.destructor(&x);
         y.destructor(&y);
+        return 0;
     }
-    return 0;
+    printf("invalid or empty input\n");
+    return -1;
 }
