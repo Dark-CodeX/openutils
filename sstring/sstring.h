@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 15.0.1
+* sstring: version 15.5.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "15.0.1"
+#define sstring_version "15.5.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -605,13 +605,13 @@ struct __string__
  * Linear time complexity = O(n), where n is the length of `src`. NOTE: `dest` must have enough space for `src`.
  * @param dest string where `src` is going to append
  * @param src string to be appended
- * @param size where to append `src`, make sure to keep a trace
+ * @param size where to append `src`, pass your variable like &size);
  */
-void fast_strncat(char *dest, const char *src, SIZE_T size)
+void fast_strncat(char *dest, const char *src, SIZE_T *size)
 {
     if (dest && src)
-        while ((dest[size++] = *src++))
-            ;
+        while ((dest[*size] = *src++))
+            *size += 1;
 }
 
 void _set(sstring *a, const char *src)
@@ -1184,10 +1184,9 @@ void _to_binary(sstring *a)
         char *buff = (char *)calloc(((2 * (len * 8)) + 1) * sizeof(char), sizeof(char));
         for (SIZE_T i = 0; i < len; ++i)
         {
-            fast_strncat(buff, binary_data[(SIZE_T)a->str.src[i]], size);
-            size += 8;
+            fast_strncat(buff, binary_data[(SIZE_T)a->str.src[i]], &size);
             if (i < len - 1)
-                fast_strncat(buff, " ", size++);
+                fast_strncat(buff, " ", &size);
         }
         free(a->str.src);
         a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
@@ -1244,7 +1243,7 @@ int _from_binary(sstring *a)
                 {
                     c = strtol(bin, (char **)NULL, 2);
                     store[0] = c;
-                    fast_strncat(buff, (const char *)store, z++);
+                    fast_strncat(buff, (const char *)store, &z);
                     j = 0;
                 }
                 if (i == len - 1)
@@ -1252,7 +1251,7 @@ int _from_binary(sstring *a)
                     bin[j] = a->str.src[i]; // append last character
                     c = strtol(bin, (char **)NULL, 2);
                     store[0] = c;
-                    fast_strncat(buff, store, z++);
+                    fast_strncat(buff, store, &z);
                 }
                 bin[j] = a->str.src[i];
             }
@@ -1441,14 +1440,14 @@ int _from_hexadecimal(sstring *a)
                     bin[j] = a->str.src[i];
                     c = strtol(bin, (char **)NULL, 16);
                     store[0] = c;
-                    fast_strncat(buff, (const char *)store, z++);
+                    fast_strncat(buff, (const char *)store, &z);
                 }
                 if (j == 2)
                 {
                     j = 0;
                     c = strtol(bin, (char **)NULL, 16);
                     store[0] = c;
-                    fast_strncat(buff, (const char *)store, z++);
+                    fast_strncat(buff, (const char *)store, &z);
                 }
                 bin[j] = a->str.src[i];
                 j++;
