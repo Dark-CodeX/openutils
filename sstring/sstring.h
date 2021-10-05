@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 15.0.0
+* sstring: version 15.0.1
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "15.0.0"
+#define sstring_version "15.0.1"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -2111,7 +2111,7 @@ int free_split(split_t *a)
  * By the way use `SSTRING(x)` macro for shortcut.
  * @param a pointer to struct sstring
  */
-void init_sstr(sstring *a)
+int init_sstr(sstring *a)
 {
     if (a)
     {
@@ -2182,6 +2182,8 @@ void init_sstr(sstring *a)
         a->print_binary = _print_binary;
 
         a->str.src = (char *)calloc(1 * sizeof(char), sizeof(char));
-        a->str.init = true; // initialized properly}
+        a->str.init = true; // initialized properly
+        return true;
     }
+    return false;
 }
