@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/vector.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "vector.h" under "vector" directory
-* vector version: 10.1.0
+* vector version: 11.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -36,18 +36,24 @@
 #define false 1
 typedef unsigned long long int SIZE_T;
 
-#define vector_version "10.1.0"
+#define vector_version "11.0.0"
 
 /**
 * Appends `data` to `vec` at the end.
 * @param vec vector
 * @param data data to append
 */
-#define vector_add(vec, data)                                                   \
-    if (vec.init == true && vec.src && sizeof(vec.def) == sizeof(data))         \
-    {                                                                           \
-        vec.src = realloc(vec.src, (vec.length * sizeof(data)) + sizeof(data)); \
-        vec.src[vec.length++] = data;                                           \
+#define vector_add(vec, data)                                                         \
+    if (vec.init == true && vec.src && sizeof(vec.def) == sizeof(data))               \
+    {                                                                                 \
+        if (vec.length == vec.capacity)                                               \
+        {                                                                             \
+            vec.capacity += 8;                                                        \
+            vec.src = realloc(vec.src, (vec.capacity * sizeof(data)) + sizeof(data)); \
+            vec.src[vec.length++] = data;                                             \
+        }                                                                             \
+        else                                                                          \
+            vec.src[vec.length++] = data;                                             \
     }
 
 /**
@@ -56,17 +62,16 @@ typedef unsigned long long int SIZE_T;
 * @param index index of the data to be removed
 * @param type data type eg. int, char *, long, float
 */
-#define vector_remove(vec, index, type)                                               \
-    if (vec.init == true && vec.src && index < vec.length)                            \
-    {                                                                                 \
-        vec.src[index] = vec.def;                                                     \
-        for (SIZE_T i = index; i < vec.length - 1; i++)                               \
-        {                                                                             \
-            vec.src[i] = vec.src[i + 1];                                              \
-            vec.src[i + 1] = vec.def;                                                 \
-        }                                                                             \
-        vec.src = realloc(vec.src, (vec.length * sizeof(vec.def)) - sizeof(vec.def)); \
-        vec.length--;                                                                 \
+#define vector_remove(vec, index, type)                                                   \
+    if (vec.init == true && vec.src && index < vec.length)                                \
+    {                                                                                     \
+        vec.src[index] = vec.def;                                                         \
+        for (SIZE_T i = index; i < vec.length - 1; i++)                                   \
+        {                                                                                 \
+            vec.src[i] = vec.src[i + 1];                                                  \
+            vec.src[i + 1] = vec.def;                                                     \
+        }                                                                                 \
+        vec.length--;                                                                     \
     }
 
 /**
@@ -92,6 +97,7 @@ typedef unsigned long long int SIZE_T;
         free(vec.src);                                          \
         vec.src = calloc(sizeof(vec.def) * 1, sizeof(vec.def)); \
         vec.length = 0;                                         \
+        vec.capacity = 8;                                       \
     }
 
 /**
@@ -205,19 +211,19 @@ typedef unsigned long long int SIZE_T;
 * @param vec2 vector
 * @param result if assigned value is 0 then, `vec` and `vec2` are same. NOTE: `result` data type should be `int`
 */
-#define vector_compare(vec, vec2, result)                                                                                                                                                         \
+#define vector_compare(vec, vec2, result)                                                                                                                                      \
     if (sizeof(result) == sizeof(int) && vec.init == true && vec.src && vec2.init == true && vec2.src && (vec.length == vec2.length) && (sizeof(vec.def) == sizeof(vec2.def))) \
-    {                                                                                                                                                                                             \
-        for (SIZE_T i = 0; i < vec.length; i++)                                                                                                                                                   \
-            if (vec.src[i] != vec2.src[i])                                                                                                                                                        \
-            {                                                                                                                                                                                     \
-                result = false;                                                                                                                                                                   \
-                break;                                                                                                                                                                            \
-            }                                                                                                                                                                                     \
-            else                                                                                                                                                                                  \
-                result = true;                                                                                                                                                                    \
-    }                                                                                                                                                                                             \
-    else                                                                                                                                                                                          \
+    {                                                                                                                                                                          \
+        for (SIZE_T i = 0; i < vec.length; i++)                                                                                                                                \
+            if (vec.src[i] != vec2.src[i])                                                                                                                                     \
+            {                                                                                                                                                                  \
+                result = false;                                                                                                                                                \
+                break;                                                                                                                                                         \
+            }                                                                                                                                                                  \
+            else                                                                                                                                                               \
+                result = true;                                                                                                                                                 \
+    }                                                                                                                                                                          \
+    else                                                                                                                                                                       \
         result = vec.length;
 
 /**
@@ -225,15 +231,17 @@ typedef unsigned long long int SIZE_T;
 * @param var_name vector name or variable name
 * @param type data type eg. int, char *, long, float
 */
-#define vector(var_name, type)                                     \
-    struct var_name                                                \
-    {                                                              \
-        type *src;                                                 \
-        SIZE_T length;                                             \
-        int init;                                                  \
-        type def;                                                  \
-    } var_name;                                                    \
-    var_name.src = (type *)calloc(sizeof(type) * 1, sizeof(type)); \
-    var_name.def = var_name.src[0];                                \
-    var_name.length = 0;                                           \
+#define vector(var_name, type)                                                     \
+    struct var_name                                                                \
+    {                                                                              \
+        type *src;                                                                 \
+        SIZE_T length;                                                             \
+        SIZE_T capacity;                                                           \
+        int init;                                                                  \
+        type def;                                                                  \
+    } var_name;                                                                    \
+    var_name.capacity = 8;                                                         \
+    var_name.src = (type *)calloc(sizeof(type) * var_name.capacity, sizeof(type)); \
+    var_name.def = var_name.src[0];                                                \
+    var_name.length = 0;                                                           \
     var_name.init = true;
