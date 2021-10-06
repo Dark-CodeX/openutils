@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 16.0.0
+* sstring: version 17.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "16.0.0"
+#define sstring_version "17.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -597,7 +597,7 @@ struct __string__
      * @param len length of the `a` (returned value of `open_binary` function)
      * @returns size of data written in bytes, if returned value is 0 then no data is written
      */
-    SIZE_T (*add_binary)
+    SIZE_T(*add_binary)
     (sstring *a, const char *data, SIZE_T len);
 
     /**
@@ -646,11 +646,11 @@ void _set_char(sstring *a, const char c)
 
 void _set_upto(sstring *a, const char *src, SIZE_T N)
 {
-    if (a && src && a->str.init == true && a->str.src && N <= strlen(src))
+    SIZE_T l = 0;
+    if (a && src && a->str.init == true && a->str.src && N <= (l = strlen(src)))
     {
         free(a->str.src);
-        SIZE_T l = strlen(src);
-        a->str.src = (char *)calloc(((sizeof(char) * l) + 1) + (-l + N), sizeof(char));
+        a->str.src = (char *)calloc(sizeof(char) * (N + 1), sizeof(char));
         strncpy(a->str.src, src, N);
     }
 }
@@ -698,15 +698,16 @@ void _set_array(sstring *a, const char *src[], char char_between, SIZE_T from, S
         {
             if (char_between != '\0')
                 cnt_t += len + 1;
-            char *buff = (char *)calloc((sizeof(char) * cnt_t) + 1, sizeof(char));
+            char *buff = (char *)calloc((sizeof(char) * cnt_t) + 1, sizeof(char)), bw[2] = "\0\0";
+            SIZE_T track = 0;
             for (SIZE_T i = from; i < till; i++)
             {
-                strcat(buff, src[i]);
-                if (i < till - 1 && char_between != '\0')
-                    strncat(buff, &char_between, 1);
+                fast_strncat(buff, src[i], &track);
+                if (i < till - 1 && (bw[0] = char_between) != '\0')
+                    fast_strncat(buff, (const char *)bw, &track);
             }
             free(a->str.src);
-            a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
+            a->str.src = (char *)calloc(sizeof(char) * (track + 1), sizeof(char));
             strcpy(a->str.src, (const char *)buff);
             free(buff);
         }
@@ -724,7 +725,8 @@ void _append(sstring *a, const char *src)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
-        if (strlen((const char *)a->str.src) == 0) // string is empty
+        SIZE_T len = 0;
+        if ((len = strlen((const char *)a->str.src)) == 0) // string is empty
         {
             free(a->str.src); // used calloc in `init_str` function
             a->str.src = (char *)calloc(sizeof(char) * (strlen(src) + 1), sizeof(char));
@@ -732,8 +734,8 @@ void _append(sstring *a, const char *src)
         }
         else
         {
-            a->str.src = (char *)realloc(a->str.src, sizeof(char) * (strlen(src) + strlen(a->str.src) + 1));
-            strcat(a->str.src, src);
+            a->str.src = (char *)realloc(a->str.src, sizeof(char) * (strlen(src) + len + 1));
+            fast_strncat(a->str.src, src, &len);
         }
     }
 }
@@ -742,7 +744,8 @@ void _append_char(sstring *a, const char c)
 {
     if (a && c != '\0' && a->str.init == true && a->str.src)
     {
-        if (strlen((const char *)a->str.src) == 0) // string is empty
+        SIZE_T len = 0;
+        if ((len = strlen((const char *)a->str.src)) == 0) // string is empty
         {
             free(a->str.src); // used calloc in `init_str` function
             a->str.src = (char *)calloc(sizeof(char) * 2, sizeof(char));
@@ -750,27 +753,33 @@ void _append_char(sstring *a, const char c)
         }
         else
         {
-            a->str.src = (char *)realloc(a->str.src, (sizeof(char) * 2) + (strlen(a->str.src) + 1));
-            strncat(a->str.src, &c, 1);
+            a->str.src = (char *)realloc(a->str.src, (sizeof(char) * 2) + (len + 1));
+            char __dat[2] = "\0\0";
+            __dat[0] = c;
+            fast_strncat(a->str.src, (const char *)__dat, &len);
         }
     }
 }
 
 void _append_upto(sstring *a, const char *src, SIZE_T N)
 {
-    if (a && src && a->str.init == true && a->str.src && N <= strlen(src))
+    SIZE_T l = 0;
+    if (a && src && a->str.init == true && a->str.src && N <= (l = strlen(src)) && N != 0)
     {
-        SIZE_T l = strlen(src);
-        if (strlen((const char *)a->str.src) == 0) // string is empty
+        SIZE_T len = 0;
+        if ((len = strlen((const char *)a->str.src)) == 0) // string is empty
         {
             free(a->str.src); // used calloc in `init_str` function
-            a->str.src = (char *)calloc(((sizeof(char) * l) + 1) + (-l + N), sizeof(char));
+            a->str.src = (char *)calloc(sizeof(char) * (N + 1), sizeof(char));
             strncpy(a->str.src, src, N); // copy `src` to `a`.
         }
         else
         {
-            a->str.src = (char *)realloc(a->str.src, sizeof(char) * (l + (-l + N)) + strlen(a->str.src) + 1);
-            strncat(a->str.src, src, N);
+            a->str.src = (char *)realloc(a->str.src, sizeof(char) * (N + len + 1));
+            char *buff = (char *)calloc(sizeof(char) * (N + 1), sizeof(char));
+            strncpy(buff, src, N);
+            fast_strncat(a->str.src, (const char *)buff, &len);
+            free(buff);
         }
     }
 }
@@ -779,7 +788,8 @@ void _append_start(sstring *a, const char *src)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
-        if (strlen((const char *)a->str.src) == 0) // string is empty
+        SIZE_T len = 0;
+        if ((len = strlen((const char *)a->str.src)) == 0) // string is empty
         {
             free(a->str.src); // used calloc in `init_str` function
             a->str.src = (char *)calloc(sizeof(char) * (strlen(src) + 1), sizeof(char));
@@ -787,12 +797,14 @@ void _append_start(sstring *a, const char *src)
         }
         else
         {
-            char *buff = (char *)calloc(sizeof(char) * (strlen(src) + strlen(a->str.src) + 1), sizeof(char));
-            strcpy(buff, src);
-            strcat(buff, (const char *)a->str.src);
+            char *buff = (char *)calloc(sizeof(char) * (strlen(src) + len + 1), sizeof(char));
+            SIZE_T track = 0;
+            fast_strncat(buff, src, &track);
+            fast_strncat(buff, (const char *)a->str.src, &track);
             free(a->str.src);
-            a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
-            strcpy(a->str.src, (const char *)buff);
+            a->str.src = (char *)calloc((sizeof(char) * track) + 1, sizeof(char));
+            track = 0;
+            fast_strncat(a->str.src, (const char *)buff, &track);
             free(buff);
         }
     }
@@ -802,7 +814,8 @@ void _append_start_char(sstring *a, const char c)
 {
     if (a && c != '\0' && a->str.init == true && a->str.src)
     {
-        if (strlen((const char *)a->str.src) == 0) // string is empty
+        SIZE_T len = 0;
+        if ((len = strlen((const char *)a->str.src)) == 0) // string is empty
         {
             free(a->str.src); // used calloc in `init_str` function
             a->str.src = (char *)calloc(sizeof(char) * 2, sizeof(char));
@@ -810,12 +823,16 @@ void _append_start_char(sstring *a, const char c)
         }
         else
         {
-            char *buff = (char *)calloc((sizeof(char) * 2) + (strlen(a->str.src) + 1), sizeof(char));
-            strncpy(buff, &c, 1);
-            strcat(buff, (const char *)a->str.src);
+            char ___c[2] = "\0\0";
+            ___c[0] = c;
+            SIZE_T track = 0;
+            char *buff = (char *)calloc((sizeof(char) * 2) + (len + 1), sizeof(char));
+            fast_strncat(buff, (const char *)___c, &track);
+            fast_strncat(buff, (const char *)a->str.src, &track);
             free(a->str.src);
-            a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
-            strcpy(a->str.src, (const char *)buff);
+            a->str.src = (char *)calloc((sizeof(char) * track) + 1, sizeof(char));
+            track = 0;
+            fast_strncat(a->str.src, (const char *)buff, &track);
             free(buff);
         }
     }
@@ -823,23 +840,26 @@ void _append_start_char(sstring *a, const char c)
 
 void _append_start_upto(sstring *a, const char *src, SIZE_T N)
 {
-    if (a && src && a->str.init == true && a->str.src && N <= strlen(src))
+    SIZE_T l = 0;
+    if (a && src && a->str.init == true && a->str.src && N <= (l = strlen(src)) && N != 0)
     {
-        SIZE_T l = strlen(src);
-        if (strlen((const char *)a->str.src) == 0) // string is empty
+        SIZE_T len = 0;
+        if ((len = strlen((const char *)a->str.src)) == 0) // string is empty
         {
             free(a->str.src); // used calloc in `init_str` function
-            a->str.src = (char *)calloc(((sizeof(char) * l) + 1) + (-l + N), sizeof(char));
+            a->str.src = (char *)calloc(sizeof(char) * (N + 1), sizeof(char));
             strncpy(a->str.src, src, N); // copy `src` to `a`.
         }
         else
         {
-            char *buff = (char *)calloc((sizeof(char) * (l + (-l + N)) + strlen(a->str.src)) + 1, sizeof(char));
+            char *buff = (char *)calloc((sizeof(char) * (len + N + 1)), sizeof(char));
             strncpy(buff, src, N);
-            strcat(buff, (const char *)a->str.src);
+            SIZE_T track = N;
+            fast_strncat(buff, (const char *)a->str.src, &track);
             free(a->str.src);
-            a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
-            strcpy(a->str.src, (const char *)buff);
+            a->str.src = (char *)calloc((sizeof(char) * track) + 1, sizeof(char));
+            track = 0;
+            fast_strncat(a->str.src, (const char *)buff, &track);
             free(buff);
         }
     }
@@ -873,19 +893,22 @@ void _append_array(sstring *a, const char *src[], char char_between, SIZE_T from
         {
             if (char_between != '\0')
                 cnt_t += len + 1;
-            char *buff = (char *)calloc((sizeof(char) * cnt_t) + strlen((const char *)a->str.src) + 1, sizeof(char));
-            strcpy(buff, (const char *)a->str.src);
-            if (strlen((const char *)a->str.src) > 0 && char_between != '\0')
-                strncat(buff, &char_between, 1);
+            SIZE_T slen = strlen((const char *)a->str.src), track = 0;
+            char *buff = (char *)calloc((sizeof(char) * cnt_t) + slen + 1, sizeof(char)), bw[2] = "\0\0";
+            fast_strncat(buff, (const char *)a->str.src, &track);
+
+            if (slen > 0 && (bw[0] = char_between) != '\0')
+                fast_strncat(buff, (const char *)bw, &track);
             for (SIZE_T i = from; i < till; i++)
             {
-                strcat(buff, src[i]);
-                if (i < till - 1 && char_between != '\0')
-                    strncat(buff, &char_between, 1);
+                fast_strncat(buff, src[i], &track);
+                if (i < till - 1 && (bw[0] = char_between) != '\0')
+                    fast_strncat(buff, (const char *)bw, &track);
             }
             free(a->str.src);
-            a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
-            strcpy(a->str.src, (const char *)buff);
+            a->str.src = (char *)calloc(sizeof(char) * (track + 1), sizeof(char));
+            track = 0;
+            fast_strncat(a->str.src, (const char *)buff, &track);
             free(buff);
         }
     }
@@ -919,19 +942,21 @@ void _append_start_array(sstring *a, const char *src[], char char_between, SIZE_
         {
             if (char_between != '\0')
                 cnt_t += len + 1;
-            char *buff = (char *)calloc((sizeof(char) * cnt_t) + strlen((const char *)a->str.src) + 1, sizeof(char));
+            SIZE_T slen = strlen((const char *)a->str.src), track = 0;
+            char *buff = (char *)calloc((sizeof(char) * cnt_t) + slen + 1, sizeof(char)), bw[2] = "\0\0";
             for (SIZE_T i = from; i < till; i++)
             {
-                strcat(buff, src[i]);
-                if (i < till - 1 && char_between != '\0')
-                    strncat(buff, &char_between, 1);
+                fast_strncat(buff, src[i], &track);
+                if (i < till - 1 && (bw[0] = char_between) != '\0')
+                    fast_strncat(buff, (const char *)bw, &track);
             }
-            if (cnt_t > 2 && char_between != '\0')
-                strncat(buff, &char_between, 1);
-            strcat(buff, (const char *)a->str.src);
+            if (cnt_t > 2 && (bw[0] = char_between) != '\0')
+                fast_strncat(buff, (const char *)bw, &track);
+            fast_strncat(buff, (const char *)a->str.src, &track);
             free(a->str.src);
-            a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
-            strcpy(a->str.src, (const char *)buff);
+            a->str.src = (char *)calloc(sizeof(char) * (track + 1), sizeof(char));
+            track = 0;
+            fast_strncat(a->str.src, (const char *)buff, &track);
             free(buff);
         }
     }
@@ -1199,8 +1224,9 @@ void _to_binary(sstring *a)
                 fast_strncat(buff, " ", &size);
         }
         free(a->str.src);
-        a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
-        strcpy(a->str.src, (const char *)buff);
+        a->str.src = (char *)calloc(sizeof(char) * (size + 1), sizeof(char));
+        size = 0;
+        fast_strncat(a->str.src, (const char *)buff, &size);
         free(buff);
     }
 }
@@ -1247,7 +1273,8 @@ int _from_binary(sstring *a)
             char *buff = (char *)calloc((len / 8) + 1, sizeof(char));
             char bin[9] = "\0", store[2] = "\0";
             char c = '\0';
-            for (SIZE_T i = 0, j = 0, z = 0; i < len; ++i, ++j)
+            SIZE_T z = 0;
+            for (SIZE_T i = 0, j = 0; i < len; ++i, ++j)
             {
                 if (a->str.src[i] == ' ')
                 {
@@ -1266,8 +1293,9 @@ int _from_binary(sstring *a)
                 bin[j] = a->str.src[i];
             }
             free(a->str.src);
-            a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
-            strcpy(a->str.src, (const char *)buff);
+            a->str.src = (char *)calloc(sizeof(char) * (z + 1), sizeof(char));
+            z = 0;
+            fast_strncat(a->str.src, (const char *)buff, &z);
             free(buff);
         }
     }
@@ -1392,8 +1420,9 @@ void _to_hexadecimal(sstring *a)
             i++, j += 2;
         }
         free(a->str.src);
-        a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
-        strcpy(a->str.src, (const char *)buff);
+        a->str.src = (char *)calloc(sizeof(char) * (j + 1), sizeof(char));
+        j = 0;
+        fast_strncat(a->str.src, (const char *)buff, &j);
         free(buff);
     }
 }
@@ -1443,7 +1472,8 @@ int _from_hexadecimal(sstring *a)
             char *buff = (char *)calloc((len) / 2 + 1, sizeof(char));
             char bin[3] = "\0", store[2] = "\0";
             char c = '\0';
-            for (SIZE_T i = 0, j = 0, z = 0; i < len; ++i)
+            SIZE_T z = 0;
+            for (SIZE_T i = 0, j = 0; i < len; ++i)
             {
                 if (i == len - 1)
                 {
@@ -1463,8 +1493,9 @@ int _from_hexadecimal(sstring *a)
                 j++;
             }
             free(a->str.src);
-            a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
-            strcpy(a->str.src, (const char *)buff);
+            a->str.src = (char *)calloc(sizeof(char) * (z + 1), sizeof(char));
+            z = 0;
+            fast_strncat(a->str.src, (const char *)buff, &z);
             free(buff);
         }
     }
