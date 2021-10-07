@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 17.0.5
+* sstring: version 17.0.10
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "17.0.5"
+#define sstring_version "17.0.10"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -2149,10 +2149,18 @@ int free_split(split_t *a)
     return false;
 }
 
-sstring new_sstring(void)
+/**
+ * Shortcut for initializing a `sstring` struct.
+ * @param src data to assign by default, if `src` is NULL then nothing is assigned
+ * @returns an initialized `sstring`
+ */
+sstring new_sstring(const char *src)
 {
     sstring x;
     init_sstr(&x);
+    if (src)
+        x.set(&x, src);
+    return x;
 }
 
 /**
