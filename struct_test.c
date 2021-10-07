@@ -5,7 +5,7 @@ int main(int argc, char const **argv)
 {
     vector(vec, sstring);
     for (SIZE_T i = 0; i < (SIZE_T)argc; i++)
-        vector_add(vec, new_sstring());
+        vector_add(vec, new_sstring(NULL));
     for (SIZE_T i = 0; i < (SIZE_T)argc; i++)
     {
         vec.src[i].set(&vec.src[i], argv[i]);
