@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 17.1.0
+* sstring: version 17.2.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "17.1.0"
+#define sstring_version "17.2.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -112,7 +112,7 @@ struct __string__
      * @param till assign till `src[till]`
      * @param len length of `src` array
      */
-    void (*set_array)(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
+    void (*set_array)(sstring *a, const char **src, char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
 
     /** Returns `a` as `char *`. 
      * @param a pointer to struct sstring
@@ -168,7 +168,7 @@ struct __string__
      * @param till append till `src[till]`
      * @param len length of `src` array
      */
-    void (*append_array)(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
+    void (*append_array)(sstring *a, const char **src, char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
 
     /** @brief Appends `src` array to `a` at the starting. NOTE: `from`, `till` belongs to [0, sizeof(`src`)]. 
      * Set `char_between` to 0 if you want nothing to append in-between. 
@@ -180,7 +180,7 @@ struct __string__
      * @param till append till `src[till]`
      * @param len length of `src` array
      */
-    void (*append_start_array)(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
+    void (*append_start_array)(sstring *a, const char **src, char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
 
     /** Checks whether `a` is empty or not.
      * @param a pointer to struct sstring
@@ -672,7 +672,7 @@ void _set_random(sstring *a, const SIZE_T len)
     }
 }
 
-void _set_array(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len)
+void _set_array(sstring *a, const char **src, char char_between, SIZE_T from, SIZE_T till, SIZE_T len)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
@@ -867,7 +867,7 @@ void _append_start_upto(sstring *a, const char *src, SIZE_T N)
     }
 }
 
-void _append_array(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len)
+void _append_array(sstring *a, const char **src, char char_between, SIZE_T from, SIZE_T till, SIZE_T len)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
@@ -916,7 +916,7 @@ void _append_array(sstring *a, const char *src[], char char_between, SIZE_T from
     }
 }
 
-void _append_start_array(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len)
+void _append_start_array(sstring *a, const char **src, char char_between, SIZE_T from, SIZE_T till, SIZE_T len)
 {
     if (a && src && a->str.init == true && a->str.src)
     {

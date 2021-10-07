@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "prototype_err.h" under "sstring" directory
-* sstring: version 17.1.0
+* sstring: version 17.2.0
 * 
 * MIT License
 * 
@@ -37,7 +37,7 @@ void _set(sstring *a, const char *src);
 void _set_char(sstring *a, const char c);
 void _set_upto(sstring *a, const char *src, SIZE_T N);
 void _set_random(sstring *a, const SIZE_T len);
-void _set_array(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
+void _set_array(sstring *a, const char **src, char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
 char *_get(sstring *a);
 void _append(sstring *a, const char *src);
 void _append_char(sstring *a, const char c);
@@ -45,8 +45,8 @@ void _append_upto(sstring *a, const char *src, SIZE_T N);
 void _append_start(sstring *a, const char *src);
 void _append_start_char(sstring *a, const char src);
 void _append_start_upto(sstring *a, const char *src, SIZE_T N);
-void _append_array(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
-void _append_start_array(sstring *a, const char *src[], char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
+void _append_array(sstring *a, const char **src, char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
+void _append_start_array(sstring *a, const char **src, char char_between, SIZE_T from, SIZE_T till, SIZE_T len);
 int _empty(sstring *a);
 void _replace_char(sstring *a, const char old, const char new_);
 void _char_set(sstring *a, const char what, SIZE_T where);
