@@ -3,14 +3,9 @@
 
 int main(int argc, char const **argv)
 {
-    sstring str[argc];
     vector(vec, sstring);
     for (SIZE_T i = 0; i < (SIZE_T)argc; i++)
-        init_sstr(&str[i]);
-
-    for (SIZE_T i = 0; i < (SIZE_T)argc; i++)
-        vector_add(vec, str[i]);
-
+        vector_add(vec, new_sstring());
     for (SIZE_T i = 0; i < (SIZE_T)argc; i++)
     {
         vec.src[i].set(&vec.src[i], argv[i]);
