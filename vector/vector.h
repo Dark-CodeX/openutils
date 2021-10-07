@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/vector.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "vector.h" under "vector" directory
-* vector version: 11.0.0
+* vector version: 11.2.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -36,7 +36,7 @@
 #define false 1
 typedef unsigned long long int SIZE_T;
 
-#define vector_version "11.0.0"
+#define vector_version "11.2.0"
 
 /**
 * Appends `data` to `vec` at the end.
@@ -48,7 +48,7 @@ typedef unsigned long long int SIZE_T;
     {                                                                                 \
         if (vec.length == vec.capacity)                                               \
         {                                                                             \
-            vec.capacity += 8;                                                        \
+            vec.capacity *= 2;                                                        \
             vec.src = realloc(vec.src, (vec.capacity * sizeof(data)) + sizeof(data)); \
             vec.src[vec.length++] = data;                                             \
         }                                                                             \
@@ -60,18 +60,17 @@ typedef unsigned long long int SIZE_T;
 * Removes data at `index` from `vec`.
 * @param vec vector
 * @param index index of the data to be removed
-* @param type data type eg. int, char *, long, float
 */
-#define vector_remove(vec, index, type)                                                   \
-    if (vec.init == true && vec.src && index < vec.length)                                \
-    {                                                                                     \
-        vec.src[index] = vec.def;                                                         \
-        for (SIZE_T i = index; i < vec.length - 1; i++)                                   \
-        {                                                                                 \
-            vec.src[i] = vec.src[i + 1];                                                  \
-            vec.src[i + 1] = vec.def;                                                     \
-        }                                                                                 \
-        vec.length--;                                                                     \
+#define vector_remove(vec, index)                          \
+    if (vec.init == true && vec.src && index < vec.length) \
+    {                                                      \
+        vec.src[index] = vec.def;                          \
+        for (SIZE_T i = index; i < vec.length - 1; i++)    \
+        {                                                  \
+            vec.src[i] = vec.src[i + 1];                   \
+            vec.src[i + 1] = vec.def;                      \
+        }                                                  \
+        vec.length--;                                      \
     }
 
 /**
