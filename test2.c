@@ -1,36 +1,34 @@
 #include "sstring/sstring.h"
+#include <vector/vector.h>
 
 int main(void)
 {
     SSTRING(x);
-    SSTRING(y);
     x.open(&x, "/home/tushar/Desktop/m.txt");
-    SIZE_T cnt = x.count_char(&x, '\n');
-    long double plots[cnt];
+    split_t data = x.split(&x, "\n");
+    vector(vec, long double);
 
-    printf("Enter:\t");
-    y.in(&y, false, 512);
-    char *r;
-    for (SIZE_T i = 0; i < cnt; i++)
+    SSTRING(input);
+    printf("ENTER:\n");
+    input.in(&input, false, 1024ULL);
+
+    for (SIZE_T i = 0; i < data.len; i++)
+        vector_add(vec, input.percentage_matched(&input, data.data[i]));
+
+    long double __d = 0;
+    SIZE_T index = 0;
+    for (SIZE_T i = 0; i < vec.length; i++)
     {
-        r = x.getline(&x, i);
-        plots[i] = y.percentage_matched(&y, (const char *)r);
-        free(r);
-    }
-    long double l = plots[0];
-    SIZE_T z = 0;
-    for (SIZE_T p = 1; p < cnt; p++) // get largest percentage in `plots`
-    {
-        if (l < plots[p])
+        if (__d < vec.src[i])
         {
-            l = plots[p];
-            z = p;
+            __d = vec.src[i];
+            index = i;
         }
     }
-    r = x.getline(&x, z);
-    printf("Best Matched: %s\nAt: %lld\n", r, z);
-    free(r);
+    printf("Best Match:\n%s\nAt:%llu\n", data.data[index], index);
+    free_split(&data);
+    vector_destructor(vec);
+    input.destructor(&input);
     x.destructor(&x);
-    y.destructor(&y);
     return 0;
 }
