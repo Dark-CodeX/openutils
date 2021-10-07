@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 17.2.0
+* sstring: version 17.3.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "17.2.0"
+#define sstring_version "17.3.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -700,7 +700,7 @@ void _set_array(sstring *a, const char **src, char char_between, SIZE_T from, SI
         {
             if (char_between != '\0')
                 cnt_t += len + 1;
-            char *buff = (char *)calloc((sizeof(char) * cnt_t) + 1, sizeof(char)), bw[2] = "\0\0";
+            char *buff = (char *)calloc((sizeof(char) * cnt_t) + 1, sizeof(char)), bw[3] = "\0\0";
             SIZE_T track = 0;
             for (SIZE_T i = from; i < till; i++)
             {
@@ -756,7 +756,7 @@ void _append_char(sstring *a, const char c)
         else
         {
             a->str.src = (char *)realloc(a->str.src, (sizeof(char) * 2) + (len + 1));
-            char __dat[2] = "\0\0";
+            char __dat[3] = "\0\0";
             __dat[0] = c;
             fast_strncat(a->str.src, (const char *)__dat, &len);
         }
@@ -825,7 +825,7 @@ void _append_start_char(sstring *a, const char c)
         }
         else
         {
-            char ___c[2] = "\0\0";
+            char ___c[3] = "\0\0";
             ___c[0] = c;
             SIZE_T track = 0;
             char *buff = (char *)calloc((sizeof(char) * 2) + (len + 1), sizeof(char));
@@ -896,7 +896,7 @@ void _append_array(sstring *a, const char **src, char char_between, SIZE_T from,
             if (char_between != '\0')
                 cnt_t += len + 1;
             SIZE_T slen = strlen((const char *)a->str.src), track = 0;
-            char *buff = (char *)calloc((sizeof(char) * cnt_t) + slen + 1, sizeof(char)), bw[2] = "\0\0";
+            char *buff = (char *)calloc((sizeof(char) * cnt_t) + slen + 1, sizeof(char)), bw[3] = "\0\0";
             fast_strncat(buff, (const char *)a->str.src, &track);
 
             if (slen > 0 && (bw[0] = char_between) != '\0')
@@ -945,7 +945,7 @@ void _append_start_array(sstring *a, const char **src, char char_between, SIZE_T
             if (char_between != '\0')
                 cnt_t += len + 1;
             SIZE_T slen = strlen((const char *)a->str.src), track = 0;
-            char *buff = (char *)calloc((sizeof(char) * cnt_t) + slen + 1, sizeof(char)), bw[2] = "\0\0";
+            char *buff = (char *)calloc((sizeof(char) * cnt_t) + slen + 1, sizeof(char)), bw[3] = "\0\0";
             for (SIZE_T i = from; i < till; i++)
             {
                 fast_strncat(buff, src[i], &track);
