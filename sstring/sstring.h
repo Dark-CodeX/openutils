@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 17.3.0
+* sstring: version 18.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "17.3.0"
+#define sstring_version "18.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,7 +45,7 @@ typedef struct __string__ sstring;
 typedef unsigned long long int SIZE_T;
 
 /**
- * This struct is made to store single-pointer char and it's initialized value.
+ * This struct is made to store single-pointer char and its initialized value.
  * Do not use this directly, instead use `sstring` struct.
  */
 typedef struct __str__
@@ -57,7 +57,7 @@ typedef struct __str__
 } __str__;
 
 /**
- * This struct is made to store double-pointer char and it's length.
+ * This struct is made to store double-pointer char and its length.
  * Use `free_split` function to free this struct.
  */
 typedef struct split_t
@@ -355,10 +355,10 @@ struct __string__
     int (*contains)(sstring *a, const char *str);
 
     /** 
-     * If character was found returns it's index (first occurrence only) in `a`, otherwise returns -1.
+     * If character was found returns its index (first occurrence only) in `a`, otherwise returns -1.
      * @param a pointer to struct sstring
      * @param c character to be tested
-     * @returns If character was found returns it's index (first occurrence only) in `a`, otherwise returns -1.
+     * @returns If character was found returns its index (first occurrence only) in `a`, otherwise returns -1.
     */
     signed long long int (*contains_char)(sstring *a, const char c);
 
@@ -493,9 +493,16 @@ struct __string__
      * Returns percentage matched against `src` using `Levenshtein Distance` algorithm (From Information Theory).
      * @param a pointer to struct sstring
      * @param src string to be matched
-     * @returns percentage matched, NOTE: returned value belongs to [1, 100]
+     * @returns percentage matched, NOTE: returned value belongs to [0, 100]
      */
     long double (*percentage_matched)(sstring *a, const char *src);
+
+    /**
+     * Return average of `a` with respect to its position.
+     * @param a pointer to struct sstring
+     * @returns average of `a` with respect to its position.
+     */
+    long double (*positional_average)(sstring *a);
 
     /**
      * Counts the number of occurrence of `what` in `a`.
@@ -555,7 +562,7 @@ struct __string__
      * @endcode
      * @param a pointer to struct sstring
      * @param dl delimiter string
-     * @returns splitted string as `split` struct with it's length. 
+     * @returns splitted string as `split` struct with its length. 
      */
     split_t (*split)(sstring *a, const char *dl);
 
@@ -1784,6 +1791,19 @@ long double _percentage_matched(sstring *a, const char *src)
     return (long double)0.0f;
 }
 
+long double _positional_average(sstring *a)
+{
+    if (a && a->str.src && a->str.init == true)
+    {
+        long double val = 0;
+        for (SIZE_T i = 0; a->str.src[i] != '\0'; i++)
+            val += (a->str.src[i] + i) / (2.0 + i);
+        val /= strlen((const char *)a->str.src);
+        return val;
+    }
+    return (long double)0;
+}
+
 SIZE_T _count(sstring *a, const char *what)
 {
     if (a && a->str.src && a->str.init == true && what)
@@ -2237,6 +2257,7 @@ int init_sstr(sstring *a)
         a->distance = _distance;
         a->edit_distance = _edit_distance;
         a->percentage_matched = _percentage_matched;
+        a->positional_average = _positional_average;
         a->count = _count;
         a->count_char = _count_char;
         a->soundex = _soundex;
