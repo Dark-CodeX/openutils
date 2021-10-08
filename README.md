@@ -9,7 +9,7 @@ This header file is *cross-platform*, but tested only on Windows 10, Windows 11,
 Documents are added in the header(`"sstring/sstring.h"`) file itself.
 Be sure to suggest any changes.
 
-# Functions Defined v:17.3.0
+# Functions Defined v:18.0.0
 
 <code>set</code>
 
@@ -118,6 +118,8 @@ Be sure to suggest any changes.
 <code>edit_distance</code>
 
 <code>percentage_matched</code>
+
+<code>positional_average</code>
 
 <code>count</code>
 
