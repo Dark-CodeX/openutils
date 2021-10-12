@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/vector.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "vector.h" under "vector" directory
-* vector version: 11.2.1
+* vector version: 12.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -36,7 +36,7 @@
 #define false 1
 typedef unsigned long long int SIZE_T;
 
-#define vector_version "11.2.1"
+#define vector_version "12.0.0"
 
 /**
 * Appends `data` to `vec` at the end.
@@ -51,8 +51,7 @@ typedef unsigned long long int SIZE_T;
             vec.capacity *= 2;                                                        \
             vec.src = realloc(vec.src, (vec.capacity * sizeof(data)) + sizeof(data)); \
         }                                                                             \
-        else                                                                          \
-            vec.src[vec.length++] = data;                                             \
+        vec.src[vec.length++] = data;                                                 \
     }
 
 /**
