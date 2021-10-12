@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 18.0.0
+* sstring: version 21.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "18.0.0"
+#define sstring_version "21.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -505,6 +505,14 @@ struct __string__
     long double (*positional_average)(sstring *a);
 
     /**
+     * Return modulus of `a` with respect to its position.
+     * @param a pointer to struct sstring
+     * @returns modulus of `a` with respect to its position.
+     */
+    SIZE_T(*positional_modulus)
+    (sstring *a);
+
+    /**
      * Counts the number of occurrence of `what` in `a`.
      * @param a pointer to struct sstring
      * @param what string to find in `a`
@@ -616,6 +624,20 @@ struct __string__
      * @returns true if appended, otherwise false
      */
     int (*print_binary)(sstring *a, SIZE_T len);
+
+    /**
+     * Encrypts `a` using positional modulus for `key`.
+     * @param a pointer to struct sstring
+     * @returns true if encrypted, otherwise false
+     */
+    int (*encrypt)(sstring *a, const char *key);
+
+    /**
+     * Decrypts `a` using positional modulus for `key`.
+     * @param a pointer to struct sstring
+     * @returns true if decrypted, otherwise false
+     */
+    int (*decrypt)(sstring *a, const char *key);
 } __string__;
 
 #include "prototype_err.h"
@@ -1804,6 +1826,19 @@ long double _positional_average(sstring *a)
     return (long double)0;
 }
 
+SIZE_T _positional_modulus(sstring *a)
+{
+    if (a && a->str.src && a->str.init == true)
+    {
+        SIZE_T val = 0;
+        for (SIZE_T i = 0; a->str.src[i] != '\0'; i++)
+            val += (a->str.src[i] + i) / (2 + i);
+        val %= strlen((const char *)a->str.src);
+        return val;
+    }
+    return 0ULL;
+}
+
 SIZE_T _count(sstring *a, const char *what)
 {
     if (a && a->str.src && a->str.init == true && what)
@@ -2151,6 +2186,82 @@ int _print_binary(sstring *a, SIZE_T len)
     return false;
 }
 
+int _encrypt(sstring *a, const char *key)
+{
+    if (a && a->str.src && a->str.init == true && key)
+    {
+        SIZE_T val = 0; // positional_modulus
+        for (SIZE_T i = 0; key[i] != '\0'; i++)
+            val += (key[i] + i) / (2.0 + i);
+        val %= strlen(key);
+        if (val == 0)
+            return false;
+        SIZE_T len = strlen((const char *)a->str.src);
+        short add = true;
+        char *buff = (char *)calloc(sizeof(char) * (len + 1), sizeof(char));
+        for (SIZE_T i = 0; a->str.src[i] != '\0'; i++)
+        {
+            if (add == true && a->str.src[i] + val > '\0')
+            {
+                buff[i] = a->str.src[i] + val;
+                add = false;
+            }
+            else if (add == false && a->str.src[i] - val > '\0')
+            {
+                buff[i] = a->str.src[i] - val;
+                add = true;
+            }
+            else
+                return false;
+        }
+        free(a->str.src);
+        a->str.src = (char *)calloc(sizeof(char) * (len + 1), sizeof(char));
+        len = 0;
+        fast_strncat(a->str.src, (const char *)buff, &len);
+        free(buff);
+        return true;
+    }
+    return false;
+}
+
+int _decrypt(sstring *a, const char *key)
+{
+    if (a && a->str.src && a->str.init == true && key)
+    {
+        SIZE_T val = 0; // positional_modulus
+        for (SIZE_T i = 0; key[i] != '\0'; i++)
+            val += (key[i] + i) / (2.0 + i);
+        val %= strlen(key);
+        if (val == 0)
+            return false;
+        SIZE_T len = strlen((const char *)a->str.src);
+        short add_inrv = true;
+        char *buff = (char *)calloc(sizeof(char) * (len + 1), sizeof(char));
+        for (SIZE_T i = 0; a->str.src[i] != '\0'; i++)
+        {
+            if (add_inrv == true && a->str.src[i] - val > '\0')
+            {
+                buff[i] = a->str.src[i] - val;
+                add_inrv = false;
+            }
+            else if (add_inrv == false && a->str.src[i] + val > '\0')
+            {
+                buff[i] = a->str.src[i] + val;
+                add_inrv = true;
+            }
+            else
+                return false;
+        }
+        free(a->str.src);
+        a->str.src = (char *)calloc(sizeof(char) * (len + 1), sizeof(char));
+        len = 0;
+        fast_strncat(a->str.src, (const char *)buff, &len);
+        free(buff);
+        return true;
+    }
+    return false;
+}
+
 /**
  * Frees `a` carefully. Always use this function when there is not use of `a` or before your program exits.
  * @param a pointer to struct split
@@ -2258,6 +2369,7 @@ int init_sstr(sstring *a)
         a->edit_distance = _edit_distance;
         a->percentage_matched = _percentage_matched;
         a->positional_average = _positional_average;
+        a->positional_modulus = _positional_modulus;
         a->count = _count;
         a->count_char = _count_char;
         a->soundex = _soundex;
@@ -2270,7 +2382,8 @@ int init_sstr(sstring *a)
         a->append_binary = _append_binary;
         a->add_binary = _add_binary;
         a->print_binary = _print_binary;
-
+        a->encrypt = _encrypt;
+        a->decrypt = _decrypt;
         a->str.src = (char *)calloc(1 * sizeof(char), sizeof(char));
         a->str.init = true; // initialized properly
         return true;
