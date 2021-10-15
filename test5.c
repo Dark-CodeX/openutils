@@ -115,7 +115,7 @@ struct coefficient parse_eq(sstring *a)
     struct coefficient x = (struct coefficient){.C = 0, .X = 0, .Y = 0};
     if (a && a->str.src && a->str.init == true)
     {
-        char *buff_x = (char *)calloc(sizeof(char) * 20, sizeof(char)), *buff_y = (char *)calloc(sizeof(char) * 20, sizeof(char)), *buff_c = (char *)calloc(sizeof(char) * 20, sizeof(char));
+        char *buff_x = (char *)calloc(sizeof(char) * 64, sizeof(char)), *buff_y = (char *)calloc(sizeof(char) * 64, sizeof(char)), *buff_c = (char *)calloc(sizeof(char) * 64, sizeof(char));
         SIZE_T i = 0, k = 0, j = 0;
         for (; a->str.src[i] != 'x'; i++)
             buff_x[i] = a->str.src[i];
