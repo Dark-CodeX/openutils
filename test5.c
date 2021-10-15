@@ -3,19 +3,20 @@
 /** KIND OF TUPLE */
 struct coefficient
 {
-    long long int X;
-    long long int Y;
-    long long int C;
+    long double X;
+    long double Y;
+    long double C;
 };
 
 /** KIND OF TUPLE */
 struct sol
 {
-    long long int X;
-    long long int Y;
+    long double X;
+    long double Y;
 };
 
-long long int ABS(long long int __x) // just for long long int, otherwise use in-built `abs()` function
+long double ABS(long double __x);
+long double ABS(long double __x) // just for long double, otherwise use in-built `abs()` function
 {
     if (__x < 0)
         return __x * (-1LL);
@@ -25,7 +26,7 @@ long long int ABS(long long int __x) // just for long long int, otherwise use in
 int isDigit(char c);
 int isDigit(char c)
 {
-    if (c >= 48 && c <= 57)
+    if ((c >= 48 && c <= 57) || c == 46)
         return true;
     return false;
 }
@@ -58,6 +59,7 @@ int format_eq(sstring *e)
             case '7':
             case '8':
             case '9':
+            case '.':
                 valid = true;
                 break;
 
@@ -125,9 +127,9 @@ struct coefficient parse_eq(sstring *a)
             i++;
         for (; a->str.src[i] != '\0'; j++)
             buff_c[j] = a->str.src[i++];
-        x.X = atoll((const char *)buff_x);
-        x.Y = atoll((const char *)buff_y);
-        x.C = atoll((const char *)buff_c);
+        x.X = strtold((const char *)buff_x, (char **)NULL);
+        x.Y = strtold((const char *)buff_y, (char **)NULL);
+        x.C = strtold((const char *)buff_c, (char **)NULL);
         free(buff_c);
         free(buff_y);
         free(buff_x);
@@ -136,21 +138,22 @@ struct coefficient parse_eq(sstring *a)
     return x;
 }
 
+struct sol solve(struct coefficient *m1, struct coefficient *m2);
 struct sol solve(struct coefficient *m1, struct coefficient *m2)
 {
-    struct sol ans = (struct sol){.X = INFINITY, .Y = INFINITY};
+    struct sol ans = (struct sol){.X = (long double)INFINITY, .Y = (long double)INFINITY};
     if (m1 && m2 && (m1->X / m2->X != m1->Y / m2->Y))
     {
         // elimination method
-        long long int temp_m1_x = ABS(m1->X); // not to change sign
-        long long int temp_m2_x = ABS(m2->X); // not to change sign
+        long double temp_m1_x = ABS(m1->X); // not to change sign
+        long double temp_m2_x = ABS(m2->X); // not to change sign
         m1->X *= temp_m2_x, m1->Y *= temp_m2_x, m1->C *= temp_m2_x;
         m2->X *= temp_m1_x, m2->Y *= temp_m1_x, m2->C *= temp_m1_x;
         if (m1->X + m2->X == 0 || m1->X - m2->X == 0)
         {
             // now x is eliminated, now change sign
-            m2->Y *= -1LL;
-            m2->C *= -1LL;
+            m2->Y *= -1;
+            m2->C *= -1;
             ans.Y = (m1->C + m2->C) / (m1->Y + m2->Y);
             ans.X = (m1->C - (m1->Y * ans.Y)) / m1->X;
         }
@@ -159,7 +162,7 @@ struct sol solve(struct coefficient *m1, struct coefficient *m2)
     return ans;
 }
 
-int main(int argc, char **argv)
+int main(void)
 {
     sstring eq1 = new_sstring(NULL);
     sstring eq2 = new_sstring(NULL);
@@ -178,10 +181,10 @@ int main(int argc, char **argv)
         }
         struct coefficient ans = parse_eq(&eq1);
         struct coefficient ans2 = parse_eq(&eq2);
-
+        
         struct sol result = solve(&ans, &ans2);
 
-        printf("[X: %lld, Y: %lld]\n", result.X, result.Y);
+        printf("[X: %Lf, Y: %Lf]\n", result.X, result.Y);
         eq1.destructor(&eq1);
         eq2.destructor(&eq2);
         return 0;
