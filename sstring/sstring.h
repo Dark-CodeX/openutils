@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 21.0.0
+* sstring: version 24.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "21.0.0"
+#define sstring_version "24.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,6 +54,8 @@ typedef struct __str__
     char *src;
     /* Do not change this value. */
     int init;
+    /** Stores the length of sstring without using `strlen` function. NOTE: Do not change this value.*/
+    SIZE_T len;
 } __str__;
 
 /**
@@ -215,7 +217,7 @@ struct __string__
     char (*char_get)(sstring *a, SIZE_T where);
 
     /**
-     * Returns length of `a`, does not include the count of NUL(0).
+     * Returns length of `a` using `strlen` function, does not include the count of NUL(0).
      * @param a pointer to struct sstring
      * @returns length of `a`
      */
@@ -638,6 +640,21 @@ struct __string__
      * @returns true if decrypted, otherwise false
      */
     int (*decrypt)(sstring *a, const char *key);
+
+    /**
+     * Returns first index of `sstring`, i.e, 0.
+     * @returns 0
+     */
+    SIZE_T(*begin)
+    (void);
+
+    /**
+     * Returns last index of `a`, without using `strlen` function. Should be used in any loop.
+     * @param a pointer to struct sstring
+     * @returns last index of `a`, without using `strlen` function
+     */
+    SIZE_T(*end)
+    (sstring *a);
 } __string__;
 
 #include "prototype_err.h"
@@ -660,8 +677,10 @@ void _set(sstring *a, const char *src)
     if (a && src && a->str.init == true && a->str.src)
     {
         free(a->str.src);
-        a->str.src = (char *)calloc(sizeof(char) * (strlen(src) + 1), sizeof(char));
+        SIZE_T len = strlen(src);
+        a->str.src = (char *)calloc(sizeof(char) * (len + 1), sizeof(char));
         strcpy(a->str.src, src);
+        a->str.len = len;
     }
 }
 
@@ -672,6 +691,7 @@ void _set_char(sstring *a, const char c)
         free(a->str.src);
         a->str.src = (char *)calloc(sizeof(char) * 2, sizeof(char));
         strncpy(a->str.src, &c, 1);
+        a->str.len = 1;
     }
 }
 
@@ -683,6 +703,7 @@ void _set_upto(sstring *a, const char *src, SIZE_T N)
         free(a->str.src);
         a->str.src = (char *)calloc(sizeof(char) * (N + 1), sizeof(char));
         strncpy(a->str.src, src, N);
+        a->str.len = N;
     }
 }
 
@@ -698,6 +719,7 @@ void _set_random(sstring *a, const SIZE_T len)
         a->str.src = (char *)calloc((sizeof(char) * len) + 1, sizeof(char));
         strcpy(a->str.src, (const char *)buff);
         free(buff);
+        a->str.len = len;
     }
 }
 
@@ -740,6 +762,7 @@ void _set_array(sstring *a, const char **src, char char_between, SIZE_T from, SI
             free(a->str.src);
             a->str.src = (char *)calloc(sizeof(char) * (track + 1), sizeof(char));
             strcpy(a->str.src, (const char *)buff);
+            a->str.len = track;
             free(buff);
         }
     }
@@ -756,17 +779,19 @@ void _append(sstring *a, const char *src)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
-        SIZE_T len = 0;
-        if ((len = strlen((const char *)a->str.src)) == 0) // string is empty
+        SIZE_T len = 0, l = strlen(src);
+        if ((len = a->str.len) == 0) // string is empty
         {
             free(a->str.src); // used calloc in `init_str` function
-            a->str.src = (char *)calloc(sizeof(char) * (strlen(src) + 1), sizeof(char));
+            a->str.src = (char *)calloc(sizeof(char) * (l + 1), sizeof(char));
             strcpy(a->str.src, src); // copy `src` to `a`.
+            a->str.len = l;
         }
         else
         {
-            a->str.src = (char *)realloc(a->str.src, sizeof(char) * (strlen(src) + len + 1));
+            a->str.src = (char *)realloc(a->str.src, sizeof(char) * (l + len + 1));
             fast_strncat(a->str.src, src, &len);
+            a->str.len = len;
         }
     }
 }
@@ -776,11 +801,12 @@ void _append_char(sstring *a, const char c)
     if (a && c != '\0' && a->str.init == true && a->str.src)
     {
         SIZE_T len = 0;
-        if ((len = strlen((const char *)a->str.src)) == 0) // string is empty
+        if ((len = a->str.len) == 0) // string is empty
         {
             free(a->str.src); // used calloc in `init_str` function
             a->str.src = (char *)calloc(sizeof(char) * 2, sizeof(char));
             strncpy(a->str.src, &c, 1); // copy `c` to `a`.
+            a->str.len = 1;
         }
         else
         {
@@ -788,6 +814,7 @@ void _append_char(sstring *a, const char c)
             char __dat[3] = "\0\0";
             __dat[0] = c;
             fast_strncat(a->str.src, (const char *)__dat, &len);
+            a->str.len = len;
         }
     }
 }
@@ -798,11 +825,12 @@ void _append_upto(sstring *a, const char *src, SIZE_T N)
     if (a && src && a->str.init == true && a->str.src && N <= (l = strlen(src)) && N != 0)
     {
         SIZE_T len = 0;
-        if ((len = strlen((const char *)a->str.src)) == 0) // string is empty
+        if ((len = a->str.len) == 0) // string is empty
         {
             free(a->str.src); // used calloc in `init_str` function
             a->str.src = (char *)calloc(sizeof(char) * (N + 1), sizeof(char));
             strncpy(a->str.src, src, N); // copy `src` to `a`.
+            a->str.len = N;
         }
         else
         {
@@ -811,6 +839,7 @@ void _append_upto(sstring *a, const char *src, SIZE_T N)
             strncpy(buff, src, N);
             fast_strncat(a->str.src, (const char *)buff, &len);
             free(buff);
+            a->str.len = len;
         }
     }
 }
@@ -819,16 +848,17 @@ void _append_start(sstring *a, const char *src)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
-        SIZE_T len = 0;
-        if ((len = strlen((const char *)a->str.src)) == 0) // string is empty
+        SIZE_T len = 0, l = strlen(src);
+        if ((len = a->str.len) == 0) // string is empty
         {
             free(a->str.src); // used calloc in `init_str` function
-            a->str.src = (char *)calloc(sizeof(char) * (strlen(src) + 1), sizeof(char));
+            a->str.src = (char *)calloc(sizeof(char) * (l + 1), sizeof(char));
             strcpy(a->str.src, src); // copy `src` to `a`.
+            a->str.len = l;
         }
         else
         {
-            char *buff = (char *)calloc(sizeof(char) * (strlen(src) + len + 1), sizeof(char));
+            char *buff = (char *)calloc(sizeof(char) * (l + len + 1), sizeof(char));
             SIZE_T track = 0;
             fast_strncat(buff, src, &track);
             fast_strncat(buff, (const char *)a->str.src, &track);
@@ -837,6 +867,7 @@ void _append_start(sstring *a, const char *src)
             track = 0;
             fast_strncat(a->str.src, (const char *)buff, &track);
             free(buff);
+            a->str.len = track;
         }
     }
 }
@@ -846,11 +877,12 @@ void _append_start_char(sstring *a, const char c)
     if (a && c != '\0' && a->str.init == true && a->str.src)
     {
         SIZE_T len = 0;
-        if ((len = strlen((const char *)a->str.src)) == 0) // string is empty
+        if ((len = a->str.len) == 0) // string is empty
         {
             free(a->str.src); // used calloc in `init_str` function
             a->str.src = (char *)calloc(sizeof(char) * 2, sizeof(char));
             strncpy(a->str.src, &c, 1); // copy `c` to `a`.
+            a->str.len = len + 1;
         }
         else
         {
@@ -865,6 +897,7 @@ void _append_start_char(sstring *a, const char c)
             track = 0;
             fast_strncat(a->str.src, (const char *)buff, &track);
             free(buff);
+            a->str.len = track;
         }
     }
 }
@@ -875,11 +908,12 @@ void _append_start_upto(sstring *a, const char *src, SIZE_T N)
     if (a && src && a->str.init == true && a->str.src && N <= (l = strlen(src)) && N != 0)
     {
         SIZE_T len = 0;
-        if ((len = strlen((const char *)a->str.src)) == 0) // string is empty
+        if ((len = a->str.len) == 0) // string is empty
         {
             free(a->str.src); // used calloc in `init_str` function
             a->str.src = (char *)calloc(sizeof(char) * (N + 1), sizeof(char));
             strncpy(a->str.src, src, N); // copy `src` to `a`.
+            a->str.len = N;
         }
         else
         {
@@ -892,6 +926,7 @@ void _append_start_upto(sstring *a, const char *src, SIZE_T N)
             track = 0;
             fast_strncat(a->str.src, (const char *)buff, &track);
             free(buff);
+            a->str.len = track;
         }
     }
 }
@@ -924,7 +959,7 @@ void _append_array(sstring *a, const char **src, char char_between, SIZE_T from,
         {
             if (char_between != '\0')
                 cnt_t += len + 1;
-            SIZE_T slen = strlen((const char *)a->str.src), track = 0;
+            SIZE_T slen = a->str.len, track = 0;
             char *buff = (char *)calloc((sizeof(char) * cnt_t) + slen + 1, sizeof(char)), bw[3] = "\0\0";
             fast_strncat(buff, (const char *)a->str.src, &track);
 
@@ -941,6 +976,7 @@ void _append_array(sstring *a, const char **src, char char_between, SIZE_T from,
             track = 0;
             fast_strncat(a->str.src, (const char *)buff, &track);
             free(buff);
+            a->str.len = track;
         }
     }
 }
@@ -973,7 +1009,7 @@ void _append_start_array(sstring *a, const char **src, char char_between, SIZE_T
         {
             if (char_between != '\0')
                 cnt_t += len + 1;
-            SIZE_T slen = strlen((const char *)a->str.src), track = 0;
+            SIZE_T slen = a->str.len, track = 0;
             char *buff = (char *)calloc((sizeof(char) * cnt_t) + slen + 1, sizeof(char)), bw[3] = "\0\0";
             for (SIZE_T i = from; i < till; i++)
             {
@@ -989,6 +1025,7 @@ void _append_start_array(sstring *a, const char **src, char char_between, SIZE_T
             track = 0;
             fast_strncat(a->str.src, (const char *)buff, &track);
             free(buff);
+            a->str.len = track;
         }
     }
 }
@@ -996,7 +1033,7 @@ void _append_start_array(sstring *a, const char **src, char char_between, SIZE_T
 int _empty(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
-        if (strlen((const char *)a->str.src) == 0)
+        if (a->str.len == 0)
             return true;
     return false;
 }
@@ -1015,7 +1052,7 @@ void _char_set(sstring *a, const char what, SIZE_T where)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        if (strlen((const char *)a->str.src) > where && what != '\0')
+        if (a->str.len > where && what != '\0')
             a->str.src[where] = what;
     }
 }
@@ -1024,7 +1061,7 @@ char _char_get(sstring *a, SIZE_T where)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        if (strlen((const char *)a->str.src) > where)
+        if (a->str.len > where)
             return a->str.src[where];
     }
     return (char)'\0';
@@ -1068,11 +1105,17 @@ void _print(sstring *a, int add_next_line, const char *__format__, ...)
         va_end(ar);
         if (add_next_line == true)
         {
-#ifdef _WIN32
-            printf("\r\n");
-#elif defined __unix__
+#if defined __linux__ || defined linux || defined __linux
             printf("\n");
-#elif defined __APPLE__
+#elif _WIN32 || defined _WIN64 || defined __CYGWIN__
+            printf("\r\n");
+#elif defined __unix__ || defined __unix || defined unix
+            printf("\n");
+#elif defined __APPLE__ || defined __MACH__
+            printf("\n");
+#elif defined __FreeBSD__
+            printf("\n");
+#elif defined __ANDROID__
             printf("\n");
 #endif
         }
@@ -1109,9 +1152,11 @@ void _replace(sstring *a, const char *old, const char *new_)
         }
         buff[i] = '\0';
         free(a->str.src);
-        a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
+        SIZE_T buff__len = strlen((const char *)buff);
+        a->str.src = (char *)calloc(sizeof(char) * (buff__len + 1), sizeof(char));
         strcpy(a->str.src, (const char *)buff);
         free(buff);
+        a->str.len = buff__len;
     }
 }
 
@@ -1121,6 +1166,7 @@ int _destructor(sstring *a)
     {
         free(a->str.src);
         a->str.init = false;
+        a->str.len = 0;
         return true;
     }
     return false;
@@ -1140,7 +1186,7 @@ int _save(sstring *a, const char *location)
         FILE *f = fopen(location, "wb");
         if (f != NULL)
         {
-            fwrite((const char *)a->str.src, strlen((const char *)a->str.src), sizeof(char), f);
+            fwrite((const char *)a->str.src, a->str.len, sizeof(char), f);
             fclose(f);
             return true;
         }
@@ -1155,7 +1201,7 @@ int _append_file(sstring *a, const char *location)
         FILE *f = fopen(location, "ab");
         if (f != NULL)
         {
-            fwrite((const char *)a->str.src, strlen((const char *)a->str.src), sizeof(char), f);
+            fwrite((const char *)a->str.src, a->str.len, sizeof(char), f);
             fclose(f);
             return true;
         }
@@ -1177,6 +1223,7 @@ int _open(sstring *a, const char *location)
             a->str.src = (char *)calloc(len + 1, sizeof(char));
             fread(a->str.src, sizeof(char), len, f);
             fclose(f);
+            a->str.len = len;
             return true;
         }
     }
@@ -1189,6 +1236,7 @@ int _clear(sstring *a)
     {
         free(a->str.src);
         a->str.src = (char *)calloc(1, sizeof(char));
+        a->str.len = 0;
         return true;
     }
     return false;
@@ -1246,7 +1294,7 @@ void _to_binary(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        SIZE_T len = strlen((const char *)a->str.src), size = 0;
+        SIZE_T len = a->str.len, size = 0;
         char *buff = (char *)calloc(((2 * (len * 8)) + 1) * sizeof(char), sizeof(char));
         for (SIZE_T i = 0; i < len; ++i)
         {
@@ -1258,6 +1306,7 @@ void _to_binary(sstring *a)
         a->str.src = (char *)calloc(sizeof(char) * (size + 1), sizeof(char));
         size = 0;
         fast_strncat(a->str.src, (const char *)buff, &size);
+        a->str.len = size;
         free(buff);
     }
 }
@@ -1267,7 +1316,7 @@ int _from_binary(sstring *a)
     int valid = true;
     if (a && a->str.src && a->str.init == true)
     {
-        SIZE_T len = strlen((const char *)a->str.src);
+        SIZE_T len = a->str.len;
         // test 1 for checking binary input format
         for (SIZE_T i = 0; i < len; i++)
         {
@@ -1327,6 +1376,7 @@ int _from_binary(sstring *a)
             a->str.src = (char *)calloc(sizeof(char) * (z + 1), sizeof(char));
             z = 0;
             fast_strncat(a->str.src, (const char *)buff, &z);
+            a->str.len = z;
             free(buff);
         }
     }
@@ -1337,7 +1387,7 @@ long double _entropy(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        SIZE_T len = strlen((const char *)a->str.src);
+        SIZE_T len = a->str.len;
         SIZE_T cnt = 0, map_append = 0, o = 0;
         int check = false;
         char *map_char = (char *)calloc((sizeof(char) * len) + 1, sizeof(char));
@@ -1399,7 +1449,7 @@ void _to_set(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        SIZE_T len = strlen((const char *)a->str.src);
+        SIZE_T len = a->str.len;
         SIZE_T cnt = 0, map_append = 0, o = 0;
         int check = false;
         char *set_char = (char *)calloc((sizeof(char) * len) + 1, sizeof(char));
@@ -1421,8 +1471,10 @@ void _to_set(sstring *a)
             }
         }
         free(a->str.src);
-        a->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)set_char) + 1), sizeof(char));
+        SIZE_T set_len = strlen((const char *)set_char);
+        a->str.src = (char *)calloc(sizeof(char) * (set_len + 1), sizeof(char));
         strcpy(a->str.src, (const char *)set_char);
+        a->str.len = set_len;
         free(set_char);
     }
 }
@@ -1432,8 +1484,9 @@ int _copy(sstring *a, sstring *dest)
     if (a && dest && dest->str.src && dest->str.init == true && a->str.src && a->str.init == true)
     {
         free(dest->str.src);
-        dest->str.src = (char *)calloc(sizeof(char) * (strlen((const char *)a->str.src) + 1), sizeof(char));
+        dest->str.src = (char *)calloc(sizeof(char) * (a->str.len + 1), sizeof(char));
         strcpy(dest->str.src, (const char *)a->str.src);
+        dest->str.len = a->str.len;
         return true;
     }
     return false;
@@ -1443,7 +1496,7 @@ void _to_hexadecimal(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        char *buff = (char *)calloc((sizeof(char) * strlen((const char *)a->str.src) * 2) + 1, sizeof(char));
+        char *buff = (char *)calloc((sizeof(char) * a->str.len * 2) + 1, sizeof(char));
         SIZE_T i = 0, j = 0;
         while (a->str.src[i] != '\0')
         {
@@ -1454,6 +1507,7 @@ void _to_hexadecimal(sstring *a)
         a->str.src = (char *)calloc(sizeof(char) * (j + 1), sizeof(char));
         j = 0;
         fast_strncat(a->str.src, (const char *)buff, &j);
+        a->str.len = j;
         free(buff);
     }
 }
@@ -1463,7 +1517,7 @@ int _from_hexadecimal(sstring *a)
     int valid = true;
     if (a && a->str.src && a->str.init == true)
     {
-        SIZE_T len = strlen((const char *)a->str.src);
+        SIZE_T len = a->str.len;
         // test 1 for checking hexadecimal input format
         for (SIZE_T i = 0; i < len; i++)
         {
@@ -1527,6 +1581,7 @@ int _from_hexadecimal(sstring *a)
             a->str.src = (char *)calloc(sizeof(char) * (z + 1), sizeof(char));
             z = 0;
             fast_strncat(a->str.src, (const char *)buff, &z);
+            a->str.len = z;
             free(buff);
         }
     }
@@ -1544,7 +1599,7 @@ signed long long _find(sstring *a, const char *sub)
         buff = strstr((const char *)a->str.src, sub);
 #endif
         if (buff != NULL)
-            return (SIZE_T)strlen((const char *)a->str.src) - strlen((const char *)buff); // buff is subset of a, if buff != NULL
+            return (SIZE_T)a->str.len - strlen((const char *)buff); // buff is subset of a, if buff != NULL
     }
     return -1;
 }
@@ -1566,9 +1621,11 @@ int _in(sstring *a, int get_line, SIZE_T buff_size)
         if (buff)
         {
             free(a->str.src);
-            a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
+            SIZE_T len_ = strlen((const char *)buff);
+            a->str.src = (char *)calloc((sizeof(char) * len_) + 1, sizeof(char));
             strcpy(a->str.src, (const char *)buff);
             free(buff);
+            a->str.len = len_;
             return true;
         }
     }
@@ -1579,7 +1636,7 @@ char *_getline(sstring *a, SIZE_T line)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        SIZE_T len = strlen((const char *)a->str.src), cnt = 0;
+        SIZE_T len = a->str.len, cnt = 0;
         char *temp = (char *)calloc((sizeof(char) * len) + 1, sizeof(char)), *tok;
         strcpy(temp, a->str.src);
         tok = strtok(temp, "\n");
@@ -1606,7 +1663,7 @@ void _reverse(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        SIZE_T len = strlen((const char *)a->str.src), l = len / 2;
+        SIZE_T len = a->str.len, l = len / 2;
         char c = '\0';
         for (SIZE_T i = 0; i < l; i++)
         {
@@ -1621,7 +1678,7 @@ SIZE_T _remove(sstring *a, const char *sub)
 {
     if (a && a->str.src && a->str.init == true && sub && sub[0] != '\0')
     {
-        char *buff = (char *)calloc((sizeof(char) * strlen((const char *)a->str.src)) + 1, sizeof(char));
+        char *buff = (char *)calloc((sizeof(char) * a->str.len) + 1, sizeof(char));
         strcpy(buff, (const char *)a->str.src);
         SIZE_T len_s = strlen(sub), cnt = 0;
         {
@@ -1636,9 +1693,11 @@ SIZE_T _remove(sstring *a, const char *sub)
             free(temp);
         }
         free(a->str.src);
-        a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
+        SIZE_T len_buff = strlen((const char *)buff);
+        a->str.src = (char *)calloc((sizeof(char) * len_buff) + 1, sizeof(char));
         strcpy(a->str.src, (const char *)buff);
         free(buff);
+        a->str.len = len_buff;
         return cnt;
     }
     return 0;
@@ -1648,7 +1707,7 @@ SIZE_T _remove_char(sstring *a, const char c)
 {
     if (a && a->str.src && a->str.init == true && c != '\0')
     {
-        char *buff = (char *)calloc((sizeof(char) * strlen((const char *)a->str.src)) + 1, sizeof(char));
+        char *buff = (char *)calloc((sizeof(char) * a->str.len) + 1, sizeof(char));
         SIZE_T cnt = 0;
         for (SIZE_T i = 0, k = 0; a->str.src[i] != '\0'; i++)
         {
@@ -1661,9 +1720,11 @@ SIZE_T _remove_char(sstring *a, const char c)
                 cnt++;
         }
         free(a->str.src);
-        a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
+        SIZE_T buff_len = strlen((const char *)buff);
+        a->str.src = (char *)calloc((sizeof(char) * buff_len) + 1, sizeof(char));
         strcpy(a->str.src, (const char *)buff);
         free(buff);
+        a->str.len = buff_len;
         return cnt;
     }
     return 0;
@@ -1673,7 +1734,7 @@ SIZE_T _remove_extra_char(sstring *a, const char c)
 {
     if (a && a->str.src && a->str.init == true && c != '\0')
     {
-        char *buff = (char *)calloc((sizeof(char) * strlen((const char *)a->str.src)) + 1, sizeof(char));
+        char *buff = (char *)calloc((sizeof(char) * a->str.len) + 1, sizeof(char));
         SIZE_T p = 0, i = 0, cnt = 0;
         while (a->str.src[p] != '\0')
         {
@@ -1688,9 +1749,11 @@ SIZE_T _remove_extra_char(sstring *a, const char c)
         }
         buff[i] = '\0';
         free(a->str.src);
-        a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
+        SIZE_T buff_len = strlen((const char *)buff);
+        a->str.src = (char *)calloc((sizeof(char) * buff_len) + 1, sizeof(char));
         strcpy(a->str.src, (const char *)buff);
         free(buff);
+        a->str.len = buff_len;
         return cnt;
     }
     return 0;
@@ -1700,7 +1763,7 @@ SIZE_T _remove_range(sstring *a, SIZE_T from, SIZE_T till)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        SIZE_T len = strlen((const char *)a->str.src), cnt = 0;
+        SIZE_T len = a->str.len, cnt = 0;
         if (till > len || from > len || from > till)
             return cnt;
         char *buff = (char *)calloc(sizeof(char) * (len - (till - from) + 1), sizeof(char));
@@ -1718,9 +1781,11 @@ SIZE_T _remove_range(sstring *a, SIZE_T from, SIZE_T till)
             }
         }
         free(a->str.src);
-        a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
+        SIZE_T buff_len = strlen((const char *)buff);
+        a->str.src = (char *)calloc((sizeof(char) * buff_len) + 1, sizeof(char));
         strcpy(a->str.src, (const char *)buff);
         free(buff);
+        a->str.len = buff_len;
         return cnt;
     }
     return 0;
@@ -1730,7 +1795,7 @@ int _intersect(sstring *a, SIZE_T from, SIZE_T till)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        SIZE_T len = strlen((const char *)a->str.src);
+        SIZE_T len = a->str.len;
         if (till > len || from > len || from > till)
             return false;
         char *buff = (char *)calloc(sizeof(char) * ((till - from) + 1), sizeof(char));
@@ -1740,9 +1805,11 @@ int _intersect(sstring *a, SIZE_T from, SIZE_T till)
             k++;
         }
         free(a->str.src);
-        a->str.src = (char *)calloc((sizeof(char) * strlen((const char *)buff)) + 1, sizeof(char));
+        SIZE_T buff_len = strlen((const char *)buff);
+        a->str.src = (char *)calloc((sizeof(char) * buff_len) + 1, sizeof(char));
         strcpy(a->str.src, (const char *)buff);
         free(buff);
+        a->str.len = buff_len;
         return true;
     }
     return false;
@@ -1752,7 +1819,7 @@ signed long long int _distance(sstring *a, const char *src)
 {
     if (a && a->str.src && a->str.init == true && src)
     {
-        if (strlen(src) == strlen((const char *)a->str.src))
+        if (strlen(src) == a->str.len)
         {
             SIZE_T cnt = 0;
             for (SIZE_T i = 0; a->str.src[i] != '\0'; i++)
@@ -1770,7 +1837,7 @@ signed long long int _edit_distance(sstring *a, const char *src)
 {
     if (a && a->str.src && a->str.init == true && src)
     {
-        SIZE_T len1 = strlen((const char *)a->str.src), len2 = strlen(src), x, y, last, old;
+        SIZE_T len1 = a->str.len, len2 = strlen(src), x, y, last, old;
         SIZE_T cols[len1 + 1];
         for (y = 1; y <= len1; y++)
             cols[y] = y;
@@ -1793,7 +1860,7 @@ long double _percentage_matched(sstring *a, const char *src)
 {
     if (a && a->str.src && a->str.init == true && src)
     {
-        SIZE_T len1 = strlen((const char *)a->str.src), len2 = strlen(src), x, y, last, old;
+        SIZE_T len1 = a->str.len, len2 = strlen(src), x, y, last, old;
         SIZE_T cols[len1 + 1];
         for (y = 1; y <= len1; y++)
             cols[y] = y;
@@ -1820,7 +1887,7 @@ long double _positional_average(sstring *a)
         long double val = 0;
         for (SIZE_T i = 0; a->str.src[i] != '\0'; i++)
             val += (a->str.src[i] + i) / (2.0 + i);
-        val /= strlen((const char *)a->str.src);
+        val /= a->str.len;
         return val;
     }
     return (long double)0;
@@ -1833,7 +1900,7 @@ SIZE_T _positional_modulus(sstring *a)
         SIZE_T val = 0;
         for (SIZE_T i = 0; a->str.src[i] != '\0'; i++)
             val += (a->str.src[i] + i) / (2 + i);
-        val %= strlen((const char *)a->str.src);
+        val %= a->str.len;
         return val;
     }
     return 0ULL;
@@ -1872,7 +1939,7 @@ char *_soundex(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        SIZE_T s = 1, len = strlen((const char *)a->str.src);
+        SIZE_T s = 1, len = a->str.len;
         const char *map = "01230120022455012623010202"; // not stored in heap memory, do not free it
         char c, *res = (char *)calloc(sizeof(char) * 5, sizeof(char));
         res[0] = toupper(a->str.src[0]);
@@ -1915,7 +1982,7 @@ char *_most_used(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        SIZE_T len = strlen((const char *)a->str.src), cnt = 0, l = 0;
+        SIZE_T len = a->str.len, cnt = 0, l = 0;
         for (SIZE_T i = 0; i < len; i++)
             if (a->str.src[i] == ' ')
                 cnt++;
@@ -1958,7 +2025,7 @@ char _most_used_char(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        SIZE_T len = strlen((const char *)a->str.src);
+        SIZE_T len = a->str.len;
         SIZE_T cnt = 0, map_append = 0, o = 0;
         int check = false;
         char *map_char = (char *)calloc((sizeof(char) * len) + 1, sizeof(char));
@@ -2007,7 +2074,7 @@ split_t _split(sstring *a, const char *dl)
         split_t x;
         x.data = (char **)NULL;
         x.len = 0;
-        SIZE_T len = strlen((const char *)a->str.src), cnt = 0;
+        SIZE_T len = a->str.len, cnt = 0;
         char *temp = (char *)calloc((sizeof(char) * len) + 1, sizeof(char)), *tok;
         strcpy(temp, a->str.src);
         tok = strtok(temp, dl);
@@ -2099,7 +2166,7 @@ void _sort(sstring *a)
 {
     if (a && a->str.src && a->str.init == true && a->str.src[0] != '\0')
     {
-        SIZE_T len = strlen((const char *)a->str.src);
+        SIZE_T len = a->str.len;
         merge_sort(a->str.src, 0, len - 1);
     }
 }
@@ -2196,7 +2263,7 @@ int _encrypt(sstring *a, const char *key)
         val %= strlen(key);
         if (val == 0)
             return false;
-        SIZE_T len = strlen((const char *)a->str.src);
+        SIZE_T len = a->str.len;
         short add = true;
         char *buff = (char *)calloc(sizeof(char) * (len + 1), sizeof(char));
         for (SIZE_T i = 0; a->str.src[i] != '\0'; i++)
@@ -2218,6 +2285,7 @@ int _encrypt(sstring *a, const char *key)
         a->str.src = (char *)calloc(sizeof(char) * (len + 1), sizeof(char));
         len = 0;
         fast_strncat(a->str.src, (const char *)buff, &len);
+        a->str.len = len;
         free(buff);
         return true;
     }
@@ -2234,7 +2302,7 @@ int _decrypt(sstring *a, const char *key)
         val %= strlen(key);
         if (val == 0)
             return false;
-        SIZE_T len = strlen((const char *)a->str.src);
+        SIZE_T len = a->str.len;
         short add_inrv = true;
         char *buff = (char *)calloc(sizeof(char) * (len + 1), sizeof(char));
         for (SIZE_T i = 0; a->str.src[i] != '\0'; i++)
@@ -2256,10 +2324,23 @@ int _decrypt(sstring *a, const char *key)
         a->str.src = (char *)calloc(sizeof(char) * (len + 1), sizeof(char));
         len = 0;
         fast_strncat(a->str.src, (const char *)buff, &len);
+        a->str.len = len;
         free(buff);
         return true;
     }
     return false;
+}
+
+SIZE_T _begin(void)
+{
+    return 0ULL;
+}
+
+SIZE_T _end_sstring(sstring *a)
+{
+    if (a && a->str.src && a->str.init == true)
+        return a->str.len;
+    return 0x0ULL;
 }
 
 /**
@@ -2384,7 +2465,11 @@ int init_sstr(sstring *a)
         a->print_binary = _print_binary;
         a->encrypt = _encrypt;
         a->decrypt = _decrypt;
+        a->begin = _begin;
+        a->end = _end_sstring;
+
         a->str.src = (char *)calloc(1 * sizeof(char), sizeof(char));
+        a->str.len = 0ULL;
         a->str.init = true; // initialized properly
         return true;
     }
