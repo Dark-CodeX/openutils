@@ -19,7 +19,7 @@ long double ABS(long double __x);
 long double ABS(long double __x) // just for long double, otherwise use in-built `abs()` function
 {
     if (__x < 0)
-        return __x * (-1LL);
+        return __x * (-1.0L);
     return __x;
 }
 
@@ -130,6 +130,15 @@ struct coefficient parse_eq(sstring *a)
         x.X = strtold((const char *)buff_x, (char **)NULL);
         x.Y = strtold((const char *)buff_y, (char **)NULL);
         x.C = strtold((const char *)buff_c, (char **)NULL);
+        if (x.X == 0 && a->contains(a, "- x") == true)
+            x.X = -1.0L;
+        else if (x.X == 0 && a->char_get(a, 0) == 'x')
+            x.X = 1;
+
+        if (x.Y == 0 && a->contains(a, "- y") == true)
+            x.Y = -1.0L;
+        else if (x.Y == 0 && a->contains(a, "+ y") == true)
+            x.Y = 1;
         free(buff_c);
         free(buff_y);
         free(buff_x);
@@ -181,7 +190,6 @@ int main(void)
         }
         struct coefficient ans = parse_eq(&eq1);
         struct coefficient ans2 = parse_eq(&eq2);
-        
         struct sol result = solve(&ans, &ans2);
 
         printf("[X: %Lf, Y: %Lf]\n", result.X, result.Y);
