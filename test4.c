@@ -8,18 +8,24 @@ int main(void)
     if (msg.in(&msg, true, 1024 * 1024) == false)
     {
         printf("ERR: could not get the message.\n");
+        msg.destructor(&msg);
+        key.destructor(&key);
         return -1;
     }
     printf("KEY:\n");
     if (key.in(&key, true, 1024 * 1024) == false)
     {
         printf("ERR: could not get the key.\n");
+        msg.destructor(&msg);
+        key.destructor(&key);
         return -1;
     }
     printf("ENCRYPTED MESSAGE:\n");
     if (msg.encrypt(&msg, key.c_str(&key)) == false)
     {
         printf("ERR: could not encrypt the message.\n");
+        msg.destructor(&msg);
+        key.destructor(&key);
         return -1;
     }
     msg.print(&msg, true, "");
@@ -27,6 +33,8 @@ int main(void)
     if (msg.decrypt(&msg, key.c_str(&key)) == false)
     {
         printf("ERR: could not decrypt the message.\n");
+        msg.destructor(&msg);
+        key.destructor(&key);
         return -1;
     }
     msg.print(&msg, true, "");
