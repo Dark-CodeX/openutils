@@ -160,9 +160,9 @@ struct sol solve(struct coefficient *m1, struct coefficient *m2, int showSetps)
         m2->X *= temp_m1_x, m2->Y *= temp_m1_x, m2->C *= temp_m1_x;
         if (showSetps == true)
         {
-            printf("\nSTEP: 1 => multiplying eq1 with %Lf and eq2 with %Lf, to eliminate `x`.\n", temp_m2_x, temp_m1_x);
-            printf("eq1:\t%Lfx%s%Lfy = %Lf\n", m1->X, (m1->Y < 0) ? " " : " + ", m1->Y, m1->C);
-            printf("eq2:\t%Lfx%s%Lfy = %Lf\n", m2->X, (m2->Y < 0) ? " " : " + ", m2->Y, m2->C);
+            printf("\nSTEP: 1 => multiplying eq1 with %.2Lf and eq2 with %.2Lf, to eliminate `x`.\n", temp_m2_x, temp_m1_x);
+            printf("eq1:\t%.2Lfx%s%.2Lfy = %.2Lf\n", m1->X, (m1->Y < 0) ? " " : " + ", m1->Y, m1->C);
+            printf("eq2:\t%.2Lfx%s%.2Lfy = %.2Lf\n", m2->X, (m2->Y < 0) ? " " : " + ", m2->Y, m2->C);
         }
         if (m1->X + m2->X == 0 || m1->X - m2->X == 0)
         {
@@ -172,27 +172,27 @@ struct sol solve(struct coefficient *m1, struct coefficient *m2, int showSetps)
             if (showSetps == true)
             {
                 printf("\nSTEP: 2 => now `x` is eliminated, so now substract eq2 from eq1.\n");
-                int delta1 = printf("eq1:\t%Lfy = %Lf\n", m1->Y, m1->C);
-                int delta2 = printf("eq2:\t%Lfy = %Lf\n", m2->Y, m2->C);
+                int delta1 = printf("eq1:\t%.2Lfy = %.2Lf\n", m1->Y, m1->C);
+                int delta2 = printf("eq2:\t%.2Lfy = %.2Lf\n", m2->Y, m2->C);
                 if (delta1 >= delta2)
                     for (int i = 0; i < delta1 + 3; i++)
                         printf("-");
                 else
                     for (int i = 0; i < delta2 + 3; i++)
                         printf("-");
-                printf("\neq2 - eq1 => %Lfy = %Lf\n", m1->Y + m2->Y, m1->C + m2->C);
+                printf("\neq2 - eq1 => %.2Lfy = %.2Lf\n", m1->Y + m2->Y, m1->C + m2->C);
             }
             ans.Y = (m1->C + m2->C) / (m1->Y + m2->Y);
             if (showSetps == true)
             {
                 printf("\nSTEP: 3 => now divide constant `c` with coefficient of `y`, to get the value of `y`.\n");
-                printf("y = %Lf / %Lf\t=> y = %Lf\n", (m1->C + m2->C), (m1->Y + m2->Y), ans.Y);
+                printf("y = %.2Lf / %.2Lf\t=> y = %.2Lf\n", (m1->C + m2->C), (m1->Y + m2->Y), ans.Y);
             }
             ans.X = (m1->C - (m1->Y * ans.Y)) / m1->X;
             if (showSetps == true)
             {
                 printf("\nSTEP: 4 => we got our value of `y`, now just put the value of `y` in eq1. So,\n");
-                printf("x = (%Lf - (%Lf * %Lf)) / %Lf\t=> x = %Lf\n", m1->C, m1->Y, ans.Y, m1->X, ans.X);
+                printf("x = (%.2Lf - (%.2Lf * %.2Lf)) / %.2Lf\t=> x = %.2Lf\n", m1->C, m1->Y, ans.Y, m1->X, ans.X);
             }
         }
         return ans;
@@ -225,7 +225,7 @@ int main(int argc, char const **argv)
                 steps = true;
         struct sol result = solve(&ans, &ans2, steps);
 
-        printf("[X: %Lf, Y: %Lf]\n", result.X, result.Y);
+        printf("[X: %.2Lf, Y: %.2Lf]\n", result.X, result.Y);
         eq1.destructor(&eq1);
         eq2.destructor(&eq2);
         return 0;
