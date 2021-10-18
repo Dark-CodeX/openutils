@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 24.0.0
+* sstring: version 24.5.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "24.0.0"
+#define sstring_version "24.5.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1609,25 +1609,25 @@ int _in(sstring *a, int get_line, SIZE_T buff_size)
     if (a && a->str.src && a->str.init == true)
     {
         char *buff = (char *)calloc((sizeof(char) * buff_size + 1), sizeof(char));
+        SIZE_T len_ = 0;
         if (get_line == false)
+        {
             scanf("%s", buff);
+            len_ = strlen((const char *)buff);
+        }
         else
         {
             fgets(buff, buff_size, stdin);
-            SIZE_T l = strlen((const char *)buff);
-            if (l != 0 && buff[l - 1] == '\n')
-                buff[l - 1] = '\0';
+            len_ = strlen((const char *)buff);
+            if (len_ != 0 && buff[len_ - 1] == '\n')
+                buff[len_ - 1] = '\0';
         }
-        if (buff)
-        {
-            free(a->str.src);
-            SIZE_T len_ = strlen((const char *)buff);
-            a->str.src = (char *)calloc((sizeof(char) * len_) + 1, sizeof(char));
-            strcpy(a->str.src, (const char *)buff);
-            free(buff);
-            a->str.len = len_;
-            return true;
-        }
+        free(a->str.src);
+        a->str.src = (char *)calloc((sizeof(char) * len_) + 1, sizeof(char));
+        strcpy(a->str.src, (const char *)buff);
+        free(buff);
+        a->str.len = len_;
+        return true;
     }
     return false;
 }
@@ -1900,7 +1900,8 @@ SIZE_T _positional_modulus(sstring *a)
         SIZE_T val = 0;
         for (SIZE_T i = 0; a->str.src[i] != '\0'; i++)
             val += (a->str.src[i] + i) / (2 + i);
-        val %= a->str.len;
+        if (val != 0)
+            val %= a->str.len;
         return val;
     }
     return 0ULL;
@@ -2257,12 +2258,20 @@ int _encrypt(sstring *a, const char *key)
 {
     if (a && a->str.src && a->str.init == true && key)
     {
-        SIZE_T val = 0; // positional_modulus
+        SIZE_T val = 0, len_key = strlen(key); // positional_modulus
         for (SIZE_T i = 0; key[i] != '\0'; i++)
             val += (key[i] + i) / (2.0 + i);
-        val %= strlen(key);
         if (val == 0)
             return false;
+
+        long double avg = 0; // positional_average
+        for (SIZE_T i = 0; key[i] != '\0'; i++)
+            avg += (key[i] + i) / (2.0 + i);
+        avg /= len_key;
+        if (avg == INFINITY || avg == -INFINITY)
+            return false;
+        val %= len_key;
+        val += avg;
         SIZE_T len = a->str.len;
         short add = true;
         char *buff = (char *)calloc(sizeof(char) * (len + 1), sizeof(char));
@@ -2296,12 +2305,20 @@ int _decrypt(sstring *a, const char *key)
 {
     if (a && a->str.src && a->str.init == true && key)
     {
-        SIZE_T val = 0; // positional_modulus
+        SIZE_T val = 0, len_key = strlen(key); // positional_modulus
         for (SIZE_T i = 0; key[i] != '\0'; i++)
             val += (key[i] + i) / (2.0 + i);
-        val %= strlen(key);
         if (val == 0)
             return false;
+
+        long double avg = 0; // positional_average
+        for (SIZE_T i = 0; key[i] != '\0'; i++)
+            avg += (key[i] + i) / (2.0 + i);
+        avg /= len_key;
+        if (avg == INFINITY || avg == -INFINITY)
+            return false;
+        val %= len_key;
+        val += avg;
         SIZE_T len = a->str.len;
         short add_inrv = true;
         char *buff = (char *)calloc(sizeof(char) * (len + 1), sizeof(char));
