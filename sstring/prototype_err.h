@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "prototype_err.h" under "sstring" directory
-* sstring: version 24.5.0
+* sstring: version 30.0.0
 * 
 * MIT License
 * 
@@ -104,11 +104,21 @@ int _print_binary(sstring *a, SIZE_T len);
 int _encrypt(sstring *a, const char *key);
 int _decrypt(sstring *a, const char *key);
 SIZE_T _begin(void);
+iter_sstring _iterator(SIZE_T init_value, SIZE_T max_value);
 SIZE_T _end_sstring(sstring *a);
+int _to_morse_code(sstring *a);
+int _from_morse_code(sstring *a);
+int _is_digit(sstring *a);
+int _is_decimal(sstring *a);
+int _is_ascii(sstring *a);
+int _is_alphabetic(sstring *a);
+
+void __advance__iter_sstring(iter_sstring *is, SIZE_T move_by);
+int __c_loop__iter_sstring(iter_sstring *is);
 
 int strcmp_void(const void *a1, const void *a2);
 int free_split(split_t *a);
 void merge(char *arr, SIZE_T l, SIZE_T m, SIZE_T r);
 void merge_sort(char *arr, SIZE_T l, SIZE_T r);
-sstring new_sstring(const char *src);
-int init_sstr(sstring *a);
+sstring new_sstring(SIZE_T alloc_size, const char *src);
+int init_sstr(sstring *a, SIZE_T alloc_size);
