@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 24.5.0
+* sstring: version 30.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "24.5.0"
+#define sstring_version "30.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -69,6 +69,31 @@ typedef struct split_t
     /* length of double-pointer `data` */
     SIZE_T len;
 } split_t;
+
+/**
+ * This struct is made to store current position and character in a `sstring`.
+ */
+typedef struct __iterator__ iter_sstring;
+struct __iterator__
+{
+    /** Initial position. */
+    SIZE_T cur;
+    /** Final position. */
+    SIZE_T max;
+    /**
+     * Increases or decreases `iter_sstring` by `move_by`.
+     * @param is pointer to struct iter_sstring
+     * @param move_by factor to move `is->cur`
+     */
+    void (*advance)(iter_sstring *is, SIZE_T move_by);
+
+    /**
+     * Tells whether to continue the loop or not.
+     * @param is pointer to struct iter_sstring
+     * @returns true if loop can be continued, otherwise false
+     */
+    int (*c_loop)(iter_sstring *is);
+};
 
 struct __string__
 {
@@ -649,12 +674,62 @@ struct __string__
     (void);
 
     /**
+     * Stores the current position of the iterator in any loop.
+     * @param init_value initial position
+     * @param max_value final position
+     * @returns an initialized `iter_sstring`
+     */
+    iter_sstring (*iterator)(SIZE_T init_value, SIZE_T max_value);
+
+    /**
      * Returns last index of `a`, without using `strlen` function. Should be used in any loop.
      * @param a pointer to struct sstring
      * @returns last index of `a`, without using `strlen` function
      */
     SIZE_T(*end)
     (sstring *a);
+
+    /**
+     * Converts `a` to morse code. NOTE: `a` should only contain (A-Z), (a-z), (0-9) and WHITESPACE.
+     * @param a pointer to struct sstring
+     * @returns true if converted, otherwise false
+     */
+    int (*to_morse_code)(sstring *a);
+
+    /**
+     * Converts morse code to simple readable `sstring`.
+     * @param a pointer to struct sstring
+     * @returns true if converted, otherwise false
+     */
+    int (*from_morse_code)(sstring *a);
+
+    /** 
+     * Checks whether all characters of `a` is digit or not.
+     * @param a pointer to struct sstring
+     * @returns true if all character were digit, otherwise false
+    */
+    int (*is_digit)(sstring *a);
+
+    /** 
+     * Checks whether `a` is decimal or not.
+     * @param a pointer to struct sstring
+     * @returns true if all character were decimal, otherwise false
+    */
+    int (*is_decimal)(sstring *a);
+
+    /** 
+     * Checks whether all characters of `a` is ascii or not.
+     * @param a pointer to struct sstring
+     * @returns true if all character were ascii, otherwise false
+    */
+    int (*is_ascii)(sstring *a);
+
+    /** 
+     * Checks whether all characters of `a` is alphabetic or not.
+     * @param a pointer to struct sstring
+     * @returns true if all character were alphabetic, otherwise false
+    */
+    int (*is_alphabetic)(sstring *a);
 } __string__;
 
 #include "prototype_err.h"
@@ -2353,11 +2428,185 @@ SIZE_T _begin(void)
     return 0ULL;
 }
 
+void __advance__iter_sstring(iter_sstring *is, SIZE_T move_by)
+{
+    if (is && is->max > is->cur)
+        is->cur += move_by;
+}
+
+int __c_loop__iter_sstring(iter_sstring *is)
+{
+    if (is && (is->max > is->cur))
+        return true;
+    return false;
+}
+
+iter_sstring _iterator(SIZE_T init_value, SIZE_T max_value)
+{
+    return (iter_sstring){.cur = init_value, .max = max_value, .advance = __advance__iter_sstring, .c_loop = __c_loop__iter_sstring};
+}
+
 SIZE_T _end_sstring(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
         return a->str.len;
     return 0x0ULL;
+}
+
+#include "morse_code.h"
+int _to_morse_code(sstring *a)
+{
+    if (a && a->str.src && a->str.init == true)
+    {
+        for (SIZE_T i = 0; i < a->str.len; i++)
+        {
+            if ((a->str.src[i] >= 48 && a->str.src[i] <= 57) || (a->str.src[i] >= 97 && a->str.src[i] <= 122) || (a->str.src[i] >= 65 && a->str.src[i] <= 90) || (a->str.src[i] == 32))
+            {
+            }
+            else
+                return false;
+        }
+        char *buff = (char *)calloc((sizeof(char) * a->str.len * 8) + 1, sizeof(char));
+        SIZE_T track = 0;
+        for (SIZE_T i = 0; i < a->str.len; i++)
+        {
+            if (isdigit(a->str.src[i]))
+                fast_strncat(buff, morse_code_data[(SIZE_T)a->str.src[i] - 48], &track);
+            else
+            {
+                if (a->str.src[i] >= 65 && a->str.src[i] <= 90)
+                    fast_strncat(buff, morse_code_data[(SIZE_T)a->str.src[i] - 55], &track);
+                else
+                    fast_strncat(buff, morse_code_data[(SIZE_T)a->str.src[i] - 87], &track);
+                if (a->str.src[i] == 32)
+                    fast_strncat(buff, morse_code_data[36], &track);
+            }
+            if (i < a->str.len - 1)
+                fast_strncat(buff, " ", &track);
+        }
+        free(a->str.src);
+        a->str.src = (char *)calloc(sizeof(char) * (track + 1), sizeof(char));
+        track = 0;
+        fast_strncat(a->str.src, (const char *)buff, &track);
+        free(buff);
+        a->str.len = track;
+        return true;
+    }
+    return false;
+}
+
+int _from_morse_code(sstring *a)
+{
+    if (a && a->str.src && a->str.init == true)
+    {
+        for (SIZE_T i = 0; i < a->str.len; i++)
+        {
+            switch (a->str.src[i])
+            {
+            case '-':
+            case '.':
+            case ' ':
+                break;
+            default:
+                return false;
+            }
+        }
+        char *buff = (char *)calloc(sizeof(char) * (a->str.len + 1), sizeof(char)), *temp = (char *)calloc(sizeof(char) * 8, sizeof(char));
+        SIZE_T track = 0, x = 0;
+        char arr[3] = "\0\0";
+        for (SIZE_T i = 0, k = 0; i < a->str.len; i++, k++)
+        {
+            if (i == a->str.len - 1)
+            {
+                x = 0;
+                temp[k] = a->str.src[i];
+                while ((strcmp(temp, morse_code_data[x])) != true)
+                    x++;
+                arr[0] = morse_code_char[x];
+                fast_strncat(buff, (const char *)arr, &track);
+            }
+            if (a->str.src[i] == ' ')
+            {
+                i++, x = 0;
+                while ((strcmp(temp, morse_code_data[x])) != true)
+                    x++;
+                arr[0] = morse_code_char[x];
+                fast_strncat(buff, (const char *)arr, &track);
+                memset(temp, 0, 8);
+                k = 0;
+            }
+            temp[k] = a->str.src[i];
+        }
+        free(a->str.src);
+        a->str.src = (char *)calloc(sizeof(char) * (track + 1), sizeof(char));
+        track = 0;
+        fast_strncat(a->str.src, (const char *)buff, &track);
+        free(buff);
+        free(temp);
+        a->str.len = track;
+        return true;
+    }
+    return false;
+}
+
+int _is_digit(sstring *a)
+{
+    if (a && a->str.src && a->str.init == true && a->str.src[0] != '\0')
+    {
+        for (SIZE_T i = 0; i < a->str.len; i++)
+            if (a->str.src[i] <= 48 || a->str.src[i] >= 57)
+                return false;
+        return true;
+    }
+    return false;
+}
+
+int _is_decimal(sstring *a)
+{
+    if (a && a->str.src && a->str.init == true && a->str.src[0] != '\0')
+    {
+        int point_cnt = 0;
+        for (SIZE_T i = 0; i < a->str.len; i++)
+        {
+            if (a->str.src[i] == 46)
+            {
+                point_cnt++;
+                if (point_cnt > 1)
+                    return false;
+            }
+            else if (a->str.src[i] <= 48 || a->str.src[i] >= 57)
+                return false;
+        }
+        return true;
+    }
+    return false;
+}
+
+int _is_ascii(sstring *a)
+{
+    if (a && a->str.src && a->str.init == true && a->str.src[0] != '\0')
+    {
+        for (SIZE_T i = 0; i < a->str.len; i++)
+            if (a->str.src[i] <= 0 || a->str.src[i] >= 127)
+                return false;
+        return true;
+    }
+    return false;
+}
+
+int _is_alphabetic(sstring *a)
+{
+    if (a && a->str.src && a->str.init == true && a->str.src[0] != '\0')
+    {
+        for (SIZE_T i = 0; i < a->str.len; i++)
+            if ((a->str.src[i] >= 65 && a->str.src[i] <= 90) || (a->str.src[i] >= 97 && a->str.src[i] <= 122))
+            {
+            }
+            else
+                return false;
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -2383,12 +2632,13 @@ int free_split(split_t *a)
 /**
  * Shortcut for initializing a `sstring` struct.
  * @param src data to assign by default, if `src` is NULL then nothing is assigned
+ * @param alloc_size amount of memory block to allocate `a`.
  * @returns an initialized `sstring`
  */
-sstring new_sstring(const char *src)
+sstring new_sstring(SIZE_T alloc_size, const char *src)
 {
     sstring x;
-    init_sstr(&x);
+    init_sstr(&x, alloc_size);
     if (src)
         x.set(&x, src);
     return x;
@@ -2400,15 +2650,16 @@ sstring new_sstring(const char *src)
  */
 #define SSTRING(x) \
     sstring x;     \
-    init_sstr(&x);
+    init_sstr(&x, 1);
 
 /**
  * Always use this function after any `sstring` declaration. 
  * This function initializes `a`. 
  * By the way use `SSTRING(x)` macro for shortcut.
  * @param a pointer to struct sstring
+ * @param alloc_size amount of memory block to allocate `a`.
  */
-int init_sstr(sstring *a)
+int init_sstr(sstring *a, SIZE_T alloc_size)
 {
     if (a)
     {
@@ -2483,9 +2734,16 @@ int init_sstr(sstring *a)
         a->encrypt = _encrypt;
         a->decrypt = _decrypt;
         a->begin = _begin;
+        a->iterator = _iterator;
         a->end = _end_sstring;
+        a->to_morse_code = _to_morse_code;
+        a->from_morse_code = _from_morse_code;
+        a->is_digit = _is_digit;
+        a->is_decimal = _is_decimal;
+        a->is_ascii = _is_ascii;
+        a->is_alphabetic = _is_alphabetic;
 
-        a->str.src = (char *)calloc(1 * sizeof(char), sizeof(char));
+        a->str.src = (char *)calloc((alloc_size * sizeof(char)) + sizeof(char), sizeof(char));
         a->str.len = 0ULL;
         a->str.init = true; // initialized properly
         return true;
