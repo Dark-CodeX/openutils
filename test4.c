@@ -2,8 +2,8 @@
 
 int main(void)
 {
-    sstring msg = new_sstring("");
-    sstring key = new_sstring("");
+    sstring msg = new_sstring(1, "");
+    sstring key = new_sstring(1, "");
     printf("MESSAGE:\n");
     if (msg.in(&msg, true, 1024 * 1024) == false)
     {
