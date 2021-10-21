@@ -2631,8 +2631,8 @@ int free_split(split_t *a)
 
 /**
  * Shortcut for initializing a `sstring` struct.
- * @param src data to assign by default, if `src` is NULL then nothing is assigned
  * @param alloc_size amount of memory block to allocate `a`.
+ * @param src data to assign by default, if `src` is NULL then nothing is assigned
  * @returns an initialized `sstring`
  */
 sstring new_sstring(SIZE_T alloc_size, const char *src)
