@@ -100,7 +100,7 @@ int format_eq(sstring *e)
                     format[k++] = e->str.src[i];
             }
             e->destructor(e);
-            init_sstr(e);
+            init_sstr(e, 1);
             e->set(e, (const char *)format);
             free(format);
             return true;
@@ -202,8 +202,8 @@ struct sol solve(struct coefficient *m1, struct coefficient *m2, int showSetps)
 
 int main(int argc, char const **argv)
 {
-    sstring eq1 = new_sstring(NULL);
-    sstring eq2 = new_sstring(NULL);
+    sstring eq1 = new_sstring(1, NULL);
+    sstring eq2 = new_sstring(1, NULL);
     printf("Eq. 1:\n");
     eq1.in(&eq1, true, 512);
     printf("Eq. 2:\n");
