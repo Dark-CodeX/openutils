@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 30.0.0
+* sstring: version 31.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "30.0.0"
+#define sstring_version "31.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -730,6 +730,13 @@ struct __string__
      * @returns true if all character were alphabetic, otherwise false
     */
     int (*is_alphabetic)(sstring *a);
+
+    /**
+     * Formats `a` according to escape sequences.
+     * @param a pointer to struct sstring
+     * @returns true if all formatted, otherwise false
+     */
+    int (*format_escape_sequence)(sstring *a);
 } __string__;
 
 #include "prototype_err.h"
@@ -2609,6 +2616,37 @@ int _is_alphabetic(sstring *a)
     return false;
 }
 
+int _format_escape_sequence(sstring *a)
+{
+    if (a && a->str.src && a->str.init == true)
+    {
+        if (_contains_char(a, '\\') != -1)
+            _replace(a, "\\", "\\\\");
+        if (_contains_char(a, '\a') != -1)
+            _replace(a, "\a", "\\a");
+        if (_contains_char(a, '\b') != -1)
+            _replace(a, "\b", "\\b");
+        if (_contains_char(a, '\f') != -1)
+            _replace(a, "\f", "\\f");
+        if (_contains_char(a, '\n') != -1)
+            _replace(a, "\n", "\\n");
+        if (_contains_char(a, '\r') != -1)
+            _replace(a, "\r", "\\r");
+        if (_contains_char(a, '\t') != -1)
+            _replace(a, "\t", "\\t");
+        if (_contains_char(a, '\v') != -1)
+            _replace(a, "\v", "\\v");
+        if (_contains_char(a, '\"') != -1)
+            _replace(a, "\"", "\\\"");
+        if (_contains_char(a, '\'') != -1)
+            _replace(a, "\'", "\\\'");
+        if (_contains_char(a, '\?') != -1)
+            _replace(a, "\?", "\\\?");
+        return true;
+    }
+    return false;
+}
+
 /**
  * Frees `a` carefully. Always use this function when there is not use of `a` or before your program exits.
  * @param a pointer to struct split
@@ -2742,6 +2780,7 @@ int init_sstr(sstring *a, SIZE_T alloc_size)
         a->is_decimal = _is_decimal;
         a->is_ascii = _is_ascii;
         a->is_alphabetic = _is_alphabetic;
+        a->format_escape_sequence = _format_escape_sequence;
 
         a->str.src = (char *)calloc((alloc_size * sizeof(char)) + sizeof(char), sizeof(char));
         a->str.len = 0ULL;
