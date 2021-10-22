@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 31.0.0
+* sstring: version 31.5.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "31.0.0"
+#define sstring_version "31.5.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -2478,15 +2478,15 @@ int _to_morse_code(sstring *a)
         for (SIZE_T i = 0; i < a->str.len; i++)
         {
             if (isdigit(a->str.src[i]))
-                fast_strncat(buff, morse_code_data[(SIZE_T)a->str.src[i] - 48], &track);
+                fast_strncat(buff, morse_code[(SIZE_T)a->str.src[i] - 48].code, &track);
+            else if (a->str.src[i] == ' ')
+                fast_strncat(buff, morse_code[(SIZE_T)36].code, &track);
             else
             {
                 if (a->str.src[i] >= 65 && a->str.src[i] <= 90)
-                    fast_strncat(buff, morse_code_data[(SIZE_T)a->str.src[i] - 55], &track);
+                    fast_strncat(buff, morse_code[(SIZE_T)a->str.src[i] - 55].code, &track);
                 else
-                    fast_strncat(buff, morse_code_data[(SIZE_T)a->str.src[i] - 87], &track);
-                if (a->str.src[i] == 32)
-                    fast_strncat(buff, morse_code_data[36], &track);
+                    fast_strncat(buff, morse_code[(SIZE_T)a->str.src[i] - 87].code, &track);
             }
             if (i < a->str.len - 1)
                 fast_strncat(buff, " ", &track);
@@ -2527,17 +2527,17 @@ int _from_morse_code(sstring *a)
             {
                 x = 0;
                 temp[k] = a->str.src[i];
-                while ((strcmp(temp, morse_code_data[x])) != true)
+                while ((strcmp(temp, morse_code[x].code)) != true)
                     x++;
-                arr[0] = morse_code_char[x];
+                arr[0] = morse_code[x].character;
                 fast_strncat(buff, (const char *)arr, &track);
             }
             if (a->str.src[i] == ' ')
             {
                 i++, x = 0;
-                while ((strcmp(temp, morse_code_data[x])) != true)
+                while ((strcmp(temp, morse_code[x].code)) != true)
                     x++;
-                arr[0] = morse_code_char[x];
+                arr[0] = morse_code[x].character;
                 fast_strncat(buff, (const char *)arr, &track);
                 memset(temp, 0, 8);
                 k = 0;
