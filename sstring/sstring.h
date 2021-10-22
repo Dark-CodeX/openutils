@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 31.5.0
+* sstring: version 32.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "31.5.0"
+#define sstring_version "32.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -76,16 +76,18 @@ typedef struct split_t
 typedef struct __iterator__ iter_sstring;
 struct __iterator__
 {
-    /** Initial position. */
-    SIZE_T cur;
+    /** Initial or current position. */
+    signed long long int cur;
     /** Final position. */
-    SIZE_T max;
+    signed long long int max;
+    /** For BOTTOM_TO_TOP. */
+    short is_max_smaller;
     /**
      * Increases or decreases `iter_sstring` by `move_by`.
      * @param is pointer to struct iter_sstring
      * @param move_by factor to move `is->cur`
      */
-    void (*advance)(iter_sstring *is, SIZE_T move_by);
+    void (*advance)(iter_sstring *is, signed long long int move_by);
 
     /**
      * Tells whether to continue the loop or not.
@@ -1134,7 +1136,7 @@ void _char_set(sstring *a, const char what, SIZE_T where)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        if (a->str.len > where && what != '\0')
+        if (a->str.len >= where && what != '\0')
             a->str.src[where] = what;
     }
 }
@@ -1143,7 +1145,7 @@ char _char_get(sstring *a, SIZE_T where)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        if (a->str.len > where)
+        if (a->str.len >= where)
             return a->str.src[where];
     }
     return (char)'\0';
@@ -2435,22 +2437,45 @@ SIZE_T _begin(void)
     return 0ULL;
 }
 
-void __advance__iter_sstring(iter_sstring *is, SIZE_T move_by)
+void __advance__iter_sstring(iter_sstring *is, signed long long int move_by)
 {
-    if (is && is->max > is->cur)
-        is->cur += move_by;
+    if (is)
+    {
+        if (is->is_max_smaller == true)
+            is->cur += move_by;
+        else if (is->is_max_smaller == false)
+            is->cur += move_by;
+    }
 }
 
 int __c_loop__iter_sstring(iter_sstring *is)
 {
-    if (is && (is->max > is->cur))
-        return true;
+    if (is)
+    {
+        if (is->is_max_smaller == true)
+        {
+            if (is->max <= is->cur)
+                return true;
+            else
+                return false;
+        }
+        else if (is->is_max_smaller == false)
+        {
+            if (is->max >= is->cur)
+                return true;
+            else
+                return false;
+        }
+    }
     return false;
 }
 
 iter_sstring _iterator(SIZE_T init_value, SIZE_T max_value)
 {
-    return (iter_sstring){.cur = init_value, .max = max_value, .advance = __advance__iter_sstring, .c_loop = __c_loop__iter_sstring};
+    if (max_value >= init_value)
+        return (iter_sstring){.cur = init_value, .max = max_value, .advance = __advance__iter_sstring, .c_loop = __c_loop__iter_sstring, .is_max_smaller = false};
+    else
+        return (iter_sstring){.cur = init_value, .max = max_value, .advance = __advance__iter_sstring, .c_loop = __c_loop__iter_sstring, .is_max_smaller = true};
 }
 
 SIZE_T _end_sstring(sstring *a)
