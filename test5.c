@@ -115,21 +115,21 @@ struct coefficient parse_eq(sstring *a)
     struct coefficient x = (struct coefficient){.C = 0, .X = 0, .Y = 0};
     if (a && a->str.src && a->str.init == true)
     {
-        char *buff_x = (char *)calloc(sizeof(char) * 64, sizeof(char)), *buff_y = (char *)calloc(sizeof(char) * 64, sizeof(char)), *buff_c = (char *)calloc(sizeof(char) * 64, sizeof(char));
+        sstring buff_x = new_sstring(1, NULL), buff_y = new_sstring(1, NULL), buff_c = new_sstring(1, NULL);
         SIZE_T i = 0, k = 0, j = 0;
-        for (; a->str.src[i] != 'x'; i++)
-            buff_x[i] = a->str.src[i];
+        for (; a->str.src[i] != 'x' && a->str.src[i] != '\0'; i++)
+            buff_x.append_char(&buff_x, a->str.src[i]);
         while (isDigit(a->str.src[i]) != true && a->str.src[i] != '-' && a->str.src[i] != '+')
             i++;
-        for (; a->str.src[i] != 'y'; k++)
-            buff_y[k] = a->str.src[i++];
+        for (; a->str.src[i] != 'y' && a->str.src[i] != '\0'; k++)
+            buff_y.append_char(&buff_y, a->str.src[i++]);
         while (isDigit(a->str.src[i]) != true && a->str.src[i] != '-' && a->str.src[i] != '+')
             i++;
         for (; a->str.src[i] != '\0'; j++)
-            buff_c[j] = a->str.src[i++];
-        x.X = strtold((const char *)buff_x, (char **)NULL);
-        x.Y = strtold((const char *)buff_y, (char **)NULL);
-        x.C = strtold((const char *)buff_c, (char **)NULL);
+            buff_c.append_char(&buff_c, a->str.src[i++]);
+        x.X = strtold(buff_x.c_str(&buff_x), (char **)NULL);
+        x.Y = strtold(buff_y.c_str(&buff_y), (char **)NULL);
+        x.C = strtold(buff_c.c_str(&buff_c), (char **)NULL);
         if (x.X == 0 && a->contains(a, "- x") == true)
             x.X = -1.0L;
         else if (x.X == 0 && a->char_get(a, 0) == 'x')
@@ -139,9 +139,9 @@ struct coefficient parse_eq(sstring *a)
             x.Y = -1.0L;
         else if (x.Y == 0 && a->contains(a, "+ y") == true)
             x.Y = 1;
-        free(buff_c);
-        free(buff_y);
-        free(buff_x);
+        buff_c.destructor(&buff_c);
+        buff_y.destructor(&buff_y);
+        buff_x.destructor(&buff_x);
         return x;
     }
     return x;
