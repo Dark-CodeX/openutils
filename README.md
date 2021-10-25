@@ -173,7 +173,7 @@ Be sure to suggest any changes.
 
 # BUILD AND INSTALL
 
-**For testing use:** *`gcc -Os -O3 -s -W -Wall -Wextra -Wuninitialized -Wstrict-aliasing -ggdb3 -g -std=c17 -Wextra -pedantic -Wmissing-prototypes -Wstrict-prototypes -Wold-style-definition test.c -lm -o test` and then `valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt ./test "Hello World Hello!"`*
+**For testing use:** *`gcc -Os -O3 -s -W -Wall -Wextra -Wuninitialized -Wstrict-aliasing -ggdb3 -g -std=c17 -Wextra -pedantic -Wmissing-prototypes -Wstrict-prototypes -Wold-style-definition samples/test.c -lm -o test` and then `valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt ./test "Hello World Hello!"`*
 
 ## Installation
 
