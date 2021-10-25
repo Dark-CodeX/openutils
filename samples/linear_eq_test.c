@@ -1,4 +1,4 @@
-#include "sstring/sstring.h"
+#include "../sstring/sstring.h"
 
 /** KIND OF TUPLE */
 struct coefficient

@@ -1,4 +1,4 @@
-#include "sstring/sstring.h"
+#include "../sstring/sstring.h"
 #include <vector/vector.h>
 
 int main(void)

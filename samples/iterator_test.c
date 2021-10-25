@@ -1,4 +1,4 @@
-#include "sstring/sstring.h"
+#include "../sstring/sstring.h"
 
 int main(int argc, char const **argv)
 {
