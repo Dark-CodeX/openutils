@@ -1,4 +1,4 @@
-# SSTRING: The C String Manipulation Library
+# SSTRING: The Safe C String Manipulation Library
 **Safe string in C. With huge amount of in-built functions.**
 
 This sstring struct is memory safe means that it will not cause memory leak.
