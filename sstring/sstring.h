@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 32.0.0
+* sstring: version 34.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "32.0.0"
+#define sstring_version "34.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -739,6 +739,15 @@ struct __string__
      * @returns true if all formatted, otherwise false
      */
     int (*format_escape_sequence)(sstring *a);
+
+    /**
+     * Inserts `src` into `a` at `index`.
+     * @param a pointer to struct sstring
+     * @param src string to insert
+     * @param index where to insert `src`
+     * @returns true if inserted `src` into `a`, otherwise false
+     */
+    int (*insert)(sstring *a, const char *src, SIZE_T index);
 } __string__;
 
 #include "prototype_err.h"
@@ -2645,28 +2654,38 @@ int _format_escape_sequence(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        if (_contains_char(a, '\\') != -1)
-            _replace(a, "\\", "\\\\");
-        if (_contains_char(a, '\a') != -1)
-            _replace(a, "\a", "\\a");
-        if (_contains_char(a, '\b') != -1)
-            _replace(a, "\b", "\\b");
-        if (_contains_char(a, '\f') != -1)
-            _replace(a, "\f", "\\f");
-        if (_contains_char(a, '\n') != -1)
-            _replace(a, "\n", "\\n");
-        if (_contains_char(a, '\r') != -1)
-            _replace(a, "\r", "\\r");
-        if (_contains_char(a, '\t') != -1)
-            _replace(a, "\t", "\\t");
-        if (_contains_char(a, '\v') != -1)
-            _replace(a, "\v", "\\v");
-        if (_contains_char(a, '\"') != -1)
-            _replace(a, "\"", "\\\"");
-        if (_contains_char(a, '\'') != -1)
-            _replace(a, "\'", "\\\'");
-        if (_contains_char(a, '\?') != -1)
-            _replace(a, "\?", "\\\?");
+        _replace(a, "\\", "\\\\");
+        _replace(a, "\a", "\\a");
+        _replace(a, "\b", "\\b");
+        _replace(a, "\f", "\\f");
+        _replace(a, "\n", "\\n");
+        _replace(a, "\r", "\\r");
+        _replace(a, "\t", "\\t");
+        _replace(a, "\v", "\\v");
+        _replace(a, "\"", "\\\"");
+        _replace(a, "\'", "\\\'");
+        _replace(a, "\?", "\\\?");
+        return true;
+    }
+    return false;
+}
+
+int _insert(sstring *a, const char *src, SIZE_T index)
+{
+    if (a && a->str.src && src && a->str.init == true && index <= a->str.len)
+    {
+        SIZE_T len = strlen(src);
+        char *buff = (char *)calloc(sizeof(char) * (a->str.len - index + 1), sizeof(char));
+        for (SIZE_T i = index, z = 0; i < a->str.len; i++, z++)
+            buff[z] = a->str.src[i];
+        a->str.src = (char *)realloc(a->str.src, a->str.len + len + 1);
+        SIZE_T i = index, z = 0;
+        for (; z < len; i++, z++)
+            a->str.src[i] = src[z];
+        len = index + z;
+        fast_strncat(a->str.src, buff, &len);
+        a->str.len = len;
+        free(buff);
         return true;
     }
     return false;
@@ -2806,6 +2825,7 @@ int init_sstr(sstring *a, SIZE_T alloc_size)
         a->is_ascii = _is_ascii;
         a->is_alphabetic = _is_alphabetic;
         a->format_escape_sequence = _format_escape_sequence;
+        a->insert = _insert;
 
         a->str.src = (char *)calloc((alloc_size * sizeof(char)) + sizeof(char), sizeof(char));
         a->str.len = 0ULL;
