@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 34.0.5
+* sstring: version 34.1.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "34.0.5"
+#define sstring_version "34.1.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -2482,9 +2482,9 @@ int __c_loop__iter_sstring(iter_sstring *is)
 iter_sstring _iterator(SIZE_T init_value, SIZE_T max_value)
 {
     if (max_value >= init_value)
-        return (iter_sstring){.cur = init_value, .max = max_value, .advance = __advance__iter_sstring, .c_loop = __c_loop__iter_sstring, .is_max_smaller = false};
+        return (iter_sstring){.cur = init_value, .max = max_value, .is_max_smaller = false, .advance = __advance__iter_sstring, .c_loop = __c_loop__iter_sstring};
     else
-        return (iter_sstring){.cur = init_value, .max = max_value, .advance = __advance__iter_sstring, .c_loop = __c_loop__iter_sstring, .is_max_smaller = true};
+        return (iter_sstring){.cur = init_value, .max = max_value, .is_max_smaller = true, .advance = __advance__iter_sstring, .c_loop = __c_loop__iter_sstring};
 }
 
 SIZE_T _end_sstring(sstring *a)
