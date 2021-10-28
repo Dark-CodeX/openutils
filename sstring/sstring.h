@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 34.0.0
+* sstring: version 34.0.5
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "34.0.0"
+#define sstring_version "34.0.5"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1236,20 +1236,20 @@ void _replace(sstring *a, const char *old, const char *new_)
         {
             if (strstr(temp, old) == temp)
             {
-                strcpy(&buff[i], new_);
+                SIZE_T x = 0;
+                fast_strncat(&buff[i], new_, &x);
                 i += len_n;
                 temp += len_o;
             }
             else
                 buff[i++] = *temp++;
         }
-        buff[i] = '\0';
         free(a->str.src);
-        SIZE_T buff__len = strlen((const char *)buff);
-        a->str.src = (char *)calloc(sizeof(char) * (buff__len + 1), sizeof(char));
-        strcpy(a->str.src, (const char *)buff);
+        a->str.src = (char *)calloc(sizeof(char) * (i + 1), sizeof(char));
+        a->str.len = i;
+        i = 0;
+        fast_strncat(a->str.src, (const char *)buff, &i);
         free(buff);
-        a->str.len = buff__len;
     }
 }
 
