@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "morse_code.h" under "sstring" directory
-* sstring: version 34.0.5
+* sstring: version 34.1.0
 * 
 * MIT License
 * 
