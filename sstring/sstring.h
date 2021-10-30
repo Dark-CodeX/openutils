@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 34.1.0
+* sstring: version 37.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "34.1.0"
+#define sstring_version "37.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,9 +39,8 @@ typedef struct __string__ sstring;
 #include <stdarg.h>
 #include <math.h>
 #include <ctype.h>
+#include <stdbool.h>
 
-#define true 0
-#define false 1
 typedef unsigned long long int SIZE_T;
 
 /**
@@ -748,6 +747,22 @@ struct __string__
      * @returns true if inserted `src` into `a`, otherwise false
      */
     int (*insert)(sstring *a, const char *src, SIZE_T index);
+
+    /**
+     * Checks whether `a` starts with `src`.
+     * @param a pointer to struct sstring
+     * @param src string to check
+     * @returns true if starts with `src`, otherwise false
+     */
+    int (*starts_with)(sstring *a, const char *src);
+
+    /**
+     * Checks whether `a` ends with `src`.
+     * @param a pointer to struct sstring
+     * @param src string to check
+     * @returns true if ends with `src`, otherwise false
+     */
+    int (*ends_with)(sstring *a, const char *src);
 } __string__;
 
 #include "prototype_err.h"
@@ -1171,7 +1186,7 @@ int _compare(sstring *a, const char *T1)
 {
     if (a && T1 && a->str.init == true && a->str.src)
     {
-        if (strcmp((const char *)a->str.src, T1) == true)
+        if (strcmp((const char *)a->str.src, T1) == 0)
             return true;
     }
     return false;
@@ -1181,7 +1196,7 @@ int _compare_upto(sstring *a, const char *T1, SIZE_T N)
 {
     if (a && T1 && a->str.init == true && a->str.src && strlen(T1) >= N)
     {
-        if (strncmp((const char *)a->str.src, T1, N) == true)
+        if (strncmp((const char *)a->str.src, T1, N) == 0)
             return true;
     }
     return false;
@@ -2561,7 +2576,7 @@ int _from_morse_code(sstring *a)
             {
                 x = 0;
                 temp[k] = a->str.src[i];
-                while ((strcmp(temp, morse_code[x].code)) != true)
+                while ((strcmp(temp, morse_code[x].code)) != 0)
                     x++;
                 arr[0] = morse_code[x].character;
                 fast_strncat(buff, (const char *)arr, &track);
@@ -2569,7 +2584,7 @@ int _from_morse_code(sstring *a)
             if (a->str.src[i] == ' ')
             {
                 i++, x = 0;
-                while ((strcmp(temp, morse_code[x].code)) != true)
+                while ((strcmp(temp, morse_code[x].code)) != 0)
                     x++;
                 arr[0] = morse_code[x].character;
                 fast_strncat(buff, (const char *)arr, &track);
@@ -2686,6 +2701,35 @@ int _insert(sstring *a, const char *src, SIZE_T index)
         fast_strncat(a->str.src, buff, &len);
         a->str.len = len;
         free(buff);
+        return true;
+    }
+    return false;
+}
+
+int _starts_with(sstring *a, const char *src)
+{
+    if (a && a->str.src && src && a->str.init == true && src)
+    {
+        if (strlen(src) > a->str.len)
+            return false;
+        for (SIZE_T i = 0; src[i] != '\0' && a->str.src[i] != '\0'; i++)
+            if (a->str.src[i] != src[i])
+                return false;
+        return true;
+    }
+    return false;
+}
+
+int _ends_with(sstring *a, const char *src)
+{
+    if (a && a->str.src && src && a->str.init == true && src)
+    {
+        SIZE_T len = strlen(src);
+        if (len > a->str.len)
+            return false;
+        for (SIZE_T i = a->str.len - len, z = 0; src[z] != '\0' && a->str.src[i] != '\0'; i++, z++)
+            if (a->str.src[i] != src[z])
+                return false;
         return true;
     }
     return false;
@@ -2826,6 +2870,8 @@ int init_sstr(sstring *a, SIZE_T alloc_size)
         a->is_alphabetic = _is_alphabetic;
         a->format_escape_sequence = _format_escape_sequence;
         a->insert = _insert;
+        a->starts_with = _starts_with;
+        a->ends_with = _ends_with;
 
         a->str.src = (char *)calloc((alloc_size * sizeof(char)) + sizeof(char), sizeof(char));
         a->str.len = 0ULL;
