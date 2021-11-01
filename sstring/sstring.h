@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 37.0.0
+* sstring: version 39.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "37.0.0"
+#define sstring_version "39.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,7 +59,7 @@ typedef struct __str__
 
 /**
  * This struct is made to store double-pointer char and its length.
- * Use `free_split` function to free this struct.
+ * NOTE: Use `free_split` function to free this struct.
  */
 typedef struct split_t
 {
@@ -95,6 +95,33 @@ struct __iterator__
      */
     int (*c_loop)(iter_sstring *is);
 };
+
+/**
+ * This enum is used to store the type of token.
+ */
+enum parse_token
+{
+    WORD,
+    INTEGER,
+    ESC_SEQ,
+    SPECIAL_CHAR,
+    WHITESPACE
+} parse_token;
+
+/**
+ * This struct stores double-pointer char, its length and type of token.
+ * NOTE: Use `free_parse` function to avoid memory leaks.
+ */
+typedef struct __parse__ parse_t;
+struct __parse__
+{
+    /* contains the parsed strings */
+    char **src;
+    /* length of double-pointer `src` */
+    SIZE_T length;
+    /** contains the type of token */
+    enum parse_token *type;
+} __parse__;
 
 struct __string__
 {
@@ -763,6 +790,13 @@ struct __string__
      * @returns true if ends with `src`, otherwise false
      */
     int (*ends_with)(sstring *a, const char *src);
+
+    /**
+     * Parse `a` into tokens and returns a `parse_t` struct. NOTE: Use `free_parse` function to avoid memory leaks.
+     * @param a pointer to struct sstring
+     * @returns `parse_t` struct with length, token and token type
+     */
+    parse_t (*parse)(sstring *a);
 } __string__;
 
 #include "prototype_err.h"
@@ -1343,7 +1377,7 @@ int _clear(sstring *a)
     if (a && a->str.src && a->str.init == true)
     {
         free(a->str.src);
-        a->str.src = (char *)calloc(1, sizeof(char));
+        a->str.src = (char *)calloc(sizeof(char) * 2, sizeof(char));
         a->str.len = 0;
         return true;
     }
@@ -2515,13 +2549,8 @@ int _to_morse_code(sstring *a)
     if (a && a->str.src && a->str.init == true)
     {
         for (SIZE_T i = 0; i < a->str.len; i++)
-        {
-            if ((a->str.src[i] >= 48 && a->str.src[i] <= 57) || (a->str.src[i] >= 97 && a->str.src[i] <= 122) || (a->str.src[i] >= 65 && a->str.src[i] <= 90) || (a->str.src[i] == 32))
-            {
-            }
-            else
+            if (!isdigit(a->str.src[i]) && !isalpha(a->str.src[i]) && a->str.src[i] != ' ')
                 return false;
-        }
         char *buff = (char *)calloc((sizeof(char) * a->str.len * 8) + 1, sizeof(char));
         SIZE_T track = 0;
         for (SIZE_T i = 0; i < a->str.len; i++)
@@ -2610,7 +2639,7 @@ int _is_digit(sstring *a)
     if (a && a->str.src && a->str.init == true && a->str.src[0] != '\0')
     {
         for (SIZE_T i = 0; i < a->str.len; i++)
-            if (a->str.src[i] <= 48 || a->str.src[i] >= 57)
+            if (!isdigit(a->str.src[i]))
                 return false;
         return true;
     }
@@ -2630,10 +2659,11 @@ int _is_decimal(sstring *a)
                 if (point_cnt > 1)
                     return false;
             }
-            else if (a->str.src[i] <= 48 || a->str.src[i] >= 57)
+            else if (!isdigit(a->str.src[i]))
                 return false;
         }
-        return true;
+        if (point_cnt == 1)
+            return true;
     }
     return false;
 }
@@ -2655,10 +2685,7 @@ int _is_alphabetic(sstring *a)
     if (a && a->str.src && a->str.init == true && a->str.src[0] != '\0')
     {
         for (SIZE_T i = 0; i < a->str.len; i++)
-            if ((a->str.src[i] >= 65 && a->str.src[i] <= 90) || (a->str.src[i] >= 97 && a->str.src[i] <= 122))
-            {
-            }
-            else
+            if (!isalpha(a->str.src[i]))
                 return false;
         return true;
     }
@@ -2685,6 +2712,41 @@ int _format_escape_sequence(sstring *a)
     return false;
 }
 
+/**
+ * Converts escape sequences to their representable strings (as const).
+ * @param c escape sequence of the character
+ * @returns representable string of escape sequences, if `c` is not an escape sequence then NUL is returned
+ */
+const char *char_to_esc_seq(char c)
+{
+    if (c == '\\')
+        return (const char *)"\\\\";
+    else if (c == '\a')
+        return (const char *)"\\a";
+    else if (c == '\b')
+        return (const char *)"\\b";
+    else if (c == '\f')
+        return (const char *)"\\f";
+    else if (c == '\n')
+        return (const char *)"\\n";
+    else if (c == '\r')
+        return (const char *)"\\r";
+    else if (c == '\t')
+        return (const char *)"\\t";
+    else if (c == '\v')
+        return (const char *)"\\v";
+    else if (c == '\"')
+        return (const char *)"\\\"";
+    else if (c == '\'')
+        return (const char *)"\\\'";
+    else if (c == '\?')
+        return (const char *)"\\\?";
+    else if (c == '\0')
+        return (const char *)"\\0";
+    else
+        return (const char *)"\0";
+}
+
 int _insert(sstring *a, const char *src, SIZE_T index)
 {
     if (a && a->str.src && src && a->str.init == true && index <= a->str.len)
@@ -2708,7 +2770,7 @@ int _insert(sstring *a, const char *src, SIZE_T index)
 
 int _starts_with(sstring *a, const char *src)
 {
-    if (a && a->str.src && src && a->str.init == true && src)
+    if (a && a->str.src && a->str.init == true && src)
     {
         if (strlen(src) > a->str.len)
             return false;
@@ -2722,7 +2784,7 @@ int _starts_with(sstring *a, const char *src)
 
 int _ends_with(sstring *a, const char *src)
 {
-    if (a && a->str.src && src && a->str.init == true && src)
+    if (a && a->str.src && a->str.init == true && src)
     {
         SIZE_T len = strlen(src);
         if (len > a->str.len)
@@ -2735,9 +2797,112 @@ int _ends_with(sstring *a, const char *src)
     return false;
 }
 
+parse_t _parse(sstring *a)
+{
+    if (a && a->str.src && a->str.init == true)
+    {
+        SIZE_T len = 0;
+        for (SIZE_T i = 0; i < a->str.len;)
+        {
+            if ((a->str.src[i] >= 97 && a->str.src[i] <= 122) || (a->str.src[i] >= 65 && a->str.src[i] <= 90))
+            {
+                while ((a->str.src[i] >= 97 && a->str.src[i] <= 122) || (a->str.src[i] >= 65 && a->str.src[i] <= 90))
+                    i++;
+                len++;
+            }
+            else if (a->str.src[i] == 32)
+                i++, len++;
+            else if (isdigit(a->str.src[i]))
+            {
+                while (isdigit(a->str.src[i]))
+                    i++;
+                len++;
+            }
+            else if ((a->str.src[i] >= 33 && a->str.src[i] <= 47) || (a->str.src[i] >= 58 && a->str.src[i] <= 64) || (a->str.src[i] == 91) || (a->str.src[i] >= 93 && a->str.src[i] <= 96) || (a->str.src[i] >= 123 && a->str.src[i] <= 126))
+            {
+                while ((a->str.src[i] >= 33 && a->str.src[i] <= 47) || (a->str.src[i] >= 58 && a->str.src[i] <= 64) || (a->str.src[i] == 91) || (a->str.src[i] >= 93 && a->str.src[i] <= 96) || (a->str.src[i] >= 123 && a->str.src[i] <= 126))
+                    i++;
+                len++;
+            }
+            else if (a->str.src[i] == '\\' || a->str.src[i] == '\a' || a->str.src[i] == '\b' || a->str.src[i] == '\f' || a->str.src[i] == '\n' || a->str.src[i] == '\r' || a->str.src[i] == '\t' || a->str.src[i] == '\v' || a->str.src[i] == '\"' || a->str.src[i] == '\'' || a->str.src[i] == '\?')
+            {
+                while (a->str.src[i] == '\\' || a->str.src[i] == '\a' || a->str.src[i] == '\b' || a->str.src[i] == '\f' || a->str.src[i] == '\n' || a->str.src[i] == '\r' || a->str.src[i] == '\t' || a->str.src[i] == '\v' || a->str.src[i] == '\"' || a->str.src[i] == '\'' || a->str.src[i] == '\?')
+                    i++;
+                len++;
+            }
+        }
+        parse_t pt;
+        pt.src = (char **)calloc(sizeof(char *) * (len + 1), sizeof(char *));
+        pt.type = (enum parse_token *)calloc(sizeof(enum parse_token) * (len + 1), sizeof(enum parse_token));
+        sstring toks = new_sstring(0, NULL);
+        SIZE_T sigma = 0, track = 0;
+        for (SIZE_T i = 0; i < a->str.len;)
+        {
+            if ((a->str.src[i] >= 97 && a->str.src[i] <= 122) || (a->str.src[i] >= 65 && a->str.src[i] <= 90))
+            {
+                _clear(&toks);
+                while ((a->str.src[i] >= 97 && a->str.src[i] <= 122) || (a->str.src[i] >= 65 && a->str.src[i] <= 90))
+                    _append_char(&toks, a->str.src[i++]);
+                pt.src[sigma] = (char *)calloc(sizeof(char) * (_end_sstring(&toks) + 1), sizeof(char));
+                track = 0;
+                fast_strncat(pt.src[sigma], _c_str(&toks), &track);
+                pt.type[sigma++] = WORD;
+            }
+            else if (a->str.src[i] == 32)
+            {
+                _clear(&toks);
+                _append_char(&toks, a->str.src[i++]);
+                pt.src[sigma] = (char *)calloc(sizeof(char) * (_end_sstring(&toks) + 1), sizeof(char));
+                track = 0;
+                fast_strncat(pt.src[sigma], _c_str(&toks), &track);
+                pt.type[sigma++] = WHITESPACE;
+            }
+            else if (isdigit(a->str.src[i]))
+            {
+                _clear(&toks);
+                while (isdigit(a->str.src[i]))
+                    _append_char(&toks, a->str.src[i++]);
+                pt.src[sigma] = (char *)calloc(sizeof(char) * (_end_sstring(&toks) + 1), sizeof(char));
+                track = 0;
+                fast_strncat(pt.src[sigma], _c_str(&toks), &track);
+                pt.type[sigma++] = INTEGER;
+            }
+            else if ((a->str.src[i] >= 33 && a->str.src[i] <= 47) || (a->str.src[i] >= 58 && a->str.src[i] <= 64) || (a->str.src[i] == 91) || (a->str.src[i] >= 93 && a->str.src[i] <= 96) || (a->str.src[i] >= 123 && a->str.src[i] <= 126))
+            {
+                _clear(&toks);
+                while ((a->str.src[i] >= 33 && a->str.src[i] <= 47) || (a->str.src[i] >= 58 && a->str.src[i] <= 64) || (a->str.src[i] == 91) || (a->str.src[i] >= 93 && a->str.src[i] <= 96) || (a->str.src[i] >= 123 && a->str.src[i] <= 126))
+                    _append_char(&toks, a->str.src[i++]);
+                pt.src[sigma] = (char *)calloc(sizeof(char) * (_end_sstring(&toks) + 1), sizeof(char));
+                track = 0;
+                fast_strncat(pt.src[sigma], _c_str(&toks), &track);
+                pt.type[sigma++] = SPECIAL_CHAR;
+            }
+            else if (a->str.src[i] == '\\' || a->str.src[i] == '\a' || a->str.src[i] == '\b' || a->str.src[i] == '\f' || a->str.src[i] == '\n' || a->str.src[i] == '\r' || a->str.src[i] == '\t' || a->str.src[i] == '\v' || a->str.src[i] == '\"' || a->str.src[i] == '\'' || a->str.src[i] == '\?')
+            {
+                _clear(&toks);
+                while (a->str.src[i] == '\\' || a->str.src[i] == '\a' || a->str.src[i] == '\b' || a->str.src[i] == '\f' || a->str.src[i] == '\n' || a->str.src[i] == '\r' || a->str.src[i] == '\t' || a->str.src[i] == '\v' || a->str.src[i] == '\"' || a->str.src[i] == '\'' || a->str.src[i] == '\?')
+                    _append(&toks, char_to_esc_seq(a->str.src[i++]));
+                pt.src[sigma] = (char *)calloc(sizeof(char) * (_end_sstring(&toks) + 1), sizeof(char));
+                track = 0;
+                fast_strncat(pt.src[sigma], _c_str(&toks), &track);
+                pt.type[sigma++] = ESC_SEQ;
+            }
+        }
+        // append \0 as the end of file or string
+        pt.src[sigma] = (char *)calloc(sizeof(char) * 4, sizeof(char));
+        track = 0;
+        fast_strncat(pt.src[sigma], char_to_esc_seq('\0'), &track);
+        pt.type[sigma++] = ESC_SEQ;
+        _destructor(&toks);
+        pt.length = sigma;
+        return pt;
+    }
+    return (parse_t){.src = (char **)NULL, .length = 0, .type = (enum parse_token *)NULL};
+}
+
 /**
  * Frees `a` carefully. Always use this function when there is not use of `a` or before your program exits.
- * @param a pointer to struct split
+ * @param a pointer to struct split_t
  * @returns true if freed, otherwise false
  */
 int free_split(split_t *a)
@@ -2745,11 +2910,30 @@ int free_split(split_t *a)
     if (a)
     {
         for (SIZE_T i = 0; i < a->len; i++)
-        {
             if (a->data[i] != NULL)
                 free(a->data[i]);
-        }
         free(a->data);
+        a->len = 0;
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Frees `a` carefully. Always use this function when there is not use of `a` or before your program exits.
+ * @param a pointer to struct parse_t
+ * @returns true if freed, otherwise false
+ */
+int free_parse(parse_t *a)
+{
+    if (a)
+    {
+        for (SIZE_T i = 0; i < a->length; i++)
+            if (a->src[i] != NULL)
+                free(a->src[i]);
+        free(a->src);
+        free(a->type);
+        a->length = 0;
         return true;
     }
     return false;
@@ -2872,6 +3056,7 @@ int init_sstr(sstring *a, SIZE_T alloc_size)
         a->insert = _insert;
         a->starts_with = _starts_with;
         a->ends_with = _ends_with;
+        a->parse = _parse;
 
         a->str.src = (char *)calloc((alloc_size * sizeof(char)) + sizeof(char), sizeof(char));
         a->str.len = 0ULL;
