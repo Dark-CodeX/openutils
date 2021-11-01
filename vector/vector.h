@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/vector.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "vector.h" under "vector" directory
-* vector version: 12.0.0
+* vector version: 14.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,12 +31,11 @@
 */
 
 #include <stdlib.h>
+#include <stdbool.h>
 
-#define true 0
-#define false 1
 typedef unsigned long long int SIZE_T;
 
-#define vector_version "12.0.0"
+#define vector_version "14.0.0"
 
 /**
 * Appends `data` to `vec` at the end.
@@ -206,7 +205,7 @@ typedef unsigned long long int SIZE_T;
 * Compares `vec` against `vec2` iteratively. NOTE: length of both vectors should be same
 * @param vec vector
 * @param vec2 vector
-* @param result if assigned value is 0 then, `vec` and `vec2` are same. NOTE: `result` data type should be `int`
+* @param result if assigned value is true then, `vec` and `vec2` are same. NOTE: `result` data type should be `int`
 */
 #define vector_compare(vec, vec2, result)                                                                                                                                      \
     if (sizeof(result) == sizeof(int) && vec.init == true && vec.src && vec2.init == true && vec2.src && (vec.length == vec2.length) && (sizeof(vec.def) == sizeof(vec2.def))) \
@@ -226,7 +225,7 @@ typedef unsigned long long int SIZE_T;
 /**
 * Macro for initializing a `vector` struct.
 * @param var_name vector name or variable name
-* @param type data type eg. int, char *, long, float
+* @param type data type eg. int, char *, long, float or even a struct
 */
 #define vector(var_name, type)                                                     \
     struct var_name                                                                \
