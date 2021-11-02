@@ -12,7 +12,7 @@ int main(int argc, char const *argv[])
             x.destructor(&x);
             return -1;
         }
-        if (strcmp(argv[2], "-o") != true)
+        if (strcmp(argv[2], "-o") != 0)
         {
             printf("not found `-o` instead found `%s`.\n", argv[2]);
             x.destructor(&x);

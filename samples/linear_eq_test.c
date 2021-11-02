@@ -221,7 +221,7 @@ int main(int argc, char const **argv)
         struct coefficient ans2 = parse_eq(&eq2);
         int steps = false;
         if (argc == 2)
-            if (strcmp(argv[1], "true") == true)
+            if (strcmp(argv[1], "true") == 0)
                 steps = true;
         struct sol result = solve(&ans, &ans2, steps);
 
