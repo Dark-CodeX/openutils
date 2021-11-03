@@ -6,7 +6,7 @@ static const char *tokens[] =
         "INTEGER",
         "ESC_SEQ",
         "SPECIAL_CHAR",
-        "WHITESPACE}"};
+        "WHITESPACE"};
 
 int main(void)
 {
