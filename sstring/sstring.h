@@ -152,6 +152,7 @@ struct __string__
      * @code {.c} 
      * srand((unsigned int)(time(NULL) * getpid() * getpid() + getpid())); 
      * @endcode 
+     * OR you can use `srand` function with the memory reference of any pointer. 
      * @param a pointer to struct sstring
      * @param len size of random string
      */
@@ -707,7 +708,7 @@ struct __string__
      * @param max_value final position
      * @returns an initialized `iter_sstring`
      */
-    iter_sstring (*iterator)(SIZE_T init_value, SIZE_T max_value);
+    iter_sstring (*iterator)(signed long long int init_value, signed long long int max_value);
 
     /**
      * Returns last index of `a`, without using `strlen` function. Should be used in any loop.
@@ -2498,12 +2499,7 @@ SIZE_T _begin(void)
 void __advance__iter_sstring(iter_sstring *is, signed long long int move_by)
 {
     if (is)
-    {
-        if (is->is_max_smaller == true)
-            is->cur += move_by;
-        else if (is->is_max_smaller == false)
-            is->cur += move_by;
-    }
+        is->cur += move_by;
 }
 
 int __c_loop__iter_sstring(iter_sstring *is)
@@ -2512,14 +2508,14 @@ int __c_loop__iter_sstring(iter_sstring *is)
     {
         if (is->is_max_smaller == true)
         {
-            if (is->max <= is->cur)
+            if (is->max < is->cur)
                 return true;
             else
                 return false;
         }
         else if (is->is_max_smaller == false)
         {
-            if (is->max >= is->cur)
+            if (is->max > is->cur)
                 return true;
             else
                 return false;
@@ -2528,7 +2524,7 @@ int __c_loop__iter_sstring(iter_sstring *is)
     return false;
 }
 
-iter_sstring _iterator(SIZE_T init_value, SIZE_T max_value)
+iter_sstring _iterator(signed long long int init_value, signed long long int max_value)
 {
     if (max_value >= init_value)
         return (iter_sstring){.cur = init_value, .max = max_value, .is_max_smaller = false, .advance = __advance__iter_sstring, .c_loop = __c_loop__iter_sstring};
@@ -2871,21 +2867,27 @@ parse_t _parse(sstring *a)
             {
                 _clear(&toks);
                 while ((a->str.src[i] >= 33 && a->str.src[i] <= 47) || (a->str.src[i] >= 58 && a->str.src[i] <= 64) || (a->str.src[i] == 91) || (a->str.src[i] >= 93 && a->str.src[i] <= 96) || (a->str.src[i] >= 123 && a->str.src[i] <= 126))
+                {
+                    _clear(&toks);
                     _append_char(&toks, a->str.src[i++]);
-                pt.src[sigma] = (char *)calloc(sizeof(char) * (_end_sstring(&toks) + 1), sizeof(char));
-                track = 0;
-                fast_strncat(pt.src[sigma], _c_str(&toks), &track);
-                pt.type[sigma++] = SPECIAL_CHAR;
+                    pt.src[sigma] = (char *)calloc(sizeof(char) * (_end_sstring(&toks) + 1), sizeof(char));
+                    track = 0;
+                    fast_strncat(pt.src[sigma], _c_str(&toks), &track);
+                    pt.type[sigma++] = SPECIAL_CHAR;
+                }
             }
             else if (a->str.src[i] == '\\' || a->str.src[i] == '\a' || a->str.src[i] == '\b' || a->str.src[i] == '\f' || a->str.src[i] == '\n' || a->str.src[i] == '\r' || a->str.src[i] == '\t' || a->str.src[i] == '\v' || a->str.src[i] == '\"' || a->str.src[i] == '\'' || a->str.src[i] == '\?')
             {
                 _clear(&toks);
                 while (a->str.src[i] == '\\' || a->str.src[i] == '\a' || a->str.src[i] == '\b' || a->str.src[i] == '\f' || a->str.src[i] == '\n' || a->str.src[i] == '\r' || a->str.src[i] == '\t' || a->str.src[i] == '\v' || a->str.src[i] == '\"' || a->str.src[i] == '\'' || a->str.src[i] == '\?')
+                {
+                    _clear(&toks);
                     _append(&toks, char_to_esc_seq(a->str.src[i++]));
-                pt.src[sigma] = (char *)calloc(sizeof(char) * (_end_sstring(&toks) + 1), sizeof(char));
-                track = 0;
-                fast_strncat(pt.src[sigma], _c_str(&toks), &track);
-                pt.type[sigma++] = ESC_SEQ;
+                    pt.src[sigma] = (char *)calloc(sizeof(char) * (_end_sstring(&toks) + 1), sizeof(char));
+                    track = 0;
+                    fast_strncat(pt.src[sigma], _c_str(&toks), &track);
+                    pt.type[sigma++] = ESC_SEQ;
+                }
             }
         }
         // append \0 as the end of file or string
