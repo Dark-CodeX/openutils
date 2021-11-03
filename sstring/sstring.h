@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 41.0.0
+* sstring: version 41.0.5
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "41.0.0"
+#define sstring_version "41.0.5"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -105,7 +105,8 @@ enum parse_token
     INTEGER,
     ESC_SEQ,
     SPECIAL_CHAR,
-    WHITESPACE
+    WHITESPACE,
+    NULL_END
 } parse_token;
 
 /**
@@ -2941,7 +2942,7 @@ parse_t _parse(sstring *a)
         pt.src[sigma] = (char *)calloc(sizeof(char) * 4, sizeof(char));
         track = 0;
         fast_strncat(pt.src[sigma], char_to_esc_seq('\0'), &track);
-        pt.type[sigma++] = ESC_SEQ;
+        pt.type[sigma++] = NULL_END;
         _destructor(&toks);
         pt.length = sigma;
         return pt;
