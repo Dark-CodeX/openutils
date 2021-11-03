@@ -104,7 +104,7 @@ int _print_binary(sstring *a, SIZE_T len);
 int _encrypt(sstring *a, const char *key);
 int _decrypt(sstring *a, const char *key);
 SIZE_T _begin(void);
-iter_sstring _iterator(SIZE_T init_value, SIZE_T max_value);
+iter_sstring _iterator(signed long long int init_value, signed long long int max_value);
 SIZE_T _end_sstring(sstring *a);
 int _to_morse_code(sstring *a);
 int _from_morse_code(sstring *a);
