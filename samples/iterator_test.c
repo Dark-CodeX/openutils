@@ -9,7 +9,7 @@ int main(int argc, char const **argv)
         printf("%c", x.char_get(&x, i.cur));
     printf("\n");
     printf("BOTTOM_TO_TOP\n");
-    for (iter_sstring i = x.iterator(x.end(&x), x.begin()); i.c_loop(&i) != false; i.advance(&i, -1))
+    for (iter_sstring i = x.iterator(x.end(&x), x.begin() - 1); i.c_loop(&i) != false; i.advance(&i, -1))
         printf("%c", x.char_get(&x, i.cur));
     printf("\n");
     x.destructor(&x);
