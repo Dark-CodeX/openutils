@@ -29,13 +29,13 @@ int isDigit(char c)
 int format_eq(sstring *e);
 int format_eq(sstring *e)
 {
-    if (e && e->str.src && e->str.init == true)
+    if (e && (*(__str__ *)e->str).src && (*(__str__ *)e->str).init == true)
     {
         e->remove_char(e, ' ');
         short valid = false;
-        for (SIZE_T i = 0; e->str.src[i] != '\0'; i++)
+        for (SIZE_T i = 0; (*(__str__ *)e->str).src[i] != '\0'; i++)
         {
-            switch (e->str.src[i])
+            switch ((*(__str__ *)e->str).src[i])
             {
             case 'x':
             case 'X':
@@ -69,30 +69,30 @@ int format_eq(sstring *e)
             SIZE_T len = e->length(e);
             e->to_lower(e);
             char *format = (char *)calloc(sizeof(char) * (len * 2) + 1, sizeof(char));
-            for (SIZE_T i = 0, k = 0; e->str.src[i] != '\0'; i++)
+            for (SIZE_T i = 0, k = 0; (*(__str__ *)e->str).src[i] != '\0'; i++)
             {
-                if (e->str.src[i] == ' ')
+                if ((*(__str__ *)e->str).src[i] == ' ')
                     continue;
-                if (isDigit(e->str.src[i]) == true)
-                    format[k++] = e->str.src[i];
-                else if (e->str.src[i] == 'x' || e->str.src[i] == '=')
+                if (isDigit((*(__str__ *)e->str).src[i]) == true)
+                    format[k++] = (*(__str__ *)e->str).src[i];
+                else if ((*(__str__ *)e->str).src[i] == 'x' || (*(__str__ *)e->str).src[i] == '=')
                 {
-                    format[k++] = e->str.src[i];
-                    if (e->str.src[i + 1] != '^')
+                    format[k++] = (*(__str__ *)e->str).src[i];
+                    if ((*(__str__ *)e->str).src[i + 1] != '^')
                         format[k++] = ' ';
                 }
-                else if (e->str.src[i] == '+' || e->str.src[i] == '-' || e->str.src[i] == '^')
+                else if ((*(__str__ *)e->str).src[i] == '+' || (*(__str__ *)e->str).src[i] == '-' || (*(__str__ *)e->str).src[i] == '^')
                 {
-                    if (isDigit(e->str.src[i + 1]) == true)
-                        format[k++] = e->str.src[i];
+                    if (isDigit((*(__str__ *)e->str).src[i + 1]) == true)
+                        format[k++] = (*(__str__ *)e->str).src[i];
                     else
                     {
-                        format[k++] = e->str.src[i];
+                        format[k++] = (*(__str__ *)e->str).src[i];
                         format[k++] = ' ';
                     }
                 }
                 else
-                    format[k++] = e->str.src[i];
+                    format[k++] = (*(__str__ *)e->str).src[i];
             }
             e->destructor(e);
             init_sstr(e, 1);
@@ -108,16 +108,16 @@ struct coefficient parse_eq(sstring *a);
 struct coefficient parse_eq(sstring *a)
 {
     struct coefficient x = (struct coefficient){.C = INFINITY, .X = INFINITY, .X2 = INFINITY};
-    if (a && a->str.src && a->str.init == true)
+    if (a && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true)
     {
         sstring buff_x = new_sstring(1, NULL), buff_y = new_sstring(1, NULL), buff_c = new_sstring(1, NULL);
         SIZE_T i = 0, k = 0, j = 0;
-        for (; a->str.src[i] != 'x' && a->str.src[i] != '\0'; i++)
-            buff_x.append_char(&buff_x, a->str.src[i]);
-        while (isDigit(a->str.src[i]) != true && a->str.src[i] != '-' && a->str.src[i] != '+')
+        for (; (*(__str__ *)a->str).src[i] != 'x' && (*(__str__ *)a->str).src[i] != '\0'; i++)
+            buff_x.append_char(&buff_x, (*(__str__ *)a->str).src[i]);
+        while (isDigit((*(__str__ *)a->str).src[i]) != true && (*(__str__ *)a->str).src[i] != '-' && (*(__str__ *)a->str).src[i] != '+')
             i++;
-        for (; a->str.src[i] != '+' && a->str.src[i] != '-' && a->str.src[i] != '\0'; k++)
-            buff_y.append_char(&buff_y, a->str.src[i++]);
+        for (; (*(__str__ *)a->str).src[i] != '+' && (*(__str__ *)a->str).src[i] != '-' && (*(__str__ *)a->str).src[i] != '\0'; k++)
+            buff_y.append_char(&buff_y, (*(__str__ *)a->str).src[i++]);
         if (strtold(buff_y.c_str(&buff_y), (char **)NULL) != 2.0L)
         {
             buff_c.destructor(&buff_c);
@@ -126,12 +126,12 @@ struct coefficient parse_eq(sstring *a)
             return x;
         }
         buff_y.clear(&buff_y);
-        for (; a->str.src[i] != 'x' && a->str.src[i] != '\0'; k++)
-            buff_y.append_char(&buff_y, a->str.src[i++]);
-        while (isDigit(a->str.src[i]) != true && a->str.src[i] != '-' && a->str.src[i] != '+')
+        for (; (*(__str__ *)a->str).src[i] != 'x' && (*(__str__ *)a->str).src[i] != '\0'; k++)
+            buff_y.append_char(&buff_y, (*(__str__ *)a->str).src[i++]);
+        while (isDigit((*(__str__ *)a->str).src[i]) != true && (*(__str__ *)a->str).src[i] != '-' && (*(__str__ *)a->str).src[i] != '+')
             i++;
-        for (; a->str.src[i] != '\0'; j++)
-            buff_c.append_char(&buff_c, a->str.src[i++]);
+        for (; (*(__str__ *)a->str).src[i] != '\0'; j++)
+            buff_c.append_char(&buff_c, (*(__str__ *)a->str).src[i++]);
         x.X = strtold(buff_x.c_str(&buff_x), (char **)NULL);
         x.X2 = strtold(buff_y.c_str(&buff_y), (char **)NULL);
         x.C = strtold(buff_c.c_str(&buff_c), (char **)NULL);
