@@ -6,7 +6,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 45.0.0
+* sstring: version 47.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -31,7 +31,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "45.0.0"
+#define sstring_version "47.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -807,6 +807,26 @@ struct __string__
      * @returns true if converted, otherwise false
      */
     int (*from_parse_t)(sstring *a, parse_t *toks);
+
+    /**
+     * Assigns `__format__` to `a` with formatting.
+     * @param a pointer to struct sstring
+     * @param buffer_length length of `__format__` along with variable length `...`
+     * @param __format__ string containing the format instructions
+     * @param ... variables
+     * @returns true if task completed, otherwise false
+     */
+    int (*set_formatted)(sstring *a, SIZE_T buffer_length, const char *__format__, ...);
+
+    /**
+     * Appends `__format__` to `a` with formatting.
+     * @param a pointer to struct sstring
+     * @param buffer_length length of `__format__` along with variable length `...`
+     * @param __format__ string containing the formatting instructions
+     * @param ... variables
+     * @returns true if task completed, otherwise false
+     */
+    int (*append_formatted)(sstring *a, SIZE_T buffer_length, const char *__format__, ...);
 } __string__;
 
 #include "prototype_err.h"
@@ -1374,7 +1394,7 @@ int _open(sstring *a, const char *location)
             fseek(f, 0, SEEK_SET);
             free((*(__str__ *)a->str).src);
             (*(__str__ *)a->str).src = (char *)calloc(len + 1, sizeof(char));
-            fread((*(__str__ *)a->str).src, sizeof(char), len, f);
+            fread((*(__str__ *)a->str).src, len, sizeof(char), f);
             fclose(f);
             (*(__str__ *)a->str).len = len;
             return true;
@@ -2341,7 +2361,7 @@ SIZE_T _open_binary(sstring *a, const char *location)
             unsigned char *_temp_ = (unsigned char *)calloc((sizeof(unsigned char) * len) + 1, sizeof(unsigned char));
             free((*(__str__ *)a->str).src);
             (*(__str__ *)a->str).src = (char *)calloc(len + 1, sizeof(char));
-            fread(_temp_, sizeof(unsigned char), len, f);
+            fread(_temp_, len, sizeof(unsigned char), f);
             memcpy((*(__str__ *)a->str).src, (const void *)_temp_, len);
             fclose(f);
             free(_temp_);
@@ -2972,6 +2992,51 @@ int _from_parse_t(sstring *a, parse_t *toks)
     return false;
 }
 
+int _set_formatted(sstring *a, SIZE_T buffer_length, const char *__format__, ...)
+{
+    if (__format__ == NULL)
+        return false;
+    SIZE_T buff_l = strlen(__format__);
+    if (a && a->str && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true && buffer_length >= buff_l)
+    {
+        char *buff = (char *)calloc(sizeof(char) * (buffer_length + 1), sizeof(char));
+        va_list ar;
+        va_start(ar, __format__);
+        vsnprintf(buff, buffer_length, __format__, ar);
+        va_end(ar);
+        free((*(__str__ *)a->str).src);
+        (*(__str__ *)a->str).src = (char *)calloc(sizeof(char) * (strlen((const char *)buff) + 1), sizeof(char));
+        SIZE_T len = 0;
+        fast_strncat((*(__str__ *)a->str).src, (const char *)buff, &len);
+        (*(__str__ *)a->str).len = len;
+        free(buff);
+        return true;
+    }
+    return false;
+}
+
+int _append_formatted(sstring *a, SIZE_T buffer_length, const char *__format__, ...)
+{
+    if (__format__ == NULL)
+        return false;
+    SIZE_T buff_l = strlen(__format__);
+    if (a && a->str && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true && buffer_length >= buff_l)
+    {
+        char *buff = (char *)calloc(sizeof(char) * (buffer_length + 1), sizeof(char));
+        va_list ar;
+        va_start(ar, __format__);
+        vsnprintf(buff, buffer_length, __format__, ar);
+        va_end(ar);
+        (*(__str__ *)a->str).src = (char *)realloc((*(__str__ *)a->str).src, sizeof(char) * (strlen((const char *)buff) + (*(__str__ *)a->str).len + 1));
+        SIZE_T len = (*(__str__ *)a->str).len;
+        fast_strncat((*(__str__ *)a->str).src, (const char *)buff, &len);
+        (*(__str__ *)a->str).len = len;
+        free(buff);
+        return true;
+    }
+    return false;
+}
+
 /**
  * Frees `a` carefully. Always use this function when there is not use of `a` or before your program exits.
  * @param a pointer to struct split_t
@@ -3130,6 +3195,8 @@ int init_sstr(sstring *a, SIZE_T alloc_size)
         a->ends_with = _ends_with;
         a->parse = _parse;
         a->from_parse_t = _from_parse_t;
+        a->set_formatted = _set_formatted;
+        a->append_formatted = _append_formatted;
 
         a->str = (__str__ *)calloc(sizeof(__str__), sizeof(__str__));
         (*(__str__ *)a->str).src = (char *)calloc((alloc_size * sizeof(char)) + sizeof(char), sizeof(char));
