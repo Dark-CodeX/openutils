@@ -33,7 +33,7 @@ int format_eq(sstring *e)
     {
         e->remove_char(e, ' ');
         short valid = false;
-        for (SIZE_T i = 0; (*(__str__ *)e->str).src[i] != '\0'; i++)
+        for (size_t i = 0; (*(__str__ *)e->str).src[i] != '\0'; i++)
         {
             switch ((*(__str__ *)e->str).src[i])
             {
@@ -66,10 +66,10 @@ int format_eq(sstring *e)
         }
         if (valid == true)
         {
-            SIZE_T len = e->length(e);
+            size_t len = e->length(e);
             e->to_lower(e);
             char *format = (char *)calloc(sizeof(char) * (len * 2) + 1, sizeof(char));
-            for (SIZE_T i = 0, k = 0; (*(__str__ *)e->str).src[i] != '\0'; i++)
+            for (size_t i = 0, k = 0; (*(__str__ *)e->str).src[i] != '\0'; i++)
             {
                 if ((*(__str__ *)e->str).src[i] == ' ')
                     continue;
@@ -111,7 +111,7 @@ struct coefficient parse_eq(sstring *a)
     if (a && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true)
     {
         sstring buff_x = new_sstring(1, NULL), buff_y = new_sstring(1, NULL), buff_c = new_sstring(1, NULL);
-        SIZE_T i = 0, k = 0, j = 0;
+        size_t i = 0, k = 0, j = 0;
         for (; (*(__str__ *)a->str).src[i] != 'x' && (*(__str__ *)a->str).src[i] != '\0'; i++)
             buff_x.append_char(&buff_x, (*(__str__ *)a->str).src[i]);
         while (isDigit((*(__str__ *)a->str).src[i]) != true && (*(__str__ *)a->str).src[i] != '-' && (*(__str__ *)a->str).src[i] != '+')

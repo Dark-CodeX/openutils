@@ -15,7 +15,7 @@ int main(int argc, char const **argv)
     }
     if (parse.type[0] == SPECIAL_CHAR || parse.type[0] == INTEGER)
     {
-        for (SIZE_T i = 0; parse.type[i] != NULL_END; i++)
+        for (size_t i = 0; parse.type[i] != NULL_END; i++)
         {
             if (parse.type[i] == SPECIAL_CHAR && strcmp(parse.src[i], ".") == 0)
             {

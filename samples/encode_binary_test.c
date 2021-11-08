@@ -5,7 +5,7 @@ int main(int argc, char const *argv[])
     if (argc == 4)
     {
         SSTRING(x);
-        SIZE_T len = 0;
+        size_t len = 0;
         if ((len = x.open_binary(&x, argv[1])) == 0)
         {
             printf("could not find `%s`.\n", argv[1]);

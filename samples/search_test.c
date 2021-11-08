@@ -12,12 +12,12 @@ int main(void)
     printf("ENTER:\n");
     input.in(&input, false, 1024ULL);
 
-    for (SIZE_T i = 0; i < data.len; i++)
+    for (size_t i = 0; i < data.len; i++)
         vector_add(vec, input.percentage_matched(&input, data.data[i]));
 
     long double __d = 0;
-    SIZE_T index = 0;
-    for (SIZE_T i = 0; i < vec.length; i++)
+    size_t index = 0;
+    for (size_t i = 0; i < vec.length; i++)
     {
         if (__d < vec.src[i])
         {
