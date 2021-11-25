@@ -1,6 +1,6 @@
 pkgname="sstring"
-pkgver="48.0.0"
-pkgrel="5"
+pkgver="49.0.0"
+pkgrel="7"
 pkgdesc="Memory Safe String Library in C language."
 arch=("x86_64" "i686")
 conflicts=('sstring')
@@ -10,13 +10,15 @@ source=(
   "https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/sstring.h"
   "https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/prototype_err.h"
   "https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/binary.h"
-  "https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/morse_code.h")
+  "https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/morse_code.h"
+  "https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/sstring.hh")
 
 sha512sums=(
-  "4c5693ae39a769796cfabd12a33301c4dbb8a16428b986c7e6ac547bf64a1dd61d37cafe26c327436eceeeb1bc77eae2ce2943f59b66a2d5ceb412670296ab84"
-  "61157be24569ad48c8bc2610135f3fc738620e901018e3aefa315ef1724ab1a58b7c399c62551a06e4d07e1f5b9a555cb07f0e18f1485be114792f9ee61eb5e2"
-  "c3b6cd9675eed6bd2dee042bc499e69801a36de85fb51ea9296d9f9d30cf496942d3bdc3b53aebb49c7c66680f2dfa36016dba151455afa5789f07993869824b"
-  "feee6715c7e8c1222fad8f3e96046aeef8082ce73d1a980ba34e4a366161e9286fbc9e2ff9652599efb8b94e8126272b0ed706e2f52f9ab5104ad8bc88087855")
+  "71a8462439f7e3cc95cb68ae1ab25926bc9e98476ffdfd020558642de0323d3f6f1bb71c75febcf763aefc8245bda9c231bf6f875aef3eab561b0c237fece27d"
+  "c8de1f78354273b49581dae833001ce9ff69a0a2a144efb41b8ca513b874c85ec7f2c8a6317153354f0b06d3dedf718d0f97697dbe8e45793db5b20ec2fa6147"
+  "ff8aec84b0c9345083f59fcdcee5b7fdbf798efbaec25288a83350f913af4d73c3cf49003d4597383dd7534d5f575f3aa85b16198d88f011e3903857a669f0ec"
+  "d56ddb73fdbdae8d0cee9b5e3e7c748fc539d4eea9f092d51848efd2a9e64f30a837c043fefd9b91cce81ff1d5bac2d7681bb8d0379ff0f58c51e770ecedb2a7"
+  "32501876df4644910ff951cfcef1c0b9ec550767f8d516347bad8de8df0ceb94c809a97e23ae3d9a4c07801aa4d5282935db4b56b60bb41b5506c331bd18a255")
 
 package() {
   echo "Memory Safe String Library in C language."
@@ -25,5 +27,6 @@ package() {
   cp "${srcdir}/prototype_err.h" "${pkgdir}/usr/include/sstring/prototype_err.h"
   cp "${srcdir}/binary.h" "${pkgdir}/usr/include/sstring/binary.h"
   cp "${srcdir}/morse_code.h" "${pkgdir}/usr/include/sstring/morse_code.h"
+  cp "${srcdir}/sstring.hh" "${pkgdir}/usr/include/sstring/sstring.hh"
   echo "Done!"
 }
