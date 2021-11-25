@@ -1,32 +1,32 @@
 /**
-* This header file is written to manage string data safely under C++ programming language.
-* Author: Tushar Chaurasia (https://github.com/Dark-CodeX/)
-* Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
-* You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
-* File: "sstring.h" under "sstring" directory
-* sstring: version 48.0.0
-* MIT License
-* 
-* Copyright (c) 2021 Tushar Chaurasia
-* 
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-* 
-* The above copyright notice and this permission notice shall be included in all
-* copies or substantial portions of the Software.
-* 
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-* SOFTWARE.
-*/
+ * This header file is written to manage string data safely under C++ programming language.
+ * Author: Tushar Chaurasia (https://github.com/Dark-CodeX/)
+ * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
+ * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
+ * File: "sstring.h" under "sstring" directory
+ * sstring: version 49.0.0
+ * MIT License
+ *
+ * Copyright (c) 2021 Tushar Chaurasia
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 #ifdef __cplusplus
 
@@ -40,7 +40,7 @@
 #include "binary.h"
 #include "morse_code.h"
 
-#define sstring_version "48.0.0"
+#define sstring_version "49.0.0"
 
 namespace sstr
 {
@@ -54,26 +54,26 @@ namespace sstr
     class split_t;
 
     /**
-    * Linear time complexity = O(n), where n is the length of `src`. NOTE: `dest` must have enough space for `src`.
-    * @param dest string where `src` is going to append
-    * @param src string to be appended
-    * @param size where to append `src`
-    */
+     * Linear time complexity = O(n), where n is the length of `src`. NOTE: `dest` must have enough space for `src`.
+     * @param dest string where `src` is going to append
+     * @param src string to be appended
+     * @param size where to append `src`
+     */
     void fast_strncat(char *dest, const char *src, std::size_t &size);
 
     /**
-    * Converts escape sequences to their representable strings (as const).
-    * @param c escape sequence of the character
-    * @returns representable string of escape sequences, if `c` is not an escape sequence then NUL is returned
-    */
+     * Converts escape sequences to their representable strings (as const).
+     * @param c escape sequence of the character
+     * @returns representable string of escape sequences, if `c` is not an escape sequence then NUL is returned
+     */
     const char *char_to_esc_seq(char c);
 
     /**
-    * Converts strings to their respective escape sequences, if possible. 
-    * To get escape sequence as (char) use `char c = *esc_seq_to_char_ptr("\\n");`
-    * @param c string
-    * @returns escape sequence of `c`, otherwise returns `c`
-    */
+     * Converts strings to their respective escape sequences, if possible.
+     * To get escape sequence as (char) use `char c = *esc_seq_to_char_ptr("\\n");`
+     * @param c string
+     * @returns escape sequence of `c`, otherwise returns `c`
+     */
     const char *esc_seq_to_char_ptr(const char *c);
     int strcmp_void(const void *a1, const void *a2);
     int compare_chars(const void *c1, const void *c2);
@@ -86,6 +86,7 @@ namespace sstr
 
     public:
         sstring(const char *src = nullptr, std::size_t alloc_size = 1UL);
+        sstring(sstring &&other) noexcept;
         void set(const char *src);
         void set_char(const char c);
         void set_upto(const char *src, std::size_t N);
@@ -171,6 +172,7 @@ namespace sstr
         bool from_parse_t(parse_t toks);
         bool set_formatted(std::size_t buffer_length, const char *__format__, ...);
         bool append_formatted(std::size_t buffer_length, const char *__format__, ...);
+        bool resize(std::size_t new_len);
         char operator[](std::size_t n);
         const sstring operator+(const sstring &str);
         const sstring operator+(const char str);
@@ -184,6 +186,7 @@ namespace sstr
         bool operator==(const char *str);
         bool operator!=(const sstring &str);
         bool operator!=(const char *str);
+        sstring &operator=(const sstring &&__s) noexcept;
         friend std::ostream &operator<<(std::ostream &out, const sstring &obj);
         ~sstring();
     };
@@ -228,7 +231,9 @@ namespace sstr
         enum parse_token get_type(const std::size_t n);
         const sstring operator[](const std::size_t n);
         const std::size_t length() const;
-        void destructor();
+        parse_t(parse_t &&other) noexcept;
+        parse_t &operator=(const parse_t &&__pt) noexcept;
+        ~parse_t();
     };
 
     class split_t
@@ -243,7 +248,9 @@ namespace sstr
         const sstring get(const std::size_t n);
         const sstring operator[](const std::size_t n);
         const std::size_t length() const;
-        void destructor();
+        split_t(split_t &&other) noexcept;
+        split_t &operator=(const split_t &&__st) noexcept;
+        ~split_t();
     };
 
     class iter_sstring
@@ -288,6 +295,14 @@ namespace sstr
             this->src = (char *)std::calloc(sizeof(char) * (alloc_size + 1), sizeof(char));
             this->len = 0;
         }
+    }
+
+    sstring::sstring(sstring &&other) noexcept : src(nullptr), len(0)
+    {
+        src = other.src;
+        len = other.len;
+        other.src = nullptr;
+        other.len = 0;
     }
 
     void sstring::set(const char *src)
@@ -2163,6 +2178,16 @@ namespace sstr
         return false;
     }
 
+    bool sstring::resize(std::size_t new_len)
+    {
+        if (new_len > 0)
+        {
+            this->src = (char *)realloc(this->src, new_len);
+            return true;
+        }
+        return false;
+    }
+
     char sstring::operator[](std::size_t n)
     {
         if (this->len >= n)
@@ -2236,16 +2261,29 @@ namespace sstr
         return !(this->compare(str));
     }
 
-    sstring::~sstring()
+    sstring &sstring::operator=(const sstring &&__s) noexcept
     {
-        free(this->src);
-        this->len = 0;
+        if (this != &__s)
+        {
+            free(this->src);
+            this->len = __s.len;
+            this->src = (char *)std::calloc(sizeof(char *) * this->len, sizeof(char *));
+            std::size_t pos = 0;
+            fast_strncat(this->src, __s.src, pos);
+        }
+        return *this;
     }
 
     std::ostream &operator<<(std::ostream &out, const sstring &obj)
     {
         out << obj.src;
         return out;
+    }
+
+    sstring::~sstring()
+    {
+        free(this->src);
+        this->len = 0;
     }
 
     const sstring to_sstring(char str)
@@ -2412,7 +2450,42 @@ namespace sstr
         return this->len;
     }
 
-    void parse_t::destructor()
+    parse_t::parse_t(parse_t &&other) noexcept : src(nullptr), type(nullptr), len(0), cap(10)
+    {
+        src = other.src;
+        type = other.type;
+        len = other.len;
+
+        other.src = nullptr;
+        other.type = nullptr;
+        other.len = 0;
+    }
+
+    parse_t &parse_t::operator=(const parse_t &&__pt) noexcept
+    {
+        if (this != &__pt)
+        {
+            for (std::size_t i = 0; i < this->len; i++)
+                free(this->src[i]);
+            free(this->src);
+            free(this->type);
+            this->len = __pt.len;
+            this->cap = __pt.cap;
+
+            this->src = (char **)std::calloc(sizeof(char *) * this->cap, sizeof(char *));
+            this->type = (enum parse_token *)std::calloc(sizeof(enum parse_token) * len, sizeof(enum parse_token));
+            for (std::size_t i = 0; i < this->len; i++)
+            {
+                this->src[i] = (char *)std::calloc(sizeof(char) * (std::strlen(__pt.src[i]) + 1), sizeof(char));
+                std::size_t pos = 0; // temp variable note string length of `__st.src[i]` is only counted once because if we use `std::strcpy` it will also transverse through the string
+                fast_strncat(this->src[i], __pt.src[i], pos);
+                this->type[i] = __pt.type[i];
+            }
+        }
+        return *this;
+    }
+
+    parse_t::~parse_t()
     {
         for (std::size_t i = 0; i < this->len; i++)
             free(this->src[i]);
@@ -2462,7 +2535,36 @@ namespace sstr
         return this->len;
     }
 
-    void split_t::destructor()
+    split_t::split_t(split_t &&other) noexcept : src(nullptr), len(0), cap(10)
+    {
+        src = other.src;
+        len = other.len;
+        other.src = nullptr;
+        other.len = 0;
+    }
+
+    split_t &split_t::operator=(const split_t &&__st) noexcept
+    {
+        if (this != &__st)
+        {
+            for (std::size_t i = 0; i < this->len; i++)
+                free(this->src[i]);
+            free(this->src);
+            this->len = __st.len;
+            this->cap = __st.cap;
+
+            this->src = (char **)std::calloc(sizeof(char *) * this->cap, sizeof(char *));
+            for (std::size_t i = 0; i < this->len; i++)
+            {
+                this->src[i] = (char *)std::calloc(sizeof(char) * (std::strlen(__st.src[i]) + 1), sizeof(char));
+                std::size_t pos = 0; // temp variable note string length of `__st.src[i]` is only counted once because if we use `std::strcpy` it will also transverse through the string
+                fast_strncat(this->src[i], __st.src[i], pos);
+            }
+        }
+        return *this;
+    }
+
+    split_t::~split_t()
     {
         for (std::size_t i = 0; i < this->len; i++)
             free(this->src[i]);
