@@ -8,7 +8,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "sstring.h" under "sstring" directory
-* sstring: version 48.0.0
+* sstring: version 49.0.0
 * MIT License
 * 
 * Copyright (c) 2021 Tushar Chaurasia
@@ -33,7 +33,7 @@
 */
 typedef struct __string__ sstring;
 
-#define sstring_version "48.0.0"
+#define sstring_version "49.0.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -815,6 +815,14 @@ struct __string__
      * @returns true if task completed, otherwise false
      */
     int (*append_formatted)(sstring *a, size_t buffer_length, const char *__format__, ...);
+
+    /**
+     * Resizes `a` with new size `new_len`.
+     * @param a pointer to struct sstring
+     * @param new_len new length of `a`
+     * @returns true if resized, otherwise false
+     */
+    int (*resize)(sstring *a, size_t new_len);
 } __string__;
 
 #include "prototype_err.h"
@@ -3028,6 +3036,16 @@ int _append_formatted(sstring *a, size_t buffer_length, const char *__format__, 
     return false;
 }
 
+int _resize(sstring *a, size_t new_len)
+{
+    if (a && a->str && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true && new_len > 0)
+    {
+        (*(__str__ *)a->str).src = (char *)realloc((*(__str__ *)a->str).src, new_len);
+        return true;
+    }
+    return false;
+}
+
 /**
  * Frees `a` carefully. Always use this function when there is not use of `a` or before your program exits.
  * @param a pointer to struct split_t
@@ -3188,6 +3206,7 @@ int init_sstr(sstring *a, size_t alloc_size)
         a->from_parse_t = _from_parse_t;
         a->set_formatted = _set_formatted;
         a->append_formatted = _append_formatted;
+        a->resize = _resize;
 
         a->str = (__str__ *)calloc(sizeof(__str__), sizeof(__str__));
         (*(__str__ *)a->str).src = (char *)calloc((alloc_size * sizeof(char)) + sizeof(char), sizeof(char));
