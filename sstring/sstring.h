@@ -3,37 +3,37 @@
 #pragma once
 
 /**
-* This header file is written to manage string data safely under C programming language.
-* Author: Tushar Chaurasia (https://github.com/Dark-CodeX/)
-* Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
-* You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
-* File: "sstring.h" under "sstring" directory
-* sstring: version 49.0.0
-* MIT License
-* 
-* Copyright (c) 2021 Tushar Chaurasia
-* 
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-* 
-* The above copyright notice and this permission notice shall be included in all
-* copies or substantial portions of the Software.
-* 
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-* SOFTWARE.
-*/
+ * This header file is written to manage string data safely under C programming language.
+ * Author: Tushar Chaurasia (https://github.com/Dark-CodeX/)
+ * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
+ * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
+ * File: "sstring.h" under "sstring" directory
+ * sstring: version 49.0.1
+ * MIT License
+ *
+ * Copyright (c) 2021 Tushar Chaurasia
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 typedef struct __string__ sstring;
 
-#define sstring_version "49.0.0"
+#define sstring_version "49.0.1"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -148,19 +148,19 @@ struct __string__
      */
     void (*set_upto)(sstring *a, const char *src, size_t N);
 
-    /** Sets random data to `a`. NOTE: length should be greater than 0, (not equal to 0). Well, no error and result if assigned 0. 
-     * NOTE: use srand function before calling this function. 
-     * @code {.c} 
-     * srand((unsigned int)(time(NULL) * getpid() * getpid() + getpid())); 
-     * @endcode 
-     * OR you can use `srand` function with the memory reference of any pointer. 
+    /** Sets random data to `a`. NOTE: length should be greater than 0, (not equal to 0). Well, no error and result if assigned 0.
+     * NOTE: use srand function before calling this function.
+     * @code {.c}
+     * srand((unsigned int)(time(NULL) * getpid() * getpid() + getpid()));
+     * @endcode
+     * OR you can use `srand` function with the memory reference of any pointer.
      * @param a pointer to struct sstring
      * @param len size of random string
      */
     void (*set_random)(sstring *a, const size_t len);
 
-    /** @brief Sets `src` array to `a`. NOTE: `from`, `till` belongs to [0, sizeof(`src`)]. 
-     * Set `char_between` to 0 if you want nothing to append in-between. 
+    /** @brief Sets `src` array to `a`. NOTE: `from`, `till` belongs to [0, sizeof(`src`)].
+     * Set `char_between` to 0 if you want nothing to append in-between.
      * NOTE: `src[till]` is not included in resultant string.
      * @param a pointer to struct sstring
      * @param src string array to assign
@@ -171,7 +171,7 @@ struct __string__
      */
     void (*set_array)(sstring *a, const char **src, char char_between, size_t from, size_t till, size_t len);
 
-    /** Returns `a` as `char *`. 
+    /** Returns `a` as `char *`.
      * @param a pointer to struct sstring
      * @returns return `a` as `char *`
      */
@@ -215,8 +215,8 @@ struct __string__
      */
     void (*append_start_upto)(sstring *a, const char *src, size_t N);
 
-    /** @brief Appends `src` array to `a` at the end. NOTE: `from`, `till` belongs to [0, sizeof(`src`)]. 
-     * Set `char_between` to 0 if you want nothing to append in-between. 
+    /** @brief Appends `src` array to `a` at the end. NOTE: `from`, `till` belongs to [0, sizeof(`src`)].
+     * Set `char_between` to 0 if you want nothing to append in-between.
      * NOTE: `src[till]` is not included in resultant string.
      * @param a pointer to struct sstring
      * @param src string array to append
@@ -227,8 +227,8 @@ struct __string__
      */
     void (*append_array)(sstring *a, const char **src, char char_between, size_t from, size_t till, size_t len);
 
-    /** @brief Appends `src` array to `a` at the starting. NOTE: `from`, `till` belongs to [0, sizeof(`src`)]. 
-     * Set `char_between` to 0 if you want nothing to append in-between. 
+    /** @brief Appends `src` array to `a` at the starting. NOTE: `from`, `till` belongs to [0, sizeof(`src`)].
+     * Set `char_between` to 0 if you want nothing to append in-between.
      * NOTE: `src[till]` is not included in resultant string.
      * @param a pointer to struct sstring
      * @param src string array to append
@@ -250,7 +250,7 @@ struct __string__
      * @param a pointer to struct sstring
      * @param old old character (character to be replaced)
      * @param new_ new character (character to be replaced with)
-    */
+     */
     void (*replace_char)(sstring *a, const char old, const char new_);
 
     /**
@@ -296,10 +296,10 @@ struct __string__
     int (*compare_upto)(sstring *a, const char *T1, size_t N);
 
     /**
-    * Prints `a`.
-    * @param a pointer to struct sstring
-    * @param add_next_line set 0 if append next line, otherwise set 1
-    * @param __format__ arguments for ...
+     * Prints `a`.
+     * @param a pointer to struct sstring
+     * @param add_next_line set 0 if append next line, otherwise set 1
+     * @param __format__ arguments for ...
      */
     void (*print)(sstring *a, int add_next_line, const char *__format__, ...);
 
@@ -312,14 +312,14 @@ struct __string__
     void (*replace)(sstring *a, const char *old, const char *new_);
 
     /**
-     * Frees `a`'s content. 
+     * Frees `a`'s content.
      * Do not forget to use this function at the end.
      * @param a pointer to struct sstring
      * @returns true if freed successfully, otherwise return false
      */
     int (*destructor)(sstring *a);
 
-    /** 
+    /**
      * Returns `a` as `const char *`.
      * @param a pointer to struct sstring
      * @returns return `a` as `const char *`
@@ -382,17 +382,17 @@ struct __string__
      */
     int (*is_initialized)(sstring *a);
 
-    /** 
+    /**
      * Converts `a` (as string) to base 2 (as binary).
      * @param a pointer to struct sstring
-    */
+     */
     void (*to_binary)(sstring *a);
 
-    /** 
+    /**
      * Converts `a` from base 2 (as binary) to string. Not executed if `a` is not in binary form i.e, [1, 0].
      * @param a pointer to struct sstring
      * @returns true if converted successfully, otherwise returns false.
-    */
+     */
     int (*from_binary)(sstring *a);
 
     /**
@@ -402,55 +402,55 @@ struct __string__
      */
     long double (*entropy)(sstring *a);
 
-    /** 
+    /**
      * Returns true if contains `str`, otherwise returns false.
      * @param a pointer to struct sstring
      * @param str string to be tested
      * @returns true if contains, otherwise return false
-    */
+     */
     int (*contains)(sstring *a, const char *str);
 
-    /** 
+    /**
      * If character was found returns its index (first occurrence only) in `a`, otherwise returns -1.
      * @param a pointer to struct sstring
      * @param c character to be tested
      * @returns If character was found returns its index (first occurrence only) in `a`, otherwise returns -1.
-    */
+     */
     signed long long int (*contains_char)(sstring *a, const char c);
 
-    /** 
-     * Assigns `a` as a set. (From Set Theory) 
+    /**
+     * Assigns `a` as a set. (From Set Theory)
      * @param a pointer to struct sstring
-    */
+     */
     void (*to_set)(sstring *a);
 
-    /** 
+    /**
      * Copies `a` to `dest`. If copied successfully then, returns true otherwise false.
      * @param a pointer to struct sstring
      * @param dest pointer to struct sstring
      * @returns If copied successfully then, returns true otherwise false.
-    */
+     */
     int (*copy)(sstring *a, sstring *dest);
 
-    /** 
+    /**
      * Converts `a` (as string) to base 16 (as hexadecimal).
      * @param a pointer to struct sstring
-    */
+     */
     void (*to_hexadecimal)(sstring *a);
 
-    /** 
+    /**
      * Converts `a` from base 16 (as hexadecimal) to string. Not executed if `a` is not in hexadecimal form.
      * @param a pointer to struct sstring
      * @returns true if converted successfully, otherwise returns false.
-    */
+     */
     int (*from_hexadecimal)(sstring *a);
 
-    /** 
+    /**
      * Returns index of first occurrence of sub-string `sub` in `a`. Returns -1 if `sub` was not found in `a`.
      * @param a pointer to struct sstring
      * @param sub sub-string to find in `a`
      * @returns index of first occurrence of sub-string `sub` in `a`
-    */
+     */
     signed long long int (*find)(sstring *a, const char *sub);
 
     /**
@@ -463,11 +463,11 @@ struct __string__
     int (*in)(sstring *a, int get_line, size_t buff_size);
 
     /**
-     * Returns content of `line` from `a`. If `line` does not exists it returns NULL. 
-     * NOTE: free the returned value when not in use, or before exiting the program. 
-     * @code {.c} 
-     * char *line = a.getline(&a, 7); 
-     * free(line); 
+     * Returns content of `line` from `a`. If `line` does not exists it returns NULL.
+     * NOTE: free the returned value when not in use, or before exiting the program.
+     * @code {.c}
+     * char *line = a.getline(&a, 7);
+     * free(line);
      * @endcode
      * @param a pointer to struct sstring
      * @param line line number to be returned
@@ -476,7 +476,7 @@ struct __string__
     char *(*getline)(sstring *a, size_t line);
 
     /**
-     * Reverse a string means "ABCD" -> "DCBA". 
+     * Reverse a string means "ABCD" -> "DCBA".
      * Time complexity: O(N / 2), where N is the length of the `a`.
      * @param a pointer to struct sstring
      */
@@ -499,7 +499,7 @@ struct __string__
     size_t (*remove_char)(sstring *a, char c);
 
     /**
-     * Removes all extra occurrence of character `c` from `a`. Eg.: "Hello__1" -> "Hello_1", here `c` was underscore('_'). 
+     * Removes all extra occurrence of character `c` from `a`. Eg.: "Hello__1" -> "Hello_1", here `c` was underscore('_').
      * Mainly used to remove extra whitespaces from a string.
      * @param a pointer to struct sstring
      * @param c character to remove
@@ -580,12 +580,12 @@ struct __string__
     size_t (*count_char)(sstring *a, const char what);
 
     /**
-     * Encodes `a` to 4 characters long string which can be compared to other `soundex` returned value. 
-     * This function is used to compare two names by their pronunciation. 
-     * NOTE: free the returned value when not in use, or before exiting the program. 
-     * @code {.c} 
-     * char *sdx = a.soundex(&a); 
-     * free(sdx); 
+     * Encodes `a` to 4 characters long string which can be compared to other `soundex` returned value.
+     * This function is used to compare two names by their pronunciation.
+     * NOTE: free the returned value when not in use, or before exiting the program.
+     * @code {.c}
+     * char *sdx = a.soundex(&a);
+     * free(sdx);
      * @endcode
      * @param a pointer to struct sstring
      * @returns string generated by this function
@@ -593,11 +593,11 @@ struct __string__
     char *(*soundex)(sstring *a);
 
     /**
-     * Returns the word which was most occurred in `a`. NOTE: By `word`, I mean text separated by whitespace. 
-     * @code {.c} 
-     * char *most = a.most_used(&a); 
-     * free(most); 
-     * @endcode 
+     * Returns the word which was most occurred in `a`. NOTE: By `word`, I mean text separated by whitespace.
+     * @code {.c}
+     * char *most = a.most_used(&a);
+     * free(most);
+     * @endcode
      * @param a pointer to struct sstring
      * @returns most used / occurred word in `a`
      */
@@ -611,15 +611,15 @@ struct __string__
     char (*most_used_char)(sstring *a);
 
     /**
-     * Splits `a` when `dl` is found. NOTE: `dl` is not included in the splitted string. 
-     * NOTE: use `free_split` to avoid memory leak. 
-     * @code {.c} 
-     * split sp = a.split(&a, "-"); 
-     * free_split(&sp); 
+     * Splits `a` when `dl` is found. NOTE: `dl` is not included in the splitted string.
+     * NOTE: use `free_split` to avoid memory leak.
+     * @code {.c}
+     * split sp = a.split(&a, "-");
+     * free_split(&sp);
      * @endcode
      * @param a pointer to struct sstring
      * @param dl delimiter string
-     * @returns splitted string as `split` struct with its length. 
+     * @returns splitted string as `split` struct with its length.
      */
     split_t (*split)(sstring *a, const char *dl);
 
@@ -721,32 +721,32 @@ struct __string__
      */
     int (*from_morse_code)(sstring *a);
 
-    /** 
+    /**
      * Checks whether all characters of `a` is digit or not.
      * @param a pointer to struct sstring
      * @returns true if all character were digit, otherwise false
-    */
+     */
     int (*is_digit)(sstring *a);
 
-    /** 
+    /**
      * Checks whether `a` is decimal or not.
      * @param a pointer to struct sstring
      * @returns true if all character were decimal, otherwise false
-    */
+     */
     int (*is_decimal)(sstring *a);
 
-    /** 
+    /**
      * Checks whether all characters of `a` is ascii or not.
      * @param a pointer to struct sstring
      * @returns true if all character were ascii, otherwise false
-    */
+     */
     int (*is_ascii)(sstring *a);
 
-    /** 
+    /**
      * Checks whether all characters of `a` is alphabetic or not.
      * @param a pointer to struct sstring
      * @returns true if all character were alphabetic, otherwise false
-    */
+     */
     int (*is_alphabetic)(sstring *a);
 
     /**
@@ -1784,7 +1784,10 @@ int _in(sstring *a, int get_line, size_t buff_size)
         size_t len_ = 0;
         if (get_line == false)
         {
-            scanf("%s", buff);
+            char _____format_____[128] = "%%";
+            sprintf(_____format_____ + 1, "%lu", buff_size);
+            strcat(_____format_____, "s");
+            scanf(_____format_____, buff);
             len_ = strlen((const char *)buff);
         }
         else
@@ -2776,7 +2779,7 @@ const char *char_to_esc_seq(char c)
 }
 
 /**
- * Converts strings to their respective escape sequences, if possible. 
+ * Converts strings to their respective escape sequences, if possible.
  * To get escape sequence as (char) use `char c = *esc_seq_to_char_ptr("\\n");`
  * @param c string
  * @returns escape sequence of `c`, otherwise returns `c`
@@ -3109,8 +3112,8 @@ sstring new_sstring(size_t alloc_size, const char *src)
     init_sstr(&x, 1);
 
 /**
- * Always use this function after any `sstring` declaration. 
- * This function initializes `a`. 
+ * Always use this function after any `sstring` declaration.
+ * This function initializes `a`.
  * By the way use `SSTRING(x)` macro for shortcut.
  * @param a pointer to struct sstring
  * @param alloc_size amount of memory block to allocate `a`.
