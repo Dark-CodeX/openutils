@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 49.0.1
+ * sstring: version 49.1.0
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -40,7 +40,7 @@
 #include "binary.h"
 #include "morse_code.h"
 
-#define sstring_version "49.0.1"
+#define sstring_version "49.1.0"
 
 namespace sstr
 {
@@ -129,7 +129,7 @@ namespace sstr
         bool from_hexadecimal();
         signed long long int find(const char *sub);
         bool in(bool get_line, std::size_t buff_size);
-        const sstring getline(std::size_t line);
+        sstring getline(std::size_t line);
         void reverse();
         std::size_t remove(const char *sub);
         std::size_t remove_char(char c);
@@ -143,8 +143,8 @@ namespace sstr
         std::size_t positional_modulus();
         std::size_t count(const char *what);
         std::size_t count_char(const char what);
-        const sstring soundex();
-        const sstring most_used();
+        sstring soundex();
+        sstring most_used();
         char most_used_char();
         split_t split(const char *str);
         void sort();
@@ -174,9 +174,9 @@ namespace sstr
         bool append_formatted(std::size_t buffer_length, const char *__format__, ...);
         bool resize(std::size_t new_len);
         char operator[](std::size_t n);
-        const sstring operator+(const sstring &str);
-        const sstring operator+(const char str);
-        const sstring operator+(const char *str);
+        sstring operator+(const sstring &str);
+        sstring operator+(const char str);
+        sstring operator+(const char *str);
         void operator+=(const sstring &str);
         void operator+=(const char str);
         void operator+=(const char *str);
@@ -191,21 +191,21 @@ namespace sstr
         ~sstring();
     };
 
-    const sstring to_sstring(char str);
-    const sstring to_sstring(const char *str);
-    const sstring to_sstring(void *ptr);
-    const sstring to_sstring(signed short int x);
-    const sstring to_sstring(unsigned short int x);
-    const sstring to_sstring(signed int x);
-    const sstring to_sstring(unsigned int x);
-    const sstring to_sstring(signed long int x);
-    const sstring to_sstring(unsigned long int x);
-    const sstring to_sstring(signed long long int x);
-    const sstring to_sstring(unsigned long long int x);
-    const sstring to_sstring(float x);
-    const sstring to_sstring(double x);
-    const sstring to_sstring(long double x);
-    const sstring end_line();
+    sstring to_sstring(char str);
+    sstring to_sstring(const char *str);
+    sstring to_sstring(void *ptr);
+    sstring to_sstring(signed short int x);
+    sstring to_sstring(unsigned short int x);
+    sstring to_sstring(signed int x);
+    sstring to_sstring(unsigned int x);
+    sstring to_sstring(signed long int x);
+    sstring to_sstring(unsigned long int x);
+    sstring to_sstring(signed long long int x);
+    sstring to_sstring(unsigned long long int x);
+    sstring to_sstring(float x);
+    sstring to_sstring(double x);
+    sstring to_sstring(long double x);
+    sstring end_line();
 
     enum parse_token
     {
@@ -227,9 +227,9 @@ namespace sstr
     public:
         parse_t(std::size_t len = 1LL);
         bool add(const char *src, enum parse_token type);
-        const sstring get(const std::size_t n);
+        sstring get(const std::size_t n);
         enum parse_token get_type(const std::size_t n);
-        const sstring operator[](const std::size_t n);
+        sstring operator[](const std::size_t n);
         const std::size_t length() const;
         parse_t(parse_t &&other) noexcept;
         parse_t &operator=(const parse_t &&__pt) noexcept;
@@ -245,8 +245,8 @@ namespace sstr
     public:
         split_t(std::size_t len = 1LL);
         bool add(const char *src);
-        const sstring get(const std::size_t n);
-        const sstring operator[](const std::size_t n);
+        sstring get(const std::size_t n);
+        sstring operator[](const std::size_t n);
         const std::size_t length() const;
         split_t(split_t &&other) noexcept;
         split_t &operator=(const split_t &&__st) noexcept;
@@ -1129,7 +1129,7 @@ namespace sstr
         return true;
     }
 
-    const sstring sstring::getline(std::size_t line)
+    sstring sstring::getline(std::size_t line)
     {
         std::size_t len = this->len, cnt = 0;
         char *temp = (char *)std::calloc((sizeof(char) * len) + 1, sizeof(char)), *tok;
@@ -1410,7 +1410,7 @@ namespace sstr
         return 0;
     }
 
-    const sstring sstring::soundex()
+    sstring sstring::soundex()
     {
         std::size_t s = 1, len = this->len;
         const char *map = "01230120022455012623010202"; // not stored in heap memory, do not free it
@@ -1451,7 +1451,7 @@ namespace sstr
         return std::strcmp((const char *)a1, (const char *)a2);
     }
 
-    const sstring sstring::most_used()
+    sstring sstring::most_used()
     {
         std::size_t len = this->len, cnt = 0, l = 0;
         for (std::size_t i = 0; i < len; i++)
@@ -2198,21 +2198,21 @@ namespace sstr
         return (char)'\0';
     }
 
-    const sstring sstring::operator+(const sstring &str)
+    sstring sstring::operator+(const sstring &str)
     {
         sstring x = sstring(this->src);
         x.append(str.c_str());
         return x;
     }
 
-    const sstring sstring::operator+(const char str)
+    sstring sstring::operator+(const char str)
     {
         sstring x = sstring(this->src);
         x.append_char(str);
         return x;
     }
 
-    const sstring sstring::operator+(const char *str)
+    sstring sstring::operator+(const char *str)
     {
         sstring x = sstring(this->src);
         x.append(str);
@@ -2289,103 +2289,103 @@ namespace sstr
         this->len = 0;
     }
 
-    const sstring to_sstring(char str)
+    sstring to_sstring(char str)
     {
         sstring x(nullptr);
         x.set_char(str);
         return x;
     }
 
-    const sstring to_sstring(const char *str)
+     sstring to_sstring(const char *str)
     {
         return sstring(str);
     }
 
-    const sstring to_sstring(void *ptr)
+     sstring to_sstring(void *ptr)
     {
         char s[64];
         std::snprintf(s, 64, "%p", ptr);
         return sstring((const char *)s);
     }
 
-    const sstring to_sstring(signed short int x)
+     sstring to_sstring(signed short int x)
     {
         char s[64];
         std::snprintf(s, 64, "%hi", x);
         return sstring((const char *)s);
     }
 
-    const sstring to_sstring(unsigned short int x)
+     sstring to_sstring(unsigned short int x)
     {
         char s[64];
         std::snprintf(s, 64, "%hu", x);
         return sstring((const char *)s);
     }
 
-    const sstring to_sstring(signed int x)
+     sstring to_sstring(signed int x)
     {
         char s[64];
         std::snprintf(s, 64, "%d", x);
         return sstring((const char *)s);
     }
 
-    const sstring to_sstring(unsigned int x)
+     sstring to_sstring(unsigned int x)
     {
         char s[64];
         std::snprintf(s, 64, "%i", x);
         return sstring((const char *)s);
     }
 
-    const sstring to_sstring(signed long int x)
+     sstring to_sstring(signed long int x)
     {
         char s[64];
         std::snprintf(s, 64, "%ld", x);
         return sstring((const char *)s);
     }
 
-    const sstring to_sstring(unsigned long int x)
+     sstring to_sstring(unsigned long int x)
     {
         char s[64];
         std::snprintf(s, 64, "%lu", x);
         return sstring((const char *)s);
     }
 
-    const sstring to_sstring(signed long long int x)
+     sstring to_sstring(signed long long int x)
     {
         char s[64];
         std::snprintf(s, 64, "%lld", x);
         return sstring((const char *)s);
     }
 
-    const sstring to_sstring(unsigned long long int x)
+     sstring to_sstring(unsigned long long int x)
     {
         char s[64];
         std::snprintf(s, 64, "%llu", x);
         return sstring((const char *)s);
     }
 
-    const sstring to_sstring(float x)
+     sstring to_sstring(float x)
     {
         char s[64];
         std::snprintf(s, 64, "%f", x);
         return sstring((const char *)s);
     }
 
-    const sstring to_sstring(double x)
+     sstring to_sstring(double x)
     {
         char s[512];
         std::snprintf(s, 512, "%lf", x);
         return sstring((const char *)s);
     }
 
-    const sstring to_sstring(long double x)
+     sstring to_sstring(long double x)
     {
         char s[5120];
         std::snprintf(s, 5120, "%Lf", x);
         return sstring((const char *)s);
     }
 
-    const sstring end_line()
+     sstring end_line()
     {
 #if defined __linux__ || defined linux || defined __linux
         return sstring("\n");
@@ -2427,7 +2427,7 @@ namespace sstr
         return false;
     }
 
-    const sstring parse_t::get(std::size_t n)
+    sstring parse_t::get(std::size_t n)
     {
         if (n < this->len)
             return sstring(this->src[n]);
@@ -2441,7 +2441,7 @@ namespace sstr
         return NULL_END;
     }
 
-    const sstring parse_t::operator[](std::size_t n)
+    sstring parse_t::operator[](std::size_t n)
     {
         if (n < this->len)
             return sstring(this->src[n]);
@@ -2519,14 +2519,14 @@ namespace sstr
         return false;
     }
 
-    const sstring split_t::get(std::size_t n)
+    sstring split_t::get(std::size_t n)
     {
         if (n < this->len)
             return sstring(this->src[n]);
         return sstring(nullptr);
     }
 
-    const sstring split_t::operator[](std::size_t n)
+    sstring split_t::operator[](std::size_t n)
     {
         if (n < this->len)
             return sstring(this->src[n]);
