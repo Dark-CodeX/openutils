@@ -13,5 +13,6 @@ package() {
   echo "Vectors in C language."
   mkdir -p "${pkgdir}/usr/include/vector"
   cp "${srcdir}/vector.h" "${pkgdir}/usr/include/vector/vector.h"
+  cp "${srcdir}/vector.hh" "${pkgdir}/usr/include/vector/vector.hh"
   echo "Done!"
 }
