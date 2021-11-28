@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "prototype_err.h" under "sstring" directory
-* sstring: version 49.1.0
+* sstring: version 49.1.1
 * 
 * MIT License
 * 
