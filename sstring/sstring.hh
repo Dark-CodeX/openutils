@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 49.1.0
+ * sstring: version 49.1.1
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -40,7 +40,7 @@
 #include "binary.h"
 #include "morse_code.h"
 
-#define sstring_version "49.1.0"
+#define sstring_version "49.1.1"
 
 namespace sstr
 {
@@ -86,6 +86,7 @@ namespace sstr
 
     public:
         sstring(const char *src = nullptr, std::size_t alloc_size = 1UL);
+        sstring(const sstring &other);
         sstring(sstring &&other) noexcept;
         void set(const char *src);
         void set_char(const char c);
@@ -295,6 +296,11 @@ namespace sstr
             this->src = (char *)std::calloc(sizeof(char) * (alloc_size + 1), sizeof(char));
             this->len = 0;
         }
+    }
+
+    sstring::sstring(const sstring &other)
+    {
+        this->set(other.c_str());
     }
 
     sstring::sstring(sstring &&other) noexcept : src(nullptr), len(0)
@@ -2296,96 +2302,96 @@ namespace sstr
         return x;
     }
 
-     sstring to_sstring(const char *str)
+    sstring to_sstring(const char *str)
     {
         return sstring(str);
     }
 
-     sstring to_sstring(void *ptr)
+    sstring to_sstring(void *ptr)
     {
         char s[64];
         std::snprintf(s, 64, "%p", ptr);
         return sstring((const char *)s);
     }
 
-     sstring to_sstring(signed short int x)
+    sstring to_sstring(signed short int x)
     {
         char s[64];
         std::snprintf(s, 64, "%hi", x);
         return sstring((const char *)s);
     }
 
-     sstring to_sstring(unsigned short int x)
+    sstring to_sstring(unsigned short int x)
     {
         char s[64];
         std::snprintf(s, 64, "%hu", x);
         return sstring((const char *)s);
     }
 
-     sstring to_sstring(signed int x)
+    sstring to_sstring(signed int x)
     {
         char s[64];
         std::snprintf(s, 64, "%d", x);
         return sstring((const char *)s);
     }
 
-     sstring to_sstring(unsigned int x)
+    sstring to_sstring(unsigned int x)
     {
         char s[64];
         std::snprintf(s, 64, "%i", x);
         return sstring((const char *)s);
     }
 
-     sstring to_sstring(signed long int x)
+    sstring to_sstring(signed long int x)
     {
         char s[64];
         std::snprintf(s, 64, "%ld", x);
         return sstring((const char *)s);
     }
 
-     sstring to_sstring(unsigned long int x)
+    sstring to_sstring(unsigned long int x)
     {
         char s[64];
         std::snprintf(s, 64, "%lu", x);
         return sstring((const char *)s);
     }
 
-     sstring to_sstring(signed long long int x)
+    sstring to_sstring(signed long long int x)
     {
         char s[64];
         std::snprintf(s, 64, "%lld", x);
         return sstring((const char *)s);
     }
 
-     sstring to_sstring(unsigned long long int x)
+    sstring to_sstring(unsigned long long int x)
     {
         char s[64];
         std::snprintf(s, 64, "%llu", x);
         return sstring((const char *)s);
     }
 
-     sstring to_sstring(float x)
+    sstring to_sstring(float x)
     {
         char s[64];
         std::snprintf(s, 64, "%f", x);
         return sstring((const char *)s);
     }
 
-     sstring to_sstring(double x)
+    sstring to_sstring(double x)
     {
         char s[512];
         std::snprintf(s, 512, "%lf", x);
         return sstring((const char *)s);
     }
 
-     sstring to_sstring(long double x)
+    sstring to_sstring(long double x)
     {
         char s[5120];
         std::snprintf(s, 5120, "%Lf", x);
         return sstring((const char *)s);
     }
 
-     sstring end_line()
+    sstring end_line()
     {
 #if defined __linux__ || defined linux || defined __linux
         return sstring("\n");
