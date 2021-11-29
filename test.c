@@ -4,9 +4,9 @@
 int main(int argc, char const **argv)
 {
     vector(x, char *);
-    for (SIZE_T i = 1; i < (SIZE_T)argc; i++)
+    for (size_t i = 1; i < (size_t)argc; i++)
         vector_add(x, (char *)argv[i]);
-    for (SIZE_T i = 0; i < x.length; i++)
+    for (size_t i = 0; i < x.length; i++)
         printf("'%s'\n", vector_get(x, i));
     vector_destructor(x);
     return 0;
