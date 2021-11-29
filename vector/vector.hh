@@ -1,5 +1,7 @@
 #ifdef __cplusplus
 
+#pragma once
+
 #include <cstddef>
 #include <initializer_list>
 
