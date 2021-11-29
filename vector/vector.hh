@@ -33,6 +33,7 @@ public:
     const std::size_t find(T &&data) const;
     bool swap(const std::size_t x1, const std::size_t x2);
 
+    void operator=(const vector_t &data);
     T &operator[](const std::size_t nth);
     bool operator==(const vector_t &vec);
     bool operator!=(const vector_t &vec);
@@ -217,6 +218,17 @@ bool vector_t<T>::swap(const std::size_t x1, const std::size_t x2)
         return true;
     }
     return false;
+}
+
+template <typename T>
+void vector_t<T>::operator=(const vector_t &data)
+{
+    delete[] this->data;
+    this->len = data.len;
+    this->cap = data.cap;
+    this->data = new T[data.cap];
+    for (std::size_t i = 0; i < data.len; i++)
+        this->data[i] = data.data[i];
 }
 
 template <typename T>
