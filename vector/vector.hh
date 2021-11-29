@@ -1,5 +1,8 @@
 #ifdef __cplusplus
 
+#include <cstddef>
+#include <initializer_list>
+
 template <typename T>
 class vector_t
 {
