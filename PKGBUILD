@@ -1,5 +1,5 @@
 pkgname="vector"
-pkgver="22.0.0"
+pkgver="23.0.0"
 pkgrel="3"
 pkgdesc="Vectors in C language."
 arch=("x86_64" "i686")
@@ -7,7 +7,7 @@ conflicts=('vector')
 depends=(gcc)
 license=("MIT")
 source=("https://raw.githubusercontent.com/Dark-CodeX/vector/main/vector/vector.h" "https://raw.githubusercontent.com/Dark-CodeX/vector/main/vector/vector.hh")
-sha512sums=("6025ddb11b310d2e01293505c45cc78ea9ecebe340cfef865280d75975b1c2527297f11359c851df1cbd03d6991869b559858862a8083703623be16916e109f0" "cad8eaf8fc2e63f34eb979ffa2dbad9b8e4834edafeee2c16e6c89d28e1dbb147b3c794e9fc8cac5611ed104a4edfe529d4062f2fc204c9ce748bf1fe2625780")
+sha512sums=("f4a0830bb8687220e7a8300d6eb9f22906d39c7d3aa798f7596ab723bf572a21b297acd9665f2c32dbe844523177c8e9ea9f19ae0481d45a3001fffc552ba92d" "5e5aa47a3072ae08fb4eabf5c19f0781f3861a6b781715d25fdc94830eb3f8b83b67d9195c51e63918c2b870b63e54157a5a1e36b423ebc47317b168adbd9fe4")
 
 package() {
   echo "Vectors in C language."
