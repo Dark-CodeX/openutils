@@ -212,7 +212,7 @@ bool vector_t<T>::swap(const std::size_t x1, const std::size_t x2)
 {
     if (x1 < this->len && x2 < this->len)
     {
-        T x = this->data[x1];
+        T x = T((T &&)this->data[x1]);
         this->data[x1] = this->data[x2];
         this->data[x2] = x;
         return true;
