@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 49.1.1
+ * sstring: version 49.2.0
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -40,7 +40,7 @@
 #include "binary.h"
 #include "morse_code.h"
 
-#define sstring_version "49.1.1"
+#define sstring_version "49.2.0"
 
 namespace sstr
 {
@@ -1935,17 +1935,16 @@ namespace sstr
         if (src && index <= this->len)
         {
             std::size_t len = std::strlen(src);
-            char *buff = (char *)std::calloc(sizeof(char) * (this->len - index + 1), sizeof(char));
-            for (std::size_t i = index, z = 0; i < this->len; i++, z++)
-                buff[z] = this->src[i];
-            this->src = (char *)std::realloc(this->src, this->len + len + 1);
-            std::size_t i = index, z = 0;
-            for (; z < len; i++, z++)
-                this->src[i] = src[z];
-            len = index + z;
-            fast_strncat(this->src, buff, len);
-            this->len = len;
-            std::free(buff);
+            this->src = (char *)std::realloc(this->src, sizeof(char) * (this->len + len + 1));
+            for (std::size_t i = this->len; i >= index; i--)
+            {
+                this->src[i + len] = this->src[i];
+                this->src[i] = '\0';
+                if( i == 0)
+                    break;
+            }
+            std::memcpy(this->src + index, src, len);
+            this->len += len;
             return true;
         }
         return false;

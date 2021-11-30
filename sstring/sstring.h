@@ -8,7 +8,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 49.1.1
+ * sstring: version 49.2.0
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -33,7 +33,7 @@
  */
 typedef struct __string__ sstring;
 
-#define sstring_version "49.1.1"
+#define sstring_version "49.2.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -2819,17 +2819,16 @@ int _insert(sstring *a, const char *src, size_t index)
     if (a && a->str && (*(__str__ *)a->str).src && src && (*(__str__ *)a->str).init == true && index <= (*(__str__ *)a->str).len)
     {
         size_t len = strlen(src);
-        char *buff = (char *)calloc(sizeof(char) * ((*(__str__ *)a->str).len - index + 1), sizeof(char));
-        for (size_t i = index, z = 0; i < (*(__str__ *)a->str).len; i++, z++)
-            buff[z] = (*(__str__ *)a->str).src[i];
-        (*(__str__ *)a->str).src = (char *)realloc((*(__str__ *)a->str).src, (*(__str__ *)a->str).len + len + 1);
-        size_t i = index, z = 0;
-        for (; z < len; i++, z++)
-            (*(__str__ *)a->str).src[i] = src[z];
-        len = index + z;
-        fast_strncat((*(__str__ *)a->str).src, buff, &len);
-        (*(__str__ *)a->str).len = len;
-        free(buff);
+        (*(__str__ *)a->str).src = (char *)realloc((*(__str__ *)a->str).src, sizeof(char) * ((*(__str__ *)a->str).len + len + 1));
+        for (size_t i = (*(__str__ *)a->str).len; i >= index; i--)
+        {
+            (*(__str__ *)a->str).src[i + len] = (*(__str__ *)a->str).src[i];
+            (*(__str__ *)a->str).src[i] = '\0';
+            if (i == 0)
+                break;
+        }
+        memcpy((*(__str__ *)a->str).src + index, src, len);
+        (*(__str__ *)a->str).len += len;
         return true;
     }
     return false;
