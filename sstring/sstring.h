@@ -8,7 +8,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 49.3.0
+ * sstring: version 49.4.0
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -33,7 +33,7 @@
  */
 typedef struct __string__ sstring;
 
-#define sstring_version "49.3.0"
+#define sstring_version "49.4.0"
 
 #include <stdio.h>
 #include <stdlib.h>
