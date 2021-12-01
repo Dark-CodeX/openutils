@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include <cstddef>
 #include <initializer_list>
+#include <functional>
 
 template <typename T>
 class vector_t
@@ -32,6 +32,7 @@ public:
     void reverse();
     const std::size_t find(T &&data) const;
     bool swap(const std::size_t x1, const std::size_t x2);
+    const T *cdata() const;
 
     void operator=(const vector_t &data);
     T &operator[](const std::size_t nth);
@@ -212,12 +213,18 @@ bool vector_t<T>::swap(const std::size_t x1, const std::size_t x2)
 {
     if (x1 < this->len && x2 < this->len)
     {
-        T x = T((T &&)this->data[x1]);
+        T x = T((T &&) this->data[x1]);
         this->data[x1] = this->data[x2];
         this->data[x2] = x;
         return true;
     }
     return false;
+}
+
+template <typename T>
+const T *vector_t<T>::cdata() const
+{
+    return this->data;
 }
 
 template <typename T>
@@ -289,5 +296,26 @@ vector_t<T>::~vector_t()
     this->cap = 0;
     delete[] this->data;
 }
+
+template <typename T>
+inline void hash_combine(std::size_t &seed, const T &v)
+{
+    seed ^= std::hash<T>()(v) + static_cast<std::size_t>(0xc70f6907UL) + (seed << 7) + (seed >> 3);
+}
+
+namespace std
+{
+    template <typename T>
+    struct hash<vector_t<T>>
+    {
+        std::size_t operator()(const vector_t<T> &vec) const
+        {
+            std::size_t h = 0;
+            for (std::size_t i = 0; i < vec.length(); i++)
+                hash_combine(h, vec.cdata()[i]);
+            return h;
+        }
+    };
+};
 
 #endif
