@@ -1,5 +1,5 @@
 pkgname="vector"
-pkgver="28.0.0"
+pkgver="29.0.0"
 pkgrel="3"
 pkgdesc="Vectors in C language."
 arch=("x86_64" "i686")
