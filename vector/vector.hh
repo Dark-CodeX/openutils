@@ -16,12 +16,14 @@ private:
 
 public:
     vector_t();
+    vector_t(T &&default_data, std::size_t capacity = 10);
     vector_t(const vector_t &vec);
     vector_t(vector_t &&other) noexcept;
     vector_t(std::initializer_list<T> __list);
     const std::size_t length() const;
     const std::size_t capacity() const;
     void add(T &&data);
+    void unsafe_add(std::size_t where, T &&data);
     bool insert(T &&data, const std::size_t nth);
     void remove();
     bool remove(const std::size_t nth);
@@ -48,6 +50,18 @@ template <typename T>
 vector_t<T>::vector_t()
 {
     this->data = new T[this->cap];
+}
+
+template <typename T>
+vector_t<T>::vector_t(T &&default_data, std::size_t capacity)
+{
+    this->cap = capacity;
+    this->data = new T[this->cap];
+    for (std::size_t i = 0; i < this->cap; i++)
+    {
+        this->data[i] = default_data;
+        this->len++;
+    }
 }
 
 template <typename T>
@@ -107,6 +121,14 @@ void vector_t<T>::add(T &&data)
     if (this->len == this->cap)
         this->resize();
     this->data[this->len++] = data;
+}
+
+template <typename T>
+void vector_t<T>::unsafe_add(std::size_t where, T &&data)
+{
+    if(where >= this->cap)
+        this->resize();
+    this->data[where] = data;
 }
 
 template <typename T>
