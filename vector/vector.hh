@@ -47,7 +47,9 @@ public:
     bool unsafe_remove(std::size_t where);
     std::size_t unsafe_resize(std::size_t new_size);
     T &unsafe_get(std::size_t where);
-
+    void unsafe_delete(std::size_t where);
+    void unsafe_delete(std::size_t where, bool delete_array);
+    void unsafe_free(std::size_t where);
     ~vector_t();
 };
 
@@ -330,7 +332,7 @@ bool vector_t<T>::unsafe_remove(std::size_t where)
 template <typename T>
 std::size_t vector_t<T>::unsafe_resize(std::size_t new_size)
 {
-    if(new_size <= this->cap)
+    if (new_size <= this->cap)
         return (std::size_t)-1;
     T *temp = new T[new_size];
     for (std::size_t i = 0; i < this->cap; i++)
@@ -347,6 +349,30 @@ T &vector_t<T>::unsafe_get(std::size_t where)
     if (where >= this->cap)
         return this->__t[0];
     return this->data[where];
+}
+
+template <typename T>
+void vector_t<T>::unsafe_delete(std::size_t where)
+{
+    if (where >= this->cap)
+        return;
+    delete this->data[where];
+}
+
+template <typename T>
+void vector_t<T>::unsafe_delete(std::size_t where, bool delete_array)
+{
+    if (where >= this->cap)
+        return;
+    delete[] this->data[where];
+}
+
+template <typename T>
+void vector_t<T>::unsafe_free(std::size_t where)
+{
+    if (where >= this->cap)
+        return;
+    std::free(this->data[where]);
 }
 
 template <typename T>
