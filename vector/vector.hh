@@ -5,6 +5,8 @@
 #include <initializer_list>
 #include <functional>
 
+#define vector_t_version "29.0.0"
+
 template <typename T>
 class vector_t
 {
@@ -41,6 +43,7 @@ public:
     bool operator==(const vector_t &vec);
     bool operator!=(const vector_t &vec);
     vector_t &operator=(const vector_t &&__s) noexcept;
+    void operator+=(const vector_t &data);
     void operator+=(T &&data);
     const std::size_t nerr = (std::size_t)-1;
 
@@ -198,7 +201,7 @@ void vector_t<T>::erase(T &&default_data, std::size_t capacity)
     this->cap = capacity;
     this->len = 0;
     this->data = new T[this->cap];
-    
+
     for (std::size_t i = 0; i < this->cap; i++)
     {
         this->data[i] = default_data;
@@ -320,6 +323,13 @@ vector_t<T> &vector_t<T>::operator=(const vector_t &&__s) noexcept
             this->data[i] = __s.data[i];
     }
     return *this;
+}
+
+template <typename T>
+void vector_t<T>::operator+=(const vector_t &data)
+{
+    for (std::size_t i = 0; i < data.len; i++)
+        this->add(std::move(data.data[i]));
 }
 
 template <typename T>
