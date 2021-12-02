@@ -28,6 +28,7 @@ public:
     bool remove(const std::size_t nth);
     bool empty();
     void erase();
+    void erase(T &&default_data, std::size_t capacity = 10);
     T &get(const std::size_t nth);
     bool set(T &&data, const std::size_t nth);
     void reverse();
@@ -188,6 +189,22 @@ void vector_t<T>::erase()
     this->cap = 10;
     this->len = 0;
     this->data = new T[this->cap];
+}
+
+template <typename T>
+void vector_t<T>::erase(T &&default_data, std::size_t capacity)
+{
+    delete[] this->data;
+    this->cap = capacity;
+    this->len = 0;
+    this->data = new T[this->cap];
+    
+    for (std::size_t i = 0; i < this->cap; i++)
+    {
+        this->data[i] = default_data;
+        this->len++;
+    }
+    this->__t[0] = default_data;
 }
 
 template <typename T>
