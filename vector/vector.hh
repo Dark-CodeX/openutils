@@ -23,7 +23,6 @@ public:
     const std::size_t length() const;
     const std::size_t capacity() const;
     void add(T &&data);
-    void unsafe_add(std::size_t where, T &&data);
     bool insert(T &&data, const std::size_t nth);
     void remove();
     bool remove(const std::size_t nth);
@@ -43,6 +42,12 @@ public:
     vector_t &operator=(const vector_t &&__s) noexcept;
     void operator+=(T &&data);
     const std::size_t nerr = (std::size_t)-1;
+
+    bool unsafe_set(std::size_t where, T &&data);
+    bool unsafe_remove(std::size_t where);
+    std::size_t unsafe_resize(std::size_t new_size);
+    T &unsafe_get(std::size_t where);
+
     ~vector_t();
 };
 
@@ -62,6 +67,7 @@ vector_t<T>::vector_t(T &&default_data, std::size_t capacity)
         this->data[i] = default_data;
         this->len++;
     }
+    this->__t[0] = default_data;
 }
 
 template <typename T>
@@ -121,14 +127,6 @@ void vector_t<T>::add(T &&data)
     if (this->len == this->cap)
         this->resize();
     this->data[this->len++] = data;
-}
-
-template <typename T>
-void vector_t<T>::unsafe_add(std::size_t where, T &&data)
-{
-    if(where >= this->cap)
-        this->resize();
-    this->data[where] = data;
 }
 
 template <typename T>
@@ -309,6 +307,46 @@ template <typename T>
 void vector_t<T>::operator+=(T &&data)
 {
     this->add(data);
+}
+
+template <typename T>
+bool vector_t<T>::unsafe_set(std::size_t where, T &&data)
+{
+    if (where >= this->cap)
+        return false;
+    this->data[where] = data;
+    return true;
+}
+
+template <typename T>
+bool vector_t<T>::unsafe_remove(std::size_t where)
+{
+    if (where >= this->cap)
+        return false;
+    this->data[where] = this->__t[0];
+    return true;
+}
+
+template <typename T>
+std::size_t vector_t<T>::unsafe_resize(std::size_t new_size)
+{
+    if(new_size <= this->cap)
+        return (std::size_t)-1;
+    T *temp = new T[new_size];
+    for (std::size_t i = 0; i < this->cap; i++)
+        temp[i] = this->data[i];
+    delete[] this->data;
+    this->data = temp;
+    this->cap = new_size;
+    return this->cap;
+}
+
+template <typename T>
+T &vector_t<T>::unsafe_get(std::size_t where)
+{
+    if (where >= this->cap)
+        return this->__t[0];
+    return this->data[where];
 }
 
 template <typename T>
