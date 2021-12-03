@@ -8,7 +8,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 49.4.0
+ * sstring: version 1.5.0
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -33,7 +33,7 @@
  */
 typedef struct __string__ sstring;
 
-#define sstring_version "49.4.0"
+#define sstring_version "1.5.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -411,12 +411,12 @@ struct __string__
     int (*contains)(sstring *a, const char *str);
 
     /**
-     * If character was found returns its index (first occurrence only) in `a`, otherwise returns -1.
+     * If character was found returns its index (first occurrence only) in `a`, otherwise returns `nerr`.
      * @param a pointer to struct sstring
      * @param c character to be tested
-     * @returns If character was found returns its index (first occurrence only) in `a`, otherwise returns -1.
+     * @returns If character was found returns its index (first occurrence only) in `a`, otherwise returns `nerr`.
      */
-    signed long long int (*contains_char)(sstring *a, const char c);
+    size_t (*contains_char)(sstring *a, const char c);
 
     /**
      * Assigns `a` as a set. (From Set Theory)
@@ -446,12 +446,12 @@ struct __string__
     int (*from_hexadecimal)(sstring *a);
 
     /**
-     * Returns index of first occurrence of sub-string `sub` in `a`. Returns -1 if `sub` was not found in `a`.
+     * Returns index of first occurrence of sub-string `sub` in `a`. Returns `nerr` if `sub` was not found in `a`.
      * @param a pointer to struct sstring
      * @param sub sub-string to find in `a`
      * @returns index of first occurrence of sub-string `sub` in `a`
      */
-    signed long long int (*find)(sstring *a, const char *sub);
+    size_t (*find)(sstring *a, const char *sub);
 
     /**
      * Get input from user and then sets that input to `a`.
@@ -529,9 +529,9 @@ struct __string__
      * Calculates hamming distance (From Information Theory) between two strings. NOTE: string's length should be same.
      * @param a pointer to struct sstring
      * @param src second string to compare with
-     * @returns returns -1 if length does not match, otherwise number of characters didn't matched.
+     * @returns returns `nerr` if length does not match, otherwise number of characters didn't matched.
      */
-    signed long long int (*distance)(sstring *a, const char *src);
+    size_t (*distance)(sstring *a, const char *src);
 
     /**
      * Returns `Levenshtein Distance` (From Information Theory) against `src`.
@@ -539,7 +539,7 @@ struct __string__
      * @param src string to be matched
      * @returns edit distance
      */
-    signed long long int (*edit_distance)(sstring *a, const char *src);
+    size_t (*edit_distance)(sstring *a, const char *src);
 
     /**
      * Returns percentage matched against `src` using `Levenshtein Distance` algorithm (From Information Theory).
@@ -548,20 +548,6 @@ struct __string__
      * @returns percentage matched, NOTE: returned value belongs to [0, 100]
      */
     long double (*percentage_matched)(sstring *a, const char *src);
-
-    /**
-     * Return average of `a` with respect to its position.
-     * @param a pointer to struct sstring
-     * @returns average of `a` with respect to its position.
-     */
-    long double (*positional_average)(sstring *a);
-
-    /**
-     * Return modulus of `a` with respect to its position.
-     * @param a pointer to struct sstring
-     * @returns modulus of `a` with respect to its position.
-     */
-    size_t (*positional_modulus)(sstring *a);
 
     /**
      * Counts the number of occurrence of `what` in `a`.
@@ -599,9 +585,10 @@ struct __string__
      * free(most);
      * @endcode
      * @param a pointer to struct sstring
+     * @param dl string to separate
      * @returns most used / occurred word in `a`
      */
-    char *(*most_used)(sstring *a);
+    char *(*most_used)(sstring *a, const char *dl);
 
     /**
      * Returns the character which was most occurred in `a`.
@@ -693,12 +680,18 @@ struct __string__
     size_t (*begin)(void);
 
     /**
-     * Stores the current position of the iterator in any loop.
-     * @param init_value initial position
-     * @param max_value final position
+     * Returns an iterator which traverse through `a`.
+     * @param a pointer to struct sstring
      * @returns an initialized `iter_sstring`
      */
-    iter_sstring (*iterator)(signed long long int init_value, signed long long int max_value);
+    iter_sstring (*iterator)(sstring *a);
+
+    /**
+     * Returns an iterator which traverse through `a` in reverse order.
+     * @param a pointer to struct sstring
+     * @returns an initialized `iter_sstring`
+     */
+    iter_sstring (*reverse_iterator)(sstring *a);
 
     /**
      * Returns last index of `a`, without using `strlen` function. Should be used in any loop.
@@ -823,6 +816,18 @@ struct __string__
      * @returns true if resized, otherwise false
      */
     int (*resize)(sstring *a, size_t new_len);
+
+    /**
+     * Returns hash of `a`.
+     * @param a pointer to struct sstring
+     * @returns hash of `a`
+     */
+    size_t (*hash)(sstring *a);
+
+    /**
+     * Value returned when an error is occurred.
+     */
+    size_t nerr;
 } __string__;
 
 #include "prototype_err.h"
@@ -1606,7 +1611,7 @@ int _contains(sstring *a, const char *str)
     return false;
 }
 
-signed long long int _contains_char(sstring *a, const char c)
+size_t _contains_char(sstring *a, const char c)
 {
     if (a && a->str && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true && c != '\0')
     {
@@ -1614,7 +1619,7 @@ signed long long int _contains_char(sstring *a, const char c)
             if ((*(__str__ *)a->str).src[i] == c)
                 return (size_t)i;
     }
-    return -1;
+    return (size_t)-1;
 }
 
 void _to_set(sstring *a)
@@ -1760,7 +1765,7 @@ int _from_hexadecimal(sstring *a)
     return valid;
 }
 
-signed long long _find(sstring *a, const char *sub)
+size_t _find(sstring *a, const char *sub)
 {
     if (a && a->str && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true && sub)
     {
@@ -1773,7 +1778,7 @@ signed long long _find(sstring *a, const char *sub)
         if (buff != NULL)
             return (size_t)(*(__str__ *)a->str).len - strlen((const char *)buff); // buff is subset of a, if buff != NULL
     }
-    return -1;
+    return (size_t)-1;
 }
 
 int _in(sstring *a, int get_line, size_t buff_size)
@@ -1990,7 +1995,7 @@ int _intersect(sstring *a, size_t from, size_t till)
     return false;
 }
 
-signed long long int _distance(sstring *a, const char *src)
+size_t _distance(sstring *a, const char *src)
 {
     if (a && a->str && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true && src)
     {
@@ -2003,12 +2008,12 @@ signed long long int _distance(sstring *a, const char *src)
             return (size_t)cnt;
         }
     }
-    return -1;
+    return (size_t)-1;
 }
 
 #define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
 #define MAX2(x, y) ((x > y) ? x : y)
-signed long long int _edit_distance(sstring *a, const char *src)
+size_t _edit_distance(sstring *a, const char *src)
 {
     if (a && a->str && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true && src)
     {
@@ -2028,7 +2033,7 @@ signed long long int _edit_distance(sstring *a, const char *src)
         }
         return (size_t)cols[len1];
     }
-    return -1;
+    return (size_t)-1;
 }
 
 long double _percentage_matched(sstring *a, const char *src)
@@ -2053,33 +2058,6 @@ long double _percentage_matched(sstring *a, const char *src)
         return (max - cols[len1]) * 100.0f / max;
     }
     return (long double)0.0f;
-}
-
-long double _positional_average(sstring *a)
-{
-    if (a && a->str && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true)
-    {
-        long double val = 0;
-        for (size_t i = 0; (*(__str__ *)a->str).src[i] != '\0'; i++)
-            val += ((*(__str__ *)a->str).src[i] + i) / (2.0 + i);
-        val /= (*(__str__ *)a->str).len;
-        return val;
-    }
-    return (long double)0;
-}
-
-size_t _positional_modulus(sstring *a)
-{
-    if (a && a->str && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true)
-    {
-        size_t val = 0;
-        for (size_t i = 0; (*(__str__ *)a->str).src[i] != '\0'; i++)
-            val += ((*(__str__ *)a->str).src[i] + i) / (2 + i);
-        if (val != 0)
-            val %= (*(__str__ *)a->str).len;
-        return val;
-    }
-    return 0ULL;
 }
 
 size_t _count(sstring *a, const char *what)
@@ -2154,23 +2132,21 @@ int strcmp_void(const void *a1, const void *a2)
     return strcmp((const char *)a1, (const char *)a2);
 }
 
-char *_most_used(sstring *a)
+char *_most_used(sstring *a, const char *dl)
 {
-    if (a && a->str && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true)
+    if (a && a->str && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true && dl)
     {
         size_t len = (*(__str__ *)a->str).len, cnt = 0, l = 0;
-        for (size_t i = 0; i < len; i++)
-            if ((*(__str__ *)a->str).src[i] == ' ')
-                cnt++;
+        cnt = a->count(a, dl);
         if (cnt == 0)
             return (char *)NULL;
         char *temp = (char *)calloc((sizeof(char) * len) + 1, sizeof(char));
         strcpy(temp, (*(__str__ *)a->str).src);
-        char **buff = (char **)calloc((sizeof(char *) * cnt) + sizeof(char *), sizeof(char *)), *tok = strtok(temp, " ");
+        char **buff = (char **)calloc((sizeof(char *) * cnt) + sizeof(char *), sizeof(char *)), *tok = strtok(temp, dl);
         while (tok != NULL)
         {
             buff[l] = tok;
-            tok = strtok(NULL, " ");
+            tok = strtok(NULL, dl);
             l++;
         }
         qsort(buff, l, sizeof(buff[0]), strcmp_void);
@@ -2436,20 +2412,9 @@ int _encrypt(sstring *a, const char *key)
 {
     if (a && a->str && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true && key)
     {
-        size_t val = 0, len_key = strlen(key); // positional_modulus
-        for (size_t i = 0; key[i] != '\0'; i++)
-            val += (key[i] + i) / (2.0 + i);
-        if (val == 0)
-            return false;
-
-        long double avg = 0; // positional_average
-        for (size_t i = 0; key[i] != '\0'; i++)
-            avg += (key[i] + i) / (2.0 + i);
-        avg /= len_key;
-        if (avg == INFINITY || avg == -INFINITY)
-            return false;
-        val %= len_key;
-        val += avg;
+        sstring __temp__ = new_sstring(0, key);
+        size_t val = __temp__.hash(&__temp__) % 128;
+        __temp__.destructor(&__temp__);
         size_t len = (*(__str__ *)a->str).len;
         short add = true;
         char *buff = (char *)calloc(sizeof(char) * (len + 1), sizeof(char));
@@ -2466,7 +2431,10 @@ int _encrypt(sstring *a, const char *key)
                 add = true;
             }
             else
+            {
+                free(buff);
                 return false;
+            }
         }
         free((*(__str__ *)a->str).src);
         (*(__str__ *)a->str).src = (char *)calloc(sizeof(char) * (len + 1), sizeof(char));
@@ -2483,20 +2451,9 @@ int _decrypt(sstring *a, const char *key)
 {
     if (a && a->str && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true && key)
     {
-        size_t val = 0, len_key = strlen(key); // positional_modulus
-        for (size_t i = 0; key[i] != '\0'; i++)
-            val += (key[i] + i) / (2.0 + i);
-        if (val == 0)
-            return false;
-
-        long double avg = 0; // positional_average
-        for (size_t i = 0; key[i] != '\0'; i++)
-            avg += (key[i] + i) / (2.0 + i);
-        avg /= len_key;
-        if (avg == INFINITY || avg == -INFINITY)
-            return false;
-        val %= len_key;
-        val += avg;
+        sstring __temp__ = new_sstring(0, key);
+        size_t val = __temp__.hash(&__temp__) % 128;
+        __temp__.destructor(&__temp__);
         size_t len = (*(__str__ *)a->str).len;
         short add_inrv = true;
         char *buff = (char *)calloc(sizeof(char) * (len + 1), sizeof(char));
@@ -2513,7 +2470,10 @@ int _decrypt(sstring *a, const char *key)
                 add_inrv = true;
             }
             else
+            {
+                free(buff);
                 return false;
+            }
         }
         free((*(__str__ *)a->str).src);
         (*(__str__ *)a->str).src = (char *)calloc(sizeof(char) * (len + 1), sizeof(char));
@@ -2559,19 +2519,21 @@ int __c_loop__iter_sstring(iter_sstring *is)
     return false;
 }
 
-iter_sstring _iterator(signed long long int init_value, signed long long int max_value)
+iter_sstring _iterator(sstring *a)
 {
-    if (max_value >= init_value)
-        return (iter_sstring){.cur = init_value, .max = max_value, .is_max_smaller = false, .advance = __advance__iter_sstring, .c_loop = __c_loop__iter_sstring};
-    else
-        return (iter_sstring){.cur = init_value, .max = max_value, .is_max_smaller = true, .advance = __advance__iter_sstring, .c_loop = __c_loop__iter_sstring};
+    return (iter_sstring){.cur = 0, .max = (*(__str__ *)a->str).len, .is_max_smaller = false, .advance = __advance__iter_sstring, .c_loop = __c_loop__iter_sstring};
+}
+
+iter_sstring __reverse_iterator(sstring *a)
+{
+    return (iter_sstring){.cur = (*(__str__ *)a->str).len, .max = -1, .is_max_smaller = true, .advance = __advance__iter_sstring, .c_loop = __c_loop__iter_sstring};
 }
 
 size_t _end_sstring(sstring *a)
 {
     if (a && a->str && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true)
         return (*(__str__ *)a->str).len;
-    return 0x0ULL;
+    return 0;
 }
 
 #include "morse_code.h"
@@ -3048,6 +3010,25 @@ int _resize(sstring *a, size_t new_len)
     return false;
 }
 
+size_t _hash(sstring *a)
+{
+    if (a && a->str && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true && (*(__str__ *)a->str).len != 0)
+    {
+        size_t p = 53;
+        size_t m = 1e9 + 9;
+        long long power_of_p = 1;
+        long long hash_val = 0;
+
+        for (size_t i = 0; i < (*(__str__ *)a->str).len; i++)
+        {
+            hash_val = (hash_val + ((*(__str__ *)a->str).src[i] - 97 + 1) * power_of_p) % m;
+            power_of_p = (power_of_p * p) % m;
+        }
+        return (hash_val % m + m) % m;
+    }
+    return (size_t)-1;
+}
+
 /**
  * Frees `a` carefully. Always use this function when there is not use of `a` or before your program exits.
  * @param a pointer to struct split_t
@@ -3175,8 +3156,6 @@ int init_sstr(sstring *a, size_t alloc_size)
         a->distance = _distance;
         a->edit_distance = _edit_distance;
         a->percentage_matched = _percentage_matched;
-        a->positional_average = _positional_average;
-        a->positional_modulus = _positional_modulus;
         a->count = _count;
         a->count_char = _count_char;
         a->soundex = _soundex;
@@ -3193,6 +3172,7 @@ int init_sstr(sstring *a, size_t alloc_size)
         a->decrypt = _decrypt;
         a->begin = _begin;
         a->iterator = _iterator;
+        a->reverse_iterator = __reverse_iterator;
         a->end = _end_sstring;
         a->to_morse_code = _to_morse_code;
         a->from_morse_code = _from_morse_code;
@@ -3209,6 +3189,8 @@ int init_sstr(sstring *a, size_t alloc_size)
         a->set_formatted = _set_formatted;
         a->append_formatted = _append_formatted;
         a->resize = _resize;
+        a->hash = _hash;
+        a->nerr = (size_t)-1;
 
         a->str = (__str__ *)calloc(sizeof(__str__), sizeof(__str__));
         (*(__str__ *)a->str).src = (char *)calloc((alloc_size * sizeof(char)) + sizeof(char), sizeof(char));
