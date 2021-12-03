@@ -9,7 +9,7 @@ This header file is *cross-platform*, but tested only on Windows 10, Windows 11,
 Documents are in the header(`"sstring/sstring.h"`) file itself.
 Be sure to suggest any changes.
 
-# Functions Defined v:49.4.0
+# Functions Defined v:1.5.0
 
 ```
 set
@@ -66,8 +66,6 @@ intersect
 distance
 edit_distance
 percentage_matched
-positional_average
-positional_modulus
 count
 count_char
 soundex
@@ -84,6 +82,7 @@ encrypt
 decrypt
 begin
 iterator
+reverse_iterator
 end
 to_morse_code
 from_morse_code
@@ -100,6 +99,7 @@ from_parse_t
 set_formatted
 append_formatted
 resize
+hash
 ```
 # BUILD AND INSTALL
 
