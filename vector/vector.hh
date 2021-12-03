@@ -5,7 +5,7 @@
 #include <initializer_list>
 #include <functional>
 
-#define vector_t_version "29.0.0"
+#define vector_t_version "1.4.0"
 
 template <typename T>
 class vector_t
@@ -22,35 +22,36 @@ public:
     vector_t(const vector_t &vec);
     vector_t(vector_t &&other) noexcept;
     vector_t(std::initializer_list<T> __list);
+    vector_t(const std::size_t capacity);
     const std::size_t length() const;
     const std::size_t capacity() const;
     void add(T &&data);
     bool insert(T &&data, const std::size_t nth);
     void remove();
     bool remove(const std::size_t nth);
-    bool empty();
+    bool empty() const;
     void erase();
     void erase(T &&default_data, std::size_t capacity = 10);
-    T &get(const std::size_t nth);
+    T &get(const std::size_t nth) const;
     bool set(T &&data, const std::size_t nth);
     void reverse();
     const std::size_t find(T &&data) const;
     bool swap(const std::size_t x1, const std::size_t x2);
-    const T *cdata() const;
 
     void operator=(const vector_t &data);
-    T &operator[](const std::size_t nth);
-    bool operator==(const vector_t &vec);
-    bool operator!=(const vector_t &vec);
+    T &operator[](const std::size_t nth) const;
+    bool operator==(const vector_t &vec) const;
+    bool operator!=(const vector_t &vec) const;
     vector_t &operator=(const vector_t &&__s) noexcept;
     void operator+=(const vector_t &data);
     void operator+=(T &&data);
+    void operator+=(std::initializer_list<T> __list);
     const std::size_t nerr = (std::size_t)-1;
 
     bool unsafe_set(std::size_t where, T &&data);
     bool unsafe_remove(std::size_t where);
     std::size_t unsafe_resize(std::size_t new_size);
-    T &unsafe_get(std::size_t where);
+    T &unsafe_get(std::size_t where) const;
     void unsafe_delete(std::size_t where);
     void unsafe_delete(std::size_t where, bool delete_array);
     void unsafe_free(std::size_t where);
@@ -108,6 +109,13 @@ vector_t<T>::vector_t(std::initializer_list<T> __list)
         this->data = new T[this->cap + __list.size()];
     for (auto i = __list.begin(); i != __list.end(); i++, this->len++)
         this->data[this->len] = *i;
+}
+
+template <typename T>
+vector_t<T>::vector_t(const std::size_t capacity)
+{
+    this->cap = capacity;
+    this->data = new T[this->cap];
 }
 
 template <typename T>
@@ -180,7 +188,7 @@ bool vector_t<T>::remove(const std::size_t nth)
 }
 
 template <typename T>
-bool vector_t<T>::empty()
+bool vector_t<T>::empty() const
 {
     return (this->len == 0);
 }
@@ -211,11 +219,11 @@ void vector_t<T>::erase(T &&default_data, std::size_t capacity)
 }
 
 template <typename T>
-T &vector_t<T>::get(const std::size_t nth)
+T &vector_t<T>::get(const std::size_t nth) const
 {
     if (nth < this->len)
         return this->data[nth];
-    return this->__t[0];
+    return (T &)this->__t[0];
 }
 
 template <typename T>
@@ -264,12 +272,6 @@ bool vector_t<T>::swap(const std::size_t x1, const std::size_t x2)
 }
 
 template <typename T>
-const T *vector_t<T>::cdata() const
-{
-    return this->data;
-}
-
-template <typename T>
 void vector_t<T>::operator=(const vector_t &data)
 {
     delete[] this->data;
@@ -281,15 +283,15 @@ void vector_t<T>::operator=(const vector_t &data)
 }
 
 template <typename T>
-T &vector_t<T>::operator[](const std::size_t nth)
+T &vector_t<T>::operator[](const std::size_t nth) const
 {
     if (nth < this->len)
         return this->data[nth];
-    return this->__t[0];
+    return (T &)this->__t[0];
 }
 
 template <typename T>
-bool vector_t<T>::operator==(const vector_t &vec)
+bool vector_t<T>::operator==(const vector_t &vec) const
 {
     if (this->len != vec.len)
         return false;
@@ -300,7 +302,7 @@ bool vector_t<T>::operator==(const vector_t &vec)
 }
 
 template <typename T>
-bool vector_t<T>::operator!=(const vector_t &vec)
+bool vector_t<T>::operator!=(const vector_t &vec) const
 {
     if (this->len != vec.len)
         return true;
@@ -335,7 +337,14 @@ void vector_t<T>::operator+=(const vector_t &data)
 template <typename T>
 void vector_t<T>::operator+=(T &&data)
 {
-    this->add(data);
+    this->add(std::move(data));
+}
+
+template <typename T>
+void vector_t<T>::operator+=(std::initializer_list<T> __list)
+{
+    for (auto &i : __list)
+        this->add(std::move((T &&) i));
 }
 
 template <typename T>
@@ -371,10 +380,10 @@ std::size_t vector_t<T>::unsafe_resize(std::size_t new_size)
 }
 
 template <typename T>
-T &vector_t<T>::unsafe_get(std::size_t where)
+T &vector_t<T>::unsafe_get(std::size_t where) const
 {
     if (where >= this->cap)
-        return this->__t[0];
+        return (T &)this->__t[0];
     return this->data[where];
 }
 
@@ -425,7 +434,7 @@ namespace std
         {
             std::size_t h = 0;
             for (std::size_t i = 0; i < vec.length(); i++)
-                hash_combine(h, vec.cdata()[i]);
+                hash_combine(h, vec[i]);
             return h;
         }
     };
