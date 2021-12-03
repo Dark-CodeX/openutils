@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "prototype_err.h" under "sstring" directory
-* sstring: version 49.4.0
+* sstring: version 1.5.0
 * 
 * MIT License
 * 
@@ -70,12 +70,12 @@ void _to_binary(sstring *a);
 int _from_binary(sstring *a);
 long double _entropy(sstring *a);
 int _contains(sstring *a, const char *str);
-signed long long int _contains_char(sstring *a, const char c);
+size_t _contains_char(sstring *a, const char c);
 void _to_set(sstring *a);
 int _copy(sstring *a, sstring *dest);
 void _to_hexadecimal(sstring *a);
 int _from_hexadecimal(sstring *a);
-signed long long _find(sstring *a, const char *sub);
+size_t _find(sstring *a, const char *sub);
 int _in(sstring *a, int get_line, size_t buff_size);
 char *_getline(sstring *a, size_t line);
 void _reverse(sstring *a);
@@ -84,15 +84,13 @@ size_t _remove_char(sstring *a, const char c);
 size_t _remove_extra_char(sstring *a, const char c);
 size_t _remove_range(sstring *a, size_t from, size_t till);
 int _intersect(sstring *a, size_t from, size_t till);
-signed long long int _distance(sstring *a, const char *src);
-signed long long int _edit_distance(sstring *a, const char *src);
+size_t _distance(sstring *a, const char *src);
+size_t _edit_distance(sstring *a, const char *src);
 long double _percentage_matched(sstring *a, const char *src);
-long double _positional_average(sstring *a);
-size_t _positional_modulus(sstring *a);
 size_t _count(sstring *a, const char *what);
 size_t _count_char(sstring *a, const char what);
 char *_soundex(sstring *a);
-char *_most_used(sstring *a);
+char *_most_used(sstring *a, const char *dl);
 char _most_used_char(sstring *a);
 split_t _split(sstring *a, const char *dl);
 void _sort(sstring *a);
@@ -104,7 +102,8 @@ int _print_binary(sstring *a, size_t len);
 int _encrypt(sstring *a, const char *key);
 int _decrypt(sstring *a, const char *key);
 size_t _begin(void);
-iter_sstring _iterator(signed long long int init_value, signed long long int max_value);
+iter_sstring _iterator(sstring *a);
+iter_sstring __reverse_iterator(sstring *a);
 size_t _end_sstring(sstring *a);
 int _to_morse_code(sstring *a);
 int _from_morse_code(sstring *a);
@@ -121,6 +120,7 @@ int _from_parse_t(sstring *a, parse_t *toks);
 int _set_formatted(sstring *a, size_t buffer_length, const char *__format__, ...);
 int _append_formatted(sstring *a, size_t buffer_length, const char *__format__, ...);
 int _resize(sstring *a, size_t new_len);
+size_t _hash(sstring *a);
 
 void __advance__iter_sstring(iter_sstring *is, signed long long int move_by);
 int __c_loop__iter_sstring(iter_sstring *is);
