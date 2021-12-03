@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 1.5.0
+ * sstring: version 1.5.1
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -40,7 +40,7 @@
 #include "binary.h"
 #include "morse_code.h"
 
-#define sstring_version "1.5.0"
+#define sstring_version "1.5.1"
 
 namespace std
 {
@@ -135,6 +135,8 @@ namespace sstr
         sstring(sstring &&other) noexcept;
         sstring(std::initializer_list<char> list);
         sstring(std::initializer_list<sstring> list);
+        sstring(std::initializer_list<const char *> list);
+        sstring(const char c);
         void set(const char *src);
         void set_char(const char c);
         void set_upto(const char *src, std::size_t N);
@@ -228,8 +230,11 @@ namespace sstr
         void operator+=(const sstring &str);
         void operator+=(const char str);
         void operator+=(const char *str);
+        void operator+=(std::initializer_list<char> list);
+        void operator+=(std::initializer_list<sstring> list);
         void operator=(const sstring &str);
         void operator=(const char *str);
+        void operator=(const char c);
         bool operator==(const sstring &str) const;
         bool operator==(const char *str) const;
         bool operator!=(const sstring &str) const;
@@ -376,6 +381,21 @@ namespace sstr
         this->len = 0;
         for (std::initializer_list<sstring>::const_iterator i = list.begin(); i != list.end(); i++)
             this->append(i->c_str());
+    }
+
+    sstring::sstring(std::initializer_list<const char *> list)
+    {
+        this->src = (char *)std::calloc(sizeof(char) * 1, sizeof(char));
+        this->len = 0;
+        for (std::initializer_list<const char *>::const_iterator i = list.begin(); i != list.end(); i++)
+            this->append(*i);
+    }
+
+    sstring::sstring(const char c)
+    {
+        this->src = (char *)std::calloc(sizeof(char) * 1, sizeof(char));
+        this->len = 0;
+        this->set_char(c);
     }
 
     void sstring::set(const char *src)
@@ -2281,6 +2301,18 @@ namespace sstr
         this->append(str);
     }
 
+    void sstring::operator+=(std::initializer_list<char> list)
+    {
+        for (auto &i : list)
+            this->append_char(i);
+    }
+
+    void sstring::operator+=(std::initializer_list<sstring> list)
+    {
+        for (auto &i : list)
+            this->append(i.c_str());
+    }
+
     void sstring::operator=(const sstring &str)
     {
         this->set(str.c_str());
@@ -2289,6 +2321,11 @@ namespace sstr
     void sstring::operator=(const char *str)
     {
         this->set(str);
+    }
+
+    void sstring::operator=(const char c)
+    {
+        this->set_char(c);
     }
 
     bool sstring::operator==(const sstring &str) const
