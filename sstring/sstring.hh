@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 49.4.0
+ * sstring: version 1.5.0
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -40,7 +40,52 @@
 #include "binary.h"
 #include "morse_code.h"
 
-#define sstring_version "49.4.0"
+#define sstring_version "1.5.0"
+
+namespace std
+{
+    template <>
+    struct hash<const char *>
+    {
+        std::size_t operator()(const char *const &str) const
+        {
+            std::size_t p = 53;
+            std::size_t m = 1e9 + 9;
+            long long power_of_p = 1;
+            long long hash_val = 0;
+
+            std::size_t len = std::strlen(str);
+
+            for (std::size_t i = 0; i < len; i++)
+            {
+                hash_val = (hash_val + (str[i] - 97 + 1) * power_of_p) % m;
+                power_of_p = (power_of_p * p) % m;
+            }
+            return (hash_val % m + m) % m;
+        }
+    };
+
+    template <>
+    struct hash<const unsigned char *>
+    {
+        std::size_t operator()(const unsigned char *const &str) const
+        {
+            std::size_t p = 53;
+            std::size_t m = 1e9 + 9;
+            long long power_of_p = 1;
+            long long hash_val = 0;
+
+            std::size_t len = std::strlen((const char *)str);
+
+            for (std::size_t i = 0; i < len; i++)
+            {
+                hash_val = (hash_val + (str[i] - 97 + 1) * power_of_p) % m;
+                power_of_p = (power_of_p * p) % m;
+            }
+            return (hash_val % m + m) % m;
+        }
+    };
+};
 
 namespace sstr
 {
@@ -88,6 +133,8 @@ namespace sstr
         sstring(const char *src = nullptr, std::size_t alloc_size = 1UL);
         sstring(const sstring &other);
         sstring(sstring &&other) noexcept;
+        sstring(std::initializer_list<char> list);
+        sstring(std::initializer_list<sstring> list);
         void set(const char *src);
         void set_char(const char c);
         void set_upto(const char *src, std::size_t N);
@@ -102,18 +149,18 @@ namespace sstr
         void append_start_upto(const char *src, std::size_t N);
         bool append_array(const char **src, char char_between, std::size_t from, std::size_t till, std::size_t len);
         bool append_start_array(const char **src, char char_between, std::size_t from, std::size_t till, std::size_t len);
-        bool empty();
+        bool empty() const;
         void replace_char(const char old, const char new_);
         void char_set(const char what, std::size_t where);
-        char char_get(std::size_t where);
+        char char_get(std::size_t where) const;
         const std::size_t length() const;
-        bool compare(const char *T1);
-        bool compare_upto(const char *T1, std::size_t N);
-        void print(bool add_next_line, const char *__format__, ...);
+        bool compare(const char *T1) const;
+        bool compare_upto(const char *T1, std::size_t N) const;
+        void print(bool add_next_line, const char *__format__, ...) const;
         void replace(const char *old, const char *new_);
         const char *c_str() const;
-        bool save(const char *location);
-        bool append_file(const char *location);
+        bool save(const char *location) const;
+        bool append_file(const char *location) const;
         bool open(const char *location);
         void clear();
         void to_upper();
@@ -121,60 +168,60 @@ namespace sstr
         void swap_case();
         void to_binary();
         bool from_binary();
-        long double entropy();
-        bool contains(const char *str);
-        signed long long int contains_char(const char c);
+        long double entropy() const;
+        bool contains(const char *str) const;
+        std::size_t contains_char(const char c) const;
         void to_set();
         bool copy(sstring &dest);
         void to_hexadecimal();
         bool from_hexadecimal();
-        signed long long int find(const char *sub);
+        std::size_t find(const char *sub) const;
         bool in(bool get_line, std::size_t buff_size);
-        sstring getline(std::size_t line);
+        sstring getline(std::size_t line) const;
         void reverse();
         std::size_t remove(const char *sub);
         std::size_t remove_char(char c);
         std::size_t remove_extra_char(char c);
         std::size_t remove_range(std::size_t from, std::size_t till);
         bool intersect(std::size_t from, std::size_t till);
-        signed long long int distance(const char *src);
-        signed long long int edit_distance(const char *src);
-        long double percentage_matched(const char *src);
-        long double positional_average();
-        std::size_t positional_modulus();
-        std::size_t count(const char *what);
-        std::size_t count_char(const char what);
-        sstring soundex();
-        sstring most_used();
-        char most_used_char();
+        std::size_t distance(const char *src) const;
+        std::size_t edit_distance(const char *src) const;
+        long double percentage_matched(const char *src) const;
+        std::size_t count(const char *what) const;
+        std::size_t count_char(const char what) const;
+        sstring soundex() const;
+        sstring most_used(const char *dl) const;
+        char most_used_char() const;
         split_t split(const char *str);
         void sort();
         std::size_t open_binary(const char *location);
-        bool save_binary(const char *location, std::size_t len);
-        bool append_binary(const char *location, std::size_t len);
+        bool save_binary(const char *location, std::size_t len) const;
+        bool append_binary(const char *location, std::size_t len) const;
         std::size_t add_binary(const char *data, std::size_t len);
-        bool print_binary(std::size_t len);
+        bool print_binary(std::size_t len) const;
         bool encrypt(const char *key);
         bool decrypt(const char *key);
         std::size_t begin() const;
-        iter_sstring iterator(signed long long int init_value, signed long long int max_value);
+        iter_sstring iterator() const;
+        iter_sstring reverse_iterator() const;
         const std::size_t end() const;
         bool to_morse_code();
         bool from_morse_code();
-        bool is_digit();
-        bool is_decimal();
-        bool is_ascii();
-        bool is_alphabetic();
+        bool is_digit() const;
+        bool is_decimal() const;
+        bool is_ascii() const;
+        bool is_alphabetic() const;
         void format_escape_sequence();
         bool insert(const char *src, std::size_t index);
-        bool starts_with(const char *src);
-        bool ends_with(const char *src);
+        bool starts_with(const char *src) const;
+        bool ends_with(const char *src) const;
         parse_t parse();
         bool from_parse_t(parse_t toks);
         bool set_formatted(std::size_t buffer_length, const char *__format__, ...);
         bool append_formatted(std::size_t buffer_length, const char *__format__, ...);
         bool resize(std::size_t new_len);
-        char operator[](std::size_t n);
+        std::size_t hash() const;
+        char operator[](std::size_t n) const;
         sstring operator+(const sstring &str);
         sstring operator+(const char str);
         sstring operator+(const char *str);
@@ -183,11 +230,12 @@ namespace sstr
         void operator+=(const char *str);
         void operator=(const sstring &str);
         void operator=(const char *str);
-        bool operator==(const sstring &str);
-        bool operator==(const char *str);
-        bool operator!=(const sstring &str);
-        bool operator!=(const char *str);
+        bool operator==(const sstring &str) const;
+        bool operator==(const char *str) const;
+        bool operator!=(const sstring &str) const;
+        bool operator!=(const char *str) const;
         sstring &operator=(const sstring &&__s) noexcept;
+        const std::size_t nerr = (std::size_t)-1;
         friend std::ostream &operator<<(std::ostream &out, const sstring &obj);
         ~sstring();
     };
@@ -206,6 +254,8 @@ namespace sstr
     sstring to_sstring(float x);
     sstring to_sstring(double x);
     sstring to_sstring(long double x);
+    sstring get_random(std::size_t len);
+    sstring open_file(const sstring &location);
     sstring end_line();
 
     enum parse_token
@@ -228,9 +278,9 @@ namespace sstr
     public:
         parse_t(std::size_t len = 1LL);
         bool add(const char *src, enum parse_token type);
-        sstring get(const std::size_t n);
-        enum parse_token get_type(const std::size_t n);
-        sstring operator[](const std::size_t n);
+        sstring get(const std::size_t n) const;
+        enum parse_token get_type(const std::size_t n) const;
+        sstring operator[](const std::size_t n) const;
         const std::size_t length() const;
         parse_t(parse_t &&other) noexcept;
         parse_t &operator=(const parse_t &&__pt) noexcept;
@@ -246,8 +296,8 @@ namespace sstr
     public:
         split_t(std::size_t len = 1LL);
         bool add(const char *src);
-        sstring get(const std::size_t n);
-        sstring operator[](const std::size_t n);
+        sstring get(const std::size_t n) const;
+        sstring operator[](const std::size_t n) const;
         const std::size_t length() const;
         split_t(split_t &&other) noexcept;
         split_t &operator=(const split_t &&__st) noexcept;
@@ -269,7 +319,7 @@ namespace sstr
         void operator*=(const signed long long int move_by);
         void operator/=(const signed long long int move_by);
         void operator%=(const signed long long int move_by);
-        bool c_loop();
+        bool c_loop() const;
         ~iter_sstring();
     };
 
@@ -309,6 +359,23 @@ namespace sstr
         len = other.len;
         other.src = nullptr;
         other.len = 0;
+    }
+
+    sstring::sstring(std::initializer_list<char> list)
+    {
+        std::size_t len = sizeof(char) * list.size(), currlen = 0;
+        this->src = (char *)std::calloc(len + 1, sizeof(char));
+        for (std::initializer_list<char>::const_iterator i = list.begin(); i != list.end() && *i != '\0'; i++)
+            this->src[currlen++] = *i;
+        this->len = currlen;
+    }
+
+    sstring::sstring(std::initializer_list<sstring> list)
+    {
+        this->src = (char *)std::calloc(sizeof(char) * 1, sizeof(char));
+        this->len = 0;
+        for (std::initializer_list<sstring>::const_iterator i = list.begin(); i != list.end(); i++)
+            this->append(i->c_str());
     }
 
     void sstring::set(const char *src)
@@ -633,7 +700,7 @@ namespace sstr
         return false;
     }
 
-    bool sstring::empty()
+    bool sstring::empty() const
     {
         return (this->len == 0);
     }
@@ -653,7 +720,7 @@ namespace sstr
             this->src[where] = what;
     }
 
-    char sstring::char_get(std::size_t where)
+    char sstring::char_get(std::size_t where) const
     {
 
         if (this->len >= where)
@@ -666,7 +733,7 @@ namespace sstr
         return std::strlen((const char *)this->src);
     }
 
-    bool sstring::compare(const char *T1)
+    bool sstring::compare(const char *T1) const
     {
         if (T1)
             if (std::strcmp((const char *)this->src, T1) == 0)
@@ -674,7 +741,7 @@ namespace sstr
         return false;
     }
 
-    bool sstring::compare_upto(const char *T1, std::size_t N)
+    bool sstring::compare_upto(const char *T1, std::size_t N) const
     {
         if (T1 && strlen(T1) >= N)
             if (std::strncmp((const char *)this->src, T1, N) == 0)
@@ -682,7 +749,7 @@ namespace sstr
         return false;
     }
 
-    void sstring::print(bool add_next_line, const char *__format__, ...)
+    void sstring::print(bool add_next_line, const char *__format__, ...) const
     {
         if (__format__)
         {
@@ -753,7 +820,7 @@ namespace sstr
         return (const char *)this->src;
     }
 
-    bool sstring::save(const char *location)
+    bool sstring::save(const char *location) const
     {
         if (location)
         {
@@ -768,7 +835,7 @@ namespace sstr
         return false;
     }
 
-    bool sstring::append_file(const char *location)
+    bool sstring::append_file(const char *location) const
     {
         if (location)
         {
@@ -913,7 +980,7 @@ namespace sstr
         return true;
     }
 
-    long double sstring::entropy()
+    long double sstring::entropy() const
     {
         std::size_t len = this->len;
         std::size_t cnt = 0, map_append = 0, o = 0;
@@ -952,7 +1019,7 @@ namespace sstr
         return result;
     }
 
-    bool sstring::contains(const char *str)
+    bool sstring::contains(const char *str) const
     {
         if (str)
             if (std::strstr((const char *)this->src, str) != nullptr)
@@ -960,7 +1027,7 @@ namespace sstr
         return false;
     }
 
-    signed long long int sstring::contains_char(const char c)
+    std::size_t sstring::contains_char(const char c) const
     {
         if (c != '\0')
         {
@@ -968,7 +1035,7 @@ namespace sstr
                 if (this->src[i] == c)
                     return (std::size_t)i;
         }
-        return -1;
+        return (std::size_t)-1;
     }
 
     void sstring::to_set()
@@ -1097,7 +1164,7 @@ namespace sstr
         return true;
     }
 
-    signed long long int sstring::find(const char *sub)
+    std::size_t sstring::find(const char *sub) const
     {
         if (sub)
         {
@@ -1105,7 +1172,7 @@ namespace sstr
             if (buff)
                 return (std::size_t)this->len - std::strlen((const char *)buff);
         }
-        return -1;
+        return (std::size_t)-1;
     }
 
     bool sstring::in(bool get_line, std::size_t buff_size)
@@ -1135,7 +1202,7 @@ namespace sstr
         return true;
     }
 
-    sstring sstring::getline(std::size_t line)
+    sstring sstring::getline(std::size_t line) const
     {
         std::size_t len = this->len, cnt = 0;
         char *temp = (char *)std::calloc((sizeof(char) * len) + 1, sizeof(char)), *tok;
@@ -1302,7 +1369,7 @@ namespace sstr
         return true;
     }
 
-    signed long long int sstring::distance(const char *src)
+    std::size_t sstring::distance(const char *src) const
     {
         if (src)
         {
@@ -1315,12 +1382,12 @@ namespace sstr
                 return (std::size_t)cnt;
             }
         }
-        return -1;
+        return (std::size_t)-1;
     }
 
 #define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
 #define MAX2(x, y) ((x > y) ? x : y)
-    signed long long int sstring::edit_distance(const char *src)
+    std::size_t sstring::edit_distance(const char *src) const
     {
         if (src)
         {
@@ -1340,10 +1407,10 @@ namespace sstr
             }
             return (std::size_t)cols[len1];
         }
-        return -1;
+        return (std::size_t)-1;
     }
 
-    long double sstring::percentage_matched(const char *src)
+    long double sstring::percentage_matched(const char *src) const
     {
         if (src)
         {
@@ -1367,27 +1434,7 @@ namespace sstr
         return 0.0L;
     }
 
-    long double sstring::positional_average()
-    {
-        long double val = 0;
-        for (std::size_t i = 0; this->src[i] != '\0'; i++)
-            val += (this->src[i] + i) / (2.0 + i);
-        if (val != 0)
-            val /= this->len;
-        return val;
-    }
-
-    std::size_t sstring::positional_modulus()
-    {
-        std::size_t val = 0;
-        for (std::size_t i = 0; this->src[i] != '\0'; i++)
-            val += (this->src[i] + i) / (2 + i);
-        if (val != 0)
-            val %= this->len;
-        return val;
-    }
-
-    std::size_t sstring::count(const char *what)
+    std::size_t sstring::count(const char *what) const
     {
         if (what)
         {
@@ -1403,7 +1450,7 @@ namespace sstr
         return 0;
     }
 
-    std::size_t sstring::count_char(const char what)
+    std::size_t sstring::count_char(const char what) const
     {
         if (what != '\0')
         {
@@ -1416,7 +1463,7 @@ namespace sstr
         return 0;
     }
 
-    sstring sstring::soundex()
+    sstring sstring::soundex() const
     {
         std::size_t s = 1, len = this->len;
         const char *map = "01230120022455012623010202"; // not stored in heap memory, do not free it
@@ -1457,21 +1504,21 @@ namespace sstr
         return std::strcmp((const char *)a1, (const char *)a2);
     }
 
-    sstring sstring::most_used()
+    sstring sstring::most_used(const char *dl) const
     {
+        if (!dl || dl[0] == '\0')
+            return sstring(nullptr);
         std::size_t len = this->len, cnt = 0, l = 0;
-        for (std::size_t i = 0; i < len; i++)
-            if (this->src[i] == ' ')
-                cnt++;
+        cnt = this->count(dl);
         if (cnt == 0)
             return sstring(nullptr);
         char *temp = (char *)std::calloc((sizeof(char) * len) + 1, sizeof(char));
         std::strcpy(temp, this->src);
-        char **buff = (char **)std::calloc((sizeof(char *) * cnt) + sizeof(char *), sizeof(char *)), *tok = strtok(temp, " ");
+        char **buff = (char **)std::calloc((sizeof(char *) * cnt) + sizeof(char *), sizeof(char *)), *tok = strtok(temp, dl);
         while (tok != nullptr)
         {
             buff[l] = tok;
-            tok = std::strtok(nullptr, " ");
+            tok = std::strtok(nullptr, dl);
             l++;
         }
         std::qsort(buff, l, sizeof(buff[0]), strcmp_void);
@@ -1489,14 +1536,13 @@ namespace sstr
                 m = curr;
             }
         }
-        char x[std::strlen((const char *)res + 1)];
-        std::strcpy(x, res);
+        sstring x = res;
         std::free(temp);
         std::free(buff);
-        return sstring((const char *)x);
+        return x;
     }
 
-    char sstring::most_used_char()
+    char sstring::most_used_char() const
     {
         std::size_t len = this->len;
         std::size_t cnt = 0, map_append = 0, o = 0;
@@ -1606,7 +1652,7 @@ namespace sstr
         return 0;
     }
 
-    bool sstring::save_binary(const char *location, std::size_t len)
+    bool sstring::save_binary(const char *location, std::size_t len) const
     {
         if (location)
         {
@@ -1625,7 +1671,7 @@ namespace sstr
         return false;
     }
 
-    bool sstring::append_binary(const char *location, std::size_t len)
+    bool sstring::append_binary(const char *location, std::size_t len) const
     {
         if (location)
         {
@@ -1656,7 +1702,7 @@ namespace sstr
         return 0;
     }
 
-    bool sstring::print_binary(std::size_t len)
+    bool sstring::print_binary(std::size_t len) const
     {
         std::size_t x = 0;
         while (x != len)
@@ -1668,22 +1714,7 @@ namespace sstr
     {
         if (key)
         {
-            std::size_t val = 0, len_key = std::strlen(key); // positional_modulus
-            for (std::size_t i = 0; key[i] != '\0'; i++)
-                val += (key[i] + i) / (2.0 + i);
-            if (val == 0)
-                return false;
-
-            long double avg = 0; // positional_average
-            for (std::size_t i = 0; key[i] != '\0'; i++)
-                avg += (key[i] + i) / (2.0 + i);
-            avg /= len_key;
-            if (avg == INFINITY || avg == -INFINITY)
-                return false;
-            val %= len_key;
-            val += avg;
-
-            std::size_t len = this->len;
+            std::size_t len = this->len, val = std::hash<const char *>()(key) % 128;
             short add = true;
             char *buff = (char *)std::calloc(sizeof(char) * (len + 1), sizeof(char));
             for (std::size_t i = 0; this->src[i] != '\0'; i++)
@@ -1699,7 +1730,10 @@ namespace sstr
                     add = true;
                 }
                 else
+                {
+                    std::free(buff);
                     return false;
+                }
             }
             std::free(this->src);
             this->src = (char *)std::calloc(sizeof(char) * (len + 1), sizeof(char));
@@ -1716,22 +1750,7 @@ namespace sstr
     {
         if (key)
         {
-            std::size_t val = 0, len_key = std::strlen(key); // positional_modulus
-            for (std::size_t i = 0; key[i] != '\0'; i++)
-                val += (key[i] + i) / (2.0 + i);
-            if (val == 0)
-                return false;
-
-            long double avg = 0; // positional_average
-            for (std::size_t i = 0; key[i] != '\0'; i++)
-                avg += (key[i] + i) / (2.0 + i);
-            avg /= len_key;
-            if (avg == INFINITY || avg == -INFINITY)
-                return false;
-            val %= len_key;
-            val += avg;
-
-            std::size_t len = this->len;
+            std::size_t len = this->len, val = std::hash<const char *>()(key) % 128;
             short add_invr = true;
             char *buff = (char *)std::calloc(sizeof(char) * (len + 1), sizeof(char));
             for (std::size_t i = 0; this->src[i] != '\0'; i++)
@@ -1747,7 +1766,10 @@ namespace sstr
                     add_invr = true;
                 }
                 else
+                {
+                    std::free(buff);
                     return false;
+                }
             }
             std::free(this->src);
             this->src = (char *)std::calloc(sizeof(char) * (len + 1), sizeof(char));
@@ -1765,9 +1787,14 @@ namespace sstr
         return 0ULL;
     }
 
-    iter_sstring sstring::iterator(signed long long int init_value, signed long long int max_value)
+    iter_sstring sstring::iterator() const
     {
-        return iter_sstring(init_value, max_value);
+        return iter_sstring(0, this->len);
+    }
+
+    iter_sstring sstring::reverse_iterator() const
+    {
+        return iter_sstring(this->len, -1);
     }
 
     const std::size_t sstring::end() const
@@ -1857,7 +1884,7 @@ namespace sstr
         return true;
     }
 
-    bool sstring::is_digit()
+    bool sstring::is_digit() const
     {
         if (this->src[0] != '\0')
         {
@@ -1869,7 +1896,7 @@ namespace sstr
         return false;
     }
 
-    bool sstring::is_decimal()
+    bool sstring::is_decimal() const
     {
         if (this->src[0] != '\0')
         {
@@ -1891,7 +1918,7 @@ namespace sstr
         return false;
     }
 
-    bool sstring::is_ascii()
+    bool sstring::is_ascii() const
     {
         if (this->src[0] != '\0')
         {
@@ -1903,7 +1930,7 @@ namespace sstr
         return false;
     }
 
-    bool sstring::is_alphabetic()
+    bool sstring::is_alphabetic() const
     {
         if (this->src[0] != '\0')
         {
@@ -1950,7 +1977,7 @@ namespace sstr
         return false;
     }
 
-    bool sstring::starts_with(const char *src)
+    bool sstring::starts_with(const char *src) const
     {
         if (src)
         {
@@ -1964,7 +1991,7 @@ namespace sstr
         return false;
     }
 
-    bool sstring::ends_with(const char *src)
+    bool sstring::ends_with(const char *src) const
     {
         if (src)
         {
@@ -2196,7 +2223,22 @@ namespace sstr
         return false;
     }
 
-    char sstring::operator[](std::size_t n)
+    std::size_t sstring::hash() const
+    {
+        std::size_t p = 53;
+        std::size_t m = 1e9 + 9;
+        long long power_of_p = 1;
+        long long hash_val = 0;
+
+        for (std::size_t i = 0; i < this->len; i++)
+        {
+            hash_val = (hash_val + (this->src[i] - 97 + 1) * power_of_p) % m;
+            power_of_p = (power_of_p * p) % m;
+        }
+        return (hash_val % m + m) % m;
+    }
+
+    char sstring::operator[](std::size_t n) const
     {
         if (this->len >= n)
             return this->src[n];
@@ -2249,22 +2291,22 @@ namespace sstr
         this->set(str);
     }
 
-    bool sstring::operator==(const sstring &str)
+    bool sstring::operator==(const sstring &str) const
     {
         return this->compare(str.c_str());
     }
 
-    bool sstring::operator==(const char *str)
+    bool sstring::operator==(const char *str) const
     {
         return this->compare(str);
     }
 
-    bool sstring::operator!=(const sstring &str)
+    bool sstring::operator!=(const sstring &str) const
     {
         return !(this->compare(str.c_str()));
     }
 
-    bool sstring::operator!=(const char *str)
+    bool sstring::operator!=(const char *str) const
     {
         return !(this->compare(str));
     }
@@ -2390,6 +2432,20 @@ namespace sstr
         return sstring((const char *)s);
     }
 
+    sstring get_random(std::size_t len)
+    {
+        sstring x;
+        x.set_random(len);
+        return x;
+    }
+
+    sstring open_file(const sstring &location)
+    {
+        sstring x;
+        x.open(location.c_str());
+        return x;
+    }
+
     sstring end_line()
     {
 #if defined __linux__ || defined linux || defined __linux
@@ -2432,21 +2488,21 @@ namespace sstr
         return false;
     }
 
-    sstring parse_t::get(std::size_t n)
+    sstring parse_t::get(std::size_t n) const
     {
         if (n < this->len)
             return sstring(this->src[n]);
         return sstring(nullptr);
     }
 
-    enum parse_token parse_t::get_type(std::size_t n)
+    enum parse_token parse_t::get_type(std::size_t n) const
     {
         if (n < this->len)
             return this->type[n];
         return NULL_END;
     }
 
-    sstring parse_t::operator[](std::size_t n)
+    sstring parse_t::operator[](std::size_t n) const
     {
         if (n < this->len)
             return sstring(this->src[n]);
@@ -2524,14 +2580,14 @@ namespace sstr
         return false;
     }
 
-    sstring split_t::get(std::size_t n)
+    sstring split_t::get(std::size_t n) const
     {
         if (n < this->len)
             return sstring(this->src[n]);
         return sstring(nullptr);
     }
 
-    sstring split_t::operator[](std::size_t n)
+    sstring split_t::operator[](std::size_t n) const
     {
         if (n < this->len)
             return sstring(this->src[n]);
@@ -2625,7 +2681,7 @@ namespace sstr
         this->cur %= move_by;
     }
 
-    bool iter_sstring::c_loop()
+    bool iter_sstring::c_loop() const
     {
         if (this->is_max_smaller == true)
         {
@@ -2655,30 +2711,7 @@ namespace std
     {
         std::size_t operator()(const sstr::sstring &str) const
         {
-            std::size_t __seed = static_cast<std::size_t>(0xc70f6907UL);
-            return _Fnv_hash_bytes(str.c_str(), str.length(), __seed);
-        }
-    };
-
-    template <>
-    struct hash<const char *>
-    {
-        std::size_t operator()(const char *const &str) const
-        {
-            std::size_t __seed = static_cast<std::size_t>(0xc70f6907UL);
-            std::size_t len = std::strlen(str);
-            return _Fnv_hash_bytes(str, len, __seed);
-        }
-    };
-
-    template <>
-    struct hash<const unsigned char *>
-    {
-        std::size_t operator()(const unsigned char *const &str) const
-        {
-            std::size_t __seed = static_cast<std::size_t>(0xc70f6907UL);
-            std::size_t len = std::strlen((const char *)str);
-            return _Fnv_hash_bytes(str, len, __seed);
+            return str.hash();
         }
     };
 };
