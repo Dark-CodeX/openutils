@@ -8,7 +8,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.h" under "vector" directory
- * vector version: 1.4.0
+ * vector version: 1.4.2
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -35,7 +35,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define vector_version "1.4.0"
+#define vector_version "1.4.2"
 
 /**
  * Appends `data` to `vec` at the end.
@@ -47,7 +47,7 @@
     {                                                                                 \
         if (vec.length == vec.capacity)                                               \
         {                                                                             \
-            vec.capacity *= 2;                                                        \
+            vec.capacity *= 3;                                                        \
             vec.src = realloc(vec.src, (vec.capacity * sizeof(data)) + sizeof(data)); \
         }                                                                             \
         vec.src[vec.length++] = data;                                                 \
@@ -91,9 +91,9 @@
     if (vec.init == true && vec.src)                                    \
     {                                                                   \
         free(vec.src);                                                  \
-        vec.capacity = 8;                                               \
+        vec.capacity = 10;                                               \
         vec.length = 0;                                                 \
-        vec.src = calloc(sizeof(vec._def[0]) * 8, sizeof(vec._def[0])); \
+        vec.src = calloc(sizeof(vec._def[0]) * 10, sizeof(vec._def[0])); \
     }
 
 /**
@@ -233,7 +233,7 @@
     {                                                                                 \
         if (vec.length == vec.capacity)                                               \
         {                                                                             \
-            vec.capacity *= 2;                                                        \
+            vec.capacity *= 3;                                                        \
             vec.src = realloc(vec.src, (vec.capacity * sizeof(data)) + sizeof(data)); \
         }                                                                             \
         for (size_t i = vec.length; i >= nth; i--)                                    \
@@ -261,7 +261,7 @@
         int init;                                                                  \
         type _def[1];                                                              \
     } var_name;                                                                    \
-    var_name.capacity = 8;                                                         \
+    var_name.capacity = 10;                                                         \
     var_name.src = (type *)calloc(sizeof(type) * var_name.capacity, sizeof(type)); \
     var_name.length = 0;                                                           \
     var_name.init = true;
