@@ -3,9 +3,9 @@
 #pragma once
 
 #include <initializer_list>
-#include <functional>
+#include <bits/functional_hash.h>
 
-#define vector_t_version "1.4.0"
+#define vector_t_version "1.4.2"
 
 template <typename T>
 class vector_t
@@ -30,6 +30,9 @@ public:
     void remove();
     bool remove(const std::size_t nth);
     bool empty() const;
+    const std::size_t hash() const;
+    bool compare(const vector_t &vec) const;
+    bool compare_hash(const vector_t &vec) const;
     void erase();
     void erase(T &&default_data, std::size_t capacity = 10);
     T &get(const std::size_t nth) const;
@@ -52,8 +55,7 @@ public:
     bool unsafe_remove(std::size_t where);
     std::size_t unsafe_resize(std::size_t new_size);
     T &unsafe_get(std::size_t where) const;
-    void unsafe_delete(std::size_t where);
-    void unsafe_delete(std::size_t where, bool delete_array);
+    void unsafe_delete(std::size_t where, bool delete_array = false);
     void unsafe_free(std::size_t where);
     ~vector_t();
 };
@@ -194,6 +196,38 @@ bool vector_t<T>::empty() const
 }
 
 template <typename T>
+inline void hash_combine(std::size_t &seed, const T &v)
+{
+    seed ^= std::hash<T>()(v) + static_cast<std::size_t>(0xc70f6907UL) + (seed << 7) + (seed >> 3);
+}
+
+template <typename T>
+const std::size_t vector_t<T>::hash() const
+{
+    std::size_t h = 0;
+    for (std::size_t i = 0; i < this->len; i++)
+        hash_combine(h, this->data[i]);
+    return h;
+}
+
+template <typename T>
+bool vector_t<T>::compare(const vector_t &vec) const
+{
+    if (this->len != vec.len)
+        return false;
+    for (std::size_t i = 0; i < this->len; i++)
+        if (this->data[i] != vec.data[i])
+            return false;
+    return true;
+}
+
+template <typename T>
+bool vector_t<T>::compare_hash(const vector_t &vec) const
+{
+    return (this->hash() == vec.hash());
+}
+
+template <typename T>
 void vector_t<T>::erase()
 {
     delete[] this->data;
@@ -293,23 +327,13 @@ T &vector_t<T>::operator[](const std::size_t nth) const
 template <typename T>
 bool vector_t<T>::operator==(const vector_t &vec) const
 {
-    if (this->len != vec.len)
-        return false;
-    for (std::size_t i = 0; i < this->len; i++)
-        if (this->data[i] != vec.data[i])
-            return false;
-    return true;
+    return this->compare(vec);
 }
 
 template <typename T>
 bool vector_t<T>::operator!=(const vector_t &vec) const
 {
-    if (this->len != vec.len)
-        return true;
-    for (std::size_t i = 0; i < this->len; i++)
-        if (this->data[i] != vec.data[i])
-            return true;
-    return false;
+    return !(*this == vec);
 }
 
 template <typename T>
@@ -388,19 +412,14 @@ T &vector_t<T>::unsafe_get(std::size_t where) const
 }
 
 template <typename T>
-void vector_t<T>::unsafe_delete(std::size_t where)
-{
-    if (where >= this->cap)
-        return;
-    delete this->data[where];
-}
-
-template <typename T>
 void vector_t<T>::unsafe_delete(std::size_t where, bool delete_array)
 {
     if (where >= this->cap)
         return;
-    delete[] this->data[where];
+    if (delete_array == true)
+        delete[] this->data[where];
+    else
+        delete this->data[where];
 }
 
 template <typename T>
@@ -419,12 +438,6 @@ vector_t<T>::~vector_t()
     delete[] this->data;
 }
 
-template <typename T>
-inline void hash_combine(std::size_t &seed, const T &v)
-{
-    seed ^= std::hash<T>()(v) + static_cast<std::size_t>(0xc70f6907UL) + (seed << 7) + (seed >> 3);
-}
-
 namespace std
 {
     template <typename T>
@@ -432,12 +445,8 @@ namespace std
     {
         std::size_t operator()(const vector_t<T> &vec) const
         {
-            std::size_t h = 0;
-            for (std::size_t i = 0; i < vec.length(); i++)
-                hash_combine(h, vec[i]);
-            return h;
+            return vec.hash();
         }
     };
 };
-
 #endif
