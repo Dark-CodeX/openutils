@@ -34,7 +34,7 @@
 
 #include <initializer_list>
 #include <bits/functional_hash.h>
-#include <utility>
+#include <bits/move.h>
 #include <cstdlib>
 
 #define vector_t_version "1.4.3"
