@@ -1,5 +1,5 @@
 # SSTRING: The Safe C/C++ String Manipulation Library
-**Safe string in C. With huge amount of in-built functions.**
+**Safe string in C/C++. With huge amount of in-built functions.**
 
 This sstring struct is memory safe means that it will not cause memory leak.
 **This library have most of the functions of a high level language and some functions are not even defined in high level language like `entropy`, `to_binary`, `to_hexadecimal`, `parse`, `encrypt`, `distance` and *even more*.**
@@ -9,7 +9,7 @@ This header file is *cross-platform*, but tested only on Windows 10, Windows 11,
 Documents are in the header(`"sstring/sstring.h"`) file itself.
 Be sure to suggest any changes.
 
-# Functions Defined v:1.5.1
+# Functions Defined v:1.5.2
 
 ```
 set
@@ -81,8 +81,8 @@ print_binary
 encrypt
 decrypt
 begin
-iterator
-reverse_iterator
+iterator (C only)
+reverse_iterator (C only)
 end
 to_morse_code
 from_morse_code
