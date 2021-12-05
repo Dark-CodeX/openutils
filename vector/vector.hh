@@ -8,7 +8,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 1.4.2
+ * vector version: 1.4.3
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -34,8 +34,10 @@
 
 #include <initializer_list>
 #include <bits/functional_hash.h>
+#include <utility>
+#include <cstdlib>
 
-#define vector_t_version "1.4.2"
+#define vector_t_version "1.4.3"
 
 template <typename T>
 class vector_t
@@ -44,7 +46,6 @@ private:
     void resize();
     std::size_t len = 0, cap = 10;
     T *data;
-    T __t[1] = {};
 
 public:
     vector_t();
@@ -106,7 +107,6 @@ vector_t<T>::vector_t(T &&default_data, std::size_t capacity)
         this->data[i] = default_data;
         this->len++;
     }
-    this->__t[0] = default_data;
 }
 
 template <typename T>
@@ -182,10 +182,11 @@ bool vector_t<T>::insert(T &&data, const std::size_t nth)
     {
         if (this->len == this->cap)
             this->resize();
+        static T __t[1] = {};
         for (std::size_t i = this->len; i >= nth; i--)
         {
             this->data[i + 1] = this->data[i];
-            this->data[i] = this->__t[0];
+            this->data[i] = __t[0];
             if (i == 0)
                 break;
         }
@@ -199,7 +200,8 @@ bool vector_t<T>::insert(T &&data, const std::size_t nth)
 template <typename T>
 void vector_t<T>::remove()
 {
-    this->data[this->len--] = this->__t[0];
+    static T __t[1] = {};
+    this->data[this->len--] = __t[0];
 }
 
 template <typename T>
@@ -207,11 +209,12 @@ bool vector_t<T>::remove(const std::size_t nth)
 {
     if (nth < this->len)
     {
-        this->data[nth] = this->__t[0];
+        static T __t[1] = {};
+        this->data[nth] = __t[0];
         for (std::size_t i = nth; i < this->len - 1; i++)
         {
             this->data[i] = this->data[i + 1];
-            this->data[i + 1] = this->__t[0];
+            this->data[i + 1] = __t[0];
         }
         this->len--;
         return true;
@@ -279,7 +282,6 @@ void vector_t<T>::erase(T &&default_data, std::size_t capacity)
         this->data[i] = default_data;
         this->len++;
     }
-    this->__t[0] = default_data;
 }
 
 template <typename T>
@@ -287,7 +289,8 @@ T &vector_t<T>::get(const std::size_t nth) const
 {
     if (nth < this->len)
         return this->data[nth];
-    return (T &)this->__t[0];
+    static T __t[1] = {};
+    return (T &)__t[0];
 }
 
 template <typename T>
@@ -351,7 +354,8 @@ T &vector_t<T>::operator[](const std::size_t nth) const
 {
     if (nth < this->len)
         return this->data[nth];
-    return (T &)this->__t[0];
+    static T __t[1] = {};
+    return (T &)__t[0];
 }
 
 template <typename T>
@@ -415,7 +419,8 @@ bool vector_t<T>::unsafe_remove(std::size_t where)
 {
     if (where >= this->cap)
         return false;
-    this->data[where] = this->__t[0];
+    static T __t[1] = {};
+    this->data[where] = __t[0];
     return true;
 }
 
@@ -437,7 +442,10 @@ template <typename T>
 T &vector_t<T>::unsafe_get(std::size_t where) const
 {
     if (where >= this->cap)
-        return (T &)this->__t[0];
+    {
+        static T __t[1] = {};
+        return (T &)__t[0];
+    }
     return this->data[where];
 }
 
