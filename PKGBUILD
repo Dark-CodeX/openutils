@@ -7,7 +7,7 @@ conflicts=('vector')
 depends=(gcc)
 license=("MIT")
 source=("https://raw.githubusercontent.com/Dark-CodeX/vector/main/vector/vector.h" "https://raw.githubusercontent.com/Dark-CodeX/vector/main/vector/vector.hh")
-sha512sums=("5039e7ca926b1ccaecb6e701c70a619ba10499c3d38451e343086e81a2f8d2c4917796dfd12505c8884aad08eb77b19d0459f4ef46985bb2cf68dec9faa1e4ac" "c406d21b3a8448e9d0dcaea3f585498c11284304c0902279b77b5987ed6c0e33d9638c0a724b8e89126397ad832d924493168e27dfe0cdf4ac9510fddc614f47")
+sha512sums=("5039e7ca926b1ccaecb6e701c70a619ba10499c3d38451e343086e81a2f8d2c4917796dfd12505c8884aad08eb77b19d0459f4ef46985bb2cf68dec9faa1e4ac" "afe7708bf4e7d5c5204c43b9c62bdf343e8d4472cb1e78750300fbe6e4f9c0bcb4f4f5b2be0e51186eed6791e47ad42d7ce4bc0f55fd80712b0bbaed1bbb7c40")
 
 package() {
   echo "Vectors in C language."
