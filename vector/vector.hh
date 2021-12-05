@@ -8,7 +8,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 1.4.3
+ * vector version: 1.4.4
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -37,14 +37,14 @@
 #include <bits/move.h>
 #include <cstdlib>
 
-#define vector_t_version "1.4.3"
+#define vector_t_version "1.4.4"
 
 template <typename T>
 class vector_t
 {
 private:
     void resize();
-    std::size_t len = 0, cap = 10;
+    std::size_t len, cap;
     T *data;
 
 public:
@@ -94,6 +94,7 @@ public:
 template <typename T>
 vector_t<T>::vector_t()
 {
+    this->cap = 10;
     this->data = new T[this->cap];
 }
 
@@ -112,7 +113,6 @@ vector_t<T>::vector_t(T &&default_data, std::size_t capacity)
 template <typename T>
 vector_t<T>::vector_t(const vector_t &vec)
 {
-    delete[] this->data;
     this->len = vec.len;
     this->cap = vec.cap;
     this->data = new T[this->cap];
@@ -135,10 +135,8 @@ template <typename T>
 vector_t<T>::vector_t(std::initializer_list<T> __list)
 {
     this->len = 0;
-    if (__list.size() < this->cap)
-        this->data = new T[this->cap];
-    else
-        this->data = new T[this->cap + __list.size()];
+    this->cap = __list.size();
+    this->data = new T[this->cap];
     for (auto i = __list.begin(); i != __list.end(); i++, this->len++)
         this->data[this->len] = *i;
 }
