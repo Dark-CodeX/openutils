@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 1.5.1
+ * sstring: version 1.5.2
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -40,7 +40,7 @@
 #include "binary.h"
 #include "morse_code.h"
 
-#define sstring_version "1.5.1"
+#define sstring_version "1.5.2"
 
 namespace std
 {
@@ -91,8 +91,6 @@ namespace sstr
 {
     /** sstring class for storing 1D array chars */
     class sstring;
-    /** iterator class for sstring */
-    class iter_sstring;
     /** parse_t class for storing 2D array of tokens */
     class parse_t;
     /** split_t class for storing 2D array of splitted strings */
@@ -204,8 +202,6 @@ namespace sstr
         bool encrypt(const char *key);
         bool decrypt(const char *key);
         std::size_t begin() const;
-        iter_sstring iterator() const;
-        iter_sstring reverse_iterator() const;
         const std::size_t end() const;
         bool to_morse_code();
         bool from_morse_code();
@@ -307,25 +303,6 @@ namespace sstr
         split_t(split_t &&other) noexcept;
         split_t &operator=(const split_t &&__st) noexcept;
         ~split_t();
-    };
-
-    class iter_sstring
-    {
-    private:
-        signed long long int cur, max;
-        bool is_max_smaller;
-
-    public:
-        iter_sstring(const signed long long int init_value, const signed long long int max_value);
-        void advance(const signed long long int move_by);
-        const signed long long int current_value() const;
-        void operator+=(const signed long long int move_by);
-        void operator-=(const signed long long int move_by);
-        void operator*=(const signed long long int move_by);
-        void operator/=(const signed long long int move_by);
-        void operator%=(const signed long long int move_by);
-        bool c_loop() const;
-        ~iter_sstring();
     };
 
     // definitions
@@ -1807,16 +1784,6 @@ namespace sstr
         return 0ULL;
     }
 
-    iter_sstring sstring::iterator() const
-    {
-        return iter_sstring(0, this->len);
-    }
-
-    iter_sstring sstring::reverse_iterator() const
-    {
-        return iter_sstring(this->len, -1);
-    }
-
     const std::size_t sstring::end() const
     {
         return this->len;
@@ -2673,72 +2640,6 @@ namespace sstr
         this->len = 0;
         this->cap = 0;
     }
-    iter_sstring::iter_sstring(const signed long long int init_value, const signed long long int max_value)
-    {
-        this->cur = init_value;
-        this->max = max_value;
-        if (max_value >= init_value)
-            this->is_max_smaller = false;
-        else
-            this->is_max_smaller = true;
-    }
-
-    void iter_sstring::advance(const signed long long int move_by)
-    {
-        this->cur += move_by;
-    }
-
-    const signed long long int iter_sstring::current_value() const
-    {
-        return this->cur;
-    }
-
-    void iter_sstring::operator+=(const signed long long int move_by)
-    {
-        this->cur += move_by;
-    }
-
-    void iter_sstring::operator-=(const signed long long int move_by)
-    {
-        this->cur -= move_by;
-    }
-
-    void iter_sstring::operator*=(const signed long long int move_by)
-    {
-        this->cur *= move_by;
-    }
-
-    void iter_sstring::operator/=(const signed long long int move_by)
-    {
-        this->cur /= move_by;
-    }
-
-    void iter_sstring::operator%=(const signed long long int move_by)
-    {
-        this->cur %= move_by;
-    }
-
-    bool iter_sstring::c_loop() const
-    {
-        if (this->is_max_smaller == true)
-        {
-            if (this->max < this->cur)
-                return true;
-            else
-                return false;
-        }
-        else if (this->is_max_smaller == false)
-        {
-            if (this->max > this->cur)
-                return true;
-            else
-                return false;
-        }
-        else
-            return false;
-    }
-
-    iter_sstring::~iter_sstring() = default;
 };
 
 namespace std
