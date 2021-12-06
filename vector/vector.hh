@@ -8,7 +8,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 1.4.5
+ * vector version: 1.4.6
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -37,7 +37,7 @@
 #include <bits/move.h>
 #include <cstdlib>
 
-#define vector_t_version "1.4.5"
+#define vector_t_version "1.4.6"
 
 template <typename T>
 class vector_t
@@ -96,8 +96,6 @@ public:
     bool unsafe_remove(const std::size_t where);
     std::size_t unsafe_resize(const std::size_t new_size);
     T &unsafe_get(const std::size_t where) const;
-    void unsafe_delete(const std::size_t where, bool delete_array = false);
-    void unsafe_free(const std::size_t where);
     ~vector_t();
 };
 
@@ -535,25 +533,6 @@ T &vector_t<T>::unsafe_get(const std::size_t where) const
 }
 
 template <typename T>
-void vector_t<T>::unsafe_delete(const std::size_t where, bool delete_array)
-{
-    if (where >= this->cap)
-        return;
-    if (delete_array == true)
-        delete[] this->data[where];
-    else
-        delete this->data[where];
-}
-
-template <typename T>
-void vector_t<T>::unsafe_free(const std::size_t where)
-{
-    if (where >= this->cap)
-        return;
-    std::free(this->data[where]);
-}
-
-template <typename T>
 vector_t<T>::~vector_t()
 {
     this->len = 0;
@@ -572,4 +551,5 @@ namespace std
         }
     };
 };
+
 #endif
