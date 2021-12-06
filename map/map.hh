@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/map.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "map.hh" under "map" directory
- * map version: 1.0.0
+ * map version: 1.0.1
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -80,6 +80,7 @@ public:
     const long double error_rate(std::size_t expected_size) const;
     typedef iter_map_t<KEY, VALUE> iter;
     iter iterator() const;
+    const std::size_t hash() const;
 
     void operator=(const map_t &other);
     map_t &operator=(map_t &&other);
@@ -329,7 +330,22 @@ const long double map_t<KEY, VALUE>::error_rate(std::size_t expected_size) const
 template <typename KEY, typename VALUE>
 typename map_t<KEY, VALUE>::iter map_t<KEY, VALUE>::iterator() const
 {
-    return iter_map_t<KEY, VALUE>(this);
+    return map_t<KEY, VALUE>::iter(this);
+}
+
+template <typename KEY, typename VALUE>
+inline void hash_combine(std::size_t &seed, const KEY &k, const VALUE &v)
+{
+    seed ^= std::hash<KEY>()(k) + std::hash<VALUE>()(v) + static_cast<std::size_t>(0xc70f6907UL) + (seed << 7) + (seed >> 3);
+}
+
+template <typename KEY, typename VALUE>
+const std::size_t map_t<KEY, VALUE>::hash() const
+{
+    std::size_t h = 0;
+    for (map_t<KEY, VALUE>::iter i = this->iterator(); i.c_loop(); i.next())
+        hash_combine(h, i->key, i->value);
+    return h;
 }
 
 template <typename KEY, typename VALUE>
@@ -508,5 +524,17 @@ void iter_map_t<KEY, VALUE>::next()
             this->cur = this->m->table[this->i];
     }
 }
+
+namespace std
+{
+    template <typename KEY, typename VALUE>
+    struct hash<map_t<KEY, VALUE>>
+    {
+        std::size_t operator()(const map_t<KEY, VALUE> &m) const
+        {
+            return m.hash();
+        }
+    };
+};
 
 #endif
