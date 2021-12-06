@@ -8,7 +8,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 1.4.4
+ * vector version: 1.4.5
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -37,7 +37,7 @@
 #include <bits/move.h>
 #include <cstdlib>
 
-#define vector_t_version "1.4.4"
+#define vector_t_version "1.4.5"
 
 template <typename T>
 class vector_t
@@ -50,6 +50,7 @@ private:
 public:
     vector_t();
     vector_t(T &&default_data, std::size_t capacity = 10);
+    vector_t(const T &default_data, std::size_t capacity = 10);
     vector_t(const vector_t &vec);
     vector_t(vector_t &&other) noexcept;
     vector_t(std::initializer_list<T> __list);
@@ -57,7 +58,9 @@ public:
     const std::size_t length() const;
     const std::size_t capacity() const;
     void add(T &&data);
+    void add(const T &data);
     bool insert(T &&data, const std::size_t nth);
+    bool insert(const T &data, const std::size_t nth);
     void remove();
     bool remove(const std::size_t nth);
     bool empty() const;
@@ -66,10 +69,13 @@ public:
     bool compare_hash(const vector_t &vec) const;
     void erase();
     void erase(T &&default_data, std::size_t capacity = 10);
+    void erase(const T &default_data, std::size_t capacity = 10);
     T &get(const std::size_t nth) const;
     bool set(T &&data, const std::size_t nth);
+    bool set(const T &data, const std::size_t nth);
     void reverse();
     const std::size_t find(T &&data) const;
+    const std::size_t find(const T &data) const;
     bool swap(const std::size_t x1, const std::size_t x2);
 
     void operator=(const vector_t &data);
@@ -79,15 +85,19 @@ public:
     vector_t &operator=(const vector_t &&__s) noexcept;
     void operator+=(const vector_t &data);
     void operator+=(T &&data);
+    void operator+=(const T &data);
     void operator+=(std::initializer_list<T> __list);
     const std::size_t nerr = (std::size_t)-1;
 
-    bool unsafe_set(std::size_t where, T &&data);
-    bool unsafe_remove(std::size_t where);
-    std::size_t unsafe_resize(std::size_t new_size);
-    T &unsafe_get(std::size_t where) const;
-    void unsafe_delete(std::size_t where, bool delete_array = false);
-    void unsafe_free(std::size_t where);
+    bool unsafe_set(const std::size_t where, T &&data);
+    bool unsafe_set(const std::size_t where, const T &data);
+    const std::size_t unsafe_find(T &&data) const;
+    const std::size_t unsafe_find(const T &data) const;
+    bool unsafe_remove(const std::size_t where);
+    std::size_t unsafe_resize(const std::size_t new_size);
+    T &unsafe_get(const std::size_t where) const;
+    void unsafe_delete(const std::size_t where, bool delete_array = false);
+    void unsafe_free(const std::size_t where);
     ~vector_t();
 };
 
@@ -100,6 +110,18 @@ vector_t<T>::vector_t()
 
 template <typename T>
 vector_t<T>::vector_t(T &&default_data, std::size_t capacity)
+{
+    this->cap = capacity;
+    this->data = new T[this->cap];
+    for (std::size_t i = 0; i < this->cap; i++)
+    {
+        this->data[i] = default_data;
+        this->len++;
+    }
+}
+
+template <typename T>
+vector_t<T>::vector_t(const T &default_data, std::size_t capacity)
 {
     this->cap = capacity;
     this->data = new T[this->cap];
@@ -174,6 +196,14 @@ void vector_t<T>::add(T &&data)
 }
 
 template <typename T>
+void vector_t<T>::add(const T &data)
+{
+    if (this->len == this->cap)
+        this->resize();
+    this->data[this->len++] = data;
+}
+
+template <typename T>
 bool vector_t<T>::insert(T &&data, const std::size_t nth)
 {
     if (nth <= this->len)
@@ -193,6 +223,12 @@ bool vector_t<T>::insert(T &&data, const std::size_t nth)
         return true;
     }
     return false;
+}
+
+template <typename T>
+bool vector_t<T>::insert(const T &data, const std::size_t nth)
+{
+    return this->insert(std::move(data), nth);
 }
 
 template <typename T>
@@ -283,6 +319,12 @@ void vector_t<T>::erase(T &&default_data, std::size_t capacity)
 }
 
 template <typename T>
+void vector_t<T>::erase(const T &default_data, std::size_t capacity)
+{
+    this->erase(std::move(default_data), capacity);
+}
+
+template <typename T>
 T &vector_t<T>::get(const std::size_t nth) const
 {
     if (nth < this->len)
@@ -300,6 +342,12 @@ bool vector_t<T>::set(T &&data, const std::size_t nth)
         return true;
     }
     return false;
+}
+
+template <typename T>
+bool vector_t<T>::set(const T &data, const std::size_t nth)
+{
+    return this->set(std::move(data), nth);
 }
 
 template <typename T>
@@ -321,6 +369,12 @@ const std::size_t vector_t<T>::find(T &&data) const
         if (this->data[i] == data)
             return i;
     return (std::size_t)-1;
+}
+
+template <typename T>
+const std::size_t vector_t<T>::find(const T &data) const
+{
+    return this->find(std::move(data));
 }
 
 template <typename T>
@@ -397,6 +451,12 @@ void vector_t<T>::operator+=(T &&data)
 }
 
 template <typename T>
+void vector_t<T>::operator+=(const T &data)
+{
+    this->add(data);
+}
+
+template <typename T>
 void vector_t<T>::operator+=(std::initializer_list<T> __list)
 {
     for (auto &i : __list)
@@ -404,7 +464,7 @@ void vector_t<T>::operator+=(std::initializer_list<T> __list)
 }
 
 template <typename T>
-bool vector_t<T>::unsafe_set(std::size_t where, T &&data)
+bool vector_t<T>::unsafe_set(const std::size_t where, T &&data)
 {
     if (where >= this->cap)
         return false;
@@ -413,7 +473,34 @@ bool vector_t<T>::unsafe_set(std::size_t where, T &&data)
 }
 
 template <typename T>
-bool vector_t<T>::unsafe_remove(std::size_t where)
+bool vector_t<T>::unsafe_set(const std::size_t where, const T &data)
+{
+    if (where >= this->cap)
+        return false;
+    this->data[where] = data;
+    return true;
+}
+
+template <typename T>
+const std::size_t vector_t<T>::unsafe_find(T &&data) const
+{
+    for (std::size_t i = 0; i < this->cap; i++)
+        if (this->data[i] == data)
+            return i;
+    return (std::size_t)-1;
+}
+
+template <typename T>
+const std::size_t vector_t<T>::unsafe_find(const T &data) const
+{
+    for (std::size_t i = 0; i < this->cap; i++)
+        if (this->data[i] == data)
+            return i;
+    return (std::size_t)-1;
+}
+
+template <typename T>
+bool vector_t<T>::unsafe_remove(const std::size_t where)
 {
     if (where >= this->cap)
         return false;
@@ -423,7 +510,7 @@ bool vector_t<T>::unsafe_remove(std::size_t where)
 }
 
 template <typename T>
-std::size_t vector_t<T>::unsafe_resize(std::size_t new_size)
+std::size_t vector_t<T>::unsafe_resize(const std::size_t new_size)
 {
     if (new_size <= this->cap)
         return (std::size_t)-1;
@@ -437,7 +524,7 @@ std::size_t vector_t<T>::unsafe_resize(std::size_t new_size)
 }
 
 template <typename T>
-T &vector_t<T>::unsafe_get(std::size_t where) const
+T &vector_t<T>::unsafe_get(const std::size_t where) const
 {
     if (where >= this->cap)
     {
@@ -448,7 +535,7 @@ T &vector_t<T>::unsafe_get(std::size_t where) const
 }
 
 template <typename T>
-void vector_t<T>::unsafe_delete(std::size_t where, bool delete_array)
+void vector_t<T>::unsafe_delete(const std::size_t where, bool delete_array)
 {
     if (where >= this->cap)
         return;
@@ -459,7 +546,7 @@ void vector_t<T>::unsafe_delete(std::size_t where, bool delete_array)
 }
 
 template <typename T>
-void vector_t<T>::unsafe_free(std::size_t where)
+void vector_t<T>::unsafe_free(const std::size_t where)
 {
     if (where >= this->cap)
         return;
