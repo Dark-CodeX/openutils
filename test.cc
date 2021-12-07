@@ -2,7 +2,7 @@
 #include <iostream>
 #include <sstring/sstring.hh>
 
-int main(int argc, char const** argv)
+int main(int argc, char const **argv)
 {
     using namespace sstr;
     map_t<sstring, int> map;
