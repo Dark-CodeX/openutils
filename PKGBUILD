@@ -1,5 +1,5 @@
 pkgname="map"
-pkgver="1.0.1"
+pkgver="1.0.2"
 pkgrel="1"
 pkgdesc="Memory Safe Map Library in C++ language."
 arch=("x86_64" "i686")
@@ -8,7 +8,7 @@ depends=(gcc)
 license=("MIT")
 source=("https://raw.githubusercontent.com/Dark-CodeX/map/master/map/map.hh")
 
-sha512sums=("414f45ef26aed30625c008edb7bea86d8a8f9f4574a999e438ce21f6d61edae0335e1e2632541a22c4631a0bd783886a68cf9feff825226328bd154eeb5ad747")
+sha512sums=("8a8727b0182b2649bf9547834d6ddbe22aca43f45e169e307563fda0f8e5198cf5af6287595bab0ae3620d379b9e0e4fb8bb4f9d541c5aa7eaa496fe937287e4")
 
 package() {
   echo "Memory Safe Map Library in C++ language."
