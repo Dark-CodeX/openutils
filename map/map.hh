@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/map.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "map.hh" under "map" directory
- * map version: 1.0.1
+ * map version: 1.0.2
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -69,15 +69,20 @@ public:
     map_t(std::initializer_list<std::pair<KEY, VALUE>> list);
     map_t(float load_factor);
     bool add(KEY &&key, VALUE &&value);
+    bool add(const KEY &key, const VALUE &value);
     bool remove(KEY &&key);
+    bool remove(const KEY &key);
     bool contains(KEY &&key) const;
+    bool contains(const KEY &key) const;
     VALUE &get(KEY &&key) const;
+    VALUE &get(const KEY &key) const;
     const node_t<KEY, VALUE> *get_node(KEY &&key) const;
+    const node_t<KEY, VALUE> *get_node(const KEY &key) const;
     void erase();
     bool empty() const;
     const std::size_t length() const;
     const std::size_t capacity() const;
-    const long double error_rate(std::size_t expected_size) const;
+    const long double error_rate(const std::size_t expected_size) const;
     typedef iter_map_t<KEY, VALUE> iter;
     iter iterator() const;
     const std::size_t hash() const;
@@ -85,12 +90,14 @@ public:
     void operator=(const map_t &other);
     map_t &operator=(map_t &&other);
     VALUE &operator[](KEY &&key) const;
+    VALUE &operator[](const KEY &key) const;
     bool operator==(const map_t &other) const;
     bool operator!=(const map_t &other) const;
     bool operator+=(std::pair<KEY, VALUE> pair);
     void operator+=(std::initializer_list<std::pair<KEY, VALUE>> list);
     void operator+=(const map_t &other);
     bool operator-=(KEY &&key);
+    bool operator-=(const KEY &key);
     ~map_t();
 };
 
@@ -220,6 +227,12 @@ bool map_t<KEY, VALUE>::add(KEY &&key, VALUE &&value)
 }
 
 template <typename KEY, typename VALUE>
+bool map_t<KEY, VALUE>::add(const KEY &key, const VALUE &value)
+{
+    return this->add(std::move(key), std::move(value));
+}
+
+template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::remove(KEY &&key)
 {
     std::size_t hash = this->get_hash(key, this->cap);
@@ -244,6 +257,12 @@ bool map_t<KEY, VALUE>::remove(KEY &&key)
 }
 
 template <typename KEY, typename VALUE>
+bool map_t<KEY, VALUE>::remove(const KEY &key)
+{
+    return this->remove(std::move(key));
+}
+
+template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::contains(KEY &&key) const
 {
     std::size_t hash = this->get_hash(key, this->cap);
@@ -255,6 +274,12 @@ bool map_t<KEY, VALUE>::contains(KEY &&key) const
         cur = cur->next;
     }
     return false;
+}
+
+template <typename KEY, typename VALUE>
+bool map_t<KEY, VALUE>::contains(const KEY &key) const
+{
+    return this->contains(std::move(key));
 }
 
 template <typename KEY, typename VALUE>
@@ -273,6 +298,12 @@ VALUE &map_t<KEY, VALUE>::get(KEY &&key) const
 }
 
 template <typename KEY, typename VALUE>
+VALUE &map_t<KEY, VALUE>::get(const KEY &key) const
+{
+    return this->get(std::move(key));
+}
+
+template <typename KEY, typename VALUE>
 const node_t<KEY, VALUE> *map_t<KEY, VALUE>::get_node(KEY &&key) const
 {
     std::size_t hash = this->get_hash(key, this->cap);
@@ -284,6 +315,12 @@ const node_t<KEY, VALUE> *map_t<KEY, VALUE>::get_node(KEY &&key) const
         cur = cur->next;
     }
     return nullptr;
+}
+
+template <typename KEY, typename VALUE>
+const node_t<KEY, VALUE> *map_t<KEY, VALUE>::get_node(const KEY &key) const
+{
+    return this->get_node(std::move(key));
 }
 
 template <typename KEY, typename VALUE>
@@ -322,7 +359,7 @@ const std::size_t map_t<KEY, VALUE>::capacity() const
 }
 
 template <typename KEY, typename VALUE>
-const long double map_t<KEY, VALUE>::error_rate(std::size_t expected_size) const
+const long double map_t<KEY, VALUE>::error_rate(const std::size_t expected_size) const
 {
     return (expected_size - this->len) * 100.0L / this->len;
 }
@@ -396,6 +433,21 @@ VALUE &map_t<KEY, VALUE>::operator[](KEY &&key) const
 }
 
 template <typename KEY, typename VALUE>
+VALUE &map_t<KEY, VALUE>::operator[](const KEY &key) const
+{
+    std::size_t hash = this->get_hash(key, this->cap);
+    node_t<KEY, VALUE> *cur = this->table[hash];
+    while (cur != nullptr)
+    {
+        if (this->equal(cur->key, key))
+            return cur->value;
+        cur = cur->next;
+    }
+    static VALUE __t[1] = {};
+    return (VALUE &)__t[0];
+}
+
+template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::operator==(const map_t &other) const
 {
     if (this->len != other.len)
@@ -452,6 +504,12 @@ void map_t<KEY, VALUE>::operator+=(const map_t &other)
 
 template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::operator-=(KEY &&key)
+{
+    return this->remove(std::move(key));
+}
+
+template <typename KEY, typename VALUE>
+bool map_t<KEY, VALUE>::operator-=(const KEY &key)
 {
     return this->remove(std::move(key));
 }
