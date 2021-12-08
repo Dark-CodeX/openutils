@@ -8,7 +8,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 1.4.9
+ * vector version: 1.5.0
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -35,9 +35,8 @@
 #include <initializer_list>
 #include <bits/functional_hash.h>
 #include <bits/move.h>
-#include <cstdlib>
 
-#define vector_t_version "1.4.9"
+#define vector_t_version "1.5.0"
 
 template <typename T>
 class iter_vector_t;
@@ -74,7 +73,7 @@ public:
     void erase();
     void erase(T &&default_data, std::size_t capacity = 10);
     void erase(const T &default_data, std::size_t capacity = 10);
-    T &get(const std::size_t nth) const;
+    const T &get(const std::size_t nth) const;
     bool set(T &&data, const std::size_t nth);
     bool set(const T &data, const std::size_t nth);
     void reverse();
@@ -102,7 +101,7 @@ public:
     const std::size_t unsafe_find(const T &data) const;
     bool unsafe_remove(const std::size_t where);
     std::size_t unsafe_resize(const std::size_t new_size);
-    T &unsafe_get(const std::size_t where) const;
+    const T &unsafe_get(const std::size_t where) const;
     ~vector_t();
 };
 
@@ -110,6 +109,7 @@ template <typename T>
 vector_t<T>::vector_t()
 {
     this->cap = 10;
+    this->len = 0;
     this->vec_data = new T[this->cap];
 }
 
@@ -117,6 +117,7 @@ template <typename T>
 vector_t<T>::vector_t(T &&default_data, std::size_t capacity)
 {
     this->cap = capacity;
+    this->len = 0;
     this->vec_data = new T[this->cap];
     for (std::size_t i = 0; i < this->cap; i++)
     {
@@ -129,6 +130,7 @@ template <typename T>
 vector_t<T>::vector_t(const T &default_data, std::size_t capacity)
 {
     this->cap = capacity;
+    this->len = 0;
     this->vec_data = new T[this->cap];
     for (std::size_t i = 0; i < this->cap; i++)
     {
@@ -172,6 +174,7 @@ template <typename T>
 vector_t<T>::vector_t(const std::size_t capacity)
 {
     this->cap = capacity;
+    this->len = 0;
     this->vec_data = new T[this->cap];
 }
 
@@ -330,7 +333,7 @@ void vector_t<T>::erase(const T &default_data, std::size_t capacity)
 }
 
 template <typename T>
-T &vector_t<T>::get(const std::size_t nth) const
+const T &vector_t<T>::get(const std::size_t nth) const
 {
     if (nth < this->len)
         return this->vec_data[nth];
@@ -458,7 +461,7 @@ template <typename T>
 void vector_t<T>::operator+=(const vector_t &data)
 {
     for (std::size_t i = 0; i < data.len; i++)
-        this->add(std::move(data.vec_data[i]));
+        this->add(data.vec_data[i]);
 }
 
 template <typename T>
@@ -477,7 +480,7 @@ template <typename T>
 void vector_t<T>::operator+=(std::initializer_list<T> __list)
 {
     for (auto &i : __list)
-        this->add(std::move((T &&) i));
+        this->add(i);
 }
 
 template <typename T>
@@ -541,7 +544,7 @@ std::size_t vector_t<T>::unsafe_resize(const std::size_t new_size)
 }
 
 template <typename T>
-T &vector_t<T>::unsafe_get(const std::size_t where) const
+const T &vector_t<T>::unsafe_get(const std::size_t where) const
 {
     if (where >= this->cap)
     {
@@ -582,6 +585,8 @@ private:
 public:
     iter_vector_t(const vector_t<T> *vec, bool reverse);
     bool c_loop() const;
+    bool is_first() const;
+    bool is_last() const;
     T &operator->() const;
     T &operator*() const;
     void next();
@@ -607,15 +612,31 @@ bool iter_vector_t<T>::c_loop() const
 }
 
 template <typename T>
+bool iter_vector_t<T>::is_first() const
+{
+    if(this->rev == true)
+        return this->index == this->vec->len - 1;
+    return this->index == 0;
+}
+
+template <typename T>
+bool iter_vector_t<T>::is_last() const
+{
+    if (this->rev == true)
+        return this->index == -1;
+    return this->index < this->vec->len - 1;
+}
+
+template <typename T>
 T &iter_vector_t<T>::operator->() const
 {
-    return this->vec->get(this->index);
+    return (T &)this->vec->get(this->index);
 }
 
 template <typename T>
 T &iter_vector_t<T>::operator*() const
 {
-    return this->vec->get(this->index);
+    return (T &)this->vec->get(this->index);
 }
 
 template <typename T>
