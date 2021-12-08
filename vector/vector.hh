@@ -8,7 +8,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 1.4.6
+ * vector version: 1.4.7
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -37,7 +37,10 @@
 #include <bits/move.h>
 #include <cstdlib>
 
-#define vector_t_version "1.4.6"
+#define vector_t_version "1.4.7"
+
+template <typename T>
+class iter_vector_t;
 
 template <typename T>
 class vector_t
@@ -45,7 +48,8 @@ class vector_t
 private:
     void resize();
     std::size_t len, cap;
-    T *data;
+    T *vec_data;
+    friend class iter_vector_t<T>;
 
 public:
     vector_t();
@@ -77,6 +81,9 @@ public:
     const std::size_t find(T &&data) const;
     const std::size_t find(const T &data) const;
     bool swap(const std::size_t x1, const std::size_t x2);
+    typedef iter_vector_t<T> iter;
+    iter iterator() const;
+    iter reverse_iterator() const;
 
     void operator=(const vector_t &data);
     T &operator[](const std::size_t nth) const;
@@ -103,17 +110,17 @@ template <typename T>
 vector_t<T>::vector_t()
 {
     this->cap = 10;
-    this->data = new T[this->cap];
+    this->vec_data = new T[this->cap];
 }
 
 template <typename T>
 vector_t<T>::vector_t(T &&default_data, std::size_t capacity)
 {
     this->cap = capacity;
-    this->data = new T[this->cap];
+    this->vec_data = new T[this->cap];
     for (std::size_t i = 0; i < this->cap; i++)
     {
-        this->data[i] = default_data;
+        this->vec_data[i] = default_data;
         this->len++;
     }
 }
@@ -122,10 +129,10 @@ template <typename T>
 vector_t<T>::vector_t(const T &default_data, std::size_t capacity)
 {
     this->cap = capacity;
-    this->data = new T[this->cap];
+    this->vec_data = new T[this->cap];
     for (std::size_t i = 0; i < this->cap; i++)
     {
-        this->data[i] = default_data;
+        this->vec_data[i] = default_data;
         this->len++;
     }
 }
@@ -135,17 +142,17 @@ vector_t<T>::vector_t(const vector_t &vec)
 {
     this->len = vec.len;
     this->cap = vec.cap;
-    this->data = new T[this->cap];
+    this->vec_data = new T[this->cap];
     for (std::size_t i = 0; i < vec.len; i++)
-        this->data[i] = vec.data[i];
+        this->vec_data[i] = vec.data[i];
 }
 
 template <typename T>
-vector_t<T>::vector_t(vector_t &&other) noexcept : len(0), cap(0), data(nullptr)
+vector_t<T>::vector_t(vector_t &&other) noexcept : len(0), cap(0), vec_data(nullptr)
 {
-    data = other.data;
-    len = other.len;
-    cap = other.cap;
+    this->vec_data = other.vec_data;
+    this->len = other.len;
+    this->cap = other.cap;
     other.data = nullptr;
     other.len = 0;
     other.cap = 10;
@@ -156,16 +163,16 @@ vector_t<T>::vector_t(std::initializer_list<T> __list)
 {
     this->len = 0;
     this->cap = __list.size();
-    this->data = new T[this->cap];
+    this->vec_data = new T[this->cap];
     for (auto i = __list.begin(); i != __list.end(); i++, this->len++)
-        this->data[this->len] = *i;
+        this->vec_data[this->len] = *i;
 }
 
 template <typename T>
 vector_t<T>::vector_t(const std::size_t capacity)
 {
     this->cap = capacity;
-    this->data = new T[this->cap];
+    this->vec_data = new T[this->cap];
 }
 
 template <typename T>
@@ -173,10 +180,10 @@ void vector_t<T>::resize()
 {
     T *temp = new T[this->cap * 3];
     for (std::size_t i = 0; i < this->cap; i++)
-        temp[i] = this->data[i];
-    delete[] this->data;
+        temp[i] = this->vec_data[i];
+    delete[] this->vec_data;
     this->cap *= 3;
-    this->data = temp;
+    this->vec_data = temp;
 }
 
 template <typename T>
@@ -190,7 +197,7 @@ void vector_t<T>::add(T &&data)
 {
     if (this->len == this->cap)
         this->resize();
-    this->data[this->len++] = data;
+    this->vec_data[this->len++] = data;
 }
 
 template <typename T>
@@ -198,7 +205,7 @@ void vector_t<T>::add(const T &data)
 {
     if (this->len == this->cap)
         this->resize();
-    this->data[this->len++] = data;
+    this->vec_data[this->len++] = data;
 }
 
 template <typename T>
@@ -211,12 +218,12 @@ bool vector_t<T>::insert(T &&data, const std::size_t nth)
         static T __t[1] = {};
         for (std::size_t i = this->len; i >= nth; i--)
         {
-            this->data[i + 1] = this->data[i];
-            this->data[i] = __t[0];
+            this->vec_data[i + 1] = this->vec_data[i];
+            this->vec_data[i] = __t[0];
             if (i == 0)
                 break;
         }
-        this->data[nth] = data;
+        this->vec_data[nth] = data;
         this->len++;
         return true;
     }
@@ -226,14 +233,14 @@ bool vector_t<T>::insert(T &&data, const std::size_t nth)
 template <typename T>
 bool vector_t<T>::insert(const T &data, const std::size_t nth)
 {
-    return this->insert(std::move(data), nth);
+    return this->insert((T &&) data, nth);
 }
 
 template <typename T>
 void vector_t<T>::remove()
 {
     static T __t[1] = {};
-    this->data[this->len--] = __t[0];
+    this->vec_data[this->len--] = __t[0];
 }
 
 template <typename T>
@@ -242,11 +249,11 @@ bool vector_t<T>::remove(const std::size_t nth)
     if (nth < this->len)
     {
         static T __t[1] = {};
-        this->data[nth] = __t[0];
+        this->vec_data[nth] = __t[0];
         for (std::size_t i = nth; i < this->len - 1; i++)
         {
-            this->data[i] = this->data[i + 1];
-            this->data[i + 1] = __t[0];
+            this->vec_data[i] = this->vec_data[i + 1];
+            this->vec_data[i + 1] = __t[0];
         }
         this->len--;
         return true;
@@ -271,7 +278,7 @@ const std::size_t vector_t<T>::hash() const
 {
     std::size_t h = 0;
     for (std::size_t i = 0; i < this->len; i++)
-        hash_combine(h, this->data[i]);
+        hash_combine(h, this->vec_data[i]);
     return h;
 }
 
@@ -281,7 +288,7 @@ bool vector_t<T>::compare(const vector_t &vec) const
     if (this->len != vec.len)
         return false;
     for (std::size_t i = 0; i < this->len; i++)
-        if (this->data[i] != vec.data[i])
+        if (this->vec_data[i] != vec.data[i])
             return false;
     return true;
 }
@@ -295,23 +302,23 @@ bool vector_t<T>::compare_hash(const vector_t &vec) const
 template <typename T>
 void vector_t<T>::erase()
 {
-    delete[] this->data;
+    delete[] this->vec_data;
     this->cap = 10;
     this->len = 0;
-    this->data = new T[this->cap];
+    this->vec_data = new T[this->cap];
 }
 
 template <typename T>
 void vector_t<T>::erase(T &&default_data, std::size_t capacity)
 {
-    delete[] this->data;
+    delete[] this->vec_data;
     this->cap = capacity;
     this->len = 0;
-    this->data = new T[this->cap];
+    this->vec_data = new T[this->cap];
 
     for (std::size_t i = 0; i < this->cap; i++)
     {
-        this->data[i] = default_data;
+        this->vec_data[i] = default_data;
         this->len++;
     }
 }
@@ -319,14 +326,14 @@ void vector_t<T>::erase(T &&default_data, std::size_t capacity)
 template <typename T>
 void vector_t<T>::erase(const T &default_data, std::size_t capacity)
 {
-    this->erase(std::move(default_data), capacity);
+    this->erase((T &&) default_data, capacity);
 }
 
 template <typename T>
 T &vector_t<T>::get(const std::size_t nth) const
 {
     if (nth < this->len)
-        return this->data[nth];
+        return this->vec_data[nth];
     static T __t[1] = {};
     return (T &)__t[0];
 }
@@ -336,7 +343,7 @@ bool vector_t<T>::set(T &&data, const std::size_t nth)
 {
     if (nth < this->len)
     {
-        this->data[nth] = data;
+        this->vec_data[nth] = data;
         return true;
     }
     return false;
@@ -345,7 +352,7 @@ bool vector_t<T>::set(T &&data, const std::size_t nth)
 template <typename T>
 bool vector_t<T>::set(const T &data, const std::size_t nth)
 {
-    return this->set(std::move(data), nth);
+    return this->set((T &&) data, nth);
 }
 
 template <typename T>
@@ -354,9 +361,9 @@ void vector_t<T>::reverse()
     T c;
     for (std::size_t i = 0; i < this->len / 2; i++)
     {
-        c = this->data[i];
-        this->data[i] = this->data[this->len - i - 1];
-        this->data[this->len - i - 1] = c;
+        c = this->vec_data[i];
+        this->vec_data[i] = this->vec_data[this->len - i - 1];
+        this->vec_data[this->len - i - 1] = c;
     }
 }
 
@@ -364,7 +371,7 @@ template <typename T>
 const std::size_t vector_t<T>::find(T &&data) const
 {
     for (std::size_t i = 0; i < this->len; i++)
-        if (this->data[i] == data)
+        if (this->vec_data[i] == data)
             return i;
     return (std::size_t)-1;
 }
@@ -372,7 +379,7 @@ const std::size_t vector_t<T>::find(T &&data) const
 template <typename T>
 const std::size_t vector_t<T>::find(const T &data) const
 {
-    return this->find(std::move(data));
+    return this->find((T &&) data);
 }
 
 template <typename T>
@@ -380,30 +387,42 @@ bool vector_t<T>::swap(const std::size_t x1, const std::size_t x2)
 {
     if (x1 < this->len && x2 < this->len)
     {
-        T x = T((T &&) this->data[x1]);
-        this->data[x1] = this->data[x2];
-        this->data[x2] = x;
+        T x = T((T &&) this->vec_data[x1]);
+        this->vec_data[x1] = this->vec_data[x2];
+        this->vec_data[x2] = x;
         return true;
     }
     return false;
 }
 
 template <typename T>
+typename vector_t<T>::iter vector_t<T>::iterator() const
+{
+    return vector_t<T>::iter(this, false);
+}
+
+template <typename T>
+typename vector_t<T>::iter vector_t<T>::reverse_iterator() const
+{
+    return vector_t<T>::iter(this, true);
+}
+
+template <typename T>
 void vector_t<T>::operator=(const vector_t &data)
 {
-    delete[] this->data;
+    delete[] this->vec_data;
     this->len = data.len;
     this->cap = data.cap;
-    this->data = new T[data.cap];
+    this->vec_data = new T[data.cap];
     for (std::size_t i = 0; i < data.len; i++)
-        this->data[i] = data.data[i];
+        this->vec_data[i] = data.data[i];
 }
 
 template <typename T>
 T &vector_t<T>::operator[](const std::size_t nth) const
 {
     if (nth < this->len)
-        return this->data[nth];
+        return this->vec_data[nth];
     static T __t[1] = {};
     return (T &)__t[0];
 }
@@ -425,12 +444,12 @@ vector_t<T> &vector_t<T>::operator=(const vector_t &&__s) noexcept
 {
     if (this != &__s)
     {
-        delete[] this->data;
+        delete[] this->vec_data;
         this->len = __s.len;
         this->cap = __s.cap;
-        this->data = new T[this->cap];
+        this->vec_data = new T[this->cap];
         for (std::size_t i = 0; i < __s.len; i++)
-            this->data[i] = __s.data[i];
+            this->vec_data[i] = __s.data[i];
     }
     return *this;
 }
@@ -466,7 +485,7 @@ bool vector_t<T>::unsafe_set(const std::size_t where, T &&data)
 {
     if (where >= this->cap)
         return false;
-    this->data[where] = data;
+    this->vec_data[where] = data;
     return true;
 }
 
@@ -475,7 +494,7 @@ bool vector_t<T>::unsafe_set(const std::size_t where, const T &data)
 {
     if (where >= this->cap)
         return false;
-    this->data[where] = data;
+    this->vec_data[where] = data;
     return true;
 }
 
@@ -483,7 +502,7 @@ template <typename T>
 const std::size_t vector_t<T>::unsafe_find(T &&data) const
 {
     for (std::size_t i = 0; i < this->cap; i++)
-        if (this->data[i] == data)
+        if (this->vec_data[i] == data)
             return i;
     return (std::size_t)-1;
 }
@@ -492,7 +511,7 @@ template <typename T>
 const std::size_t vector_t<T>::unsafe_find(const T &data) const
 {
     for (std::size_t i = 0; i < this->cap; i++)
-        if (this->data[i] == data)
+        if (this->vec_data[i] == data)
             return i;
     return (std::size_t)-1;
 }
@@ -503,7 +522,7 @@ bool vector_t<T>::unsafe_remove(const std::size_t where)
     if (where >= this->cap)
         return false;
     static T __t[1] = {};
-    this->data[where] = __t[0];
+    this->vec_data[where] = __t[0];
     return true;
 }
 
@@ -514,9 +533,9 @@ std::size_t vector_t<T>::unsafe_resize(const std::size_t new_size)
         return (std::size_t)-1;
     T *temp = new T[new_size];
     for (std::size_t i = 0; i < this->cap; i++)
-        temp[i] = this->data[i];
-    delete[] this->data;
-    this->data = temp;
+        temp[i] = this->vec_data[i];
+    delete[] this->vec_data;
+    this->vec_data = temp;
     this->cap = new_size;
     return this->cap;
 }
@@ -529,7 +548,7 @@ T &vector_t<T>::unsafe_get(const std::size_t where) const
         static T __t[1] = {};
         return (T &)__t[0];
     }
-    return this->data[where];
+    return this->vec_data[where];
 }
 
 template <typename T>
@@ -537,7 +556,7 @@ vector_t<T>::~vector_t()
 {
     this->len = 0;
     this->cap = 0;
-    delete[] this->data;
+    delete[] this->vec_data;
 }
 
 namespace std
@@ -551,5 +570,61 @@ namespace std
         }
     };
 };
+
+template <typename T>
+class iter_vector_t
+{
+private:
+    vector_t<T> *vec;
+    std::size_t index;
+    bool rev;
+
+public:
+    iter_vector_t(const vector_t<T> *vec, bool reverse);
+    bool c_loop() const;
+    T &operator->() const;
+    T &operator*() const;
+    void next();
+};
+
+template <typename T>
+iter_vector_t<T>::iter_vector_t(const vector_t<T> *v, bool reverse)
+{
+    this->vec = (vector_t<T> *)v;
+    this->rev = reverse;
+    if (reverse == true)
+        this->index = this->vec->len;
+    else
+        this->index = 0;
+}
+
+template <typename T>
+bool iter_vector_t<T>::c_loop() const
+{
+    if (this->rev == true)
+        return this->index != 0;
+    return this->index != this->vec->len;
+}
+
+template <typename T>
+T &iter_vector_t<T>::operator->() const
+{
+    return this->vec->get(this->index);
+}
+
+template <typename T>
+T &iter_vector_t<T>::operator*() const
+{
+    return this->vec->get(this->index);
+}
+
+template <typename T>
+void iter_vector_t<T>::next()
+{
+    if (this->rev == true)
+        this->index--;
+    else
+        this->index++;
+}
 
 #endif
