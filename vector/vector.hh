@@ -8,7 +8,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 1.5.0
+ * vector version: 1.5.1
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -36,7 +36,7 @@
 #include <bits/functional_hash.h>
 #include <bits/move.h>
 
-#define vector_t_version "1.5.0"
+#define vector_t_version "1.5.1"
 
 template <typename T>
 class iter_vector_t;
@@ -579,7 +579,7 @@ class iter_vector_t
 {
 private:
     vector_t<T> *vec;
-    std::size_t index;
+    std::size_t ind;
     bool rev;
 
 public:
@@ -587,6 +587,7 @@ public:
     bool c_loop() const;
     bool is_first() const;
     bool is_last() const;
+    const std::size_t index() const;
     T &operator->() const;
     T &operator*() const;
     void next();
@@ -598,54 +599,60 @@ iter_vector_t<T>::iter_vector_t(const vector_t<T> *v, bool reverse)
     this->vec = (vector_t<T> *)v;
     this->rev = reverse;
     if (reverse == true)
-        this->index = this->vec->len - 1;
+        this->ind = this->vec->len - 1;
     else
-        this->index = 0;
+        this->ind = 0;
 }
 
 template <typename T>
 bool iter_vector_t<T>::c_loop() const
 {
     if (this->rev == true)
-        return this->index != -1;
-    return this->index < this->vec->len;
+        return this->ind != -1;
+    return this->ind < this->vec->len;
 }
 
 template <typename T>
 bool iter_vector_t<T>::is_first() const
 {
     if(this->rev == true)
-        return this->index == this->vec->len - 1;
-    return this->index == 0;
+        return this->ind == this->vec->len - 1;
+    return this->ind == 0;
 }
 
 template <typename T>
 bool iter_vector_t<T>::is_last() const
 {
     if (this->rev == true)
-        return this->index == -1;
-    return this->index < this->vec->len - 1;
+        return this->ind == -1;
+    return this->ind < this->vec->len - 1;
+}
+
+template <typename T>
+const std::size_t iter_vector_t<T>::index() const
+{
+    return this->ind;
 }
 
 template <typename T>
 T &iter_vector_t<T>::operator->() const
 {
-    return (T &)this->vec->get(this->index);
+    return (T &)this->vec->get(this->ind);
 }
 
 template <typename T>
 T &iter_vector_t<T>::operator*() const
 {
-    return (T &)this->vec->get(this->index);
+    return (T &)this->vec->get(this->ind);
 }
 
 template <typename T>
 void iter_vector_t<T>::next()
 {
     if (this->rev == true)
-        this->index--;
+        this->ind--;
     else
-        this->index++;
+        this->ind++;
 }
 
 #endif
