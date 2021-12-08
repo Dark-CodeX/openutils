@@ -8,7 +8,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 1.4.8
+ * vector version: 1.4.9
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -37,7 +37,7 @@
 #include <bits/move.h>
 #include <cstdlib>
 
-#define vector_t_version "1.4.8"
+#define vector_t_version "1.4.9"
 
 template <typename T>
 class iter_vector_t;
@@ -144,7 +144,7 @@ vector_t<T>::vector_t(const vector_t &vec)
     this->cap = vec.cap;
     this->vec_data = new T[this->cap];
     for (std::size_t i = 0; i < vec.len; i++)
-        this->vec_data[i] = vec.data[i];
+        this->vec_data[i] = vec.vec_data[i];
 }
 
 template <typename T>
@@ -153,7 +153,7 @@ vector_t<T>::vector_t(vector_t &&other) noexcept : len(0), cap(0), vec_data(null
     this->vec_data = other.vec_data;
     this->len = other.len;
     this->cap = other.cap;
-    other.data = nullptr;
+    other.vec_data = nullptr;
     other.len = 0;
     other.cap = 10;
 }
@@ -288,7 +288,7 @@ bool vector_t<T>::compare(const vector_t &vec) const
     if (this->len != vec.len)
         return false;
     for (std::size_t i = 0; i < this->len; i++)
-        if (this->vec_data[i] != vec.data[i])
+        if (this->vec_data[i] != vec.vec_data[i])
             return false;
     return true;
 }
@@ -415,7 +415,7 @@ void vector_t<T>::operator=(const vector_t &data)
     this->cap = data.cap;
     this->vec_data = new T[data.cap];
     for (std::size_t i = 0; i < data.len; i++)
-        this->vec_data[i] = data.data[i];
+        this->vec_data[i] = data.vec_data[i];
 }
 
 template <typename T>
@@ -449,7 +449,7 @@ vector_t<T> &vector_t<T>::operator=(const vector_t &&__s) noexcept
         this->cap = __s.cap;
         this->vec_data = new T[this->cap];
         for (std::size_t i = 0; i < __s.len; i++)
-            this->vec_data[i] = __s.data[i];
+            this->vec_data[i] = __s.vec_data[i];
     }
     return *this;
 }
@@ -458,7 +458,7 @@ template <typename T>
 void vector_t<T>::operator+=(const vector_t &data)
 {
     for (std::size_t i = 0; i < data.len; i++)
-        this->add(std::move(data.data[i]));
+        this->add(std::move(data.vec_data[i]));
 }
 
 template <typename T>
