@@ -3,12 +3,16 @@
 
 int main(void)
 {
-    vector_t<int> v = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    std::cout << "Normal" << std::endl;
-    for (vector_t<int>::iter i = v.iterator(); i.c_loop(); i.next())
-        std::cout << *i << std::endl;
-    std::cout << "Reverse" << std::endl;
-    for (vector_t<int>::iter i = v.reverse_iterator(); i.c_loop(); i.next())
-        std::cout << *i << std::endl;
+    vector_t<vector_t<const char *>> v, v2;
+    v.add({"a", "b", "c"});
+    v.add({"d", "e", "f", "g"});
+    v.add({"g", "h", "i"});
+    for (auto x = v.iterator(); x.c_loop(); x.next())
+    {
+        std::cout << "[";
+        for (auto y = (*x).iterator(); y.c_loop(); y.next())
+            std::cout << *y << (y.is_last() ? ", " : "]");
+        std::cout << std::endl;
+    }
     return 0;
 }
