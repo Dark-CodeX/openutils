@@ -8,7 +8,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 1.4.7
+ * vector version: 1.4.8
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -37,7 +37,7 @@
 #include <bits/move.h>
 #include <cstdlib>
 
-#define vector_t_version "1.4.7"
+#define vector_t_version "1.4.8"
 
 template <typename T>
 class iter_vector_t;
@@ -593,7 +593,7 @@ iter_vector_t<T>::iter_vector_t(const vector_t<T> *v, bool reverse)
     this->vec = (vector_t<T> *)v;
     this->rev = reverse;
     if (reverse == true)
-        this->index = this->vec->len;
+        this->index = this->vec->len - 1;
     else
         this->index = 0;
 }
@@ -602,8 +602,8 @@ template <typename T>
 bool iter_vector_t<T>::c_loop() const
 {
     if (this->rev == true)
-        return this->index != 0;
-    return this->index != this->vec->len;
+        return this->index != -1;
+    return this->index < this->vec->len;
 }
 
 template <typename T>
