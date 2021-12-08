@@ -7,7 +7,7 @@ This header file is *cross-platform*, but tested only on Windows 10, Windows 11,
 Documents are in the header(`"vector/vector.h"`) file itself.
 Be sure to suggest any changes.
 
-# Functions Defined v:1.4.6
+# Functions Defined v:1.4.7
 
 ```
 length
@@ -27,6 +27,8 @@ set
 reverse
 find
 swap
+iterator
+reverse_iterator
 unsafe_set
 unsafe_find
 unsafe_remove
