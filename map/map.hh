@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/map.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "map.hh" under "map" directory
- * map version: 1.0.2
+ * map version: 1.0.3
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -229,7 +229,7 @@ bool map_t<KEY, VALUE>::add(KEY &&key, VALUE &&value)
 template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::add(const KEY &key, const VALUE &value)
 {
-    return this->add(std::move(key), std::move(value));
+    return this->add((KEY &&)key, (VALUE &&)value);
 }
 
 template <typename KEY, typename VALUE>
@@ -259,7 +259,7 @@ bool map_t<KEY, VALUE>::remove(KEY &&key)
 template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::remove(const KEY &key)
 {
-    return this->remove(std::move(key));
+    return this->remove((KEY &&)key);
 }
 
 template <typename KEY, typename VALUE>
@@ -279,7 +279,7 @@ bool map_t<KEY, VALUE>::contains(KEY &&key) const
 template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::contains(const KEY &key) const
 {
-    return this->contains(std::move(key));
+    return this->contains((KEY &&)key);
 }
 
 template <typename KEY, typename VALUE>
@@ -300,7 +300,7 @@ VALUE &map_t<KEY, VALUE>::get(KEY &&key) const
 template <typename KEY, typename VALUE>
 VALUE &map_t<KEY, VALUE>::get(const KEY &key) const
 {
-    return this->get(std::move(key));
+    return this->get((KEY&&)key);
 }
 
 template <typename KEY, typename VALUE>
@@ -320,7 +320,7 @@ const node_t<KEY, VALUE> *map_t<KEY, VALUE>::get_node(KEY &&key) const
 template <typename KEY, typename VALUE>
 const node_t<KEY, VALUE> *map_t<KEY, VALUE>::get_node(const KEY &key) const
 {
-    return this->get_node(std::move(key));
+    return this->get_node((KEY &&)key);
 }
 
 template <typename KEY, typename VALUE>
@@ -511,7 +511,7 @@ bool map_t<KEY, VALUE>::operator-=(KEY &&key)
 template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::operator-=(const KEY &key)
 {
-    return this->remove(std::move(key));
+    return this->remove((KEY &&)key);
 }
 
 template <typename KEY, typename VALUE>
