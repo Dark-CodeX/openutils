@@ -5,7 +5,7 @@ int main(void)
 {
     vector_t<vector_t<const char *>> v, v2;
     v.add({"a", "b", "c"});
-    v.add({"d", "e", "f", "g"});
+    v.add({"d", "e", "f"});
     v.add({"g", "h", "i"});
     for (auto x = v.iterator(); x.c_loop(); x.next())
     {
