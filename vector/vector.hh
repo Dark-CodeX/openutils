@@ -615,7 +615,7 @@ bool iter_vector_t<T>::c_loop() const
 template <typename T>
 bool iter_vector_t<T>::is_first() const
 {
-    if(this->rev == true)
+    if (this->rev == true)
         return this->ind == this->vec->len - 1;
     return this->ind == 0;
 }
