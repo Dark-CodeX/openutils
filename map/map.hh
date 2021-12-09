@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/map.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "map.hh" under "map" directory
- * map version: 1.0.3
+ * map version: 1.0.4
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -74,8 +74,8 @@ public:
     bool remove(const KEY &key);
     bool contains(KEY &&key) const;
     bool contains(const KEY &key) const;
-    VALUE &get(KEY &&key) const;
-    VALUE &get(const KEY &key) const;
+    const VALUE &get(KEY &&key) const;
+    const VALUE &get(const KEY &key) const;
     const node_t<KEY, VALUE> *get_node(KEY &&key) const;
     const node_t<KEY, VALUE> *get_node(const KEY &key) const;
     void erase();
@@ -229,7 +229,7 @@ bool map_t<KEY, VALUE>::add(KEY &&key, VALUE &&value)
 template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::add(const KEY &key, const VALUE &value)
 {
-    return this->add((KEY &&)key, (VALUE &&)value);
+    return this->add((KEY &&) key, (VALUE &&) value);
 }
 
 template <typename KEY, typename VALUE>
@@ -259,7 +259,7 @@ bool map_t<KEY, VALUE>::remove(KEY &&key)
 template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::remove(const KEY &key)
 {
-    return this->remove((KEY &&)key);
+    return this->remove((KEY &&) key);
 }
 
 template <typename KEY, typename VALUE>
@@ -279,11 +279,11 @@ bool map_t<KEY, VALUE>::contains(KEY &&key) const
 template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::contains(const KEY &key) const
 {
-    return this->contains((KEY &&)key);
+    return this->contains((KEY &&) key);
 }
 
 template <typename KEY, typename VALUE>
-VALUE &map_t<KEY, VALUE>::get(KEY &&key) const
+const VALUE &map_t<KEY, VALUE>::get(KEY &&key) const
 {
     std::size_t hash = this->get_hash(key, this->cap);
     node_t<KEY, VALUE> *cur = this->table[hash];
@@ -298,9 +298,9 @@ VALUE &map_t<KEY, VALUE>::get(KEY &&key) const
 }
 
 template <typename KEY, typename VALUE>
-VALUE &map_t<KEY, VALUE>::get(const KEY &key) const
+const VALUE &map_t<KEY, VALUE>::get(const KEY &key) const
 {
-    return this->get((KEY&&)key);
+    return this->get((KEY &&) key);
 }
 
 template <typename KEY, typename VALUE>
@@ -320,7 +320,7 @@ const node_t<KEY, VALUE> *map_t<KEY, VALUE>::get_node(KEY &&key) const
 template <typename KEY, typename VALUE>
 const node_t<KEY, VALUE> *map_t<KEY, VALUE>::get_node(const KEY &key) const
 {
-    return this->get_node((KEY &&)key);
+    return this->get_node((KEY &&) key);
 }
 
 template <typename KEY, typename VALUE>
@@ -457,11 +457,11 @@ bool map_t<KEY, VALUE>::operator==(const map_t &other) const
         node_t<KEY, VALUE> *cur = this->table[i];
         while (cur != nullptr)
         {
-            if (!other.contains(std::move(cur->key)))
+            if (!other.contains(cur->key))
                 return false;
-            if (this->get(std::move(cur->key)) != other.get(std::move(cur->key)))
+            if (this->get(cur->key) != other.get(cur->key))
                 return false;
-            if (this->get(std::move(cur->value)) != other.get(std::move(cur->value)))
+            if (this->get(cur->value) != other.get(cur->value))
                 return false;
             cur = cur->next;
         }
@@ -511,7 +511,7 @@ bool map_t<KEY, VALUE>::operator-=(KEY &&key)
 template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::operator-=(const KEY &key)
 {
-    return this->remove((KEY &&)key);
+    return this->remove((KEY &&) key);
 }
 
 template <typename KEY, typename VALUE>
