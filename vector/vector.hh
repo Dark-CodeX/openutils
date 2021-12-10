@@ -8,7 +8,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 1.5.1
+ * vector version: 1.5.2
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -32,11 +32,17 @@
  * SOFTWARE.
  */
 
-#include <initializer_list>
+#ifdef _WIN32 || defined _WIN64 || defined __CYGWIN__
+#include <utility>
+#include <functional>
+#else
 #include <bits/functional_hash.h>
 #include <bits/move.h>
+#endif
 
-#define vector_t_version "1.5.1"
+#include <initializer_list>
+
+#define vector_t_version "1.5.2"
 
 template <typename T>
 class iter_vector_t;
