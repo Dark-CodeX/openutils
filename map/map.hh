@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/map.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "map.hh" under "map" directory
- * map version: 1.0.4
+ * map version: 1.0.5
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -32,9 +32,15 @@
 
 #pragma once
 
+#ifdef _WIN32 || defined _WIN64 || defined __CYGWIN__
+#include <utility>
+#include <functional>
+#else
 #include <bits/functional_hash.h>
 #include <bits/move.h>
 #include <bits/stl_pair.h>
+#endif
+
 #include <initializer_list>
 
 template <typename KEY, typename VALUE>
