@@ -8,7 +8,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 1.5.2
+ * vector version: 1.5.3
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -32,7 +32,7 @@
  * SOFTWARE.
  */
 
-#ifdef _WIN32 || defined _WIN64 || defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #include <utility>
 #include <functional>
 #else
@@ -42,7 +42,7 @@
 
 #include <initializer_list>
 
-#define vector_t_version "1.5.2"
+#define vector_t_version "1.5.3"
 
 template <typename T>
 class iter_vector_t;
@@ -64,8 +64,8 @@ public:
     vector_t(vector_t &&other) noexcept;
     vector_t(std::initializer_list<T> __list);
     vector_t(const std::size_t capacity);
-    const std::size_t length() const;
-    const std::size_t capacity() const;
+    std::size_t length() const;
+    std::size_t capacity() const;
     void add(T &&data);
     void add(const T &data);
     bool insert(T &&data, const std::size_t nth);
@@ -73,7 +73,7 @@ public:
     void remove();
     bool remove(const std::size_t nth);
     bool empty() const;
-    const std::size_t hash() const;
+    std::size_t hash() const;
     bool compare(const vector_t &vec) const;
     bool compare_hash(const vector_t &vec) const;
     void erase();
@@ -83,8 +83,8 @@ public:
     bool set(T &&data, const std::size_t nth);
     bool set(const T &data, const std::size_t nth);
     void reverse();
-    const std::size_t find(T &&data) const;
-    const std::size_t find(const T &data) const;
+    std::size_t find(T &&data) const;
+    std::size_t find(const T &data) const;
     bool swap(const std::size_t x1, const std::size_t x2);
     typedef iter_vector_t<T> iter;
     iter iterator() const;
@@ -103,8 +103,8 @@ public:
 
     bool unsafe_set(const std::size_t where, T &&data);
     bool unsafe_set(const std::size_t where, const T &data);
-    const std::size_t unsafe_find(T &&data) const;
-    const std::size_t unsafe_find(const T &data) const;
+    std::size_t unsafe_find(T &&data) const;
+    std::size_t unsafe_find(const T &data) const;
     bool unsafe_remove(const std::size_t where);
     std::size_t unsafe_resize(const std::size_t new_size);
     const T &unsafe_get(const std::size_t where) const;
@@ -196,10 +196,10 @@ void vector_t<T>::resize()
 }
 
 template <typename T>
-const std::size_t vector_t<T>::length() const { return this->len; }
+std::size_t vector_t<T>::length() const { return this->len; }
 
 template <typename T>
-const std::size_t vector_t<T>::capacity() const { return this->cap; }
+std::size_t vector_t<T>::capacity() const { return this->cap; }
 
 template <typename T>
 void vector_t<T>::add(T &&data)
@@ -283,7 +283,7 @@ inline void hash_combine(std::size_t &seed, const T &v)
 }
 
 template <typename T>
-const std::size_t vector_t<T>::hash() const
+std::size_t vector_t<T>::hash() const
 {
     std::size_t h = 0;
     for (std::size_t i = 0; i < this->len; i++)
@@ -377,7 +377,7 @@ void vector_t<T>::reverse()
 }
 
 template <typename T>
-const std::size_t vector_t<T>::find(T &&data) const
+std::size_t vector_t<T>::find(T &&data) const
 {
     for (std::size_t i = 0; i < this->len; i++)
         if (this->vec_data[i] == data)
@@ -386,7 +386,7 @@ const std::size_t vector_t<T>::find(T &&data) const
 }
 
 template <typename T>
-const std::size_t vector_t<T>::find(const T &data) const
+std::size_t vector_t<T>::find(const T &data) const
 {
     return this->find((T &&) data);
 }
@@ -508,7 +508,7 @@ bool vector_t<T>::unsafe_set(const std::size_t where, const T &data)
 }
 
 template <typename T>
-const std::size_t vector_t<T>::unsafe_find(T &&data) const
+std::size_t vector_t<T>::unsafe_find(T &&data) const
 {
     for (std::size_t i = 0; i < this->cap; i++)
         if (this->vec_data[i] == data)
@@ -517,7 +517,7 @@ const std::size_t vector_t<T>::unsafe_find(T &&data) const
 }
 
 template <typename T>
-const std::size_t vector_t<T>::unsafe_find(const T &data) const
+std::size_t vector_t<T>::unsafe_find(const T &data) const
 {
     for (std::size_t i = 0; i < this->cap; i++)
         if (this->vec_data[i] == data)
@@ -593,7 +593,7 @@ public:
     bool c_loop() const;
     bool is_first() const;
     bool is_last() const;
-    const std::size_t index() const;
+    std::size_t index() const;
     T &operator->() const;
     T &operator*() const;
     void next();
@@ -614,7 +614,7 @@ template <typename T>
 bool iter_vector_t<T>::c_loop() const
 {
     if (this->rev == true)
-        return this->ind != -1;
+        return this->ind != (std::size_t)-1;
     return this->ind < this->vec->len;
 }
 
@@ -630,12 +630,12 @@ template <typename T>
 bool iter_vector_t<T>::is_last() const
 {
     if (this->rev == true)
-        return this->ind == -1;
+        return this->ind == (std::size_t)-1;
     return this->ind < this->vec->len - 1;
 }
 
 template <typename T>
-const std::size_t iter_vector_t<T>::index() const
+std::size_t iter_vector_t<T>::index() const
 {
     return this->ind;
 }
