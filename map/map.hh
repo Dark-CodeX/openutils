@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/map.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "map.hh" under "map" directory
- * map version: 1.0.5
+ * map version: 1.5.0
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -32,7 +32,7 @@
 
 #pragma once
 
-#ifdef _WIN32 || defined _WIN64 || defined __CYGWIN__
+#if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #include <utility>
 #include <functional>
 #else
@@ -43,6 +43,27 @@
 
 #include <initializer_list>
 
+/**
+ * @brief Resizes an array with new space `new_size`, and copies previous elements to the new one.
+ * NOTE: If your array is allocated using `malloc` or `calloc` then, do not use this function instead use `realloc` function defined in `stdlib.h`
+ * @tparam T data type of `arr`
+ * @param arr array to be resized
+ * @param prev_size previous length of `arr`
+ * @param new_size new length of `arr`. NOTE: `prev_size` >= `new_size`
+ * @return T* return new allocated and copied data
+ */
+template <typename T>
+T *resize_array(T *arr, std::size_t prev_size, std::size_t new_size)
+{
+    if (prev_size >= new_size)
+        return (T *)nullptr;
+    T *temp = new T[new_size];
+    for (std::size_t i = 0; i < prev_size; i++)
+        temp[i] = arr[i];
+    delete[] arr;
+    return temp;
+}
+
 template <typename KEY, typename VALUE>
 struct node_t
 {
@@ -50,7 +71,7 @@ struct node_t
     VALUE value;
     node_t *next;
     node_t() : next(nullptr) {}
-    node_t(KEY &&key, VALUE &&value) : key(std::move(key)), value(std::move(value)), next(nullptr) {}
+    node_t(const KEY &key, const VALUE &value) : key(key), value(value), next(nullptr) {}
 };
 
 template <typename KEY, typename VALUE>
@@ -60,12 +81,13 @@ template <typename KEY, typename VALUE>
 class map_t
 {
 private:
-    std::size_t cap, len;
-    float load_factor = 0.75f;
+    std::size_t cap, len, key_len, k_cap;
+    float load_factor;
     std::size_t get_hash(const KEY &key, std::size_t c) const;
     bool equal(const KEY &key1, const KEY &key2) const;
     void rehash();
     node_t<KEY, VALUE> **table;
+    KEY *keys;
     friend class iter_map_t<KEY, VALUE>;
 
 public:
@@ -76,6 +98,8 @@ public:
     map_t(float load_factor);
     bool add(KEY &&key, VALUE &&value);
     bool add(const KEY &key, const VALUE &value);
+    bool add(const node_t<KEY, VALUE> *node);
+    bool add(const node_t<KEY, VALUE> &node);
     bool remove(KEY &&key);
     bool remove(const KEY &key);
     bool contains(KEY &&key) const;
@@ -86,12 +110,14 @@ public:
     const node_t<KEY, VALUE> *get_node(const KEY &key) const;
     void erase();
     bool empty() const;
-    const std::size_t length() const;
-    const std::size_t capacity() const;
-    const long double error_rate(const std::size_t expected_size) const;
+    std::size_t length() const;
+    std::size_t capacity() const;
+    long double error_rate(const std::size_t expected_size) const;
     typedef iter_map_t<KEY, VALUE> iter;
     iter iterator() const;
-    const std::size_t hash() const;
+    std::size_t hash() const;
+    bool compare(const map_t &m) const;
+    bool compare_hash(const map_t &m) const;
 
     void operator=(const map_t &other);
     map_t &operator=(map_t &&other);
@@ -111,38 +137,35 @@ template <typename KEY, typename VALUE>
 map_t<KEY, VALUE>::map_t(std::size_t capacity, float load_factor)
 {
     this->cap = capacity;
+    this->len = 0, this->key_len = 0, this->k_cap = 10;
     this->table = new node_t<KEY, VALUE> *[this->cap];
+    this->keys = new KEY[this->k_cap];
     for (std::size_t i = 0; i < this->cap; i++)
         this->table[i] = nullptr;
-    this->len = 0;
     this->load_factor = load_factor;
 }
 
 template <typename KEY, typename VALUE>
 map_t<KEY, VALUE>::map_t(const map_t &other)
 {
-    this->cap = other.cap;
+    this->cap = 16, this->len = 0, this->key_len = 0, this->k_cap = 10;
     this->table = new node_t<KEY, VALUE> *[this->cap];
+    this->keys = new KEY[this->k_cap];
     for (std::size_t i = 0; i < this->cap; i++)
         this->table[i] = nullptr;
-    this->len = 0;
     this->load_factor = other.load_factor;
-    for (std::size_t i = 0; i < this->cap; i++)
-    {
-        node_t<KEY, VALUE> *curr = other.table[i];
-        while (curr != nullptr)
-        {
-            this->add(std::move(curr->key), std::move(curr->value));
-            curr = curr->next;
-        }
-    }
+    for (map_t<KEY, VALUE>::iter i = other.iterator(); i.c_loop() != false; i.next())
+        this->add(i->key, i->value);
 }
 
 template <typename KEY, typename VALUE>
-map_t<KEY, VALUE>::map_t(map_t &&other) noexcept : cap(0), len(0), load_factor(0), table(nullptr)
+map_t<KEY, VALUE>::map_t(map_t &&other) noexcept : cap(0), len(0), load_factor(0), table(nullptr), keys(nullptr), key_len(0), k_cap(0)
 {
     this->cap = other.cap;
     this->table = other.table;
+    this->key_len = other.key_len;
+    this->k_cap = other.k_cap;
+    this->keys = other.keys;
     this->len = other.len;
     this->load_factor = other.load_factor;
 
@@ -150,16 +173,20 @@ map_t<KEY, VALUE>::map_t(map_t &&other) noexcept : cap(0), len(0), load_factor(0
     other.table = nullptr;
     other.len = 0;
     other.load_factor = 0;
+    other.keys = nullptr;
+    other.key_len = 0;
+    other.k_cap = 0;
 }
 
 template <typename KEY, typename VALUE>
 map_t<KEY, VALUE>::map_t(std::initializer_list<std::pair<KEY, VALUE>> list)
 {
     this->cap = list.size();
+    this->len = 0, this->key_len = 0, this->k_cap = 10;
     this->table = new node_t<KEY, VALUE> *[this->cap];
+    this->keys = new KEY[this->k_cap];
     for (std::size_t i = 0; i < this->cap; i++)
         this->table[i] = nullptr;
-    this->len = 0;
     this->load_factor = 0.75f;
     for (auto &pair : list)
         this->add(std::move((KEY &&) pair.first), std::move((VALUE &&) pair.second));
@@ -168,11 +195,12 @@ map_t<KEY, VALUE>::map_t(std::initializer_list<std::pair<KEY, VALUE>> list)
 template <typename KEY, typename VALUE>
 map_t<KEY, VALUE>::map_t(float load_factor)
 {
-    this->cap = 16;
+    this->cap = 16, this->k_cap = 10;
     this->table = new node_t<KEY, VALUE> *[this->cap];
+    this->keys = new KEY[this->k_cap];
     for (std::size_t i = 0; i < this->cap; i++)
         this->table[i] = nullptr;
-    this->len = 0;
+    this->len = 0, this->key_len = 0;
     this->load_factor = load_factor;
 }
 
@@ -223,12 +251,17 @@ bool map_t<KEY, VALUE>::add(KEY &&key, VALUE &&value)
             return false;
         cur = cur->next;
     }
-    node_t<KEY, VALUE> *new_node = new node_t<KEY, VALUE>(std::move(key), std::move(value));
+    this->keys[this->key_len++] = key;
+    node_t<KEY, VALUE> *new_node = new node_t<KEY, VALUE>();
+    new_node->key = key;
+    new_node->value = value;
     new_node->next = this->table[hash];
     this->table[hash] = new_node;
     this->len++;
     if (this->len >= this->cap * this->load_factor)
         this->rehash();
+    if (this->key_len >= this->k_cap)
+        this->keys = resize_array<KEY>(this->keys, this->key_len, this->k_cap *= 2);
     return true;
 }
 
@@ -236,6 +269,20 @@ template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::add(const KEY &key, const VALUE &value)
 {
     return this->add((KEY &&) key, (VALUE &&) value);
+}
+
+template <typename KEY, typename VALUE>
+bool map_t<KEY, VALUE>::add(const node_t<KEY, VALUE> *node)
+{
+    if(!node)
+        return false;
+    return this->add(node->key, node->value);
+}
+
+template <typename KEY, typename VALUE>
+bool map_t<KEY, VALUE>::add(const node_t<KEY, VALUE> &node)
+{
+    return this->add(node.key, node.value);
 }
 
 template <typename KEY, typename VALUE>
@@ -343,7 +390,9 @@ void map_t<KEY, VALUE>::erase()
         }
         this->table[i] = nullptr;
     }
-    this->len = 0;
+    delete[] this->keys;
+    this->keys = new KEY[this->k_cap];
+    this->len = 0, this->key_len = 0;
 }
 
 template <typename KEY, typename VALUE>
@@ -353,19 +402,19 @@ bool map_t<KEY, VALUE>::empty() const
 }
 
 template <typename KEY, typename VALUE>
-const std::size_t map_t<KEY, VALUE>::length() const
+std::size_t map_t<KEY, VALUE>::length() const
 {
     return this->len;
 }
 
 template <typename KEY, typename VALUE>
-const std::size_t map_t<KEY, VALUE>::capacity() const
+std::size_t map_t<KEY, VALUE>::capacity() const
 {
     return this->cap;
 }
 
 template <typename KEY, typename VALUE>
-const long double map_t<KEY, VALUE>::error_rate(const std::size_t expected_size) const
+long double map_t<KEY, VALUE>::error_rate(const std::size_t expected_size) const
 {
     return (expected_size - this->len) * 100.0L / this->len;
 }
@@ -383,7 +432,7 @@ inline void hash_combine(std::size_t &seed, const KEY &k, const VALUE &v)
 }
 
 template <typename KEY, typename VALUE>
-const std::size_t map_t<KEY, VALUE>::hash() const
+std::size_t map_t<KEY, VALUE>::hash() const
 {
     std::size_t h = 0;
     for (map_t<KEY, VALUE>::iter i = this->iterator(); i.c_loop(); i.next())
@@ -392,18 +441,47 @@ const std::size_t map_t<KEY, VALUE>::hash() const
 }
 
 template <typename KEY, typename VALUE>
+bool map_t<KEY, VALUE>::compare(const map_t &m) const
+{
+    if (this->len != m.len)
+        return false;
+    for (map_t<KEY, VALUE>::iter i = this->iterator(), j = m.iterator(); i.c_loop() && j.c_loop(); i.next(), j.next())
+        if (!this->equal(i->key, j->key) || i->value != j->value)
+            return false;
+    return true;
+}
+
+template <typename KEY, typename VALUE>
+bool map_t<KEY, VALUE>::compare_hash(const map_t &m) const
+{
+    return this->hash() == m.hash();
+}
+
+template <typename KEY, typename VALUE>
 void map_t<KEY, VALUE>::operator=(const map_t &other)
 {
-    this->erase();
-    for (std::size_t i = 0; i < other.cap; i++)
+    for (std::size_t i = 0; i < this->cap; i++)
     {
-        node_t<KEY, VALUE> *cur = other.table[i];
+        node_t<KEY, VALUE> *cur = this->table[i];
         while (cur != nullptr)
         {
-            this->add(std::move(cur->key), std::move(cur->value));
-            cur = cur->next;
+            node_t<KEY, VALUE> *next = cur->next;
+            delete cur;
+            cur = next;
         }
+        this->table[i] = nullptr;
     }
+    delete[] this->keys;
+    delete[] this->table;
+    this->len = 0, this->cap = 16, this->key_len = 0, this->k_cap = 10;
+    this->load_factor = other.load_factor;
+    this->table = new node_t<KEY, VALUE> *[this->cap];
+    for (std::size_t i = 0; i < this->cap; i++)
+        this->table[i] = nullptr;
+    this->keys = new KEY[this->k_cap];
+
+    for (map_t<KEY, VALUE>::iter i = other.iterator(); i.c_loop() != false; i.next())
+        this->add(i->key, i->value);
 }
 
 template <typename KEY, typename VALUE>
@@ -411,14 +489,27 @@ map_t<KEY, VALUE> &map_t<KEY, VALUE>::operator=(map_t &&other)
 {
     if (this != &other)
     {
-        this->erase();
-        this->table = other.table;
-        this->len = other.len;
-        this->cap = other.cap;
+        for (std::size_t i = 0; i < this->cap; i++)
+        {
+            node_t<KEY, VALUE> *cur = this->table[i];
+            while (cur != nullptr)
+            {
+                node_t<KEY, VALUE> *next = cur->next;
+                delete cur;
+                cur = next;
+            }
+        }
+        delete[] this->table;
+        delete[] this->keys;
+        this->len = 0, this->cap = 16, this->key_len = 0, this->k_cap = 10;
+        this->load_factor = other.load_factor;
+        this->table = new node_t<KEY, VALUE> *[this->cap];
+        for (std::size_t i = 0; i < this->cap; i++)
+            this->table[i] = nullptr;
+        this->keys = new KEY[this->k_cap];
 
-        other.table = nullptr;
-        other.len = 0;
-        other.cap = 0;
+        for (map_t<KEY, VALUE>::iter i = other.iterator(); i.c_loop() != false; i.next())
+            this->add(i->key, i->value);
     }
     return *this;
 }
@@ -456,29 +547,13 @@ VALUE &map_t<KEY, VALUE>::operator[](const KEY &key) const
 template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::operator==(const map_t &other) const
 {
-    if (this->len != other.len)
-        return false;
-    for (std::size_t i = 0; i < this->cap; i++)
-    {
-        node_t<KEY, VALUE> *cur = this->table[i];
-        while (cur != nullptr)
-        {
-            if (!other.contains(cur->key))
-                return false;
-            if (this->get(cur->key) != other.get(cur->key))
-                return false;
-            if (this->get(cur->value) != other.get(cur->value))
-                return false;
-            cur = cur->next;
-        }
-    }
-    return true;
+    return this->compare(other);
 }
 
 template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::operator!=(const map_t &other) const
 {
-    return !(*this == other);
+    return !this->compare(other);
 }
 
 template <typename KEY, typename VALUE>
@@ -502,7 +577,7 @@ void map_t<KEY, VALUE>::operator+=(const map_t &other)
         node_t<KEY, VALUE> *cur = other.table[i];
         while (cur != nullptr)
         {
-            this->add(std::move(cur->key), std::move(cur->value));
+            this->add(cur->key, cur->value);
             cur = cur->next;
         }
     }
@@ -511,7 +586,7 @@ void map_t<KEY, VALUE>::operator+=(const map_t &other)
 template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::operator-=(KEY &&key)
 {
-    return this->remove(std::move(key));
+    return this->remove(key);
 }
 
 template <typename KEY, typename VALUE>
@@ -534,8 +609,8 @@ map_t<KEY, VALUE>::~map_t()
         }
     }
     delete[] this->table;
-    this->len = 0;
-    this->cap = 0;
+    delete[] this->keys;
+    this->len = 0, this->cap = 0, this->key_len = 0, this->k_cap = 0;
 }
 
 template <typename KEY, typename VALUE>
@@ -550,6 +625,7 @@ public:
     iter_map_t(const map_t<KEY, VALUE> *m);
     bool c_loop() const;
     const node_t<KEY, VALUE> *&operator->() const;
+    const node_t<KEY, VALUE> *&operator*() const;
     void next();
 };
 
@@ -558,9 +634,9 @@ iter_map_t<KEY, VALUE>::iter_map_t(const map_t<KEY, VALUE> *m)
 {
     this->m = (map_t<KEY, VALUE> *)m;
     this->i = 0;
-    while (this->i < this->m->cap && this->m->table[this->i] == nullptr)
+    while (this->i < this->m->key_len && this->m->get_node(this->m->keys[this->i]) == nullptr)
         this->i++;
-    this->cur = this->m->table[this->i];
+    this->cur = (node_t<KEY, VALUE> *)this->m->get_node(this->m->keys[this->i]);
 }
 
 template <typename KEY, typename VALUE>
@@ -576,17 +652,18 @@ const node_t<KEY, VALUE> *&iter_map_t<KEY, VALUE>::operator->() const
 }
 
 template <typename KEY, typename VALUE>
+const node_t<KEY, VALUE> *&iter_map_t<KEY, VALUE>::operator*() const
+{
+    return (const node_t<KEY, VALUE> *&)this->cur;
+}
+
+template <typename KEY, typename VALUE>
 void iter_map_t<KEY, VALUE>::next()
 {
-    this->cur = this->cur->next;
-    if (this->cur == nullptr)
-    {
+    this->i++;
+    while (this->i < this->m->key_len && this->m->get_node(this->m->keys[this->i]) == nullptr)
         this->i++;
-        while (this->i < this->m->cap && this->m->table[this->i] == nullptr)
-            this->i++;
-        if (this->i < this->m->cap)
-            this->cur = this->m->table[this->i];
-    }
+    this->cur = (node_t<KEY, VALUE> *)this->m->get_node(this->m->keys[this->i]);
 }
 
 namespace std
