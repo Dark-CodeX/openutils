@@ -22,11 +22,11 @@ sha512sums=(
 
 package() {
   echo "Memory Safe String Library in C language."
-  mkdir -p "${pkgdir}/usr/include/sstring"
-  cp "${srcdir}/sstring.h" "${pkgdir}/usr/include/sstring/sstring.h"
-  cp "${srcdir}/prototype_err.h" "${pkgdir}/usr/include/sstring/prototype_err.h"
-  cp "${srcdir}/binary.h" "${pkgdir}/usr/include/sstring/binary.h"
-  cp "${srcdir}/morse_code.h" "${pkgdir}/usr/include/sstring/morse_code.h"
-  cp "${srcdir}/sstring.hh" "${pkgdir}/usr/include/sstring/sstring.hh"
+  mkdir -p "${pkgdir}/usr/include/openutils/sstring"
+  cp "${srcdir}/sstring.h" "${pkgdir}/usr/include/openutils/sstring/sstring.h"
+  cp "${srcdir}/prototype_err.h" "${pkgdir}/usr/include/openutils/sstring/prototype_err.h"
+  cp "${srcdir}/binary.h" "${pkgdir}/usr/include/openutils/sstring/binary.h"
+  cp "${srcdir}/morse_code.h" "${pkgdir}/usr/include/openutils/sstring/morse_code.h"
+  cp "${srcdir}/sstring.hh" "${pkgdir}/usr/include/openutils/sstring/sstring.hh"
   echo "Done!"
 }
