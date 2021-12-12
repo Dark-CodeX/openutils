@@ -1,5 +1,5 @@
-#include <sstring/sstring.h>
-#include "vector/vector.h"
+#include <openutils/sstring/sstring.h>
+#include "../vector/vector.h"
 
 int main(int argc, char const **argv)
 {

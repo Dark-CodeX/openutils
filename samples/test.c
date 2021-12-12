@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "vector/vector.h"
+#include "../vector/vector.h"
 
 int main(int argc, char const **argv)
 {
