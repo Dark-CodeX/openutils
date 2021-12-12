@@ -1,9 +1,9 @@
-pkgname="vector"
+pkgname="openutils-vector"
 pkgver="1.5.3"
 pkgrel="3"
 pkgdesc="Vectors in C language."
 arch=("x86_64" "i686")
-conflicts=('vector')
+conflicts=('openutils-vector')
 depends=(gcc)
 license=("MIT")
 source=("https://raw.githubusercontent.com/Dark-CodeX/vector/main/vector/vector.h" "https://raw.githubusercontent.com/Dark-CodeX/vector/main/vector/vector.hh")
