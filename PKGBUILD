@@ -1,6 +1,6 @@
 pkgname="openutils-map"
 pkgver="1.5.1"
-pkgrel="1"
+pkgrel="2"
 pkgdesc="Memory Safe Map Library in C++ language."
 arch=("x86_64" "i686")
 conflicts=('openutils-map')
