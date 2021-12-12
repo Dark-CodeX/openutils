@@ -13,6 +13,7 @@ int main(int argc, char const **argv)
     std::cout << "------------------------------------------" << std::endl;
     std::cout << "Length = " << map.length() << std::endl;
     std::cout << "Capacity = " << map.capacity() << std::endl;
+    std::cout << "Max Depth = " << map.max_depth() << std::endl;
     std::cout << "HASH = " << std::hash<map_t<sstring, int>>()(map) << std::endl;
     std::cout << "Error Rate = " << map.error_rate(argc - 1) << "%" << std::endl;
     return 0;
