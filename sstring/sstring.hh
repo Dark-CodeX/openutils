@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 1.5.2
+ * sstring: version 1.5.5
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -40,7 +40,7 @@
 #include "binary.h"
 #include "morse_code.h"
 
-#define sstring_version "1.5.2"
+#define sstring_version "1.5.5"
 
 namespace std
 {
@@ -153,7 +153,7 @@ namespace sstr
         void replace_char(const char old, const char new_);
         void char_set(const char what, std::size_t where);
         char char_get(std::size_t where) const;
-        const std::size_t length() const;
+        std::size_t length() const;
         bool compare(const char *T1) const;
         bool compare_upto(const char *T1, std::size_t N) const;
         void print(bool add_next_line, const char *__format__, ...) const;
@@ -202,7 +202,7 @@ namespace sstr
         bool encrypt(const char *key);
         bool decrypt(const char *key);
         std::size_t begin() const;
-        const std::size_t end() const;
+        std::size_t end() const;
         bool to_morse_code();
         bool from_morse_code();
         bool is_digit() const;
@@ -273,8 +273,8 @@ namespace sstr
     {
     private:
         char **src;
-        std::size_t len, cap;
         enum parse_token *type;
+        std::size_t len, cap;
 
     public:
         parse_t(std::size_t len = 1LL);
@@ -282,7 +282,7 @@ namespace sstr
         sstring get(const std::size_t n) const;
         enum parse_token get_type(const std::size_t n) const;
         sstring operator[](const std::size_t n) const;
-        const std::size_t length() const;
+        std::size_t length() const;
         parse_t(parse_t &&other) noexcept;
         parse_t &operator=(const parse_t &&__pt) noexcept;
         ~parse_t();
@@ -299,7 +299,7 @@ namespace sstr
         bool add(const char *src);
         sstring get(const std::size_t n) const;
         sstring operator[](const std::size_t n) const;
-        const std::size_t length() const;
+        std::size_t length() const;
         split_t(split_t &&other) noexcept;
         split_t &operator=(const split_t &&__st) noexcept;
         ~split_t();
@@ -725,7 +725,7 @@ namespace sstr
         return (char)'\0';
     }
 
-    const std::size_t sstring::length() const
+    std::size_t sstring::length() const
     {
         return std::strlen((const char *)this->src);
     }
@@ -1389,7 +1389,7 @@ namespace sstr
         if (src)
         {
             std::size_t len1 = this->len, len2 = std::strlen(src), x, y, last, old;
-            std::size_t cols[len1 + 1];
+            std::size_t *cols = (std::size_t *)std::calloc(sizeof(std::size_t) * (len1 + 1), sizeof(std::size_t));
             for (y = 1; y <= len1; y++)
                 cols[y] = y;
             for (x = 1; x <= len2; x++)
@@ -1402,7 +1402,9 @@ namespace sstr
                     last = old;
                 }
             }
-            return (std::size_t)cols[len1];
+            std::size_t r = cols[len1];
+            std::free(cols);
+            return r;
         }
         return (std::size_t)-1;
     }
@@ -1412,7 +1414,7 @@ namespace sstr
         if (src)
         {
             std::size_t len1 = this->len, len2 = std::strlen(src), x, y, last, old;
-            std::size_t cols[len1 + 1];
+            std::size_t *cols = (std::size_t *)std::calloc(sizeof(std::size_t) * (len1 + 1), sizeof(std::size_t));
             for (y = 1; y <= len1; y++)
                 cols[y] = y;
             for (x = 1; x <= len2; x++)
@@ -1426,7 +1428,9 @@ namespace sstr
                 }
             }
             std::size_t max = MAX2(len1, len2);
-            return (max - cols[len1]) * 100.0L / max;
+            std::size_t r = cols[len1];
+            std::free(cols);
+            return (max - r) * 100.0L / max;
         }
         return 0.0L;
     }
@@ -1784,7 +1788,7 @@ namespace sstr
         return 0ULL;
     }
 
-    const std::size_t sstring::end() const
+    std::size_t sstring::end() const
     {
         return this->len;
     }
@@ -2513,7 +2517,7 @@ namespace sstr
         return sstring(nullptr);
     }
 
-    const std::size_t parse_t::length() const
+    std::size_t parse_t::length() const
     {
         return this->len;
     }
@@ -2598,7 +2602,7 @@ namespace sstr
         return sstring(nullptr);
     }
 
-    const std::size_t split_t::length() const
+    std::size_t split_t::length() const
     {
         return this->len;
     }
