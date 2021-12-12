@@ -1,9 +1,9 @@
-pkgname="sstring"
+pkgname="openutils-sstring"
 pkgver="1.5.5"
 pkgrel="7"
 pkgdesc="Memory Safe String Library in C language."
 arch=("x86_64" "i686")
-conflicts=('sstring')
+conflicts=('openutils-sstring')
 depends=(gcc)
 license=("MIT")
 source=(
