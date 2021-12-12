@@ -1,9 +1,9 @@
-pkgname="returns"
+pkgname="openutils-returns"
 pkgver="1.0.0"
 pkgrel="1"
 pkgdesc="Memory Safe Value Returning Library in C++ language."
 arch=("x86_64" "i686")
-conflicts=('returns')
+conflicts=('openutils-returns')
 depends=(gcc)
 license=("MIT")
 source=("https://raw.githubusercontent.com/Dark-CodeX/returns/master/returns/default.hh" "https://raw.githubusercontent.com/Dark-CodeX/returns/master/returns/optional.hh")
