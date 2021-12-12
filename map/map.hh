@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/map.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "map.hh" under "map" directory
- * map version: 1.5.0
+ * map version: 1.5.1
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -118,6 +118,7 @@ public:
     std::size_t hash() const;
     bool compare(const map_t &m) const;
     bool compare_hash(const map_t &m) const;
+    std::size_t max_depth() const;
 
     void operator=(const map_t &other);
     map_t &operator=(map_t &&other);
@@ -274,7 +275,7 @@ bool map_t<KEY, VALUE>::add(const KEY &key, const VALUE &value)
 template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::add(const node_t<KEY, VALUE> *node)
 {
-    if(!node)
+    if (!node)
         return false;
     return this->add(node->key, node->value);
 }
@@ -455,6 +456,22 @@ template <typename KEY, typename VALUE>
 bool map_t<KEY, VALUE>::compare_hash(const map_t &m) const
 {
     return this->hash() == m.hash();
+}
+
+template <typename KEY, typename VALUE>
+std::size_t map_t<KEY, VALUE>::max_depth() const
+{
+    std::size_t max = 0, x = 0;
+    for (std::size_t i = 0; i < this->cap; i++)
+    {
+        node_t<KEY, VALUE> *temp = this->table[i];
+        while (temp)
+            x++, temp = temp->next;
+        if (x > max)
+            max = x;
+        x = 0;
+    }
+    return max;
 }
 
 template <typename KEY, typename VALUE>
