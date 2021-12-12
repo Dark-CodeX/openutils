@@ -8,7 +8,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 1.5.2
+ * sstring: version 1.5.5
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -33,7 +33,7 @@
  */
 typedef struct __string__ sstring;
 
-#define sstring_version "1.5.2"
+#define sstring_version "1.5.5"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -2262,65 +2262,15 @@ split_t _split(sstring *a, const char *dl)
     return x;
 }
 
-void merge(char *arr, size_t l, size_t m, size_t r)
+int compare_chars(const void *c1, const void *c2)
 {
-    size_t i, j, k;
-    size_t n1 = m - l + 1;
-    size_t n2 = r - m;
-    size_t L[n1], R[n2];
-    for (i = 0; i < n1; i++)
-        L[i] = arr[l + i];
-    for (j = 0; j < n2; j++)
-        R[j] = arr[m + 1 + j];
-    i = 0;
-    j = 0;
-    k = l;
-    while (i < n1 && j < n2)
-    {
-        if (L[i] <= R[j])
-        {
-            arr[k] = L[i];
-            i++;
-        }
-        else
-        {
-            arr[k] = R[j];
-            j++;
-        }
-        k++;
-    }
-    while (i < n1)
-    {
-        arr[k] = L[i];
-        i++;
-        k++;
-    }
-    while (j < n2)
-    {
-        arr[k] = R[j];
-        j++;
-        k++;
-    }
-}
-
-void merge_sort(char *arr, size_t l, size_t r)
-{
-    if (l < r)
-    {
-        size_t m = l + (r - l) / 2;
-        merge_sort(arr, l, m);
-        merge_sort(arr, m + 1, r);
-        merge(arr, l, m, r);
-    }
+    return (*(char *)c1 - *(char *)c2);
 }
 
 void _sort(sstring *a)
 {
     if (a && a->str && (*(__str__ *)a->str).src && (*(__str__ *)a->str).init == true && (*(__str__ *)a->str).src[0] != '\0')
-    {
-        size_t len = (*(__str__ *)a->str).len;
-        merge_sort((*(__str__ *)a->str).src, 0, len - 1);
-    }
+        qsort((*(__str__ *)a->str).src, (*(__str__ *)a->str).len, sizeof(char), compare_chars);
 }
 
 size_t _open_binary(sstring *a, const char *location)
