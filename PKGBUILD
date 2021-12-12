@@ -1,6 +1,6 @@
 pkgname="openutils-vector"
 pkgver="1.5.3"
-pkgrel="3"
+pkgrel="4"
 pkgdesc="Vectors in C language."
 arch=("x86_64" "i686")
 conflicts=('openutils-vector')
