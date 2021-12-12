@@ -1,6 +1,6 @@
 #include "map/map.hh"
 #include <iostream>
-#include <sstring/sstring.hh>
+#include <openutils/sstring/sstring.hh>
 
 int main(int argc, char const **argv)
 {
