@@ -12,8 +12,8 @@ sha512sums=("a9214e67c2149f9922d0767792674f3fbb67ce7bc0c191e547b988232f1196312e0
 
 package() {
   echo "Memory Safe Value Returning Library in C++ language."
-  mkdir -p "${pkgdir}/usr/include/returns"
-  cp "${srcdir}/default.hh" "${pkgdir}/usr/include/returns/default.hh"
-  cp "${srcdir}/optional.hh" "${pkgdir}/usr/include/returns/optional.hh"
+  mkdir -p "${pkgdir}/usr/include/openutils/returns"
+  cp "${srcdir}/default.hh" "${pkgdir}/usr/include/openutils/returns/default.hh"
+  cp "${srcdir}/optional.hh" "${pkgdir}/usr/include/openutils/returns/optional.hh"
   echo "Done!"
 }
