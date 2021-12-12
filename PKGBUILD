@@ -11,8 +11,8 @@ sha512sums=("b2f8b649d73ca6eb61e4ff3dc445575f89d9a96bb4b9b36e4b53dde884909763ee3
 
 package() {
   echo "Vectors in C language."
-  mkdir -p "${pkgdir}/usr/include/vector"
-  cp "${srcdir}/vector.h" "${pkgdir}/usr/include/vector/vector.h"
-  cp "${srcdir}/vector.hh" "${pkgdir}/usr/include/vector/vector.hh"
+  mkdir -p "${pkgdir}/usr/include/openutils/vector"
+  cp "${srcdir}/vector.h" "${pkgdir}/usr/include/openutils/vector/vector.h"
+  cp "${srcdir}/vector.hh" "${pkgdir}/usr/include/openutils/vector/vector.hh"
   echo "Done!"
 }
