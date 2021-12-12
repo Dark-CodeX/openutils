@@ -1,9 +1,9 @@
-pkgname="map"
+pkgname="openutils-map"
 pkgver="1.5.1"
 pkgrel="1"
 pkgdesc="Memory Safe Map Library in C++ language."
 arch=("x86_64" "i686")
-conflicts=('map')
+conflicts=('openutils-map')
 depends=(gcc)
 license=("MIT")
 source=("https://raw.githubusercontent.com/Dark-CodeX/map/master/map/map.hh")
