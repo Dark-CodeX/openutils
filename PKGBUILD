@@ -1,6 +1,6 @@
 pkgname="openutils-returns"
 pkgver="1.0.0"
-pkgrel="1"
+pkgrel="2"
 pkgdesc="Memory Safe Value Returning Library in C++ language."
 arch=("x86_64" "i686")
 conflicts=('openutils-returns')
