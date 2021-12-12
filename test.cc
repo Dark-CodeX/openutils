@@ -1,6 +1,6 @@
 #include "returns/optional.hh"
 #include "returns/default.hh"
-#include <sstring/sstring.hh>
+#include <openutils/sstring/sstring.hh>
 #include <iostream>
 
 optional_t<sstr::sstring> test(sstr::sstring x)
