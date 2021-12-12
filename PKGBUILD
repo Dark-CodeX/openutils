@@ -12,7 +12,7 @@ sha512sums=("b300f5d3fe589e0ba2903956ab09a41135ebc910eae13e45b19e1c0fcc244c39daf
 
 package() {
   echo "Memory Safe Map Library in C++ language."
-  mkdir -p "${pkgdir}/usr/include/map"
-  cp "${srcdir}/map.hh" "${pkgdir}/usr/include/map/map.hh"
+  mkdir -p "${pkgdir}/usr/include/openutils/map"
+  cp "${srcdir}/map.hh" "${pkgdir}/usr/include/openutils/map/map.hh"
   echo "Done!"
 }
