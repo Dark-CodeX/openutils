@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 1.5.5
+ * sstring: version 1.5.6
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -40,7 +40,7 @@
 #include "binary.h"
 #include "morse_code.h"
 
-#define sstring_version "1.5.5"
+#define sstring_version "1.5.6"
 
 namespace std
 {
@@ -1188,8 +1188,6 @@ namespace sstr
         {
             std::fgets(buff, buff_size, stdin);
             len_ = std::strlen((const char *)buff);
-            if (len_ != 0 && buff[len_ - 1] == '\n')
-                buff[len_ - 1] = '\0';
         }
         std::free(this->src);
         this->src = (char *)std::calloc((sizeof(char) * len_) + 1, sizeof(char));
