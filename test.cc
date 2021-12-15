@@ -4,7 +4,7 @@
 
 int main(int argc, char const **argv)
 {
-    using namespace sstr;
+    using namespace openutils;
     map_t<sstring, int> map;
     for (std::size_t i = 1; i < (std::size_t)argc; ++i)
         map.add(argv[i], i);
