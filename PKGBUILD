@@ -8,7 +8,7 @@ depends=(gcc)
 license=("MIT")
 source=("https://raw.githubusercontent.com/Dark-CodeX/returns/master/returns/default.hh" "https://raw.githubusercontent.com/Dark-CodeX/returns/master/returns/optional.hh")
 
-sha512sums=("a9214e67c2149f9922d0767792674f3fbb67ce7bc0c191e547b988232f1196312e0a2bfef79e3e769b471fd33ad214f3982ef053902de60a4e635c105b89bb18" "77ec4d34ef43294ee52ed7953bc835f7af1706bc9c294fbb38437386a2bb34d16c0c49a17ad04ff296f2912a7b31189c9aed6fb1d568314ecd8abca624c0c546")
+sha512sums=("30541e2a9c79c633e50d6388b78afe42515b2e90ca24d6cd9a161b56834a1eda04739db4dc562204d9210cae658fcb78d72529488828f0c4b0d96265ede8834e" "8f900a0eab09bf9cb8f8b36d7d50b8461b70ef9d78076b854664601f07206244300644987f70e72ff1d6888da813a4481dfbce82cd3b76e829b9f8afe461704c")
 
 package() {
   echo "Memory Safe Value Returning Library in C++ language."
