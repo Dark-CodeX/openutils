@@ -8,7 +8,7 @@ depends=(gcc)
 license=("MIT")
 source=("https://raw.githubusercontent.com/Dark-CodeX/map/master/map/map.hh")
 
-sha512sums=("b300f5d3fe589e0ba2903956ab09a41135ebc910eae13e45b19e1c0fcc244c39dafdc4fec936abaf60058e7af3cacc014f6ff7887d2a05c7ef07becd00d2a8cf")
+sha512sums=("1a7dfdeb4c6c6a2bab55daee4346e296126131d4ce045ff217dccc774a14e1d169580a998062dc1db921d04fc8059bcb9132d9df854208bed8991e414d09a9fd")
 
 package() {
   echo "Memory Safe Map Library in C++ language."
