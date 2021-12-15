@@ -38,22 +38,24 @@
 #include <bits/move.h>
 #endif
 
-class default_t
+namespace openutils
 {
-public:
-    template <typename T>
-    operator T &() const
+    class default_t
     {
-        static T __t[1] = {};
-        return __t[0];
-    }
+    public:
+        template <typename T>
+        operator T &() const
+        {
+            static T __t[1] = {};
+            return __t[0];
+        }
 
-    template <typename T>
-    T &operator()(const T &t) const
-    {
-        static T __t[1] = {};
-        return (__t[0] = std::move(t));
-    }
+        template <typename T>
+        T &operator()(const T &t) const
+        {
+            static T __t[1] = {};
+            return (__t[0] = std::move(t));
+        }
+    };
 };
-
 #endif
