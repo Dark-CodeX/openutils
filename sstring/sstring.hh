@@ -87,7 +87,7 @@ namespace std
     };
 };
 
-namespace sstr
+namespace openutils
 {
     /** sstring class for storing 1D array chars */
     class sstring;
@@ -2647,9 +2647,9 @@ namespace sstr
 namespace std
 {
     template <>
-    struct hash<sstr::sstring>
+    struct hash<openutils::sstring>
     {
-        std::size_t operator()(const sstr::sstring &str) const
+        std::size_t operator()(const openutils::sstring &str) const
         {
             return str.hash();
         }
