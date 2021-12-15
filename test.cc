@@ -3,11 +3,11 @@
 #include <openutils/sstring/sstring.hh>
 #include <iostream>
 
-optional_t<sstr::sstring> test(sstr::sstring x)
+openutils::optional_t<openutils::sstring> test(openutils::sstring x)
 {
     if (x.end() != 0)
         return x.soundex();
-    return optnull;
+    return openutils::optnull;
 }
 
 int main(void)
@@ -20,8 +20,8 @@ int main(void)
         std::cerr << "value was null" << std::endl;
         return -1;
     }
-    sstr::sstring &x = default_t();
-    int &z = default_t();
+    openutils::sstring &x = openutils::default_t();
+    int &z = openutils::default_t();
     std::cout << "Default value of sstring = `" << x << "`, with length = " << x.end() << std::endl;
     std::cout << "Default value of int = " << z << std::endl;
     return 0;
