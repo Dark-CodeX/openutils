@@ -3,7 +3,7 @@
 
 int main(void)
 {
-    vector_t<vector_t<const char *>> v, v2;
+    openutils::vector_t<openutils::vector_t<const char *>> v, v2;
     v.add({"a", "b", "c"});
     v.add({"d", "e", "f"});
     v.add({"g", "h", "i"});
