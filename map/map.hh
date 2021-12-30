@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/map.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "map.hh" under "map" directory
- * map version: 1.5.2
+ * map version: 1.5.3
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -387,15 +387,9 @@ namespace openutils
     {
         std::size_t hash = this->get_hash(key, this->cap);
         node_t<KEY, VALUE> *cur = this->table[hash];
-        std::size_t ind = 0;
-        while (cur != nullptr)
-        {
-            if (this->equal(cur->key, key))
-                return ind;
-            cur = cur->next;
-            ind++;
-        }
-        return (std::size_t)-1;
+        if (!cur)
+            return (std::size_t)-1;
+        return hash;
     }
 
     template <typename KEY, typename VALUE>
