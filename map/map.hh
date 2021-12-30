@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/map.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "map.hh" under "map" directory
- * map version: 1.5.1
+ * map version: 1.5.2
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -46,14 +46,14 @@
 namespace openutils
 {
     /**
- * @brief Resizes an array with new space `new_size`, and copies previous elements to the new one.
- * NOTE: If your array is allocated using `malloc` or `calloc` then, do not use this function instead use `realloc` function defined in `stdlib.h`
- * @tparam T data type of `arr`
- * @param arr array to be resized
- * @param prev_size previous length of `arr`
- * @param new_size new length of `arr`. NOTE: `prev_size` >= `new_size`
- * @return T* return new allocated and copied data
- */
+     * @brief Resizes an array with new space `new_size`, and copies previous elements to the new one.
+     * NOTE: If your array is allocated using `malloc` or `calloc` then, do not use this function instead use `realloc` function defined in `stdlib.h`
+     * @tparam T data type of `arr`
+     * @param arr array to be resized
+     * @param prev_size previous length of `arr`
+     * @param new_size new length of `arr`. NOTE: `prev_size` >= `new_size`
+     * @return T* return new allocated and copied data
+     */
     template <typename T>
     T *resize_array(T *arr, std::size_t prev_size, std::size_t new_size)
     {
@@ -110,6 +110,8 @@ namespace openutils
         const VALUE &get(const KEY &key) const;
         const node_t<KEY, VALUE> *get_node(KEY &&key) const;
         const node_t<KEY, VALUE> *get_node(const KEY &key) const;
+        std::size_t get_index(KEY &&key) const;
+        std::size_t get_index(const KEY &key) const;
         void erase();
         bool empty() const;
         std::size_t length() const;
@@ -121,6 +123,7 @@ namespace openutils
         bool compare(const map_t &m) const;
         bool compare_hash(const map_t &m) const;
         std::size_t max_depth() const;
+        std::size_t nerr = (std::size_t)-1;
 
         void operator=(const map_t &other);
         map_t &operator=(map_t &&other);
@@ -377,6 +380,28 @@ namespace openutils
     const node_t<KEY, VALUE> *map_t<KEY, VALUE>::get_node(const KEY &key) const
     {
         return this->get_node((KEY &&) key);
+    }
+
+    template <typename KEY, typename VALUE>
+    std::size_t map_t<KEY, VALUE>::get_index(KEY &&key) const
+    {
+        std::size_t hash = this->get_hash(key, this->cap);
+        node_t<KEY, VALUE> *cur = this->table[hash];
+        std::size_t ind = 0;
+        while (cur != nullptr)
+        {
+            if (this->equal(cur->key, key))
+                return ind;
+            cur = cur->next;
+            ind++;
+        }
+        return (std::size_t)-1;
+    }
+
+    template <typename KEY, typename VALUE>
+    std::size_t map_t<KEY, VALUE>::get_index(const KEY &key) const
+    {
+        return this->get_index((KEY &&) key);
     }
 
     template <typename KEY, typename VALUE>
