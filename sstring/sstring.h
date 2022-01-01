@@ -8,7 +8,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 1.5.6
+ * sstring: version 1.5.7
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -33,7 +33,7 @@
  */
 typedef struct __string__ sstring;
 
-#define sstring_version "1.5.6"
+#define sstring_version "1.5.7"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1799,6 +1799,11 @@ int _in(sstring *a, int get_line, size_t buff_size)
         {
             fgets(buff, buff_size, stdin);
             len_ = strlen((const char *)buff);
+            if (buff[len_ - 1] == '\n')
+            {
+                buff[len_ - 1] = '\0';
+                len_--;
+            }
         }
         free((*(__str__ *)a->str).src);
         (*(__str__ *)a->str).src = (char *)calloc((sizeof(char) * len_) + 1, sizeof(char));
