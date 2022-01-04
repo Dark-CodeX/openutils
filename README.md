@@ -24,6 +24,11 @@ compare
 comapre_hash
 max_depth
 ```
+* # SOME RESULTS:
+    * #### Added 466474 words from the dictionary to the map, with 0% error rate, 0 memory leaks and 0 errors from valgrind.
+    * ![app.png](./img/app.png)
+    
+    * ![heap_alloc.png](./img/heap_alloc.png)
 * # BUILD
     * #### **For testing use:** *`g++ -g -W -Wall -Wextra -std=c++20 ./samples/test.cc -o test` **and then** `valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt ./test "Hello" "World" "123" "map"`*
 * # Installation
