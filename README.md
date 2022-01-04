@@ -1,8 +1,8 @@
 * # VECTOR: The Safe C/C++ Vector Library ![license-status](https://img.shields.io/github/license/Dark-CodeX/vector)
-    * ### **Safe vector in C/C++. With huge amount of in-built functions.**
-    * ### **This library has 22 pre-defined functions.**
-    * ### This header file is *cross-platform*, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (22/22) functions passed.*
-    * ### Documents are in the header(`"vector/vector.h"`) file itself. Be sure to suggest any changes.
+    * #### **Safe vector in C/C++. With huge amount of in-built functions.**
+    * #### **This library has 22 pre-defined functions.**
+    * #### This header file is *cross-platform*, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (22/22) functions passed.*
+    * #### Documents are in the header(`"vector/vector.h"`) file itself. Be sure to suggest any changes.
 * # Functions Defined v:1.5.3
 ```
 length
