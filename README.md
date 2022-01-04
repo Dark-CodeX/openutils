@@ -25,7 +25,7 @@ comapre_hash
 max_depth
 ```
 * # SOME RESULTS:
-    * #### Added 466474 words from the dictionary to the map, with 0% error rate, 0 memory leaks and 0 errors from valgrind.
+    * #### Added 466474 words from the dictionary to the map, with 0% error rate, 0 memory leaks and 0 errors from valgrind. On a Intel Core i5-7200U CPU @ 2.50 GHz processor with 8GB RAM, it took only 0.34 seconds to add the dictionary to the map.
     * ![app.png](./img/app.png)
     
     * ![heap_alloc.png](./img/heap_alloc.png)
