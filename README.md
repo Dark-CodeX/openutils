@@ -1,9 +1,10 @@
-* # MAP: The Safe C++ Map / Linked List Library ![license-status](https://img.shields.io/github/license/Dark-CodeX/map)
-    * #### **Safe map in C++, with huge amount of in-built functions.**
+* # MAP: The Safe C/C++ Map / Linked List Library ![license-status](https://img.shields.io/github/license/Dark-CodeX/map)
+    * #### **Safe map in C/C++, with huge amount of in-built functions.**
     * #### **This library has 18 pre-defined functions.**
+    * #### **This library can be used in both C and C++.**
     * #### This header file is *cross-platform*, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (18/18) functions passed.*
 
-* # Functions Defined v:1.5.3
+* # Functions Defined v:1.6.0
 ```
 add(key, value)
 add(node<key, value> *)
