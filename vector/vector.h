@@ -1,14 +1,10 @@
-#ifndef __cplusplus
-
-#pragma once
-
 /**
  * This header file is written to create vectors in C, like we do in C++.
  * Author: Tushar Chaurasia (https://github.com/Dark-CodeX/)
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.h" under "vector" directory
- * vector version: 1.5.3
+ * vector version: 1.5.4
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -32,10 +28,14 @@
  * SOFTWARE.
  */
 
+#ifndef __cplusplus
+
+#pragma once
+
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define vector_version "1.5.3"
+#define vector_version "1.5.4"
 
 /**
  * Appends `data` to `vec` at the end.
@@ -87,13 +87,13 @@
  * Clears `vec` (removes all the data). NOTE: if `v`'s elements are pointers then it will not be freed, you will have to free it.
  * @param vec vector
  */
-#define vector_clear(vec)                                               \
-    if (vec.init == true && vec.src)                                    \
-    {                                                                   \
-        free(vec.src);                                                  \
-        vec.capacity = 10;                                               \
-        vec.length = 0;                                                 \
-        vec.src = calloc(sizeof(vec._def[0]) * 10, sizeof(vec._def[0])); \
+#define vector_clear(vec)                          \
+    if (vec.init == true && vec.src)               \
+    {                                              \
+        free(vec.src);                             \
+        vec.capacity = 10;                         \
+        vec.length = 0;                            \
+        vec.src = calloc(10, sizeof(vec._def[0])); \
     }
 
 /**
@@ -190,7 +190,7 @@
     if (vec.init == true && vec.src && vec2.init == true && vec2.src && sizeof(vec._def[0]) == sizeof(vec2._def[0])) \
     {                                                                                                                \
         free(vec2.src);                                                                                              \
-        vec2.src = calloc(sizeof(vec2._def[0]) * vec.length, sizeof(vec2._def[0]));                                  \
+        vec2.src = calloc(vec.length, sizeof(vec2._def[0]));                                                         \
         for (size_t i = 0; i < vec.length; i++)                                                                      \
             vec2.src[vec2.length++] = vec.src[i];                                                                    \
     }
@@ -252,18 +252,18 @@
  * @param var_name vector name or variable name
  * @param type data type eg. int, char *, long, float or even a struct
  */
-#define vector(var_name, type)                                                     \
-    struct var_name                                                                \
-    {                                                                              \
-        type *src;                                                                 \
-        size_t length;                                                             \
-        size_t capacity;                                                           \
-        int init;                                                                  \
-        type _def[1];                                                              \
-    } var_name;                                                                    \
-    var_name.capacity = 10;                                                         \
-    var_name.src = (type *)calloc(sizeof(type) * var_name.capacity, sizeof(type)); \
-    var_name.length = 0;                                                           \
+#define vector(var_name, type)                                      \
+    struct var_name                                                 \
+    {                                                               \
+        type *src;                                                  \
+        size_t length;                                              \
+        size_t capacity;                                            \
+        int init;                                                   \
+        type _def[1];                                               \
+    } var_name;                                                     \
+    var_name.capacity = 10;                                         \
+    var_name.src = (type *)calloc(var_name.capacity, sizeof(type)); \
+    var_name.length = 0;                                            \
     var_name.init = true;
 
 #endif
