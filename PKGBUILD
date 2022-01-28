@@ -1,5 +1,5 @@
 pkgname="openutils-vector"
-pkgver="1.5.3"
+pkgver="1.5.4"
 pkgrel="4"
 pkgdesc="Vectors in C language."
 arch=("x86_64" "i686")
@@ -7,7 +7,7 @@ conflicts=('openutils-vector')
 depends=(gcc)
 license=("MIT")
 source=("https://raw.githubusercontent.com/Dark-CodeX/vector/main/vector/vector.h" "https://raw.githubusercontent.com/Dark-CodeX/vector/main/vector/vector.hh")
-sha512sums=("b2f8b649d73ca6eb61e4ff3dc445575f89d9a96bb4b9b36e4b53dde884909763ee3c750187a6c71d569e8af6f82ec71827601f9d150b83dddaa09f2d39abbedd" "68c1c9a67d1ecdb8fece516fd71c3e058b8e87fcad5c984607349b22f623d24a8967120992a89eeb37d87e99721355b8867986d253fd80a9abe9c288e8b9cbb5")
+sha512sums=("c0f12375ed15f6bfb2a1940821b5117b2d7686b06c7cdc8bac55ee67cbc86e419ee8721c13ab4de8814e3e30e042de805e72b28c6ff28b0a3b51945fbad6d1a8" "b7876b50e3427aa5845bcaa97f651697a7c868918762d9319c1ec7f8d5098e12a87d450933990833b2f295d8e50df0534cebbe5afe35f4e755727b423626712b")
 
 package() {
   echo "Vectors in C language."
