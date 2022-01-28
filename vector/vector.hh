@@ -1,14 +1,10 @@
-#ifdef __cplusplus
-
-#pragma once
-
 /**
  * This header file is written to create vectors in C++.
  * Author: Tushar Chaurasia (https://github.com/Dark-CodeX/)
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 1.5.3
+ * vector version: 1.5.4
  * MIT License
  *
  * Copyright (c) 2021 Tushar Chaurasia
@@ -32,6 +28,10 @@
  * SOFTWARE.
  */
 
+#ifdef __cplusplus
+
+#pragma once
+
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #include <utility>
 #include <functional>
@@ -42,7 +42,7 @@
 
 #include <initializer_list>
 
-#define vector_t_version "1.5.3"
+#define vector_t_version "1.5.4"
 
 namespace openutils
 {
