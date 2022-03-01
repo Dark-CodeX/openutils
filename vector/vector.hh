@@ -4,10 +4,10 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 1.5.4
+ * vector version: 1.5.5
  * MIT License
  *
- * Copyright (c) 2021 Tushar Chaurasia
+ * Copyright (c) 2022 Tushar Chaurasia
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,7 @@
 
 #include <initializer_list>
 
-#define vector_t_version "1.5.4"
+#define vector_t_version "1.5.5"
 
 namespace openutils
 {
@@ -93,7 +93,8 @@ namespace openutils
         iter reverse_iterator() const;
 
         void operator=(const vector_t &data);
-        T &operator[](const std::size_t nth) const;
+        T operator[](const std::size_t nth) const;
+        T &operator[](const std::size_t nth);
         bool operator==(const vector_t &vec) const;
         bool operator!=(const vector_t &vec) const;
         vector_t &operator=(const vector_t &&__s) noexcept;
@@ -430,7 +431,16 @@ namespace openutils
     }
 
     template <typename T>
-    T &vector_t<T>::operator[](const std::size_t nth) const
+    T vector_t<T>::operator[](const std::size_t nth) const
+    {
+        if (nth < this->len)
+            return this->vec_data[nth];
+        static T __t[1] = {};
+        return (T &)__t[0];
+    }
+
+    template <typename T>
+    T &vector_t<T>::operator[](const std::size_t nth)
     {
         if (nth < this->len)
             return this->vec_data[nth];
