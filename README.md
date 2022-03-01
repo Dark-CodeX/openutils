@@ -98,7 +98,7 @@ resize
 hash
 ```
 * # BUILD
-    * #### **For testing use:** *`gcc -g -W -Wall -Wextra -Wuninitialized -Wstrict-aliasing -ggdb3 -std=c17 -Wextra -pedantic -Wmissing-prototypes -Wstrict-prototypes -Wold-style-definition samples/test.c -lm -o test` **and then** `valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt ./test "Hello World Hello!123"`*
+    * #### **For testing use:** *`gcc -g -W -Wall -Wextra -Wuninitialized -Wstrict-aliasing -ggdb3 -std=c17 -Wextra -pedantic -Wmissing-prototypes -Wstrict-prototypes -Wold-style-definition samples/main.c -lm -o main` **and then** `valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt ./main "Hello World Hello!123"`*
 * # Installation
     * #### To install on *arch linux* use **`PKGBUILD`**.
     * #### To install on **any Operating System** use:
