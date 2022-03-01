@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/map.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "map.hh" under "map" directory
- * map version: 1.6.0
+ * map version: 1.6.1
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -42,6 +42,8 @@
 #endif
 
 #include <initializer_list>
+
+#define map_t_version "1.6.1"
 
 namespace openutils
 {
@@ -127,8 +129,12 @@ namespace openutils
 
         void operator=(const map_t &other);
         map_t &operator=(map_t &&other);
-        VALUE &operator[](KEY &&key) const;
-        VALUE &operator[](const KEY &key) const;
+
+        VALUE operator[](KEY &&key) const;
+        VALUE operator[](const KEY &key) const;
+        VALUE &operator[](KEY &&key);
+        VALUE &operator[](const KEY &key);
+
         bool operator==(const map_t &other) const;
         bool operator!=(const map_t &other) const;
         bool operator+=(std::pair<KEY, VALUE> pair);
@@ -553,7 +559,7 @@ namespace openutils
     }
 
     template <typename KEY, typename VALUE>
-    VALUE &map_t<KEY, VALUE>::operator[](KEY &&key) const
+    VALUE map_t<KEY, VALUE>::operator[](KEY &&key) const
     {
         std::size_t hash = this->get_hash(key, this->cap);
         node_t<KEY, VALUE> *cur = this->table[hash];
@@ -568,7 +574,37 @@ namespace openutils
     }
 
     template <typename KEY, typename VALUE>
-    VALUE &map_t<KEY, VALUE>::operator[](const KEY &key) const
+    VALUE map_t<KEY, VALUE>::operator[](const KEY &key) const
+    {
+        std::size_t hash = this->get_hash(key, this->cap);
+        node_t<KEY, VALUE> *cur = this->table[hash];
+        while (cur != nullptr)
+        {
+            if (this->equal(cur->key, key))
+                return cur->value;
+            cur = cur->next;
+        }
+        static VALUE __t[1] = {};
+        return (VALUE &)__t[0];
+    }
+
+    template <typename KEY, typename VALUE>
+    VALUE &map_t<KEY, VALUE>::operator[](KEY &&key)
+    {
+        std::size_t hash = this->get_hash(key, this->cap);
+        node_t<KEY, VALUE> *cur = this->table[hash];
+        while (cur != nullptr)
+        {
+            if (this->equal(cur->key, key))
+                return cur->value;
+            cur = cur->next;
+        }
+        static VALUE __t[1] = {};
+        return (VALUE &)__t[0];
+    }
+
+    template <typename KEY, typename VALUE>
+    VALUE &map_t<KEY, VALUE>::operator[](const KEY &key)
     {
         std::size_t hash = this->get_hash(key, this->cap);
         node_t<KEY, VALUE> *cur = this->table[hash];
