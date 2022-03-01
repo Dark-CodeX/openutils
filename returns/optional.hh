@@ -7,7 +7,7 @@
  * returns version: 1.0.0
  * MIT License
  *
- * Copyright (c) 2021 Tushar Chaurasia
+ * Copyright (c) 2022 Tushar Chaurasia
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
