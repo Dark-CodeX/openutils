@@ -2,8 +2,8 @@
     * #### **Safe string in C/C++. With huge amount of in-built functions.**
     * #### This sstring struct is memory safe means that it will not cause memory leak.
     * #### **This library have most of the functions of a high level language and some functions are not even defined in high level language like `entropy`, `to_binary`, `to_hexadecimal`, `parse`, `encrypt`, `distance` and *even more*.**
-    * #### **This library has 88 pre-defined functions.**
-    * #### This header file is *cross-platform*, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (88/88) functions passed.*
+    * #### **This library has 89 pre-defined functions.**
+    * #### This header file is *cross-platform*, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (89/89) functions passed.*
     * #### Documents are in the header(`"sstring/sstring.h"`) file itself. Be sure to suggest any changes.
 * # Functions Defined v:1.5.7
 ```
@@ -25,6 +25,7 @@ empty
 replace_char
 char_set
 char_get
+last_index_of
 length
 compare
 compare_upto
