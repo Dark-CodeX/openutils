@@ -1,13 +1,13 @@
 /**
  * This header file is written to manage string data safely under C++ programming language.
  * Author: Tushar Chaurasia (https://github.com/Dark-CodeX/)
- * Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
+ * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
- * File: "sstring.h" under "sstring" directory
+ * File: "sstring.hh" under "sstring" directory
  * sstring: version 1.5.7
  * MIT License
  *
- * Copyright (c) 2021 Tushar Chaurasia
+ * Copyright (c) 2022 Tushar Chaurasia
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -89,11 +89,8 @@ namespace std
 
 namespace openutils
 {
-    /** sstring class for storing 1D array chars */
     class sstring;
-    /** parse_t class for storing 2D array of tokens */
     class parse_t;
-    /** split_t class for storing 2D array of splitted strings */
     class split_t;
 
     /**
@@ -103,20 +100,7 @@ namespace openutils
      * @param size where to append `src`
      */
     void fast_strncat(char *dest, const char *src, std::size_t &size);
-
-    /**
-     * Converts escape sequences to their representable strings (as const).
-     * @param c escape sequence of the character
-     * @returns representable string of escape sequences, if `c` is not an escape sequence then NUL is returned
-     */
     const char *char_to_esc_seq(char c);
-
-    /**
-     * Converts strings to their respective escape sequences, if possible.
-     * To get escape sequence as (char) use `char c = *esc_seq_to_char_ptr("\\n");`
-     * @param c string
-     * @returns escape sequence of `c`, otherwise returns `c`
-     */
     const char *esc_seq_to_char_ptr(const char *c);
     int strcmp_void(const void *a1, const void *a2);
     int compare_chars(const void *c1, const void *c2);
@@ -172,7 +156,7 @@ namespace openutils
         bool contains(const char *str) const;
         std::size_t contains_char(const char c) const;
         void to_set();
-        bool copy(sstring &dest);
+        bool copy(sstring &dest) const;
         void to_hexadecimal();
         bool from_hexadecimal();
         std::size_t find(const char *sub) const;
@@ -192,7 +176,7 @@ namespace openutils
         sstring soundex() const;
         sstring most_used(const char *dl) const;
         char most_used_char() const;
-        split_t split(const char *str);
+        split_t split(const char *str) const;
         void sort();
         std::size_t open_binary(const char *location);
         bool save_binary(const char *location, std::size_t len) const;
@@ -213,16 +197,17 @@ namespace openutils
         bool insert(const char *src, std::size_t index);
         bool starts_with(const char *src) const;
         bool ends_with(const char *src) const;
-        parse_t parse();
-        bool from_parse_t(parse_t toks);
+        parse_t parse() const;
+        bool from_parse_t(const parse_t &toks);
         bool set_formatted(std::size_t buffer_length, const char *__format__, ...);
         bool append_formatted(std::size_t buffer_length, const char *__format__, ...);
         bool resize(std::size_t new_len);
         std::size_t hash() const;
         char operator[](std::size_t n) const;
-        sstring operator+(const sstring &str);
-        sstring operator+(const char str);
-        sstring operator+(const char *str);
+        char &operator[](std::size_t n);
+        sstring operator+(const sstring &str) const;
+        sstring operator+(const char c) const;
+        sstring operator+(const char *str) const;
         void operator+=(const sstring &str);
         void operator+=(const char str);
         void operator+=(const char *str);
@@ -318,14 +303,14 @@ namespace openutils
     {
         if (src)
         {
-            this->src = (char *)std::calloc(sizeof(char) * (std::strlen(src) + 1), sizeof(char));
+            this->src = (char *)std::calloc(std::strlen(src) + 1, sizeof(char));
             std::size_t l = 0;
             fast_strncat(this->src, src, l);
             this->len = l;
         }
         else
         {
-            this->src = (char *)std::calloc(sizeof(char) * (alloc_size + 1), sizeof(char));
+            this->src = (char *)std::calloc(alloc_size + 1, sizeof(char));
             this->len = 0;
         }
     }
@@ -354,7 +339,7 @@ namespace openutils
 
     sstring::sstring(std::initializer_list<sstring> list)
     {
-        this->src = (char *)std::calloc(sizeof(char) * 1, sizeof(char));
+        this->src = (char *)std::calloc(2, sizeof(char));
         this->len = 0;
         for (std::initializer_list<sstring>::const_iterator i = list.begin(); i != list.end(); i++)
             this->append(i->c_str());
@@ -362,7 +347,7 @@ namespace openutils
 
     sstring::sstring(std::initializer_list<const char *> list)
     {
-        this->src = (char *)std::calloc(sizeof(char) * 1, sizeof(char));
+        this->src = (char *)std::calloc(2, sizeof(char));
         this->len = 0;
         for (std::initializer_list<const char *>::const_iterator i = list.begin(); i != list.end(); i++)
             this->append(*i);
@@ -370,7 +355,7 @@ namespace openutils
 
     sstring::sstring(const char c)
     {
-        this->src = (char *)std::calloc(sizeof(char) * 1, sizeof(char));
+        this->src = (char *)std::calloc(2, sizeof(char));
         this->len = 0;
         this->set_char(c);
     }
@@ -381,7 +366,7 @@ namespace openutils
         {
             std::free(this->src);
             std::size_t len = std::strlen(src);
-            this->src = (char *)std::calloc(sizeof(char) * (len + 1), sizeof(char));
+            this->src = (char *)std::calloc(len + 1, sizeof(char));
             std::strcpy(this->src, src);
             this->len = len;
         }
@@ -392,7 +377,7 @@ namespace openutils
         if (c != '\0')
         {
             std::free(this->src);
-            this->src = (char *)std::calloc(sizeof(char) * 2, sizeof(char));
+            this->src = (char *)std::calloc(2, sizeof(char));
             std::strncpy(this->src, &c, 1);
             this->len = 1;
         }
@@ -404,7 +389,7 @@ namespace openutils
         if (src && N <= (l = std::strlen(src)))
         {
             std::free(this->src);
-            this->src = (char *)std::calloc(sizeof(char) * (N + 1), sizeof(char));
+            this->src = (char *)std::calloc(N + 1, sizeof(char));
             std::strncpy(this->src, src, N);
             this->len = N;
         }
@@ -414,12 +399,12 @@ namespace openutils
     {
         if (len > 0)
         {
-            char *buff = (char *)std::calloc(sizeof(char) * (len + 1), sizeof(char));
+            char *buff = (char *)std::calloc(len + 1, sizeof(char));
             // random ascii character betweem 32 and 126, inclusive
             for (std::size_t i = 0; i < len; i++)
                 buff[i] = (rand() % (126 - 32 + 1)) + 32;
             std::free(this->src);
-            this->src = (char *)std::calloc((sizeof(char) * len) + 1, sizeof(char));
+            this->src = (char *)std::calloc(len + 1, sizeof(char));
             std::strcpy(this->src, (const char *)buff);
             std::free(buff);
             this->len = len;
@@ -442,7 +427,7 @@ namespace openutils
             }
             if (char_between != '\0')
                 cnt_t += len + 1;
-            char *buff = (char *)std::calloc((sizeof(char) * cnt_t) + 1, sizeof(char)), bw[3] = "\0\0";
+            char *buff = (char *)std::calloc(cnt_t + 1, sizeof(char)), bw[3] = "\0\0";
             std::size_t track = 0;
             for (std::size_t i = from; i < till; i++)
             {
@@ -451,7 +436,7 @@ namespace openutils
                     fast_strncat(buff, (const char *)bw, track);
             }
             std::free(this->src);
-            this->src = (char *)std::calloc(sizeof(char) * (track + 1), sizeof(char));
+            this->src = (char *)std::calloc(track + 1, sizeof(char));
             std::strcpy(this->src, (const char *)buff);
             this->len = track;
             std::free(buff);
@@ -473,7 +458,7 @@ namespace openutils
             if ((len = this->len) == 0) // string is empty
             {
                 std::free(this->src);
-                this->src = (char *)std::calloc(sizeof(char) * (l + 1), sizeof(char));
+                this->src = (char *)std::calloc(l + 1, sizeof(char));
                 std::strcpy(this->src, src);
                 this->len = l;
             }
@@ -494,7 +479,7 @@ namespace openutils
             if ((len = this->len) == 0)
             {
                 std::free(this->src);
-                this->src = (char *)std::calloc(sizeof(char) * 2, sizeof(char));
+                this->src = (char *)std::calloc(2, sizeof(char));
                 std::strncpy(this->src, &c, 1);
                 this->len = 1;
             }
@@ -517,15 +502,15 @@ namespace openutils
             std::size_t len = 0;
             if ((len = this->len) == 0) // string is empty
             {
-                std::free(this->src); // used calloc in `init_str` function
-                this->src = (char *)std::calloc(sizeof(char) * (N + 1), sizeof(char));
+                std::free(this->src);
+                this->src = (char *)std::calloc(N + 1, sizeof(char));
                 std::strncpy(this->src, src, N); // copy `src` to `a`.
                 this->len = N;
             }
             else
             {
                 this->src = (char *)std::realloc(this->src, sizeof(char) * (N + len + 1));
-                char *buff = (char *)std::calloc(sizeof(char) * (N + 1), sizeof(char));
+                char *buff = (char *)std::calloc(N + 1, sizeof(char));
                 std::strncpy(buff, src, N);
                 fast_strncat(this->src, (const char *)buff, len);
                 std::free(buff);
@@ -541,19 +526,19 @@ namespace openutils
             std::size_t len = 0, l = std::strlen(src);
             if ((len = this->len) == 0) // string is empty
             {
-                std::free(this->src); // used calloc in `init_str` function
-                this->src = (char *)std::calloc(sizeof(char) * (l + 1), sizeof(char));
+                std::free(this->src);
+                this->src = (char *)std::calloc(l + 1, sizeof(char));
                 std::strcpy(this->src, src); // copy `src` to `a`.
                 this->len = l;
             }
             else
             {
-                char *buff = (char *)std::calloc(sizeof(char) * (l + len + 1), sizeof(char));
+                char *buff = (char *)std::calloc(l + len + 1, sizeof(char));
                 std::size_t track = 0;
                 fast_strncat(buff, src, track);
                 fast_strncat(buff, (const char *)this->src, track);
                 std::free(this->src);
-                this->src = (char *)std::calloc((sizeof(char) * track) + 1, sizeof(char));
+                this->src = (char *)std::calloc(track + 1, sizeof(char));
                 track = 0;
                 fast_strncat(this->src, (const char *)buff, track);
                 std::free(buff);
@@ -569,8 +554,8 @@ namespace openutils
             std::size_t len = 0;
             if ((len = this->len) == 0) // string is empty
             {
-                std::free(this->src); // used calloc in `init_str` function
-                this->src = (char *)std::calloc(sizeof(char) * 2, sizeof(char));
+                std::free(this->src);
+                this->src = (char *)std::calloc(2, sizeof(char));
                 std::strncpy(this->src, &c, 1); // copy `c` to `a`.
                 this->len = len + 1;
             }
@@ -579,11 +564,11 @@ namespace openutils
                 char ___c[3] = "\0\0";
                 ___c[0] = c;
                 std::size_t track = 0;
-                char *buff = (char *)std::calloc((sizeof(char) * 2) + (len + 1), sizeof(char));
+                char *buff = (char *)std::calloc(len + 1 + 2, sizeof(char));
                 fast_strncat(buff, (const char *)___c, track);
                 fast_strncat(buff, (const char *)this->src, track);
                 std::free(this->src);
-                this->src = (char *)std::calloc((sizeof(char) * track) + 1, sizeof(char));
+                this->src = (char *)std::calloc(track + 1, sizeof(char));
                 track = 0;
                 fast_strncat(this->src, (const char *)buff, track);
                 std::free(buff);
@@ -600,19 +585,19 @@ namespace openutils
             std::size_t len = 0;
             if ((len = this->len) == 0) // string is empty
             {
-                std::free(this->src); // used calloc in `init_str` function
-                this->src = (char *)std::calloc(sizeof(char) * (N + 1), sizeof(char));
+                std::free(this->src);
+                this->src = (char *)std::calloc(N + 1, sizeof(char));
                 std::strncpy(this->src, src, N); // copy `src` to `a`.
                 this->len = N;
             }
             else
             {
-                char *buff = (char *)std::calloc((sizeof(char) * (len + N + 1)), sizeof(char));
+                char *buff = (char *)std::calloc(len + N + 1, sizeof(char));
                 std::strncpy(buff, src, N);
                 std::size_t track = N;
                 fast_strncat(buff, (const char *)this->src, track);
                 std::free(this->src);
-                this->src = (char *)std::calloc((sizeof(char) * track) + 1, sizeof(char));
+                this->src = (char *)std::calloc(track + 1, sizeof(char));
                 track = 0;
                 fast_strncat(this->src, (const char *)buff, track);
                 std::free(buff);
@@ -638,7 +623,7 @@ namespace openutils
             if (char_between != '\0')
                 cnt_t += len + 1;
             std::size_t slen = this->len, track = 0;
-            char *buff = (char *)std::calloc((sizeof(char) * (cnt_t + slen + 1)), sizeof(char)), bw[3] = "\0\0";
+            char *buff = (char *)std::calloc(cnt_t + slen + 1, sizeof(char)), bw[3] = "\0\0";
             fast_strncat(buff, (const char *)this->src, track);
 
             if (slen > 0 && (bw[0] = char_between) != '\0')
@@ -650,7 +635,7 @@ namespace openutils
                     fast_strncat(buff, (const char *)bw, track);
             }
             std::free(this->src);
-            this->src = (char *)std::calloc(sizeof(char) * (track + 1), sizeof(char));
+            this->src = (char *)std::calloc(track + 1, sizeof(char));
             track = 0;
             fast_strncat(this->src, (const char *)buff, track);
             std::free(buff);
@@ -677,7 +662,7 @@ namespace openutils
             if (char_between != '\0')
                 cnt_t += len + 1;
             std::size_t slen = this->len, track = 0;
-            char *buff = (char *)std::calloc((sizeof(char) * (cnt_t + slen + 1)), sizeof(char)), bw[3] = "\0\0";
+            char *buff = (char *)std::calloc(cnt_t + slen + 1, sizeof(char)), bw[3] = "\0\0";
             for (std::size_t i = from; i < till; i++)
             {
                 fast_strncat(buff, src[i], track);
@@ -688,7 +673,7 @@ namespace openutils
                 fast_strncat(buff, (const char *)bw, track);
             fast_strncat(buff, (const char *)this->src, track);
             std::free(this->src);
-            this->src = (char *)calloc(sizeof(char) * (track + 1), sizeof(char));
+            this->src = (char *)calloc(track + 1, sizeof(char));
             track = 0;
             fast_strncat(this->src, (const char *)buff, track);
             std::free(buff);
@@ -789,7 +774,7 @@ namespace openutils
                     i += len_o - 1;
                 }
             }
-            char *buff = (char *)std::calloc(sizeof(char) * (i + count_old * (len_n - len_o) + 1), sizeof(char));
+            char *buff = (char *)std::calloc(i + count_old * (len_n - len_o) + 1, sizeof(char));
             i = 0;
             while (*temp)
             {
@@ -804,7 +789,7 @@ namespace openutils
                     buff[i++] = *temp++;
             }
             std::free(this->src);
-            this->src = (char *)std::calloc(sizeof(char) * (i + 1), sizeof(char));
+            this->src = (char *)std::calloc(i + 1, sizeof(char));
             this->len = i;
             i = 0;
             fast_strncat(this->src, (const char *)buff, i);
@@ -871,7 +856,7 @@ namespace openutils
     void sstring::clear()
     {
         std::free(this->src);
-        this->src = (char *)std::calloc(1 * sizeof(char), sizeof(char));
+        this->src = (char *)std::calloc(1, sizeof(char));
         this->len = 0;
     }
 
@@ -907,7 +892,7 @@ namespace openutils
     void sstring::to_binary()
     {
         std::size_t len = this->len, size = 0;
-        char *buff = (char *)std::calloc(((2 * (len * 8)) + 1) * sizeof(char), sizeof(char));
+        char *buff = (char *)std::calloc((2 * (len * 8)) + 1, sizeof(char));
         for (std::size_t i = 0; i < len; ++i)
         {
             fast_strncat(buff, binary_data[(std::size_t)this->src[i]], size);
@@ -915,7 +900,7 @@ namespace openutils
                 fast_strncat(buff, " ", size);
         }
         std::free(this->src);
-        this->src = (char *)std::calloc(sizeof(char) * (size + 1), sizeof(char));
+        this->src = (char *)std::calloc(size + 1, sizeof(char));
         size = 0;
         fast_strncat(this->src, (const char *)buff, size);
         this->len = size;
@@ -969,7 +954,7 @@ namespace openutils
             bin[j] = this->src[i];
         }
         std::free(this->src);
-        this->src = (char *)std::calloc(sizeof(char) * (z + 1), sizeof(char));
+        this->src = (char *)std::calloc(z + 1, sizeof(char));
         z = 0;
         fast_strncat(this->src, (const char *)buff, z);
         this->len = z;
@@ -982,8 +967,8 @@ namespace openutils
         std::size_t len = this->len;
         std::size_t cnt = 0, map_append = 0, o = 0;
         bool check = false;
-        char *map_char = (char *)std::calloc((sizeof(char) * (len + 1)), sizeof(char));
-        std::size_t *map_cnt = (std::size_t *)std::calloc((sizeof(std::size_t) * (len + 1)), sizeof(std::size_t));
+        char *map_char = (char *)std::calloc(len + 1, sizeof(char));
+        std::size_t *map_cnt = (std::size_t *)std::calloc(len + 1, sizeof(std::size_t));
         for (cnt = 0; cnt < len; cnt++)
         {
             check = false;
@@ -1040,7 +1025,7 @@ namespace openutils
         std::size_t len = this->len;
         std::size_t cnt = 0, map_append = 0, o = 0;
         bool check = false;
-        char *set_char = (char *)std::calloc((sizeof(char) * (len + 1)), sizeof(char));
+        char *set_char = (char *)std::calloc(len + 1, sizeof(char));
         for (cnt = 0; cnt < len; cnt++)
         {
             check = false;
@@ -1060,18 +1045,18 @@ namespace openutils
         }
         std::free(this->src);
         std::size_t set_len = std::strlen((const char *)set_char);
-        this->src = (char *)std::calloc(sizeof(char) * (set_len + 1), sizeof(char));
+        this->src = (char *)std::calloc(set_len + 1, sizeof(char));
         std::strcpy(this->src, (const char *)set_char);
         this->len = set_len;
         std::free(set_char);
     }
 
-    bool sstring::copy(sstring &dest)
+    bool sstring::copy(sstring &dest) const
     {
         if (dest.src)
         {
             std::free(dest.src);
-            dest.src = (char *)std::calloc(sizeof(char) * (this->len + 1), sizeof(char));
+            dest.src = (char *)std::calloc(this->len + 1, sizeof(char));
             std::strcpy(dest.src, (const char *)this->src);
             dest.len = this->len;
             return true;
@@ -1081,7 +1066,7 @@ namespace openutils
 
     void sstring::to_hexadecimal()
     {
-        char *buff = (char *)std::calloc((sizeof(char) * this->len * 2) + 1, sizeof(char));
+        char *buff = (char *)std::calloc((this->len * 2) + 1, sizeof(char));
         std::size_t i = 0, j = 0;
         while (this->src[i] != '\0')
         {
@@ -1089,7 +1074,7 @@ namespace openutils
             i++, j += 2;
         }
         std::free(this->src);
-        this->src = (char *)std::calloc(sizeof(char) * (j + 1), sizeof(char));
+        this->src = (char *)std::calloc(j + 1, sizeof(char));
         j = 0;
         fast_strncat(this->src, (const char *)buff, j);
         this->len = j;
@@ -1153,7 +1138,7 @@ namespace openutils
             j++;
         }
         std::free(this->src);
-        this->src = (char *)std::calloc(sizeof(char) * (z + 1), sizeof(char));
+        this->src = (char *)std::calloc(z + 1, sizeof(char));
         z = 0;
         fast_strncat(this->src, (const char *)buff, z);
         this->len = z;
@@ -1174,7 +1159,7 @@ namespace openutils
 
     bool sstring::in(bool get_line, std::size_t buff_size)
     {
-        char *buff = (char *)std::calloc((sizeof(char) * buff_size + 1), sizeof(char));
+        char *buff = (char *)std::calloc(buff_size + 1, sizeof(char));
         std::size_t len_ = 0;
         if (get_line == false)
         {
@@ -1195,7 +1180,7 @@ namespace openutils
             }
         }
         std::free(this->src);
-        this->src = (char *)std::calloc((sizeof(char) * len_) + 1, sizeof(char));
+        this->src = (char *)std::calloc( len_ + 1, sizeof(char));
         std::strcpy(this->src, (const char *)buff);
         std::free(buff);
         this->len = len_;
@@ -1205,7 +1190,7 @@ namespace openutils
     sstring sstring::getline(std::size_t line) const
     {
         std::size_t len = this->len, cnt = 0;
-        char *temp = (char *)std::calloc((sizeof(char) * len) + 1, sizeof(char)), *tok;
+        char *temp = (char *)std::calloc(len + 1, sizeof(char)), *tok;
         std::strcpy(temp, this->src);
         tok = std::strtok(temp, "\n");
         while (tok)
@@ -1240,7 +1225,7 @@ namespace openutils
     {
         if (sub && sub[0] != '\0')
         {
-            char *buff = (char *)std::calloc((sizeof(char) * this->len) + 1, sizeof(char));
+            char *buff = (char *)std::calloc( this->len + 1, sizeof(char));
             std::strcpy(buff, (const char *)this->src);
             std::size_t len_s = std::strlen(sub), cnt = 0;
             {
@@ -1256,7 +1241,7 @@ namespace openutils
             }
             std::free(this->src);
             std::size_t len_buff = std::strlen((const char *)buff);
-            this->src = (char *)std::calloc((sizeof(char) * len_buff) + 1, sizeof(char));
+            this->src = (char *)std::calloc( len_buff + 1, sizeof(char));
             std::strcpy(this->src, (const char *)buff);
             std::free(buff);
             this->len = len_buff;
@@ -1269,7 +1254,7 @@ namespace openutils
     {
         if (c != '\0')
         {
-            char *buff = (char *)std::calloc((sizeof(char) * this->len) + 1, sizeof(char));
+            char *buff = (char *)std::calloc( this->len + 1, sizeof(char));
             std::size_t cnt = 0;
             for (std::size_t i = 0, k = 0; this->src[i] != '\0'; i++)
             {
@@ -1283,7 +1268,7 @@ namespace openutils
             }
             std::free(this->src);
             std::size_t buff_len = std::strlen((const char *)buff);
-            this->src = (char *)std::calloc((sizeof(char) * buff_len) + 1, sizeof(char));
+            this->src = (char *)std::calloc( buff_len + 1, sizeof(char));
             std::strcpy(this->src, (const char *)buff);
             std::free(buff);
             this->len = buff_len;
@@ -1296,7 +1281,7 @@ namespace openutils
     {
         if (c != '\0')
         {
-            char *buff = (char *)std::calloc((sizeof(char) * this->len) + 1, sizeof(char));
+            char *buff = (char *)std::calloc(this->len + 1, sizeof(char));
             std::size_t p = 0, i = 0, cnt = 0;
             while (this->src[p] != '\0')
             {
@@ -1312,7 +1297,7 @@ namespace openutils
             buff[i] = '\0';
             std::free(this->src);
             std::size_t buff_len = std::strlen((const char *)buff);
-            this->src = (char *)std::calloc((sizeof(char) * buff_len) + 1, sizeof(char));
+            this->src = (char *)std::calloc(buff_len + 1, sizeof(char));
             std::strcpy(this->src, (const char *)buff);
             std::free(buff);
             this->len = buff_len;
@@ -1326,7 +1311,7 @@ namespace openutils
         std::size_t len = this->len, cnt = 0;
         if (till > len || from > len || from > till)
             return cnt;
-        char *buff = (char *)std::calloc(sizeof(char) * (len - (till - from) + 1), sizeof(char));
+        char *buff = (char *)std::calloc((len - (till - from) + 1), sizeof(char));
         for (std::size_t i = 0, k = 0; i < len; i++)
         {
             if (i == from)
@@ -1342,7 +1327,7 @@ namespace openutils
         }
         std::free(this->src);
         std::size_t buff_len = std::strlen((const char *)buff);
-        this->src = (char *)std::calloc((sizeof(char) * buff_len) + 1, sizeof(char));
+        this->src = (char *)std::calloc( buff_len + 1, sizeof(char));
         std::strcpy(this->src, (const char *)buff);
         std::free(buff);
         this->len = buff_len;
@@ -1354,7 +1339,7 @@ namespace openutils
         std::size_t len = this->len;
         if (till > len || from > len || from > till)
             return false;
-        char *buff = (char *)std::calloc(sizeof(char) * ((till - from) + 1), sizeof(char));
+        char *buff = (char *)std::calloc(((till - from) + 1), sizeof(char));
         for (std::size_t i = from, k = 0; i < till; i++)
         {
             buff[k] = this->src[i];
@@ -1362,7 +1347,7 @@ namespace openutils
         }
         std::free(this->src);
         std::size_t buff_len = std::strlen((const char *)buff);
-        this->src = (char *)std::calloc((sizeof(char) * buff_len) + 1, sizeof(char));
+        this->src = (char *)std::calloc(buff_len + 1, sizeof(char));
         std::strcpy(this->src, (const char *)buff);
         std::free(buff);
         this->len = buff_len;
@@ -1392,7 +1377,7 @@ namespace openutils
         if (src)
         {
             std::size_t len1 = this->len, len2 = std::strlen(src), x, y, last, old;
-            std::size_t *cols = (std::size_t *)std::calloc(sizeof(std::size_t) * (len1 + 1), sizeof(std::size_t));
+            std::size_t *cols = (std::size_t *)std::calloc(len1 + 1, sizeof(std::size_t));
             for (y = 1; y <= len1; y++)
                 cols[y] = y;
             for (x = 1; x <= len2; x++)
@@ -1417,7 +1402,7 @@ namespace openutils
         if (src)
         {
             std::size_t len1 = this->len, len2 = std::strlen(src), x, y, last, old;
-            std::size_t *cols = (std::size_t *)std::calloc(sizeof(std::size_t) * (len1 + 1), sizeof(std::size_t));
+            std::size_t *cols = (std::size_t *)std::calloc(len1 + 1, sizeof(std::size_t));
             for (y = 1; y <= len1; y++)
                 cols[y] = y;
             for (x = 1; x <= len2; x++)
@@ -1516,16 +1501,16 @@ namespace openutils
         cnt = this->count(dl);
         if (cnt == 0)
             return sstring(nullptr);
-        char *temp = (char *)std::calloc((sizeof(char) * len) + 1, sizeof(char));
+        char *temp = (char *)std::calloc( len + 1, sizeof(char));
         std::strcpy(temp, this->src);
-        char **buff = (char **)std::calloc((sizeof(char *) * cnt) + sizeof(char *), sizeof(char *)), *tok = strtok(temp, dl);
+        char **buff = (char **)std::calloc(cnt + 1, sizeof(char *)), *tok = strtok(temp, dl);
         while (tok != nullptr)
         {
             buff[l] = tok;
             tok = std::strtok(nullptr, dl);
             l++;
         }
-        std::qsort(buff, l, sizeof(buff[0]), strcmp_void);
+        std::qsort(buff, l, sizeof(char *), strcmp_void);
         char *res = nullptr;
         std::size_t m = 0, curr = 0;
         for (std::size_t i = 0; i < l; i++)
@@ -1551,8 +1536,8 @@ namespace openutils
         std::size_t len = this->len;
         std::size_t cnt = 0, map_append = 0, o = 0;
         bool check = false;
-        char *map_char = (char *)std::calloc((sizeof(char) * (len + 1)), sizeof(char));
-        std::size_t *map_cnt = (std::size_t *)std::calloc((sizeof(std::size_t) * (len + 1)), sizeof(std::size_t));
+        char *map_char = (char *)std::calloc(len + 1, sizeof(char));
+        std::size_t *map_cnt = (std::size_t *)std::calloc(len + 1, sizeof(std::size_t));
         for (cnt = 0; cnt < len; cnt++)
         {
             check = false;
@@ -1588,12 +1573,12 @@ namespace openutils
         return c;
     }
 
-    split_t sstring::split(const char *str)
+    split_t sstring::split(const char *str) const
     {
         if (str && str[0] != '\0')
         {
             std::size_t len = this->len, cnt = 0;
-            char *temp = (char *)std::calloc((sizeof(char) * len) + 1, sizeof(char)), *tok;
+            char *temp = (char *)std::calloc(len + 1, sizeof(char)), *tok;
             std::strcpy(temp, this->src);
             tok = std::strtok(temp, str);
             while (tok)
@@ -1606,7 +1591,7 @@ namespace openutils
             std::free(temp);
             if (cnt == 0)
                 return split_t(0);
-            temp = (char *)std::calloc((sizeof(char) * len) + 1, sizeof(char));
+            temp = (char *)std::calloc( len + 1, sizeof(char));
             std::strcpy(temp, this->src);
             tok = std::strtok(temp, str);
             split_t x(cnt + 1);
@@ -1643,13 +1628,10 @@ namespace openutils
                 std::fseek(f, 0, SEEK_END);
                 std::size_t len = std::ftell(f);
                 std::fseek(f, 0, SEEK_SET);
-                unsigned char *_temp_ = (unsigned char *)std::calloc((sizeof(unsigned char) * len) + 1, sizeof(unsigned char));
                 std::free(this->src);
                 this->src = (char *)std::calloc(len + 1, sizeof(char));
-                std::fread(_temp_, len, sizeof(unsigned char), f);
-                std::memcpy(this->src, (const void *)_temp_, len);
+                std::fread(this->src, len, sizeof(char), f);
                 std::fclose(f);
-                std::free(_temp_);
                 return len;
             }
         }
@@ -1660,17 +1642,13 @@ namespace openutils
     {
         if (location)
         {
-            unsigned char *_temp_ = (unsigned char *)std::calloc((sizeof(unsigned char) * len) + 1, sizeof(unsigned char));
-            std::memcpy(_temp_, (const void *)this->src, len);
             std::FILE *f = std::fopen(location, "wb");
             if (f != nullptr)
             {
-                std::fwrite((unsigned char *)_temp_, len, sizeof(unsigned char), f);
+                std::fwrite(this->src, len, sizeof(char), f);
                 std::fclose(f);
-                std::free(_temp_);
                 return true;
             }
-            std::free(_temp_);
         }
         return false;
     }
@@ -1679,17 +1657,13 @@ namespace openutils
     {
         if (location)
         {
-            unsigned char *_temp_ = (unsigned char *)std::calloc((sizeof(unsigned char) * len) + 1, sizeof(unsigned char));
-            std::memcpy(_temp_, (const void *)this->src, len);
             std::FILE *f = std::fopen(location, "ab");
             if (f != nullptr)
             {
-                std::fwrite((unsigned char *)_temp_, len, sizeof(unsigned char), f);
+                std::fwrite(this->src, len, sizeof(char), f);
                 std::fclose(f);
-                std::free(_temp_);
                 return true;
             }
-            std::free(_temp_);
         }
         return false;
     }
@@ -1720,7 +1694,7 @@ namespace openutils
         {
             std::size_t len = this->len, val = std::hash<const char *>()(key) % 128;
             short add = true;
-            char *buff = (char *)std::calloc(sizeof(char) * (len + 1), sizeof(char));
+            char *buff = (char *)std::calloc(len + 1, sizeof(char));
             for (std::size_t i = 0; this->src[i] != '\0'; i++)
             {
                 if (add == true && this->src[i] + val > '\0')
@@ -1740,7 +1714,7 @@ namespace openutils
                 }
             }
             std::free(this->src);
-            this->src = (char *)std::calloc(sizeof(char) * (len + 1), sizeof(char));
+            this->src = (char *)std::calloc(len + 1, sizeof(char));
             len = 0;
             fast_strncat(this->src, (const char *)buff, len);
             this->len = len;
@@ -1756,7 +1730,7 @@ namespace openutils
         {
             std::size_t len = this->len, val = std::hash<const char *>()(key) % 128;
             short add_invr = true;
-            char *buff = (char *)std::calloc(sizeof(char) * (len + 1), sizeof(char));
+            char *buff = (char *)std::calloc(len + 1, sizeof(char));
             for (std::size_t i = 0; this->src[i] != '\0'; i++)
             {
                 if (add_invr == true && this->src[i] + val > '\0')
@@ -1776,7 +1750,7 @@ namespace openutils
                 }
             }
             std::free(this->src);
-            this->src = (char *)std::calloc(sizeof(char) * (len + 1), sizeof(char));
+            this->src = (char *)std::calloc(len + 1, sizeof(char));
             len = 0;
             fast_strncat(this->src, (const char *)buff, len);
             this->len = len;
@@ -1788,7 +1762,7 @@ namespace openutils
 
     std::size_t sstring::begin() const
     {
-        return 0ULL;
+        return 0;
     }
 
     std::size_t sstring::end() const
@@ -1801,7 +1775,7 @@ namespace openutils
         for (std::size_t i = 0; i < this->len; i++)
             if (!std::isdigit(this->src[i]) && !std::isalpha(this->src[i]) && this->src[i] != ' ')
                 return false;
-        char *buff = (char *)std::calloc((sizeof(char) * this->len * 8) + 1, sizeof(char));
+        char *buff = (char *)std::calloc((this->len * 8) + 1, sizeof(char));
         std::size_t track = 0;
         for (std::size_t i = 0; i < this->len; i++)
         {
@@ -1820,7 +1794,7 @@ namespace openutils
                 fast_strncat(buff, " ", track);
         }
         std::free(this->src);
-        this->src = (char *)std::calloc(sizeof(char) * (track + 1), sizeof(char));
+        this->src = (char *)std::calloc(track + 1, sizeof(char));
         track = 0;
         fast_strncat(this->src, (const char *)buff, track);
         std::free(buff);
@@ -1842,7 +1816,7 @@ namespace openutils
                 return false;
             }
         }
-        char *buff = (char *)std::calloc(sizeof(char) * (this->len + 1), sizeof(char)), *temp = (char *)std::calloc(sizeof(char) * 8, sizeof(char));
+        char *buff = (char *)std::calloc(this->len + 1, sizeof(char)), *temp = (char *)std::calloc(9, sizeof(char));
         std::size_t track = 0, x = 0;
         char arr[3] = "\0\0";
         for (std::size_t i = 0, k = 0; i < this->len; i++, k++)
@@ -1869,7 +1843,7 @@ namespace openutils
             temp[k] = this->src[i];
         }
         std::free(this->src);
-        this->src = (char *)std::calloc(sizeof(char) * (track + 1), sizeof(char));
+        this->src = (char *)std::calloc(track + 1, sizeof(char));
         track = 0;
         fast_strncat(this->src, (const char *)buff, track);
         std::free(buff);
@@ -2060,7 +2034,7 @@ namespace openutils
             return c;
     }
 
-    parse_t sstring::parse()
+    parse_t sstring::parse() const
     {
         std::size_t len = 0;
         for (std::size_t i = 0; i < this->len;)
@@ -2144,7 +2118,7 @@ namespace openutils
         return pt;
     }
 
-    bool sstring::from_parse_t(parse_t toks)
+    bool sstring::from_parse_t(const parse_t &toks)
     {
         if (toks.length() != 0)
         {
@@ -2152,7 +2126,7 @@ namespace openutils
             for (std::size_t i = 0; i < toks.length(); i++)
                 len += std::strlen(toks[i].c_str());
             std::free(this->src);
-            this->src = (char *)std::calloc(sizeof(char) * (len + 1), sizeof(char));
+            this->src = (char *)std::calloc(len + 1, sizeof(char));
             len = 0;
             for (std::size_t i = 0; i < toks.length(); i++)
                 fast_strncat(this->src, esc_seq_to_char_ptr(toks[i].c_str()), len);
@@ -2169,13 +2143,13 @@ namespace openutils
         std::size_t buff_l = std::strlen(__format__);
         if (buffer_length >= buff_l)
         {
-            char *buff = (char *)std::calloc(sizeof(char) * (buffer_length + 1), sizeof(char));
+            char *buff = (char *)std::calloc(buffer_length + 1, sizeof(char));
             std::va_list ar;
             va_start(ar, __format__);
             std::vsnprintf(buff, buffer_length, __format__, ar);
             va_end(ar);
             std::free(this->src);
-            this->src = (char *)std::calloc(sizeof(char) * (std::strlen((const char *)buff) + 1), sizeof(char));
+            this->src = (char *)std::calloc(std::strlen((const char *)buff) + 1, sizeof(char));
             std::size_t len = 0;
             fast_strncat(this->src, (const char *)buff, len);
             this->len = len;
@@ -2192,7 +2166,7 @@ namespace openutils
         std::size_t buff_l = strlen(__format__);
         if (buffer_length >= buff_l)
         {
-            char *buff = (char *)std::calloc(sizeof(char) * (buffer_length + 1), sizeof(char));
+            char *buff = (char *)std::calloc(buffer_length + 1, sizeof(char));
             std::va_list ar;
             va_start(ar, __format__);
             std::vsnprintf(buff, buffer_length, __format__, ar);
@@ -2236,24 +2210,33 @@ namespace openutils
     {
         if (this->len >= n)
             return this->src[n];
-        return (char)'\0';
+        static char x[1] = {};
+        return *x;
     }
 
-    sstring sstring::operator+(const sstring &str)
+    char &sstring::operator[](std::size_t n)
+    {
+        if (this->len >= n)
+            return this->src[n];
+        static char x[1] = {};
+        return *x;
+    }
+
+    sstring sstring::operator+(const sstring &str) const
     {
         sstring x = sstring(this->src);
         x.append(str.c_str());
         return x;
     }
 
-    sstring sstring::operator+(const char str)
+    sstring sstring::operator+(const char c) const
     {
         sstring x = sstring(this->src);
-        x.append_char(str);
+        x.append_char(c);
         return x;
     }
 
-    sstring sstring::operator+(const char *str)
+    sstring sstring::operator+(const char *str) const
     {
         sstring x = sstring(this->src);
         x.append(str);
@@ -2328,7 +2311,7 @@ namespace openutils
         {
             free(this->src);
             this->len = __s.len;
-            this->src = (char *)std::calloc(sizeof(char *) * this->len, sizeof(char *));
+            this->src = (char *)std::calloc(this->len, sizeof(char));
             std::size_t pos = 0;
             fast_strncat(this->src, __s.src, pos);
         }
@@ -2478,8 +2461,8 @@ namespace openutils
 
     parse_t::parse_t(std::size_t len)
     {
-        this->src = (char **)std::calloc(sizeof(char *) * len, sizeof(char *));
-        this->type = (enum parse_token *)std::calloc(sizeof(enum parse_token) * len, sizeof(enum parse_token));
+        this->src = (char **)std::calloc(len, sizeof(char *));
+        this->type = (enum parse_token *)std::calloc(len, sizeof(enum parse_token));
         this->len = 0;
         this->cap = len;
     }
@@ -2490,7 +2473,7 @@ namespace openutils
         {
             if (this->len > this->cap)
                 return false;
-            this->src[this->len] = (char *)std::calloc(sizeof(char) * (std::strlen(src) + 1), sizeof(char));
+            this->src[this->len] = (char *)std::calloc(std::strlen(src) + 1, sizeof(char));
             std::size_t l = 0;
             fast_strncat(this->src[this->len], src, l);
             this->type[this->len++] = type;
@@ -2547,11 +2530,11 @@ namespace openutils
             this->len = __pt.len;
             this->cap = __pt.cap;
 
-            this->src = (char **)std::calloc(sizeof(char *) * this->cap, sizeof(char *));
-            this->type = (enum parse_token *)std::calloc(sizeof(enum parse_token) * len, sizeof(enum parse_token));
+            this->src = (char **)std::calloc(this->cap, sizeof(char *));
+            this->type = (enum parse_token *)std::calloc(this->cap, sizeof(enum parse_token));
             for (std::size_t i = 0; i < this->len; i++)
             {
-                this->src[i] = (char *)std::calloc(sizeof(char) * (std::strlen(__pt.src[i]) + 1), sizeof(char));
+                this->src[i] = (char *)std::calloc(std::strlen(__pt.src[i]) + 1, sizeof(char));
                 std::size_t pos = 0; // temp variable note string length of `__st.src[i]` is only counted once because if we use `std::strcpy` it will also transverse through the string
                 fast_strncat(this->src[i], __pt.src[i], pos);
                 this->type[i] = __pt.type[i];
@@ -2572,7 +2555,7 @@ namespace openutils
 
     split_t::split_t(std::size_t len)
     {
-        this->src = (char **)std::calloc(sizeof(char *) * len, sizeof(char *));
+        this->src = (char **)std::calloc(len, sizeof(char *));
         this->len = 0;
         this->cap = len;
     }
@@ -2583,7 +2566,7 @@ namespace openutils
         {
             if (this->len > this->cap)
                 return false;
-            this->src[this->len] = (char *)std::calloc(sizeof(char) * (std::strlen(src) + 1), sizeof(char));
+            this->src[this->len] = (char *)std::calloc(std::strlen(src) + 1, sizeof(char));
             std::size_t l = 0;
             fast_strncat(this->src[this->len++], src, l);
             return true;
@@ -2628,10 +2611,10 @@ namespace openutils
             this->len = __st.len;
             this->cap = __st.cap;
 
-            this->src = (char **)std::calloc(sizeof(char *) * this->cap, sizeof(char *));
+            this->src = (char **)std::calloc(this->cap, sizeof(char *));
             for (std::size_t i = 0; i < this->len; i++)
             {
-                this->src[i] = (char *)std::calloc(sizeof(char) * (std::strlen(__st.src[i]) + 1), sizeof(char));
+                this->src[i] = (char *)std::calloc(std::strlen(__st.src[i]) + 1, sizeof(char));
                 std::size_t pos = 0; // temp variable note string length of `__st.src[i]` is only counted once because if we use `std::strcpy` it will also transverse through the string
                 fast_strncat(this->src[i], __st.src[i], pos);
             }
