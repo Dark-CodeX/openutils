@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/map.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "prototype_err.h" under "map" directory
-* map: version 1.6.0
+* map: version 1.6.1
 * 
 * MIT License
 * 
