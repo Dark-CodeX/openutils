@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 1.6.0
+ * sstring: version 1.6.1
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -34,7 +34,7 @@
 
 typedef struct __string__ sstring;
 
-#define sstring_version "1.6.0"
+#define sstring_version "1.6.1"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -2675,77 +2675,6 @@ int _sstring_format_escape_sequence(sstring *a)
     return false;
 }
 
-/**
- * Converts escape sequences to their representable strings (as const).
- * @param c escape sequence of the character
- * @returns representable string of escape sequences, if `c` is not an escape sequence then NUL is returned
- */
-const char *char_to_esc_seq(char c)
-{
-    if (c == '\\')
-        return (const char *)"\\\\";
-    else if (c == '\a')
-        return (const char *)"\\a";
-    else if (c == '\b')
-        return (const char *)"\\b";
-    else if (c == '\f')
-        return (const char *)"\\f";
-    else if (c == '\n')
-        return (const char *)"\\n";
-    else if (c == '\r')
-        return (const char *)"\\r";
-    else if (c == '\t')
-        return (const char *)"\\t";
-    else if (c == '\v')
-        return (const char *)"\\v";
-    else if (c == '\"')
-        return (const char *)"\\\"";
-    else if (c == '\'')
-        return (const char *)"\\\'";
-    else if (c == '\?')
-        return (const char *)"\\\?";
-    else if (c == '\0')
-        return (const char *)"\\0";
-    else
-        return (const char *)"\0";
-}
-
-/**
- * Converts strings to their respective escape sequences, if possible.
- * To get escape sequence as (char) use `char c = *esc_seq_to_char_ptr("\\n");`
- * @param c string
- * @returns escape sequence of `c`, otherwise returns `c`
- */
-const char *esc_seq_to_char_ptr(const char *c)
-{
-    if (strcmp(c, "\\\\") == 0)
-        return (const char *)"\\";
-    else if (strcmp(c, "\\a") == 0)
-        return (const char *)"\a";
-    else if (strcmp(c, "\\b") == 0)
-        return (const char *)"\b";
-    else if (strcmp(c, "\\f") == 0)
-        return (const char *)"\f";
-    else if (strcmp(c, "\\n") == 0)
-        return (const char *)"\n";
-    else if (strcmp(c, "\\r") == 0)
-        return (const char *)"\r";
-    else if (strcmp(c, "\\t") == 0)
-        return (const char *)"\t";
-    else if (strcmp(c, "\\v") == 0)
-        return (const char *)"\v";
-    else if (strcmp(c, "\\\"") == 0)
-        return (const char *)"\"";
-    else if (strcmp(c, "\\\'") == 0)
-        return (const char *)"\'";
-    else if (strcmp(c, "\\\?") == 0)
-        return (const char *)"\?";
-    else if (strcmp(c, "\\0") == 0)
-        return (const char *)"\0";
-    else
-        return c;
-}
-
 int _sstring_insert(sstring *a, const char *src, size_t index)
 {
     if (a && a->str.src && src && a->str.init == true && index <= a->str.len)
@@ -2872,7 +2801,7 @@ parse_t _sstring_parse(sstring *a)
                 while (a->str.src[i] == '\\' || a->str.src[i] == '\a' || a->str.src[i] == '\b' || a->str.src[i] == '\f' || a->str.src[i] == '\n' || a->str.src[i] == '\r' || a->str.src[i] == '\t' || a->str.src[i] == '\v' || a->str.src[i] == '\"' || a->str.src[i] == '\'' || a->str.src[i] == '\?')
                 {
                     _sstring_clear(&toks);
-                    _sstring_set(&toks, char_to_esc_seq(a->str.src[i++]));
+                    _sstring_set_char(&toks, a->str.src[i++]);
                     pt.src[sigma] = (char *)calloc(_sstring_end_sstring(&toks) + 1, sizeof(char));
                     track = 0;
                     fast_strncat(pt.src[sigma], _sstring_c_str(&toks), &track);
@@ -2896,9 +2825,9 @@ parse_t _sstring_parse(sstring *a)
                 return (parse_t){.src = (char **)NULL, .length = 0, .type = (enum parse_token *)NULL};
         }
         // append \0 as the end of file or string
-        pt.src[sigma] = (char *)calloc(4, sizeof(char));
+        pt.src[sigma] = (char *)calloc(1, sizeof(char));
         track = 0;
-        fast_strncat(pt.src[sigma], char_to_esc_seq('\0'), &track);
+        fast_strncat(pt.src[sigma], "\0", &track);
         pt.type[sigma++] = NULL_END;
         _sstring_destructor(&toks);
         pt.length = sigma;
@@ -2918,7 +2847,7 @@ int _sstring_from_parse_t(sstring *a, parse_t *toks)
         a->str.src = (char *)calloc(len + 1, sizeof(char));
         len = 0;
         for (size_t i = 0; i < toks->length; i++)
-            fast_strncat(a->str.src, esc_seq_to_char_ptr((const char *)toks->src[i]), &len);
+            fast_strncat(a->str.src, (const char *)toks->src[i], &len);
         a->str.len = len;
         return true;
     }

@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.hh" under "sstring" directory
- * sstring: version 1.6.0
+ * sstring: version 1.6.1
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -40,7 +40,7 @@
 #include "binary.h"
 #include "morse_code.h"
 
-#define sstring_version "1.6.0"
+#define sstring_version "1.6.1"
 
 namespace std
 {
@@ -100,8 +100,6 @@ namespace openutils
      * @param size where to append `src`
      */
     void fast_strncat(char *dest, const char *src, std::size_t &size);
-    const char *char_to_esc_seq(char c);
-    const char *esc_seq_to_char_ptr(const char *c);
     int strcmp_void(const void *a1, const void *a2);
     int compare_chars(const void *c1, const void *c2);
 
@@ -1986,66 +1984,6 @@ namespace openutils
         return false;
     }
 
-    const char *char_to_esc_seq(char c)
-    {
-        if (c == '\\')
-            return (const char *)"\\\\";
-        else if (c == '\a')
-            return (const char *)"\\a";
-        else if (c == '\b')
-            return (const char *)"\\b";
-        else if (c == '\f')
-            return (const char *)"\\f";
-        else if (c == '\n')
-            return (const char *)"\\n";
-        else if (c == '\r')
-            return (const char *)"\\r";
-        else if (c == '\t')
-            return (const char *)"\\t";
-        else if (c == '\v')
-            return (const char *)"\\v";
-        else if (c == '\"')
-            return (const char *)"\\\"";
-        else if (c == '\'')
-            return (const char *)"\\\'";
-        else if (c == '\?')
-            return (const char *)"\\\?";
-        else if (c == '\0')
-            return (const char *)"\\0";
-        else
-            return (const char *)"\0";
-    }
-
-    const char *esc_seq_to_char_ptr(const char *c)
-    {
-        if (std::strcmp(c, "\\\\") == 0)
-            return (const char *)"\\";
-        else if (std::strcmp(c, "\\a") == 0)
-            return (const char *)"\a";
-        else if (std::strcmp(c, "\\b") == 0)
-            return (const char *)"\b";
-        else if (std::strcmp(c, "\\f") == 0)
-            return (const char *)"\f";
-        else if (std::strcmp(c, "\\n") == 0)
-            return (const char *)"\n";
-        else if (std::strcmp(c, "\\r") == 0)
-            return (const char *)"\r";
-        else if (std::strcmp(c, "\\t") == 0)
-            return (const char *)"\t";
-        else if (std::strcmp(c, "\\v") == 0)
-            return (const char *)"\v";
-        else if (std::strcmp(c, "\\\"") == 0)
-            return (const char *)"\"";
-        else if (std::strcmp(c, "\\\'") == 0)
-            return (const char *)"\'";
-        else if (std::strcmp(c, "\\\?") == 0)
-            return (const char *)"\?";
-        else if (std::strcmp(c, "\\0") == 0)
-            return (const char *)"\0";
-        else
-            return c;
-    }
-
     parse_t sstring::parse() const
     {
         std::size_t len = 0;
@@ -2109,7 +2047,7 @@ namespace openutils
                 while (this->src[i] == '\\' || this->src[i] == '\a' || this->src[i] == '\b' || this->src[i] == '\f' || this->src[i] == '\n' || this->src[i] == '\r' || this->src[i] == '\t' || this->src[i] == '\v' || this->src[i] == '\"' || this->src[i] == '\'' || this->src[i] == '\?')
                 {
                     toks.clear();
-                    toks.set(char_to_esc_seq(this->src[i++]));
+                    toks.set_char(this->src[i++]);
                     pt.add(toks.c_str(), ESC_SEQ);
                 }
             }
@@ -2126,7 +2064,7 @@ namespace openutils
             else
                 return parse_t(0);
         }
-        pt.add(char_to_esc_seq('\0'), NULL_END);
+        pt.add(sstring('\0').c_str(), NULL_END);
         return pt;
     }
 
@@ -2141,7 +2079,7 @@ namespace openutils
             this->src = (char *)std::calloc(len + 1, sizeof(char));
             len = 0;
             for (std::size_t i = 0; i < toks.length(); i++)
-                fast_strncat(this->src, esc_seq_to_char_ptr(toks[i].c_str()), len);
+                fast_strncat(this->src, toks[i].c_str(), len);
             this->len = len;
             return true;
         }

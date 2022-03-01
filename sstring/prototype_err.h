@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "prototype_err.h" under "sstring" directory
-* sstring: version 1.6.0
+* sstring: version 1.6.1
 * 
 * MIT License
 * 
@@ -128,8 +128,6 @@ int __c_loop__iter_sstring(iter_sstring *is);
 
 int compare_chars(const void *c1, const void *c2);
 int strcmp_void(const void *a1, const void *a2);
-const char *char_to_esc_seq(char c);
-const char *esc_seq_to_char_ptr(const char *c);
 int free_parse(parse_t *a);
 int free_split(split_t *a);
 sstring new_sstring(size_t alloc_size, const char *src);
