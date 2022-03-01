@@ -273,6 +273,14 @@ struct __string__
     char (*char_get)(sstring *a, size_t where);
 
     /**
+     * Returns the index of `ch` from the ending of `a`.
+     * @param a pointer to struct sstring
+     * @param ch character to find
+     * @returns the index of `ch` if found, otherwise `nerr`
+     */
+    size_t (*last_index_of)(sstring *a, char ch);
+
+    /**
      * Returns length of `a` using `strlen` function, does not include the count of NUL(0).
      * @param a pointer to struct sstring
      * @returns length of `a`
@@ -846,7 +854,7 @@ void fast_strncat(char *dest, const char *src, size_t *size)
             *size += 1;
 }
 
-void _set(sstring *a, const char *src)
+void _sstring_set(sstring *a, const char *src)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
@@ -858,7 +866,7 @@ void _set(sstring *a, const char *src)
     }
 }
 
-void _set_char(sstring *a, const char c)
+void _sstring_set_char(sstring *a, const char c)
 {
     if (a && c != '\0' && a->str.init == true && a->str.src)
     {
@@ -869,7 +877,7 @@ void _set_char(sstring *a, const char c)
     }
 }
 
-void _set_upto(sstring *a, const char *src, size_t N)
+void _sstring_set_upto(sstring *a, const char *src, size_t N)
 {
     size_t l = 0;
     if (a && src && a->str.init == true && a->str.src && N <= (l = strlen(src)))
@@ -881,7 +889,7 @@ void _set_upto(sstring *a, const char *src, size_t N)
     }
 }
 
-void _set_random(sstring *a, const size_t len)
+void _sstring_set_random(sstring *a, const size_t len)
 {
     if (a && a->str.init == true && a->str.src && len > 0)
     {
@@ -897,7 +905,7 @@ void _set_random(sstring *a, const size_t len)
     }
 }
 
-void _set_array(sstring *a, const char **src, char char_between, size_t from, size_t till, size_t len)
+void _sstring_set_array(sstring *a, const char **src, char char_between, size_t from, size_t till, size_t len)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
@@ -942,14 +950,14 @@ void _set_array(sstring *a, const char **src, char char_between, size_t from, si
     }
 }
 
-char *_get(sstring *a)
+char *_sstring_get(sstring *a)
 {
     if (a && a->str.init == true && a->str.src)
         return a->str.src;
     return (char *)NULL;
 }
 
-void _append(sstring *a, const char *src)
+void _sstring_append(sstring *a, const char *src)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
@@ -970,7 +978,7 @@ void _append(sstring *a, const char *src)
     }
 }
 
-void _append_char(sstring *a, const char c)
+void _sstring_append_char(sstring *a, const char c)
 {
     if (a && c != '\0' && a->str.init == true && a->str.src)
     {
@@ -993,7 +1001,7 @@ void _append_char(sstring *a, const char c)
     }
 }
 
-void _append_upto(sstring *a, const char *src, size_t N)
+void _sstring_append_upto(sstring *a, const char *src, size_t N)
 {
     size_t l = 0;
     if (a && src && a->str.init == true && a->str.src && N <= (l = strlen(src)) && N != 0)
@@ -1018,7 +1026,7 @@ void _append_upto(sstring *a, const char *src, size_t N)
     }
 }
 
-void _append_start(sstring *a, const char *src)
+void _sstring_append_start(sstring *a, const char *src)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
@@ -1046,7 +1054,7 @@ void _append_start(sstring *a, const char *src)
     }
 }
 
-void _append_start_char(sstring *a, const char c)
+void _sstring_append_start_char(sstring *a, const char c)
 {
     if (a && c != '\0' && a->str.init == true && a->str.src)
     {
@@ -1076,7 +1084,7 @@ void _append_start_char(sstring *a, const char c)
     }
 }
 
-void _append_start_upto(sstring *a, const char *src, size_t N)
+void _sstring_append_start_upto(sstring *a, const char *src, size_t N)
 {
     size_t l = 0;
     if (a && src && a->str.init == true && a->str.src && N <= (l = strlen(src)) && N != 0)
@@ -1105,7 +1113,7 @@ void _append_start_upto(sstring *a, const char *src, size_t N)
     }
 }
 
-void _append_array(sstring *a, const char **src, char char_between, size_t from, size_t till, size_t len)
+void _sstring_append_array(sstring *a, const char **src, char char_between, size_t from, size_t till, size_t len)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
@@ -1155,7 +1163,7 @@ void _append_array(sstring *a, const char **src, char char_between, size_t from,
     }
 }
 
-void _append_start_array(sstring *a, const char **src, char char_between, size_t from, size_t till, size_t len)
+void _sstring_append_start_array(sstring *a, const char **src, char char_between, size_t from, size_t till, size_t len)
 {
     if (a && src && a->str.init == true && a->str.src)
     {
@@ -1204,7 +1212,7 @@ void _append_start_array(sstring *a, const char **src, char char_between, size_t
     }
 }
 
-int _empty(sstring *a)
+int _sstring_empty(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
         if (a->str.len == 0)
@@ -1212,7 +1220,7 @@ int _empty(sstring *a)
     return false;
 }
 
-void _replace_char(sstring *a, const char old, const char new_)
+void _sstring_replace_char(sstring *a, const char old, const char new_)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1222,7 +1230,7 @@ void _replace_char(sstring *a, const char old, const char new_)
     }
 }
 
-void _char_set(sstring *a, const char what, size_t where)
+void _sstring_char_set(sstring *a, const char what, size_t where)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1231,7 +1239,7 @@ void _char_set(sstring *a, const char what, size_t where)
     }
 }
 
-char _char_get(sstring *a, size_t where)
+char _sstring_char_get(sstring *a, size_t where)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1241,14 +1249,25 @@ char _char_get(sstring *a, size_t where)
     return (char)'\0';
 }
 
-size_t _length(sstring *a)
+size_t _sstring_last_index_of(sstring *a, char ch)
+{
+    if (a && a->str.src && a->str.init == true && ch != '\0')
+    {
+        for (size_t i = a->str.len - 1; i != -1; i--)
+            if (a->str.src[i] == ch)
+                return i;
+    }
+    return (size_t)-1;
+}
+
+size_t _sstring_length(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
         return strlen((const char *)a->str.src);
     return (size_t)0;
 }
 
-int _compare(sstring *a, const char *T1)
+int _sstring_compare(sstring *a, const char *T1)
 {
     if (a && T1 && a->str.init == true && a->str.src)
     {
@@ -1258,7 +1277,7 @@ int _compare(sstring *a, const char *T1)
     return false;
 }
 
-int _compare_upto(sstring *a, const char *T1, size_t N)
+int _sstring_compare_upto(sstring *a, const char *T1, size_t N)
 {
     if (a && T1 && a->str.init == true && a->str.src && strlen(T1) >= N)
     {
@@ -1268,7 +1287,7 @@ int _compare_upto(sstring *a, const char *T1, size_t N)
     return false;
 }
 
-void _print(sstring *a, int add_next_line, const char *__format__, ...)
+void _sstring_print(sstring *a, int add_next_line, const char *__format__, ...)
 {
     if (a && __format__ && a->str.init == true && a->str.src)
     {
@@ -1297,7 +1316,7 @@ void _print(sstring *a, int add_next_line, const char *__format__, ...)
     }
 }
 
-void _replace(sstring *a, const char *old, const char *new_)
+void _sstring_replace(sstring *a, const char *old, const char *new_)
 {
     if (a && old && new_ && a->str.init == true && a->str.src)
     {
@@ -1334,7 +1353,7 @@ void _replace(sstring *a, const char *old, const char *new_)
     }
 }
 
-int _destructor(sstring *a)
+int _sstring_destructor(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1346,14 +1365,14 @@ int _destructor(sstring *a)
     return false;
 }
 
-const char *_c_str(sstring *a)
+const char *_sstring_c_str(sstring *a)
 {
     if (a && a->str.init == true && a->str.src)
         return (const char *)a->str.src;
     return (const char *)NULL;
 }
 
-int _save(sstring *a, const char *location)
+int _sstring_save(sstring *a, const char *location)
 {
     if (a && a->str.src && location && a->str.init == true)
     {
@@ -1368,7 +1387,7 @@ int _save(sstring *a, const char *location)
     return false;
 }
 
-int _append_file(sstring *a, const char *location)
+int _sstring_append_file(sstring *a, const char *location)
 {
     if (a && a->str.src && location && a->str.init == true)
     {
@@ -1383,7 +1402,7 @@ int _append_file(sstring *a, const char *location)
     return false;
 }
 
-int _open(sstring *a, const char *location)
+int _sstring_open(sstring *a, const char *location)
 {
     if (a && location && a->str.init == true)
     {
@@ -1404,7 +1423,7 @@ int _open(sstring *a, const char *location)
     return false;
 }
 
-int _clear(sstring *a)
+int _sstring_clear(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1417,7 +1436,7 @@ int _clear(sstring *a)
     return false;
 }
 
-void _to_upper(sstring *a)
+void _sstring_to_upper(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1429,7 +1448,7 @@ void _to_upper(sstring *a)
     }
 }
 
-void _to_lower(sstring *a)
+void _sstring_to_lower(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1441,7 +1460,7 @@ void _to_lower(sstring *a)
     }
 }
 
-void _swap_case(sstring *a)
+void _sstring_swap_case(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1455,7 +1474,7 @@ void _swap_case(sstring *a)
     }
 }
 
-int _is_initialized(sstring *a)
+int _sstring_is_initialized(sstring *a)
 {
     if (a)
         if (a->str.init == true)
@@ -1465,7 +1484,7 @@ int _is_initialized(sstring *a)
 
 #include "binary.h"
 
-void _to_binary(sstring *a)
+void _sstring_to_binary(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1486,7 +1505,7 @@ void _to_binary(sstring *a)
     }
 }
 
-int _from_binary(sstring *a)
+int _sstring_from_binary(sstring *a)
 {
     int valid = true;
     if (a && a->str.src && a->str.init == true)
@@ -1558,7 +1577,7 @@ int _from_binary(sstring *a)
     return valid;
 }
 
-long double _entropy(sstring *a)
+long double _sstring_entropy(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1601,7 +1620,7 @@ long double _entropy(sstring *a)
     return 0.0f;
 }
 
-int _contains(sstring *a, const char *str)
+int _sstring_contains(sstring *a, const char *str)
 {
     if (a && a->str.src && a->str.init == true && str)
         if (strstr((const char *)a->str.src, str) != NULL)
@@ -1609,7 +1628,7 @@ int _contains(sstring *a, const char *str)
     return false;
 }
 
-size_t _contains_char(sstring *a, const char c)
+size_t _sstring_contains_char(sstring *a, const char c)
 {
     if (a && a->str.src && a->str.init == true && c != '\0')
     {
@@ -1620,7 +1639,7 @@ size_t _contains_char(sstring *a, const char c)
     return (size_t)-1;
 }
 
-void _to_set(sstring *a)
+void _sstring_to_set(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1654,7 +1673,7 @@ void _to_set(sstring *a)
     }
 }
 
-int _copy(sstring *a, sstring *dest)
+int _sstring_copy(sstring *a, sstring *dest)
 {
     if (a && dest && dest->str.src && dest->str.init == true && a->str.src && a->str.init == true)
     {
@@ -1667,7 +1686,7 @@ int _copy(sstring *a, sstring *dest)
     return false;
 }
 
-void _to_hexadecimal(sstring *a)
+void _sstring_to_hexadecimal(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1687,7 +1706,7 @@ void _to_hexadecimal(sstring *a)
     }
 }
 
-int _from_hexadecimal(sstring *a)
+int _sstring_from_hexadecimal(sstring *a)
 {
     int valid = true;
     if (a && a->str.src && a->str.init == true)
@@ -1763,7 +1782,7 @@ int _from_hexadecimal(sstring *a)
     return valid;
 }
 
-size_t _find(sstring *a, const char *sub)
+size_t _sstring_find(sstring *a, const char *sub)
 {
     if (a && a->str.src && a->str.init == true && sub)
     {
@@ -1779,7 +1798,7 @@ size_t _find(sstring *a, const char *sub)
     return (size_t)-1;
 }
 
-int _in(sstring *a, int get_line, size_t buff_size)
+int _sstring_in(sstring *a, int get_line, size_t buff_size)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1813,7 +1832,7 @@ int _in(sstring *a, int get_line, size_t buff_size)
     return false;
 }
 
-char *_getline(sstring *a, size_t line)
+char *_sstring_getline(sstring *a, size_t line)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1840,7 +1859,7 @@ char *_getline(sstring *a, size_t line)
     return (char *)NULL;
 }
 
-void _reverse(sstring *a)
+void _sstring_reverse(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1855,7 +1874,7 @@ void _reverse(sstring *a)
     }
 }
 
-size_t _remove(sstring *a, const char *sub)
+size_t _sstring_remove(sstring *a, const char *sub)
 {
     if (a && a->str.src && a->str.init == true && sub && sub[0] != '\0')
     {
@@ -1884,7 +1903,7 @@ size_t _remove(sstring *a, const char *sub)
     return 0;
 }
 
-size_t _remove_char(sstring *a, const char c)
+size_t _sstring_remove_char(sstring *a, const char c)
 {
     if (a && a->str.src && a->str.init == true && c != '\0')
     {
@@ -1911,7 +1930,7 @@ size_t _remove_char(sstring *a, const char c)
     return 0;
 }
 
-size_t _remove_extra_char(sstring *a, const char c)
+size_t _sstring_remove_extra_char(sstring *a, const char c)
 {
     if (a && a->str.src && a->str.init == true && c != '\0')
     {
@@ -1940,7 +1959,7 @@ size_t _remove_extra_char(sstring *a, const char c)
     return 0;
 }
 
-size_t _remove_range(sstring *a, size_t from, size_t till)
+size_t _sstring_remove_range(sstring *a, size_t from, size_t till)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1972,7 +1991,7 @@ size_t _remove_range(sstring *a, size_t from, size_t till)
     return 0;
 }
 
-int _intersect(sstring *a, size_t from, size_t till)
+int _sstring_intersect(sstring *a, size_t from, size_t till)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -1996,7 +2015,7 @@ int _intersect(sstring *a, size_t from, size_t till)
     return false;
 }
 
-size_t _distance(sstring *a, const char *src)
+size_t _sstring_distance(sstring *a, const char *src)
 {
     if (a && a->str.src && a->str.init == true && src)
     {
@@ -2014,7 +2033,7 @@ size_t _distance(sstring *a, const char *src)
 
 #define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
 #define MAX2(x, y) ((x > y) ? x : y)
-size_t _edit_distance(sstring *a, const char *src)
+size_t _sstring_edit_distance(sstring *a, const char *src)
 {
     if (a && a->str.src && a->str.init == true && src)
     {
@@ -2037,7 +2056,7 @@ size_t _edit_distance(sstring *a, const char *src)
     return (size_t)-1;
 }
 
-long double _percentage_matched(sstring *a, const char *src)
+long double _sstring_percentage_matched(sstring *a, const char *src)
 {
     if (a && a->str.src && a->str.init == true && src)
     {
@@ -2061,7 +2080,7 @@ long double _percentage_matched(sstring *a, const char *src)
     return (long double)0.0f;
 }
 
-size_t _count(sstring *a, const char *what)
+size_t _sstring_count(sstring *a, const char *what)
 {
     if (a && a->str.src && a->str.init == true && what)
     {
@@ -2077,7 +2096,7 @@ size_t _count(sstring *a, const char *what)
     return 0;
 }
 
-size_t _count_char(sstring *a, const char what)
+size_t _sstring_count_char(sstring *a, const char what)
 {
     if (a && a->str.src && a->str.init == true && what != '\0')
     {
@@ -2090,7 +2109,7 @@ size_t _count_char(sstring *a, const char what)
     return 0;
 }
 
-char *_soundex(sstring *a)
+char *_sstring_soundex(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -2133,7 +2152,7 @@ int strcmp_void(const void *a1, const void *a2)
     return strcmp((const char *)a1, (const char *)a2);
 }
 
-char *_most_used(sstring *a, const char *dl)
+char *_sstring_most_used(sstring *a, const char *dl)
 {
     if (a && a->str.src && a->str.init == true && dl)
     {
@@ -2174,7 +2193,7 @@ char *_most_used(sstring *a, const char *dl)
     return (char *)NULL;
 }
 
-char _most_used_char(sstring *a)
+char _sstring_most_used_char(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -2220,7 +2239,7 @@ char _most_used_char(sstring *a)
     return '\0';
 }
 
-split_t _split(sstring *a, const char *dl)
+split_t _sstring_split(sstring *a, const char *dl)
 {
     if (a && a->str.src && a->str.init == true && dl && dl[0] != '\0')
     {
@@ -2268,13 +2287,13 @@ int compare_chars(const void *c1, const void *c2)
     return (*(char *)c1 - *(char *)c2);
 }
 
-void _sort(sstring *a)
+void _sstring_sort(sstring *a)
 {
     if (a && a->str.src && a->str.init == true && a->str.src[0] != '\0')
         qsort(a->str.src, a->str.len, sizeof(char), compare_chars);
 }
 
-size_t _open_binary(sstring *a, const char *location)
+size_t _sstring_open_binary(sstring *a, const char *location)
 {
     if (a && a->str.src && a->str.init == true && location)
     {
@@ -2297,7 +2316,7 @@ size_t _open_binary(sstring *a, const char *location)
     return 0;
 }
 
-int _save_binary(sstring *a, const char *location, size_t len)
+int _sstring_save_binary(sstring *a, const char *location, size_t len)
 {
     if (a && a->str.src && a->str.init == true && location)
     {
@@ -2316,7 +2335,7 @@ int _save_binary(sstring *a, const char *location, size_t len)
     return false;
 }
 
-int _append_binary(sstring *a, const char *location, size_t len)
+int _sstring_append_binary(sstring *a, const char *location, size_t len)
 {
     if (a && a->str.src && a->str.init == true && location)
     {
@@ -2335,7 +2354,7 @@ int _append_binary(sstring *a, const char *location, size_t len)
     return false;
 }
 
-size_t _add_binary(sstring *a, const char *data, size_t len)
+size_t _sstring_add_binary(sstring *a, const char *data, size_t len)
 {
     if (a && a->str.src && a->str.init == true && data)
     {
@@ -2347,7 +2366,7 @@ size_t _add_binary(sstring *a, const char *data, size_t len)
     return 0;
 }
 
-int _print_binary(sstring *a, size_t len)
+int _sstring_print_binary(sstring *a, size_t len)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -2359,7 +2378,7 @@ int _print_binary(sstring *a, size_t len)
     return false;
 }
 
-int _encrypt(sstring *a, const char *key)
+int _sstring_encrypt(sstring *a, const char *key)
 {
     if (a && a->str.src && a->str.init == true && key)
     {
@@ -2398,7 +2417,7 @@ int _encrypt(sstring *a, const char *key)
     return false;
 }
 
-int _decrypt(sstring *a, const char *key)
+int _sstring_decrypt(sstring *a, const char *key)
 {
     if (a && a->str.src && a->str.init == true && key)
     {
@@ -2437,7 +2456,7 @@ int _decrypt(sstring *a, const char *key)
     return false;
 }
 
-size_t _begin(void)
+size_t _sstring_begin(void)
 {
     return 0;
 }
@@ -2470,17 +2489,17 @@ int __c_loop__iter_sstring(iter_sstring *is)
     return false;
 }
 
-iter_sstring _iterator(sstring *a)
+iter_sstring _sstring_iterator(sstring *a)
 {
     return (iter_sstring){.cur = 0, .max = a->str.len, .is_max_smaller = false, .advance = __advance__iter_sstring, .c_loop = __c_loop__iter_sstring};
 }
 
-iter_sstring __reverse_iterator(sstring *a)
+iter_sstring __sstring_reverse_iterator(sstring *a)
 {
     return (iter_sstring){.cur = a->str.len, .max = -1, .is_max_smaller = true, .advance = __advance__iter_sstring, .c_loop = __c_loop__iter_sstring};
 }
 
-size_t _end_sstring(sstring *a)
+size_t _sstring_end_sstring(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
         return a->str.len;
@@ -2488,7 +2507,7 @@ size_t _end_sstring(sstring *a)
 }
 
 #include "morse_code.h"
-int _to_morse_code(sstring *a)
+int _sstring_to_morse_code(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -2524,7 +2543,7 @@ int _to_morse_code(sstring *a)
     return false;
 }
 
-int _from_morse_code(sstring *a)
+int _sstring_from_morse_code(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -2578,7 +2597,7 @@ int _from_morse_code(sstring *a)
     return false;
 }
 
-int _is_digit(sstring *a)
+int _sstring_is_digit(sstring *a)
 {
     if (a && a->str.src && a->str.init == true && a->str.src[0] != '\0')
     {
@@ -2590,7 +2609,7 @@ int _is_digit(sstring *a)
     return false;
 }
 
-int _is_decimal(sstring *a)
+int _sstring_is_decimal(sstring *a)
 {
     if (a && a->str.src && a->str.init == true && a->str.src[0] != '\0')
     {
@@ -2612,7 +2631,7 @@ int _is_decimal(sstring *a)
     return false;
 }
 
-int _is_ascii(sstring *a)
+int _sstring_is_ascii(sstring *a)
 {
     if (a && a->str.src && a->str.init == true && a->str.src[0] != '\0')
     {
@@ -2624,7 +2643,7 @@ int _is_ascii(sstring *a)
     return false;
 }
 
-int _is_alphabetic(sstring *a)
+int _sstring_is_alphabetic(sstring *a)
 {
     if (a && a->str.src && a->str.init == true && a->str.src[0] != '\0')
     {
@@ -2636,21 +2655,21 @@ int _is_alphabetic(sstring *a)
     return false;
 }
 
-int _format_escape_sequence(sstring *a)
+int _sstring_format_escape_sequence(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
-        _replace(a, "\\", "\\\\");
-        _replace(a, "\a", "\\a");
-        _replace(a, "\b", "\\b");
-        _replace(a, "\f", "\\f");
-        _replace(a, "\n", "\\n");
-        _replace(a, "\r", "\\r");
-        _replace(a, "\t", "\\t");
-        _replace(a, "\v", "\\v");
-        _replace(a, "\"", "\\\"");
-        _replace(a, "\'", "\\\'");
-        _replace(a, "\?", "\\\?");
+        _sstring_replace(a, "\\", "\\\\");
+        _sstring_replace(a, "\a", "\\a");
+        _sstring_replace(a, "\b", "\\b");
+        _sstring_replace(a, "\f", "\\f");
+        _sstring_replace(a, "\n", "\\n");
+        _sstring_replace(a, "\r", "\\r");
+        _sstring_replace(a, "\t", "\\t");
+        _sstring_replace(a, "\v", "\\v");
+        _sstring_replace(a, "\"", "\\\"");
+        _sstring_replace(a, "\'", "\\\'");
+        _sstring_replace(a, "\?", "\\\?");
         return true;
     }
     return false;
@@ -2727,7 +2746,7 @@ const char *esc_seq_to_char_ptr(const char *c)
         return c;
 }
 
-int _insert(sstring *a, const char *src, size_t index)
+int _sstring_insert(sstring *a, const char *src, size_t index)
 {
     if (a && a->str.src && src && a->str.init == true && index <= a->str.len)
     {
@@ -2747,7 +2766,7 @@ int _insert(sstring *a, const char *src, size_t index)
     return false;
 }
 
-int _starts_with(sstring *a, const char *src)
+int _sstring_starts_with(sstring *a, const char *src)
 {
     if (a && a->str.src && a->str.init == true && src)
     {
@@ -2761,7 +2780,7 @@ int _starts_with(sstring *a, const char *src)
     return false;
 }
 
-int _ends_with(sstring *a, const char *src)
+int _sstring_ends_with(sstring *a, const char *src)
 {
     if (a && a->str.src && a->str.init == true && src)
     {
@@ -2776,7 +2795,7 @@ int _ends_with(sstring *a, const char *src)
     return false;
 }
 
-parse_t _parse(sstring *a)
+parse_t _sstring_parse(sstring *a)
 {
     if (a && a->str.src && a->str.init == true)
     {
@@ -2820,56 +2839,56 @@ parse_t _parse(sstring *a)
         {
             if ((a->str.src[i] >= 97 && a->str.src[i] <= 122) || (a->str.src[i] >= 65 && a->str.src[i] <= 90))
             {
-                _clear(&toks);
+                _sstring_clear(&toks);
                 while ((a->str.src[i] >= 97 && a->str.src[i] <= 122) || (a->str.src[i] >= 65 && a->str.src[i] <= 90))
-                    _append_char(&toks, a->str.src[i++]);
-                pt.src[sigma] = (char *)calloc(_end_sstring(&toks) + 1, sizeof(char));
+                    _sstring_append_char(&toks, a->str.src[i++]);
+                pt.src[sigma] = (char *)calloc(_sstring_end_sstring(&toks) + 1, sizeof(char));
                 track = 0;
-                fast_strncat(pt.src[sigma], _c_str(&toks), &track);
+                fast_strncat(pt.src[sigma], _sstring_c_str(&toks), &track);
                 pt.type[sigma++] = WORD;
             }
             else if (a->str.src[i] == 32)
             {
-                _clear(&toks);
-                _append_char(&toks, a->str.src[i++]);
-                pt.src[sigma] = (char *)calloc(_end_sstring(&toks) + 1, sizeof(char));
+                _sstring_clear(&toks);
+                _sstring_append_char(&toks, a->str.src[i++]);
+                pt.src[sigma] = (char *)calloc(_sstring_end_sstring(&toks) + 1, sizeof(char));
                 track = 0;
-                fast_strncat(pt.src[sigma], _c_str(&toks), &track);
+                fast_strncat(pt.src[sigma], _sstring_c_str(&toks), &track);
                 pt.type[sigma++] = WHITESPACE;
             }
             else if (isdigit(a->str.src[i]))
             {
-                _clear(&toks);
+                _sstring_clear(&toks);
                 while (isdigit(a->str.src[i]))
-                    _append_char(&toks, a->str.src[i++]);
-                pt.src[sigma] = (char *)calloc(_end_sstring(&toks) + 1, sizeof(char));
+                    _sstring_append_char(&toks, a->str.src[i++]);
+                pt.src[sigma] = (char *)calloc(_sstring_end_sstring(&toks) + 1, sizeof(char));
                 track = 0;
-                fast_strncat(pt.src[sigma], _c_str(&toks), &track);
+                fast_strncat(pt.src[sigma], _sstring_c_str(&toks), &track);
                 pt.type[sigma++] = INTEGER;
             }
             else if (a->str.src[i] == '\\' || a->str.src[i] == '\a' || a->str.src[i] == '\b' || a->str.src[i] == '\f' || a->str.src[i] == '\n' || a->str.src[i] == '\r' || a->str.src[i] == '\t' || a->str.src[i] == '\v' || a->str.src[i] == '\"' || a->str.src[i] == '\'' || a->str.src[i] == '\?')
             {
-                _clear(&toks);
+                _sstring_clear(&toks);
                 while (a->str.src[i] == '\\' || a->str.src[i] == '\a' || a->str.src[i] == '\b' || a->str.src[i] == '\f' || a->str.src[i] == '\n' || a->str.src[i] == '\r' || a->str.src[i] == '\t' || a->str.src[i] == '\v' || a->str.src[i] == '\"' || a->str.src[i] == '\'' || a->str.src[i] == '\?')
                 {
-                    _clear(&toks);
-                    _set(&toks, char_to_esc_seq(a->str.src[i++]));
-                    pt.src[sigma] = (char *)calloc(_end_sstring(&toks) + 1, sizeof(char));
+                    _sstring_clear(&toks);
+                    _sstring_set(&toks, char_to_esc_seq(a->str.src[i++]));
+                    pt.src[sigma] = (char *)calloc(_sstring_end_sstring(&toks) + 1, sizeof(char));
                     track = 0;
-                    fast_strncat(pt.src[sigma], _c_str(&toks), &track);
+                    fast_strncat(pt.src[sigma], _sstring_c_str(&toks), &track);
                     pt.type[sigma++] = ESC_SEQ;
                 }
             }
             else if ((a->str.src[i] == 33) || (a->str.src[i] >= 35 && a->str.src[i] <= 38) || (a->str.src[i] >= 40 && a->str.src[i] <= 47) || (a->str.src[i] >= 58 && a->str.src[i] <= 62) || (a->str.src[i] == 64) || (a->str.src[i] == 91) || (a->str.src[i] >= 93 && a->str.src[i] <= 96) || (a->str.src[i] >= 123 && a->str.src[i] <= 126))
             {
-                _clear(&toks);
+                _sstring_clear(&toks);
                 while ((a->str.src[i] == 33) || (a->str.src[i] >= 35 && a->str.src[i] <= 38) || (a->str.src[i] >= 40 && a->str.src[i] <= 47) || (a->str.src[i] >= 58 && a->str.src[i] <= 62) || (a->str.src[i] == 64) || (a->str.src[i] == 91) || (a->str.src[i] >= 93 && a->str.src[i] <= 96) || (a->str.src[i] >= 123 && a->str.src[i] <= 126))
                 {
-                    _clear(&toks);
-                    _set_char(&toks, a->str.src[i++]);
-                    pt.src[sigma] = (char *)calloc(_end_sstring(&toks) + 1, sizeof(char));
+                    _sstring_clear(&toks);
+                    _sstring_set_char(&toks, a->str.src[i++]);
+                    pt.src[sigma] = (char *)calloc(_sstring_end_sstring(&toks) + 1, sizeof(char));
                     track = 0;
-                    fast_strncat(pt.src[sigma], _c_str(&toks), &track);
+                    fast_strncat(pt.src[sigma], _sstring_c_str(&toks), &track);
                     pt.type[sigma++] = SPECIAL_CHAR;
                 }
             }
@@ -2881,14 +2900,14 @@ parse_t _parse(sstring *a)
         track = 0;
         fast_strncat(pt.src[sigma], char_to_esc_seq('\0'), &track);
         pt.type[sigma++] = NULL_END;
-        _destructor(&toks);
+        _sstring_destructor(&toks);
         pt.length = sigma;
         return pt;
     }
     return (parse_t){.src = (char **)NULL, .length = 0, .type = (enum parse_token *)NULL};
 }
 
-int _from_parse_t(sstring *a, parse_t *toks)
+int _sstring_from_parse_t(sstring *a, parse_t *toks)
 {
     if (a && a->str.src && a->str.init == true && toks && toks->src && toks->type && toks->length > 0)
     {
@@ -2906,7 +2925,7 @@ int _from_parse_t(sstring *a, parse_t *toks)
     return false;
 }
 
-int _set_formatted(sstring *a, size_t buffer_length, const char *__format__, ...)
+int _sstring_set_formatted(sstring *a, size_t buffer_length, const char *__format__, ...)
 {
     if (__format__ == NULL)
         return false;
@@ -2929,7 +2948,7 @@ int _set_formatted(sstring *a, size_t buffer_length, const char *__format__, ...
     return false;
 }
 
-int _append_formatted(sstring *a, size_t buffer_length, const char *__format__, ...)
+int _sstring_append_formatted(sstring *a, size_t buffer_length, const char *__format__, ...)
 {
     if (__format__ == NULL)
         return false;
@@ -2951,7 +2970,7 @@ int _append_formatted(sstring *a, size_t buffer_length, const char *__format__, 
     return false;
 }
 
-int _resize(sstring *a, size_t new_len)
+int _sstring_resize(sstring *a, size_t new_len)
 {
     if (a && a->str.src && a->str.init == true && new_len > 0)
     {
@@ -2961,7 +2980,7 @@ int _resize(sstring *a, size_t new_len)
     return false;
 }
 
-size_t _hash(sstring *a)
+size_t _sstring_hash(sstring *a)
 {
     if (a && a->str.src && a->str.init == true && a->str.len != 0)
     {
@@ -3053,94 +3072,95 @@ int init_sstr(sstring *a, size_t alloc_size)
 {
     if (a)
     {
-        a->set = _set;
-        a->set_char = _set_char;
-        a->set_upto = _set_upto;
-        a->set_random = _set_random;
-        a->set_array = _set_array;
-        a->get = _get;
-        a->append = _append;
-        a->append_char = _append_char;
-        a->append_upto = _append_upto;
-        a->append_start = _append_start;
-        a->append_start_char = _append_start_char;
-        a->append_start_upto = _append_start_upto;
-        a->append_array = _append_array;
-        a->append_start_array = _append_start_array;
-        a->empty = _empty;
-        a->replace_char = _replace_char;
-        a->char_set = _char_set;
-        a->char_get = _char_get;
-        a->length = _length;
-        a->compare = _compare;
-        a->compare_upto = _compare_upto;
-        a->print = _print;
-        a->replace = _replace;
-        a->destructor = _destructor;
-        a->c_str = _c_str;
-        a->save = _save;
-        a->append_file = _append_file;
-        a->open = _open;
-        a->clear = _clear;
-        a->to_upper = _to_upper;
-        a->to_lower = _to_lower;
-        a->swap_case = _swap_case;
-        a->is_initialized = _is_initialized;
-        a->to_binary = _to_binary;
-        a->from_binary = _from_binary;
-        a->entropy = _entropy;
-        a->contains = _contains;
-        a->contains_char = _contains_char;
-        a->to_set = _to_set;
-        a->copy = _copy;
-        a->to_hexadecimal = _to_hexadecimal;
-        a->from_hexadecimal = _from_hexadecimal;
-        a->find = _find;
-        a->in = _in;
-        a->getline = _getline;
-        a->reverse = _reverse;
-        a->remove = _remove;
-        a->remove_char = _remove_char;
-        a->remove_extra_char = _remove_extra_char;
-        a->remove_range = _remove_range;
-        a->intersect = _intersect;
-        a->distance = _distance;
-        a->edit_distance = _edit_distance;
-        a->percentage_matched = _percentage_matched;
-        a->count = _count;
-        a->count_char = _count_char;
-        a->soundex = _soundex;
-        a->most_used = _most_used;
-        a->most_used_char = _most_used_char;
-        a->split = _split;
-        a->sort = _sort;
-        a->open_binary = _open_binary;
-        a->save_binary = _save_binary;
-        a->append_binary = _append_binary;
-        a->add_binary = _add_binary;
-        a->print_binary = _print_binary;
-        a->encrypt = _encrypt;
-        a->decrypt = _decrypt;
-        a->begin = _begin;
-        a->iterator = _iterator;
-        a->reverse_iterator = __reverse_iterator;
-        a->end = _end_sstring;
-        a->to_morse_code = _to_morse_code;
-        a->from_morse_code = _from_morse_code;
-        a->is_digit = _is_digit;
-        a->is_decimal = _is_decimal;
-        a->is_ascii = _is_ascii;
-        a->is_alphabetic = _is_alphabetic;
-        a->format_escape_sequence = _format_escape_sequence;
-        a->insert = _insert;
-        a->starts_with = _starts_with;
-        a->ends_with = _ends_with;
-        a->parse = _parse;
-        a->from_parse_t = _from_parse_t;
-        a->set_formatted = _set_formatted;
-        a->append_formatted = _append_formatted;
-        a->resize = _resize;
-        a->hash = _hash;
+        a->set = _sstring_set;
+        a->set_char = _sstring_set_char;
+        a->set_upto = _sstring_set_upto;
+        a->set_random = _sstring_set_random;
+        a->set_array = _sstring_set_array;
+        a->get = _sstring_get;
+        a->append = _sstring_append;
+        a->append_char = _sstring_append_char;
+        a->append_upto = _sstring_append_upto;
+        a->append_start = _sstring_append_start;
+        a->append_start_char = _sstring_append_start_char;
+        a->append_start_upto = _sstring_append_start_upto;
+        a->append_array = _sstring_append_array;
+        a->append_start_array = _sstring_append_start_array;
+        a->empty = _sstring_empty;
+        a->replace_char = _sstring_replace_char;
+        a->char_set = _sstring_char_set;
+        a->char_get = _sstring_char_get;
+        a->last_index_of = _sstring_last_index_of;
+        a->length = _sstring_length;
+        a->compare = _sstring_compare;
+        a->compare_upto = _sstring_compare_upto;
+        a->print = _sstring_print;
+        a->replace = _sstring_replace;
+        a->destructor = _sstring_destructor;
+        a->c_str = _sstring_c_str;
+        a->save = _sstring_save;
+        a->append_file = _sstring_append_file;
+        a->open = _sstring_open;
+        a->clear = _sstring_clear;
+        a->to_upper = _sstring_to_upper;
+        a->to_lower = _sstring_to_lower;
+        a->swap_case = _sstring_swap_case;
+        a->is_initialized = _sstring_is_initialized;
+        a->to_binary = _sstring_to_binary;
+        a->from_binary = _sstring_from_binary;
+        a->entropy = _sstring_entropy;
+        a->contains = _sstring_contains;
+        a->contains_char = _sstring_contains_char;
+        a->to_set = _sstring_to_set;
+        a->copy = _sstring_copy;
+        a->to_hexadecimal = _sstring_to_hexadecimal;
+        a->from_hexadecimal = _sstring_from_hexadecimal;
+        a->find = _sstring_find;
+        a->in = _sstring_in;
+        a->getline = _sstring_getline;
+        a->reverse = _sstring_reverse;
+        a->remove = _sstring_remove;
+        a->remove_char = _sstring_remove_char;
+        a->remove_extra_char = _sstring_remove_extra_char;
+        a->remove_range = _sstring_remove_range;
+        a->intersect = _sstring_intersect;
+        a->distance = _sstring_distance;
+        a->edit_distance = _sstring_edit_distance;
+        a->percentage_matched = _sstring_percentage_matched;
+        a->count = _sstring_count;
+        a->count_char = _sstring_count_char;
+        a->soundex = _sstring_soundex;
+        a->most_used = _sstring_most_used;
+        a->most_used_char = _sstring_most_used_char;
+        a->split = _sstring_split;
+        a->sort = _sstring_sort;
+        a->open_binary = _sstring_open_binary;
+        a->save_binary = _sstring_save_binary;
+        a->append_binary = _sstring_append_binary;
+        a->add_binary = _sstring_add_binary;
+        a->print_binary = _sstring_print_binary;
+        a->encrypt = _sstring_encrypt;
+        a->decrypt = _sstring_decrypt;
+        a->begin = _sstring_begin;
+        a->iterator = _sstring_iterator;
+        a->reverse_iterator = __sstring_reverse_iterator;
+        a->end = _sstring_end_sstring;
+        a->to_morse_code = _sstring_to_morse_code;
+        a->from_morse_code = _sstring_from_morse_code;
+        a->is_digit = _sstring_is_digit;
+        a->is_decimal = _sstring_is_decimal;
+        a->is_ascii = _sstring_is_ascii;
+        a->is_alphabetic = _sstring_is_alphabetic;
+        a->format_escape_sequence = _sstring_format_escape_sequence;
+        a->insert = _sstring_insert;
+        a->starts_with = _sstring_starts_with;
+        a->ends_with = _sstring_ends_with;
+        a->parse = _sstring_parse;
+        a->from_parse_t = _sstring_from_parse_t;
+        a->set_formatted = _sstring_set_formatted;
+        a->append_formatted = _sstring_append_formatted;
+        a->resize = _sstring_resize;
+        a->hash = _sstring_hash;
         a->nerr = (size_t)-1;
 
         a->str.src = (char *)calloc(alloc_size + 1, sizeof(char));
