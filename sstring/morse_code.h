@@ -1,14 +1,14 @@
 /**
 * This header file is written store morse code for (A-Z), (a-z), (0-9) and WHITESPACE.
 * Author: Tushar Chaurasia (https://github.com/Dark-CodeX/)
-* Commit to this repository at https://github.com/Dark-CodeX/SafeString.git
+* Commit to this repository at https://github.com/Dark-CodeX/sstring.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "morse_code.h" under "sstring" directory
 * sstring: version 1.5.7
 * 
 * MIT License
 * 
-* Copyright (c) 2021 Tushar Chaurasia
+* Copyright (c) 2022 Tushar Chaurasia
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal

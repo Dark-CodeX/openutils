@@ -7,11 +7,11 @@ conflicts=('openutils-sstring')
 depends=(gcc)
 license=("MIT")
 source=(
-  "https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/sstring.h"
-  "https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/prototype_err.h"
-  "https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/binary.h"
-  "https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/morse_code.h"
-  "https://raw.githubusercontent.com/Dark-CodeX/SafeString/main/sstring/sstring.hh")
+  "https://raw.githubusercontent.com/Dark-CodeX/sstring/main/sstring/sstring.h"
+  "https://raw.githubusercontent.com/Dark-CodeX/sstring/main/sstring/prototype_err.h"
+  "https://raw.githubusercontent.com/Dark-CodeX/sstring/main/sstring/binary.h"
+  "https://raw.githubusercontent.com/Dark-CodeX/sstring/main/sstring/morse_code.h"
+  "https://raw.githubusercontent.com/Dark-CodeX/sstring/main/sstring/sstring.hh")
 
 sha512sums=(
   "7c8e69b597954d377d722c5484b1742e7e27d49b6246267739b9f21031bb0fe4c960412f278e4441fd5bd01883ebb856a63eb9008bce437b6c58e0228ded6187"
