@@ -137,6 +137,7 @@ namespace openutils
         void replace_char(const char old, const char new_);
         void char_set(const char what, std::size_t where);
         char char_get(std::size_t where) const;
+        std::size_t last_index_of(char ch) const;
         std::size_t length() const;
         bool compare(const char *T1) const;
         bool compare_upto(const char *T1, std::size_t N) const;
@@ -710,6 +711,17 @@ namespace openutils
         return (char)'\0';
     }
 
+    std::size_t sstring::last_index_of(char ch) const
+    {
+        if (ch != '\0')
+        {
+            for (std::size_t i = this->len - 1; i != -1; i--)
+                if (this->src[i] == ch)
+                    return i;
+        }
+        return (std::size_t)-1;
+    }
+
     std::size_t sstring::length() const
     {
         return std::strlen((const char *)this->src);
@@ -1180,7 +1192,7 @@ namespace openutils
             }
         }
         std::free(this->src);
-        this->src = (char *)std::calloc( len_ + 1, sizeof(char));
+        this->src = (char *)std::calloc(len_ + 1, sizeof(char));
         std::strcpy(this->src, (const char *)buff);
         std::free(buff);
         this->len = len_;
@@ -1225,7 +1237,7 @@ namespace openutils
     {
         if (sub && sub[0] != '\0')
         {
-            char *buff = (char *)std::calloc( this->len + 1, sizeof(char));
+            char *buff = (char *)std::calloc(this->len + 1, sizeof(char));
             std::strcpy(buff, (const char *)this->src);
             std::size_t len_s = std::strlen(sub), cnt = 0;
             {
@@ -1241,7 +1253,7 @@ namespace openutils
             }
             std::free(this->src);
             std::size_t len_buff = std::strlen((const char *)buff);
-            this->src = (char *)std::calloc( len_buff + 1, sizeof(char));
+            this->src = (char *)std::calloc(len_buff + 1, sizeof(char));
             std::strcpy(this->src, (const char *)buff);
             std::free(buff);
             this->len = len_buff;
@@ -1254,7 +1266,7 @@ namespace openutils
     {
         if (c != '\0')
         {
-            char *buff = (char *)std::calloc( this->len + 1, sizeof(char));
+            char *buff = (char *)std::calloc(this->len + 1, sizeof(char));
             std::size_t cnt = 0;
             for (std::size_t i = 0, k = 0; this->src[i] != '\0'; i++)
             {
@@ -1268,7 +1280,7 @@ namespace openutils
             }
             std::free(this->src);
             std::size_t buff_len = std::strlen((const char *)buff);
-            this->src = (char *)std::calloc( buff_len + 1, sizeof(char));
+            this->src = (char *)std::calloc(buff_len + 1, sizeof(char));
             std::strcpy(this->src, (const char *)buff);
             std::free(buff);
             this->len = buff_len;
@@ -1327,7 +1339,7 @@ namespace openutils
         }
         std::free(this->src);
         std::size_t buff_len = std::strlen((const char *)buff);
-        this->src = (char *)std::calloc( buff_len + 1, sizeof(char));
+        this->src = (char *)std::calloc(buff_len + 1, sizeof(char));
         std::strcpy(this->src, (const char *)buff);
         std::free(buff);
         this->len = buff_len;
@@ -1501,7 +1513,7 @@ namespace openutils
         cnt = this->count(dl);
         if (cnt == 0)
             return sstring(nullptr);
-        char *temp = (char *)std::calloc( len + 1, sizeof(char));
+        char *temp = (char *)std::calloc(len + 1, sizeof(char));
         std::strcpy(temp, this->src);
         char **buff = (char **)std::calloc(cnt + 1, sizeof(char *)), *tok = strtok(temp, dl);
         while (tok != nullptr)
@@ -1591,7 +1603,7 @@ namespace openutils
             std::free(temp);
             if (cnt == 0)
                 return split_t(0);
-            temp = (char *)std::calloc( len + 1, sizeof(char));
+            temp = (char *)std::calloc(len + 1, sizeof(char));
             std::strcpy(temp, this->src);
             tok = std::strtok(temp, str);
             split_t x(cnt + 1);
