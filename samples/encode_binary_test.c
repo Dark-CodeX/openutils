@@ -20,7 +20,7 @@ int main(int argc, char const *argv[])
         }
         SSTRING(y);
         printf("message:\n");
-        y.in(&y, true, 0x100000ULL);
+        y.in(&y, true, 1048576);
         len += x.add_binary(&x, y.c_str(&y), len);
         if (x.save_binary(&x, argv[3], len) != true)
         {
