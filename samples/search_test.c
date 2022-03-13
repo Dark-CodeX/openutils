@@ -25,7 +25,7 @@ int main(void)
             index = i;
         }
     }
-    printf("Best Match:\n%s\nAt:%llu\n", data.data[index], index);
+    printf("Best Match:\n%s\nAt:%zu\n", data.data[index], index);
     free_split(&data);
     vector_destructor(vec);
     input.destructor(&input);
