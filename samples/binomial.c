@@ -78,6 +78,7 @@ expr_t format(parse_t *parse)
         else
             return err_expr;
     }
+    return err_expr;
 }
 
 sstring solve(expr_t e);
