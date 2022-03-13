@@ -1,5 +1,5 @@
 pkgname="openutils-sstring"
-pkgver="1.6.1"
+pkgver="1.6.3"
 pkgrel="8"
 pkgdesc="Memory Safe String Library in C language."
 arch=("x86_64" "i686")
