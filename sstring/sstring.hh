@@ -37,6 +37,7 @@
 #include <cstring>
 #include <cstdarg>
 #include <cmath>
+#include <climits>
 #include "binary.h"
 #include "morse_code.h"
 
@@ -151,7 +152,7 @@ namespace openutils
         void swap_case();
         void to_binary();
         bool from_binary();
-        long double entropy() const;
+        double entropy() const;
         bool contains(const char *str) const;
         std::size_t contains_char(const char c) const;
         void to_set();
@@ -169,7 +170,7 @@ namespace openutils
         bool intersect(std::size_t from, std::size_t till);
         std::size_t distance(const char *src) const;
         std::size_t edit_distance(const char *src) const;
-        long double percentage_matched(const char *src) const;
+        double percentage_matched(const char *src) const;
         std::size_t count(const char *what) const;
         std::size_t count_char(const char what) const;
         sstring soundex() const;
@@ -226,6 +227,7 @@ namespace openutils
     };
 
     sstring to_sstring(char str);
+    sstring to_sstring(bool boolean);
     sstring to_sstring(const char *str);
     sstring to_sstring(void *ptr);
     sstring to_sstring(signed short int x);
@@ -713,7 +715,7 @@ namespace openutils
     {
         if (ch != '\0')
         {
-            for (std::size_t i = this->len - 1; i != -1; i--)
+            for (std::size_t i = this->len - 1; i != (std::size_t)-1; i--)
                 if (this->src[i] == ch)
                     return i;
         }
@@ -972,42 +974,24 @@ namespace openutils
         return true;
     }
 
-    long double sstring::entropy() const
+    double sstring::entropy() const
     {
-        std::size_t len = this->len;
-        std::size_t cnt = 0, map_append = 0, o = 0;
-        bool check = false;
-        char *map_char = (char *)std::calloc(len + 1, sizeof(char));
-        std::size_t *map_cnt = (std::size_t *)std::calloc(len + 1, sizeof(std::size_t));
-        for (cnt = 0; cnt < len; cnt++)
+        size_t frequencies[1 << CHAR_BIT] = {0};
+        for (const char *p = this->src; *p != 0; p++)
         {
-            check = false;
-            for (o = 0; map_char[o] != '\0'; o++)
-            {
-                if (map_char[o] == this->src[cnt])
-                {
-                    check = true;
-                    break;
-                }
-            }
-            if (check == false)
-            {
-                map_char[map_append] = this->src[cnt];
-                map_cnt[map_append] = 1;
-                map_append++;
-            }
-            else
-                map_cnt[o] += 1;
+            frequencies[*p - CHAR_MIN] += 1;
         }
-        long double result = 0.0f;
-        long double freq = 0.0f;
-        for (std::size_t i = 0; map_char[i] != '\0'; i++)
+
+        size_t len = this->len;
+        double result = 0.0;
+        for (size_t i = 0; i < (1 << CHAR_BIT); i++)
         {
-            freq = (long double)map_cnt[i] / len;
-            result -= freq * (log10l(freq) / log10l(2.0f));
+            if (frequencies[i] != 0)
+            {
+                double freq = (double)frequencies[i] / (double)len;
+                result -= freq * (log(freq) / log(2.0));
+            }
         }
-        std::free(map_char);
-        std::free(map_cnt);
         return result;
     }
 
@@ -1174,7 +1158,7 @@ namespace openutils
         if (get_line == false)
         {
             char _____format_____[128] = "%%";
-            std::sprintf(_____format_____ + 1, "%lu", buff_size);
+            std::sprintf(_____format_____ + 1, "%zu", buff_size);
             std::strcat(_____format_____, "s");
             std::scanf(_____format_____, buff);
             len_ = std::strlen((const char *)buff);
@@ -1407,7 +1391,7 @@ namespace openutils
         return (std::size_t)-1;
     }
 
-    long double sstring::percentage_matched(const char *src) const
+    double sstring::percentage_matched(const char *src) const
     {
         if (src)
         {
@@ -2287,6 +2271,16 @@ namespace openutils
         return x;
     }
 
+    sstring to_sstring(bool boolean)
+    {
+        sstring x;
+        if (boolean)
+            x = "true";
+        else
+            x = "false";
+        return x;
+    }
+
     sstring to_sstring(const char *str)
     {
         return sstring(str);
@@ -2294,71 +2288,71 @@ namespace openutils
 
     sstring to_sstring(void *ptr)
     {
-        char s[64];
-        std::snprintf(s, 64, "%p", ptr);
+        char s[SIZE_WIDTH + 1];
+        std::snprintf(s, SIZE_WIDTH + 1, "%p", ptr);
         return sstring((const char *)s);
     }
 
     sstring to_sstring(signed short int x)
     {
-        char s[64];
-        std::snprintf(s, 64, "%hi", x);
+        char s[SHRT_WIDTH + 2];
+        std::snprintf(s, SHRT_WIDTH + 2, "%hi", x);
         return sstring((const char *)s);
     }
 
     sstring to_sstring(unsigned short int x)
     {
-        char s[64];
-        std::snprintf(s, 64, "%hu", x);
+        char s[USHRT_WIDTH + 1];
+        std::snprintf(s, USHRT_WIDTH + 1, "%hu", x);
         return sstring((const char *)s);
     }
 
     sstring to_sstring(signed int x)
     {
-        char s[64];
-        std::snprintf(s, 64, "%d", x);
+        char s[INT_WIDTH + 2];
+        std::snprintf(s, INT_WIDTH + 2, "%d", x);
         return sstring((const char *)s);
     }
 
     sstring to_sstring(unsigned int x)
     {
-        char s[64];
-        std::snprintf(s, 64, "%i", x);
+        char s[UINT_WIDTH + 1];
+        std::snprintf(s, UINT_WIDTH + 1, "%i", x);
         return sstring((const char *)s);
     }
 
     sstring to_sstring(signed long int x)
     {
-        char s[64];
-        std::snprintf(s, 64, "%ld", x);
+        char s[LONG_WIDTH + 2];
+        std::snprintf(s, LONG_WIDTH + 2, "%ld", x);
         return sstring((const char *)s);
     }
 
     sstring to_sstring(unsigned long int x)
     {
-        char s[64];
-        std::snprintf(s, 64, "%lu", x);
+        char s[ULONG_WIDTH + 1];
+        std::snprintf(s, ULONG_WIDTH + 1, "%lu", x);
         return sstring((const char *)s);
     }
 
     sstring to_sstring(signed long long int x)
     {
-        char s[64];
-        std::snprintf(s, 64, "%lld", x);
+        char s[LLONG_WIDTH + 2];
+        std::snprintf(s, LLONG_WIDTH + 2, "%lld", x);
         return sstring((const char *)s);
     }
 
     sstring to_sstring(unsigned long long int x)
     {
-        char s[64];
-        std::snprintf(s, 64, "%llu", x);
+        char s[ULLONG_WIDTH + 1];
+        std::snprintf(s, ULLONG_WIDTH + 1, "%llu", x);
         return sstring((const char *)s);
     }
 
     sstring to_sstring(float x)
     {
-        char s[64];
-        std::snprintf(s, 64, "%f", x);
+        char s[128];
+        std::snprintf(s, 128, "%f", x);
         return sstring((const char *)s);
     }
 
