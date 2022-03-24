@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 1.5.5
+ * vector version: 1.5.6
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -42,7 +42,7 @@
 
 #include <initializer_list>
 
-#define vector_t_version "1.5.5"
+#define vector_t_version "1.5.6"
 
 namespace openutils
 {
@@ -65,15 +65,15 @@ namespace openutils
         vector_t(const vector_t &vec);
         vector_t(vector_t &&other) noexcept;
         vector_t(std::initializer_list<T> __list);
-        vector_t(const std::size_t capacity);
+        vector_t(const std::size_t &capacity);
         std::size_t length() const;
         std::size_t capacity() const;
         void add(T &&data);
         void add(const T &data);
-        bool insert(T &&data, const std::size_t nth);
-        bool insert(const T &data, const std::size_t nth);
+        bool insert(T &&data, const std::size_t &nth);
+        bool insert(const T &data, const std::size_t &nth);
         void remove();
-        bool remove(const std::size_t nth);
+        bool remove(const std::size_t &nth);
         bool empty() const;
         std::size_t hash() const;
         bool compare(const vector_t &vec) const;
@@ -81,20 +81,20 @@ namespace openutils
         void erase();
         void erase(T &&default_data, std::size_t capacity = 10);
         void erase(const T &default_data, std::size_t capacity = 10);
-        const T &get(const std::size_t nth) const;
-        bool set(T &&data, const std::size_t nth);
-        bool set(const T &data, const std::size_t nth);
+        const T &get(const std::size_t &nth) const;
+        bool set(T &&data, const std::size_t &nth);
+        bool set(const T &data, const std::size_t &nth);
         void reverse();
         std::size_t find(T &&data) const;
         std::size_t find(const T &data) const;
-        bool swap(const std::size_t x1, const std::size_t x2);
+        bool swap(const std::size_t &x1, const std::size_t &x2);
         typedef iter_vector_t<T> iter;
         iter iterator() const;
         iter reverse_iterator() const;
 
         void operator=(const vector_t &data);
-        T operator[](const std::size_t nth) const;
-        T &operator[](const std::size_t nth);
+        T operator[](const std::size_t &nth) const;
+        T &operator[](const std::size_t &nth);
         bool operator==(const vector_t &vec) const;
         bool operator!=(const vector_t &vec) const;
         vector_t &operator=(const vector_t &&__s) noexcept;
@@ -102,15 +102,15 @@ namespace openutils
         void operator+=(T &&data);
         void operator+=(const T &data);
         void operator+=(std::initializer_list<T> __list);
-        const std::size_t nerr = (std::size_t)-1;
+        const std::size_t &nerr = (std::size_t)-1;
 
-        bool unsafe_set(const std::size_t where, T &&data);
-        bool unsafe_set(const std::size_t where, const T &data);
+        bool unsafe_set(const std::size_t &where, T &&data);
+        bool unsafe_set(const std::size_t &where, const T &data);
         std::size_t unsafe_find(T &&data) const;
         std::size_t unsafe_find(const T &data) const;
-        bool unsafe_remove(const std::size_t where);
-        std::size_t unsafe_resize(const std::size_t new_size);
-        const T &unsafe_get(const std::size_t where) const;
+        bool unsafe_remove(const std::size_t &where);
+        std::size_t unsafe_resize(const std::size_t &new_size);
+        const T &unsafe_get(const std::size_t &where) const;
         ~vector_t();
     };
 
@@ -180,7 +180,7 @@ namespace openutils
     }
 
     template <typename T>
-    vector_t<T>::vector_t(const std::size_t capacity)
+    vector_t<T>::vector_t(const std::size_t &capacity)
     {
         this->cap = capacity;
         this->len = 0;
@@ -221,7 +221,7 @@ namespace openutils
     }
 
     template <typename T>
-    bool vector_t<T>::insert(T &&data, const std::size_t nth)
+    bool vector_t<T>::insert(T &&data, const std::size_t &nth)
     {
         if (nth <= this->len)
         {
@@ -243,7 +243,7 @@ namespace openutils
     }
 
     template <typename T>
-    bool vector_t<T>::insert(const T &data, const std::size_t nth)
+    bool vector_t<T>::insert(const T &data, const std::size_t &nth)
     {
         return this->insert((T &&) data, nth);
     }
@@ -256,7 +256,7 @@ namespace openutils
     }
 
     template <typename T>
-    bool vector_t<T>::remove(const std::size_t nth)
+    bool vector_t<T>::remove(const std::size_t &nth)
     {
         if (nth < this->len)
         {
@@ -342,7 +342,7 @@ namespace openutils
     }
 
     template <typename T>
-    const T &vector_t<T>::get(const std::size_t nth) const
+    const T &vector_t<T>::get(const std::size_t &nth) const
     {
         if (nth < this->len)
             return this->vec_data[nth];
@@ -351,7 +351,7 @@ namespace openutils
     }
 
     template <typename T>
-    bool vector_t<T>::set(T &&data, const std::size_t nth)
+    bool vector_t<T>::set(T &&data, const std::size_t &nth)
     {
         if (nth < this->len)
         {
@@ -362,7 +362,7 @@ namespace openutils
     }
 
     template <typename T>
-    bool vector_t<T>::set(const T &data, const std::size_t nth)
+    bool vector_t<T>::set(const T &data, const std::size_t &nth)
     {
         return this->set((T &&) data, nth);
     }
@@ -395,7 +395,7 @@ namespace openutils
     }
 
     template <typename T>
-    bool vector_t<T>::swap(const std::size_t x1, const std::size_t x2)
+    bool vector_t<T>::swap(const std::size_t &x1, const std::size_t &x2)
     {
         if (x1 < this->len && x2 < this->len)
         {
@@ -431,7 +431,7 @@ namespace openutils
     }
 
     template <typename T>
-    T vector_t<T>::operator[](const std::size_t nth) const
+    T vector_t<T>::operator[](const std::size_t &nth) const
     {
         if (nth < this->len)
             return this->vec_data[nth];
@@ -440,7 +440,7 @@ namespace openutils
     }
 
     template <typename T>
-    T &vector_t<T>::operator[](const std::size_t nth)
+    T &vector_t<T>::operator[](const std::size_t &nth)
     {
         if (nth < this->len)
             return this->vec_data[nth];
@@ -502,7 +502,7 @@ namespace openutils
     }
 
     template <typename T>
-    bool vector_t<T>::unsafe_set(const std::size_t where, T &&data)
+    bool vector_t<T>::unsafe_set(const std::size_t &where, T &&data)
     {
         if (where >= this->cap)
             return false;
@@ -511,7 +511,7 @@ namespace openutils
     }
 
     template <typename T>
-    bool vector_t<T>::unsafe_set(const std::size_t where, const T &data)
+    bool vector_t<T>::unsafe_set(const std::size_t &where, const T &data)
     {
         if (where >= this->cap)
             return false;
@@ -538,7 +538,7 @@ namespace openutils
     }
 
     template <typename T>
-    bool vector_t<T>::unsafe_remove(const std::size_t where)
+    bool vector_t<T>::unsafe_remove(const std::size_t &where)
     {
         if (where >= this->cap)
             return false;
@@ -548,7 +548,7 @@ namespace openutils
     }
 
     template <typename T>
-    std::size_t vector_t<T>::unsafe_resize(const std::size_t new_size)
+    std::size_t vector_t<T>::unsafe_resize(const std::size_t &new_size)
     {
         if (new_size <= this->cap)
             return (std::size_t)-1;
@@ -562,7 +562,7 @@ namespace openutils
     }
 
     template <typename T>
-    const T &vector_t<T>::unsafe_get(const std::size_t where) const
+    const T &vector_t<T>::unsafe_get(const std::size_t &where) const
     {
         if (where >= this->cap)
         {
@@ -594,8 +594,8 @@ namespace openutils
         bool is_first() const;
         bool is_last() const;
         std::size_t index() const;
-        T &operator->() const;
-        T &operator*() const;
+        T &operator->();
+        const T &operator*() const;
         void next();
     };
 
@@ -641,15 +641,15 @@ namespace openutils
     }
 
     template <typename T>
-    T &iter_vector_t<T>::operator->() const
+    T &iter_vector_t<T>::operator->()
     {
         return (T &)this->vec->get(this->ind);
     }
 
     template <typename T>
-    T &iter_vector_t<T>::operator*() const
+    const T &iter_vector_t<T>::operator*() const
     {
-        return (T &)this->vec->get(this->ind);
+        return (const T &)this->vec->get(this->ind);
     }
 
     template <typename T>
