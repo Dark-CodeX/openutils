@@ -722,7 +722,7 @@ namespace openutils
     template <typename KEY, typename VALUE>
     node_t<KEY, VALUE> *&iter_map_t<KEY, VALUE>::operator->()
     {
-        return (const node_t<KEY, VALUE> *&)this->cur;
+        return (node_t<KEY, VALUE> *&)this->cur;
     }
 
     template <typename KEY, typename VALUE>
