@@ -118,7 +118,7 @@ namespace openutils
         bool empty() const;
         std::size_t length() const;
         std::size_t capacity() const;
-        long double error_rate(const std::size_t expected_size) const;
+        long double error_rate(const std::size_t &expected_size) const;
         typedef iter_map_t<KEY, VALUE> iter;
         iter iterator() const;
         std::size_t hash() const;
@@ -442,7 +442,7 @@ namespace openutils
     }
 
     template <typename KEY, typename VALUE>
-    long double map_t<KEY, VALUE>::error_rate(const std::size_t expected_size) const
+    long double map_t<KEY, VALUE>::error_rate(const std::size_t &expected_size) const
     {
         return (expected_size - this->len) * 100.0L / this->len;
     }
@@ -698,7 +698,7 @@ namespace openutils
     public:
         iter_map_t(const map_t<KEY, VALUE> *m);
         bool c_loop() const;
-        const node_t<KEY, VALUE> *&operator->() const;
+        node_t<KEY, VALUE> *&operator->();
         const node_t<KEY, VALUE> *&operator*() const;
         void next();
     };
@@ -720,7 +720,7 @@ namespace openutils
     }
 
     template <typename KEY, typename VALUE>
-    const node_t<KEY, VALUE> *&iter_map_t<KEY, VALUE>::operator->() const
+    node_t<KEY, VALUE> *&iter_map_t<KEY, VALUE>::operator->()
     {
         return (const node_t<KEY, VALUE> *&)this->cur;
     }
