@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.hh" under "sstring" directory
- * sstring: version 1.6.3
+ * sstring: version 1.6.4
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -37,11 +37,12 @@
 #include <cstring>
 #include <cstdarg>
 #include <cmath>
+#include <numeric>
 #include <climits>
 #include "binary.h"
 #include "morse_code.h"
 
-#define sstring_version "1.6.3"
+#define sstring_version "1.6.4"
 
 namespace std
 {
@@ -223,27 +224,28 @@ namespace openutils
         sstring &operator=(const sstring &&__s) noexcept;
         const std::size_t nerr = (std::size_t)-1;
         friend std::ostream &operator<<(std::ostream &out, const sstring &obj);
+
+        static sstring to_sstring(char str);
+        static sstring to_sstring(bool boolean);
+        static sstring to_sstring(const char *str);
+        static sstring to_sstring(void *ptr);
+        static sstring to_sstring(signed short int x);
+        static sstring to_sstring(unsigned short int x);
+        static sstring to_sstring(signed int x);
+        static sstring to_sstring(unsigned int x);
+        static sstring to_sstring(signed long int x);
+        static sstring to_sstring(unsigned long int x);
+        static sstring to_sstring(signed long long int x);
+        static sstring to_sstring(unsigned long long int x);
+        static sstring to_sstring(float x);
+        static sstring to_sstring(double x);
+        static sstring to_sstring(long double x);
+        static sstring get_random(const std::size_t &len);
+        static sstring open_file(const sstring &location);
+        static sstring end_line();
+
         ~sstring();
     };
-
-    sstring to_sstring(char str);
-    sstring to_sstring(bool boolean);
-    sstring to_sstring(const char *str);
-    sstring to_sstring(void *ptr);
-    sstring to_sstring(signed short int x);
-    sstring to_sstring(unsigned short int x);
-    sstring to_sstring(signed int x);
-    sstring to_sstring(unsigned int x);
-    sstring to_sstring(signed long int x);
-    sstring to_sstring(unsigned long int x);
-    sstring to_sstring(signed long long int x);
-    sstring to_sstring(unsigned long long int x);
-    sstring to_sstring(float x);
-    sstring to_sstring(double x);
-    sstring to_sstring(long double x);
-    sstring get_random(std::size_t len);
-    sstring open_file(const sstring &location);
-    sstring end_line();
 
     enum parse_token
     {
@@ -1687,7 +1689,7 @@ namespace openutils
         if (key)
         {
             std::size_t len = this->len, val = std::hash<const char *>()(key) % 128;
-            short add = true;
+            bool add = true;
             char *buff = (char *)std::calloc(len + 1, sizeof(char));
             for (std::size_t i = 0; this->src[i] != '\0'; i++)
             {
@@ -1723,7 +1725,7 @@ namespace openutils
         if (key)
         {
             std::size_t len = this->len, val = std::hash<const char *>()(key) % 128;
-            short add_invr = true;
+            bool add_invr = true;
             char *buff = (char *)std::calloc(len + 1, sizeof(char));
             for (std::size_t i = 0; this->src[i] != '\0'; i++)
             {
@@ -2264,14 +2266,14 @@ namespace openutils
         this->len = 0;
     }
 
-    sstring to_sstring(char str)
+    sstring sstring::to_sstring(char str)
     {
         sstring x(nullptr);
         x.set_char(str);
         return x;
     }
 
-    sstring to_sstring(bool boolean)
+    sstring sstring::to_sstring(bool boolean)
     {
         sstring x;
         if (boolean)
@@ -2281,110 +2283,110 @@ namespace openutils
         return x;
     }
 
-    sstring to_sstring(const char *str)
+    sstring sstring::to_sstring(const char *str)
     {
         return sstring(str);
     }
 
-    sstring to_sstring(void *ptr)
+    sstring sstring::to_sstring(void *ptr)
     {
-        char s[SIZE_WIDTH + 1];
-        std::snprintf(s, SIZE_WIDTH + 1, "%p", ptr);
+        char s[std::numeric_limits<std::size_t>::digits + 1] = {};
+        std::snprintf(s, std::numeric_limits<std::size_t>::digits + 1, "%p", ptr);
         return sstring((const char *)s);
     }
 
-    sstring to_sstring(signed short int x)
+    sstring sstring::to_sstring(signed short int x)
     {
-        char s[SHRT_WIDTH + 2];
-        std::snprintf(s, SHRT_WIDTH + 2, "%hi", x);
+        char s[std::numeric_limits<signed short int>::digits + 2] = {};
+        std::snprintf(s, std::numeric_limits<signed short int>::digits + 2, "%hi", x);
         return sstring((const char *)s);
     }
 
-    sstring to_sstring(unsigned short int x)
+    sstring sstring::to_sstring(unsigned short int x)
     {
-        char s[USHRT_WIDTH + 1];
-        std::snprintf(s, USHRT_WIDTH + 1, "%hu", x);
+        char s[std::numeric_limits<unsigned short int>::digits + 1] = {};
+        std::snprintf(s, std::numeric_limits<unsigned short int>::digits + 1, "%hu", x);
         return sstring((const char *)s);
     }
 
-    sstring to_sstring(signed int x)
+    sstring sstring::to_sstring(signed int x)
     {
-        char s[INT_WIDTH + 2];
-        std::snprintf(s, INT_WIDTH + 2, "%d", x);
+        char s[std::numeric_limits<signed int>::digits + 2] = {};
+        std::snprintf(s, std::numeric_limits<signed int>::digits + 2, "%d", x);
         return sstring((const char *)s);
     }
 
-    sstring to_sstring(unsigned int x)
+    sstring sstring::to_sstring(unsigned int x)
     {
-        char s[UINT_WIDTH + 1];
-        std::snprintf(s, UINT_WIDTH + 1, "%i", x);
+        char s[std::numeric_limits<unsigned int>::digits + 1] = {};
+        std::snprintf(s, std::numeric_limits<unsigned int>::digits + 1, "%i", x);
         return sstring((const char *)s);
     }
 
-    sstring to_sstring(signed long int x)
+    sstring sstring::to_sstring(signed long int x)
     {
-        char s[LONG_WIDTH + 2];
-        std::snprintf(s, LONG_WIDTH + 2, "%ld", x);
+        char s[std::numeric_limits<signed long int>::digits + 2] = {};
+        std::snprintf(s, std::numeric_limits<signed long int>::digits + 2, "%ld", x);
         return sstring((const char *)s);
     }
 
-    sstring to_sstring(unsigned long int x)
+    sstring sstring::to_sstring(unsigned long int x)
     {
-        char s[ULONG_WIDTH + 1];
-        std::snprintf(s, ULONG_WIDTH + 1, "%lu", x);
+        char s[std::numeric_limits<unsigned long int>::digits + 1] = {};
+        std::snprintf(s, std::numeric_limits<unsigned long int>::digits + 1, "%lu", x);
         return sstring((const char *)s);
     }
 
-    sstring to_sstring(signed long long int x)
+    sstring sstring::to_sstring(signed long long int x)
     {
-        char s[LLONG_WIDTH + 2];
-        std::snprintf(s, LLONG_WIDTH + 2, "%lld", x);
+        char s[std::numeric_limits<signed long long int>::digits + 2] = {};
+        std::snprintf(s, std::numeric_limits<signed long long int>::digits + 2, "%lld", x);
         return sstring((const char *)s);
     }
 
-    sstring to_sstring(unsigned long long int x)
+    sstring sstring::to_sstring(unsigned long long int x)
     {
-        char s[ULLONG_WIDTH + 1];
-        std::snprintf(s, ULLONG_WIDTH + 1, "%llu", x);
+        char s[std::numeric_limits<unsigned long long int>::digits + 1] = {};
+        std::snprintf(s, std::numeric_limits<unsigned long long int>::digits + 1, "%llu", x);
         return sstring((const char *)s);
     }
 
-    sstring to_sstring(float x)
+    sstring sstring::to_sstring(float x)
     {
-        char s[128];
-        std::snprintf(s, 128, "%f", x);
+        char s[std::numeric_limits<float>::digits + 2] = {};
+        std::snprintf(s, std::numeric_limits<float>::digits + 2, "%f", x);
         return sstring((const char *)s);
     }
 
-    sstring to_sstring(double x)
+    sstring sstring::to_sstring(double x)
     {
-        char s[512];
-        std::snprintf(s, 512, "%lf", x);
+        char s[std::numeric_limits<double>::digits + 2];
+        std::snprintf(s, std::numeric_limits<double>::digits + 2, "%lf", x);
         return sstring((const char *)s);
     }
 
-    sstring to_sstring(long double x)
+    sstring sstring::to_sstring(long double x)
     {
-        char s[5120];
-        std::snprintf(s, 5120, "%Lf", x);
+        char s[std::numeric_limits<long double>::digits + 2];
+        std::snprintf(s, std::numeric_limits<long double>::digits + 2, "%Lf", x);
         return sstring((const char *)s);
     }
 
-    sstring get_random(std::size_t len)
+    sstring sstring::get_random(const std::size_t &len)
     {
         sstring x;
         x.set_random(len);
         return x;
     }
 
-    sstring open_file(const sstring &location)
+    sstring sstring::open_file(const sstring &location)
     {
         sstring x;
         x.open(location.c_str());
         return x;
     }
 
-    sstring end_line()
+    sstring sstring::end_line()
     {
 #if defined __linux__ || defined linux || defined __linux
         return sstring("\n");
