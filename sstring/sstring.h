@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 1.6.3
+ * sstring: version 1.6.4
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -34,7 +34,7 @@
 
 typedef struct __string__ sstring;
 
-#define sstring_version "1.6.3"
+#define sstring_version "1.6.4"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -2369,7 +2369,7 @@ bool _sstring_encrypt(sstring *a, const char *key)
         size_t val = __temp__.hash(&__temp__) % 128;
         __temp__.destructor(&__temp__);
         size_t len = a->str.len;
-        short add = true;
+        bool add = true;
         char *buff = (char *)calloc(len + 1, sizeof(char));
         for (size_t i = 0; a->str.src[i] != '\0'; i++)
         {
@@ -2408,7 +2408,7 @@ bool _sstring_decrypt(sstring *a, const char *key)
         size_t val = __temp__.hash(&__temp__) % 128;
         __temp__.destructor(&__temp__);
         size_t len = a->str.len;
-        short add_inrv = true;
+        bool add_inrv = true;
         char *buff = (char *)calloc(len + 1, sizeof(char));
         for (size_t i = 0; a->str.src[i] != '\0'; i++)
         {
