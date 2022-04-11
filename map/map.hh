@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/map.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "map.hh" under "map" directory
- * map version: 1.6.1
+ * map version: 1.6.2
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -34,16 +34,16 @@
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #include <utility>
-#include <functional>
 #else
 #include <bits/functional_hash.h>
 #include <bits/move.h>
 #include <bits/stl_pair.h>
 #endif
 
+#include <functional>
 #include <initializer_list>
 
-#define map_t_version "1.6.1"
+#define map_t_version "1.6.2"
 
 namespace openutils
 {
@@ -115,6 +115,7 @@ namespace openutils
         std::size_t get_index(KEY &&key) const;
         std::size_t get_index(const KEY &key) const;
         void erase();
+        void sort();
         bool empty() const;
         std::size_t length() const;
         std::size_t capacity() const;
@@ -421,6 +422,12 @@ namespace openutils
         delete[] this->keys;
         this->keys = new KEY[this->k_cap];
         this->len = 0, this->key_len = 0;
+    }
+
+    template <typename KEY, typename VALUE>
+    void map_t<KEY, VALUE>::sort()
+    {
+        std::sort(this->keys, this->keys + this->key_len);
     }
 
     template <typename KEY, typename VALUE>

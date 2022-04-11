@@ -1,33 +1,33 @@
 /**
-* This header file is written to solve `prototype` missing error. Do not include this file.
-* Author: Tushar Chaurasia (https://github.com/Dark-CodeX/)
-* Commit to this repository at https://github.com/Dark-CodeX/map.git
-* You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
-* File: "prototype_err.h" under "map" directory
-* map: version 1.6.1
-* 
-* MIT License
-* 
-* Copyright (c) 2022 Tushar Chaurasia
-* 
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-* 
-* The above copyright notice and this permission notice shall be included in all
-* copies or substantial portions of the Software.
-* 
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF oANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-* SOFTWARE.
-*/
+ * This header file is written to solve `prototype` missing error. Do not include this file.
+ * Author: Tushar Chaurasia (https://github.com/Dark-CodeX/)
+ * Commit to this repository at https://github.com/Dark-CodeX/map.git
+ * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
+ * File: "prototype_err.h" under "map" directory
+ * map: version 1.6.2
+ *
+ * MIT License
+ *
+ * Copyright (c) 2022 Tushar Chaurasia
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF oANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 #ifndef __cplusplus
 
@@ -49,6 +49,7 @@ node_t *_get_node_map_t(map_t *map, void *key);
 size_t _get_index_map_t(map_t *map, void *key);
 size_t _get_index_node_map_t(map_t *map, node_t *node);
 void _erase_map_t(map_t *map);
+void _sort_map_t(map_t *map, int (*compt)(const void *a, const void *b));
 int _empty_map_t(map_t *map);
 size_t _length_map_t(map_t *map);
 size_t _capacity_map_t(map_t *map);

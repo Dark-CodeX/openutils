@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/map.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "map.h" under "map" directory
- * map version: 1.6.1
+ * map version: 1.6.2
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -32,7 +32,7 @@
 
 #pragma once
 
-#define map_t_version "1.6.1"
+#define map_t_version "1.6.2"
 
 #include <stdlib.h>
 #include <stdbool.h>
@@ -74,6 +74,7 @@ struct map_t
     size_t (*get_index)(map_t *map, void *key);
     size_t (*get_index_node)(map_t *map, node_t *node);
     void (*erase)(map_t *map);
+    void (*sort)(map_t *map, int (*compt)(const void *a, const void *b));
     int (*empty)(map_t *map);
     size_t (*length)(map_t *map);
     size_t (*capacity)(map_t *map);
@@ -106,7 +107,7 @@ struct iter_map_t
 
 void make_null_array(void **ptr, size_t len)
 {
-    if(!ptr)
+    if (!ptr)
         return;
     for (size_t i = 0; i < len; i++)
         ptr[i] = (void *)NULL;
@@ -301,6 +302,13 @@ void _erase_map_t(map_t *map)
     map->len = 0, map->klen = 0;
 }
 
+void _sort_map_t(map_t *map, int (*compt)(const void *a, const void *b))
+{
+    if (!map)
+        return;
+    qsort(map->keys, map->klen, map->size_key, compt);
+}
+
 int _empty_map_t(map_t *map)
 {
     if (!map)
@@ -492,6 +500,7 @@ int map_init(map_t *map, size_t capacity, float load_factor, size_t (*get_key_ha
     map->get_index = _get_index_map_t;
     map->get_index_node = _get_index_node_map_t;
     map->erase = _erase_map_t;
+    map->sort = _sort_map_t;
     map->empty = _empty_map_t;
     map->length = _length_map_t;
     map->capacity = _capacity_map_t;
