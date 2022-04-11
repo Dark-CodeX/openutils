@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.h" under "vector" directory
- * vector version: 1.5.6
+ * vector version: 1.5.7
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -35,7 +35,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define vector_version "1.5.6"
+#define vector_version "1.5.7"
 
 /**
  * Appends `data` to `vec` at the end.
@@ -74,14 +74,14 @@
  * Returns `vec`'s length
  * @param vec vector
  */
-#define vector_length(vec) (vec.src && vec.init == true) ? vec.length : 0
+#define vector_length(vec) ((vec.src && vec.init == true) ? vec.length : 0)
 
 /**
  * Returns whether `vec` is empty or not.
  * @param vec vector
  * @returns true if empty, otherwise false
  */
-#define vector_empty(vec) (vec.src && vec.init == true && vec.length == 0) ? true : false
+#define vector_empty(vec) ((vec.src && vec.init == true && vec.length == 0) ? true : false)
 
 /**
  * Clears `vec` (removes all the data). NOTE: if `v`'s elements are pointers then it will not be freed, you will have to free it.
@@ -103,7 +103,7 @@
  * @returns data at `index`, if `index` is larger than `vec`'s length than default value of vector's data type is returned
  */
 #define vector_get(vec, index) \
-    (vec.init == true && vec.src && index < vec.length) ? vec.src[index] : vec._def[0]
+    ((vec.init == true && vec.src && index < vec.length) ? vec.src[index] : vec._def[0])
 
 /**
  * Assigns `data` at `index` in `vec`.
@@ -199,7 +199,7 @@
  * Returns whether `vec` is initialized or not using.
  * @param vec vector
  */
-#define vector_is_initialized(vec) (vec.init == true) ? true : false
+#define vector_is_initialized(vec) ((vec.init == true) ? true : false)
 
 /**
  * Compares `vec` against `vec2` iteratively. NOTE: length of both vectors should be same
@@ -245,6 +245,12 @@
         }                                                                             \
         vec.src[nth] = data;                                                          \
         vec.length++;                                                                 \
+    }
+
+#define vector_sort(vec, compt)                                 \
+    if (vec.init == true && vec.src)                            \
+    {                                                           \
+        qsort(vec.src, vec.length, sizeof(vec._def[0]), compt); \
     }
 
 /**
