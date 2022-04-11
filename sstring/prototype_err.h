@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "prototype_err.h" under "sstring" directory
-* sstring: version 1.6.4
+* sstring: version 1.6.7
 * 
 * MIT License
 * 
@@ -55,6 +55,7 @@ size_t _sstring_last_index_of(sstring *a, char ch);
 size_t _sstring_length(sstring *a);
 bool _sstring_compare(sstring *a, const char *T1);
 bool _sstring_compare_upto(sstring *a, const char *T1, size_t N);
+int _sstring_lexicographical_comparison(sstring *a, const char *str);
 void _sstring_print(sstring *a, bool add_next_line, const char *__format__, ...);
 void _sstring_replace(sstring *a, const char *old, const char *new_);
 bool _sstring_destructor(sstring *a);
