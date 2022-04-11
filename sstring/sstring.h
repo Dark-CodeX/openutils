@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 1.6.4
+ * sstring: version 1.6.7
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -34,7 +34,7 @@
 
 typedef struct __string__ sstring;
 
-#define sstring_version "1.6.4"
+#define sstring_version "1.6.7"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -304,6 +304,14 @@ struct __string__
 	 * @returns return true if true, otherwise return false
 	 */
 	bool (*compare_upto)(sstring *a, const char *T1, size_t N);
+
+	/**
+	 * A lexicographical comparison is the kind of comparison generally used to sort strings alphabetically.
+	 * @param a pointer to struct sstring
+	 * @param str string to compare with
+	 * @return difference between ASCII characters or if starting of both the strings are same then it returns the difference between the length, otherwise 0 is returned if strings are equal
+	 */
+	int (*lexicographical_comparison)(sstring *a, const char *str);
 
 	/**
 	 * Prints `a`.
@@ -1280,12 +1288,27 @@ bool _sstring_compare(sstring *a, const char *T1)
 
 bool _sstring_compare_upto(sstring *a, const char *T1, size_t N)
 {
-	if (a && T1 && a->str.init == true && a->str.src && strlen(T1) >= N)
+	if (a && T1 && a->str.init == true && a->str.src)
 	{
 		if (strncmp((const char *)a->str.src, T1, N) == 0)
 			return true;
 	}
 	return false;
+}
+
+int _sstring_lexicographical_comparison(sstring *a, const char *str)
+{
+	if (a && str)
+	{
+		size_t str_len = 0;
+		for (size_t i = 0; a->str.src[i] && str[str_len]; i++, str_len++)
+		{
+			if (a->str.src[i] == str[i])
+				continue;
+			return (int)a->str.src[i] - (int)str[i];
+		}
+		return a->str.len - str_len;
+	}
 }
 
 void _sstring_print(sstring *a, bool add_next_line, const char *__format__, ...)
@@ -2585,7 +2608,7 @@ bool _sstring_is_digit(sstring *a)
 	if (a && a->str.src && a->str.init == true && a->str.src[0] != '\0')
 	{
 		for (size_t i = 0; i < a->str.len; i++)
-			if (!isdigit(a->str.src[i]))
+			if (!isdigit((unsigned int)a->str.src[i]))
 				return false;
 		return true;
 	}
@@ -2605,7 +2628,7 @@ bool _sstring_is_decimal(sstring *a)
 				if (point_cnt > 1)
 					return false;
 			}
-			else if (!isdigit(a->str.src[i]))
+			else if (!isdigit((unsigned int)a->str.src[i]))
 				return false;
 		}
 		if (point_cnt == 1)
@@ -2631,7 +2654,7 @@ bool _sstring_is_alphabetic(sstring *a)
 	if (a && a->str.src && a->str.init == true && a->str.src[0] != '\0')
 	{
 		for (size_t i = 0; i < a->str.len; i++)
-			if (!isalpha(a->str.src[i]))
+			if (!isalpha((unsigned int)a->str.src[i]))
 				return false;
 		return true;
 	}
@@ -3006,6 +3029,7 @@ bool init_sstr(sstring *a, size_t alloc_size)
 		a->length = _sstring_length;
 		a->compare = _sstring_compare;
 		a->compare_upto = _sstring_compare_upto;
+		a->lexicographical_comparison = _sstring_lexicographical_comparison;
 		a->print = _sstring_print;
 		a->replace = _sstring_replace;
 		a->destructor = _sstring_destructor;
