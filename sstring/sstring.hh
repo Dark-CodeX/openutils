@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.hh" under "sstring" directory
- * sstring: version 1.6.4
+ * sstring: version 1.6.7
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -39,10 +39,11 @@
 #include <cmath>
 #include <numeric>
 #include <climits>
+#include <functional>
 #include "binary.h"
 #include "morse_code.h"
 
-#define sstring_version "1.6.4"
+#define sstring_version "1.6.7"
 
 namespace std
 {
@@ -141,6 +142,7 @@ namespace openutils
 		std::size_t length() const;
 		bool compare(const char *T1) const;
 		bool compare_upto(const char *T1, std::size_t N) const;
+		int lexicographical_comparison(const char *str) const;
 		void print(bool add_next_line, const char *__format__, ...) const;
 		void replace(const char *old, const char *new_);
 		const char *c_str() const;
@@ -219,12 +221,22 @@ namespace openutils
 		void operator=(const char c);
 		bool operator==(const sstring &str) const;
 		bool operator==(const char *str) const;
+		bool operator<(const sstring &str) const;
+		bool operator<(const char *str) const;
+		bool operator>(const sstring &str) const;
+		bool operator>(const char *str) const;
+		bool operator<=(const sstring &str) const;
+		bool operator<=(const char *str) const;
+		bool operator>=(const sstring &str) const;
+		bool operator>=(const char *str) const;
 		bool operator!=(const sstring &str) const;
 		bool operator!=(const char *str) const;
 		sstring &operator=(const sstring &&__s) noexcept;
 		const std::size_t nerr = (std::size_t)-1;
 		friend std::ostream &operator<<(std::ostream &out, const sstring &obj);
 
+		static void sort(sstring *arr, const std::size_t &len);
+		static void sort(char **arr, const std::size_t &len);
 		static sstring to_sstring(char str);
 		static sstring to_sstring(bool boolean);
 		static sstring to_sstring(const char *str);
@@ -739,10 +751,22 @@ namespace openutils
 
 	bool sstring::compare_upto(const char *T1, std::size_t N) const
 	{
-		if (T1 && strlen(T1) >= N)
+		if (T1)
 			if (std::strncmp((const char *)this->src, T1, N) == 0)
 				return true;
 		return false;
+	}
+
+	int sstring::lexicographical_comparison(const char *str) const
+	{
+		std::size_t str_len = 0;
+		for (std::size_t i = 0; this->src[i] && str[str_len]; i++, str_len++)
+		{
+			if (this->src[i] == str[i])
+				continue;
+			return (int)this->src[i] - (int)str[i];
+		}
+		return this->len - str_len;
 	}
 
 	void sstring::print(bool add_next_line, const char *__format__, ...) const
@@ -1853,7 +1877,7 @@ namespace openutils
 		if (this->src[0] != '\0')
 		{
 			for (std::size_t i = 0; i < this->len; i++)
-				if (!std::isdigit(this->src[i]))
+				if (!std::isdigit((unsigned int)this->src[i]))
 					return false;
 			return true;
 		}
@@ -1873,7 +1897,7 @@ namespace openutils
 					if (point_cnt > 1)
 						return false;
 				}
-				else if (!std::isdigit(this->src[i]))
+				else if (!std::isdigit((unsigned int)this->src[i]))
 					return false;
 			}
 			if (point_cnt == 1)
@@ -1899,7 +1923,7 @@ namespace openutils
 		if (this->src[0] != '\0')
 		{
 			for (std::size_t i = 0; i < this->len; i++)
-				if (!std::isalpha(this->src[i]))
+				if (!std::isalpha((unsigned int)this->src[i]))
 					return false;
 			return true;
 		}
@@ -2231,6 +2255,62 @@ namespace openutils
 		return this->compare(str);
 	}
 
+	bool sstring::operator<(const sstring &str) const
+	{
+		if (this->lexicographical_comparison(str.c_str()) < 0)
+			return true;
+		return false;
+	}
+
+	bool sstring::operator<(const char *str) const
+	{
+		if (this->lexicographical_comparison(str) < 0)
+			return true;
+		return false;
+	}
+
+	bool sstring::operator>(const sstring &str) const
+	{
+		if (this->lexicographical_comparison(str.c_str()) > 0)
+			return true;
+		return false;
+	}
+
+	bool sstring::operator>(const char *str) const
+	{
+		if (this->lexicographical_comparison(str) > 0)
+			return true;
+		return false;
+	}
+
+	bool sstring::operator<=(const sstring &str) const
+	{
+		if (this->lexicographical_comparison(str.c_str()) <= 0)
+			return true;
+		return false;
+	}
+
+	bool sstring::operator<=(const char *str) const
+	{
+		if (this->lexicographical_comparison(str) <= 0)
+			return true;
+		return false;
+	}
+
+	bool sstring::operator>=(const sstring &str) const
+	{
+		if (this->lexicographical_comparison(str.c_str()) >= 0)
+			return true;
+		return false;
+	}
+
+	bool sstring::operator>=(const char *str) const
+	{
+		if (this->lexicographical_comparison(str) >= 0)
+			return true;
+		return false;
+	}
+
 	bool sstring::operator!=(const sstring &str) const
 	{
 		return !(this->compare(str.c_str()));
@@ -2264,6 +2344,17 @@ namespace openutils
 	{
 		free(this->src);
 		this->len = 0;
+	}
+
+	void sstring::sort(sstring *arr, const std::size_t &len)
+	{
+		std::sort(arr, arr + len);
+	}
+
+	void sstring::sort(char **arr, const std::size_t &len)
+	{
+		std::sort(arr, arr + len, [](char *a, char *b)
+				  { return sstring(a) < sstring(b); });
 	}
 
 	sstring sstring::to_sstring(char str)
