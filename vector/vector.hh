@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 1.5.6
+ * vector version: 1.5.7
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -34,15 +34,15 @@
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #include <utility>
-#include <functional>
 #else
 #include <bits/functional_hash.h>
 #include <bits/move.h>
 #endif
 
 #include <initializer_list>
+#include <functional>
 
-#define vector_t_version "1.5.6"
+#define vector_t_version "1.5.7"
 
 namespace openutils
 {
@@ -91,6 +91,7 @@ namespace openutils
         typedef iter_vector_t<T> iter;
         iter iterator() const;
         iter reverse_iterator() const;
+        void sort();
 
         void operator=(const vector_t &data);
         T operator[](const std::size_t &nth) const;
@@ -102,7 +103,7 @@ namespace openutils
         void operator+=(T &&data);
         void operator+=(const T &data);
         void operator+=(std::initializer_list<T> __list);
-        const std::size_t &nerr = (std::size_t)-1;
+        const std::size_t nerr = (std::size_t)-1;
 
         bool unsafe_set(const std::size_t &where, T &&data);
         bool unsafe_set(const std::size_t &where, const T &data);
@@ -417,6 +418,12 @@ namespace openutils
     typename vector_t<T>::iter vector_t<T>::reverse_iterator() const
     {
         return vector_t<T>::iter(this, true);
+    }
+
+    template <typename T>
+    void vector_t<T>::sort()
+    {
+        std::sort(this->vec_data, this->vec_data + this->len);
     }
 
     template <typename T>
