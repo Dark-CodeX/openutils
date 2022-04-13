@@ -231,7 +231,7 @@ namespace openutils
 		bool operator>=(const char *str) const;
 		bool operator!=(const sstring &str) const;
 		bool operator!=(const char *str) const;
-		sstring &operator=(const sstring &&__s) noexcept;
+		sstring &operator=(sstring &&__s) noexcept;
 		const std::size_t nerr = (std::size_t)-1;
 		friend std::ostream &operator<<(std::ostream &out, const sstring &obj);
 
@@ -284,7 +284,7 @@ namespace openutils
 		sstring operator[](const std::size_t n) const;
 		std::size_t length() const;
 		parse_t(parse_t &&other) noexcept;
-		parse_t &operator=(const parse_t &&__pt) noexcept;
+		parse_t &operator=(parse_t &&__pt) noexcept;
 		~parse_t();
 	};
 
@@ -301,7 +301,7 @@ namespace openutils
 		sstring operator[](const std::size_t n) const;
 		std::size_t length() const;
 		split_t(split_t &&other) noexcept;
-		split_t &operator=(const split_t &&__st) noexcept;
+		split_t &operator=(split_t &&__st) noexcept;
 		~split_t();
 	};
 
@@ -2323,15 +2323,15 @@ namespace openutils
 		return !(this->compare(str));
 	}
 
-	sstring &sstring::operator=(const sstring &&__s) noexcept
+	sstring &sstring::operator=(sstring &&__s) noexcept
 	{
 		if (this != &__s)
 		{
 			free(this->src);
 			this->len = __s.len;
-			this->src = (char *)std::calloc(this->len, sizeof(char));
-			std::size_t pos = 0;
-			fast_strncat(this->src, __s.src, pos);
+			this->src = __s.src;
+			__s.src = nullptr;
+			__s.len = 0;
 		}
 		return *this;
 	}
@@ -2558,7 +2558,7 @@ namespace openutils
 		other.len = 0;
 	}
 
-	parse_t &parse_t::operator=(const parse_t &&__pt) noexcept
+	parse_t &parse_t::operator=(parse_t &&__pt) noexcept
 	{
 		if (this != &__pt)
 		{
@@ -2640,7 +2640,7 @@ namespace openutils
 		other.len = 0;
 	}
 
-	split_t &split_t::operator=(const split_t &&__st) noexcept
+	split_t &split_t::operator=(split_t &&__st) noexcept
 	{
 		if (this != &__st)
 		{
