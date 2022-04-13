@@ -332,6 +332,8 @@ namespace openutils
 
 	sstring::sstring(const sstring &other)
 	{
+		this->src = (char *)std::calloc(1, sizeof(char));
+		this->len = 0;
 		this->set(other.c_str());
 	}
 
