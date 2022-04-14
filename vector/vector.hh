@@ -91,7 +91,12 @@ namespace openutils
         typedef iter_vector_t<T> iter;
         iter iterator() const;
         iter reverse_iterator() const;
-        void sort();
+
+        template <typename comp>
+        void sort(comp c)
+        {
+            std::sort(this->vec_data, this->vec_data + this->len, c);
+        }
 
         void operator=(const vector_t &data);
         T operator[](const std::size_t &nth) const;
@@ -418,12 +423,6 @@ namespace openutils
     typename vector_t<T>::iter vector_t<T>::reverse_iterator() const
     {
         return vector_t<T>::iter(this, true);
-    }
-
-    template <typename T>
-    void vector_t<T>::sort()
-    {
-        std::sort(this->vec_data, this->vec_data + this->len);
     }
 
     template <typename T>
