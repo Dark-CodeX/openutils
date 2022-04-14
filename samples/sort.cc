@@ -8,7 +8,8 @@ int main(void)
     openutils::vector_t<int> vec2 = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     for (openutils::vector_t<int>::iter i = vec.iterator(); i.c_loop(); i.next())
         std::cout << (*i) << " ";
-    vec.sort();
+    vec.sort([](int a, int b)
+             { return a < b; });
     std::cout << std::endl;
     for (openutils::vector_t<int>::iter i = vec.iterator(); i.c_loop(); i.next())
         std::cout << (*i) << " ";
