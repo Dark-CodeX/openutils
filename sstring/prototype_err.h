@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "prototype_err.h" under "sstring" directory
-* sstring: version 1.6.7
+* sstring: version 1.6.9
 * 
 * MIT License
 * 
@@ -78,7 +78,7 @@ bool _sstring_copy(sstring *a, sstring *dest);
 void _sstring_to_hexadecimal(sstring *a);
 bool _sstring_from_hexadecimal(sstring *a);
 size_t _sstring_find(sstring *a, const char *sub);
-bool _sstring_in(sstring *a, bool get_line, size_t buff_size);
+void _sstring_in(sstring *a);
 char *_sstring_getline(sstring *a, size_t line);
 void _sstring_reverse(sstring *a);
 size_t _sstring_remove(sstring *a, const char *sub);
