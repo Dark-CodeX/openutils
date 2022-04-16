@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.hh" under "sstring" directory
- * sstring: version 1.6.7
+ * sstring: version 1.6.9
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -43,7 +43,7 @@
 #include "binary.h"
 #include "morse_code.h"
 
-#define sstring_version "1.6.7"
+#define sstring_version "1.6.9"
 
 namespace std
 {
@@ -163,7 +163,7 @@ namespace openutils
 		void to_hexadecimal();
 		bool from_hexadecimal();
 		std::size_t find(const char *sub) const;
-		bool in(bool get_line, std::size_t buff_size);
+		void in();
 		sstring getline(std::size_t line) const;
 		void reverse();
 		std::size_t remove(const char *sub);
@@ -1179,34 +1179,22 @@ namespace openutils
 		return (std::size_t)-1;
 	}
 
-	bool sstring::in(bool get_line, std::size_t buff_size)
+	void sstring::in()
 	{
-		char *buff = (char *)std::calloc(buff_size + 1, sizeof(char));
-		std::size_t len_ = 0;
-		if (get_line == false)
+		char *ptr = (char *)std::calloc(2, sizeof(char)), ch;
+		std::size_t len = 0;
+		while ((ch = std::getchar()))
 		{
-			char _____format_____[128] = "%%";
-			std::sprintf(_____format_____ + 1, "%zu", buff_size);
-			std::strcat(_____format_____, "s");
-			std::scanf(_____format_____, buff);
-			len_ = std::strlen((const char *)buff);
+			if (ch == 10 || ch == 0)
+				break;
+			ptr[len++] = ch;
+			ptr = (char *)std::realloc(ptr, len + 1);
 		}
-		else
-		{
-			std::fgets(buff, buff_size, stdin);
-			len_ = std::strlen((const char *)buff);
-			if (buff[len_ - 1] == '\n')
-			{
-				buff[len_ - 1] = '\0';
-				len_--;
-			}
-		}
+		ptr[len] = 0;
 		std::free(this->src);
-		this->src = (char *)std::calloc(len_ + 1, sizeof(char));
-		std::strcpy(this->src, (const char *)buff);
-		std::free(buff);
-		this->len = len_;
-		return true;
+		this->src = (char *)std::calloc(len + 1, sizeof(char));
+		fast_strncat(this->src, ptr, this->len);
+		std::free(ptr);
 	}
 
 	sstring sstring::getline(std::size_t line) const
