@@ -10,7 +10,7 @@ int main(void)
 
 	SSTRING(input);
 	printf("ENTER:\n");
-	input.in(&input, false, 1024ULL);
+	input.in(&input);
 
 	for (size_t i = 0; i < data.len; i++)
 		vector_add(vec, input.percentage_matched(&input, data.data[i]));

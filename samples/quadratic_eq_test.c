@@ -183,7 +183,7 @@ int main(void)
 {
 	sstring eq = new_sstring(1, NULL);
 	printf("Eq. 1\n");
-	eq.in(&eq, true, 512);
+	eq.in(&eq);
 	if (format_eq(&eq) == true)
 	{
 		struct coefficient ans = parse_eq(&eq);

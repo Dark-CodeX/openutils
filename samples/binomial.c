@@ -105,7 +105,7 @@ sstring solve(expr_t e)
 int main(void)
 {
 	sstring exp = new_sstring(1, NULL);
-	exp.in(&exp, true, 512);
+	exp.in(&exp);
 
 	parse_t parse = exp.parse(&exp);
 

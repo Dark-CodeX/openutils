@@ -205,9 +205,9 @@ int main(int argc, char const **argv)
 	sstring eq1 = new_sstring(1, NULL);
 	sstring eq2 = new_sstring(1, NULL);
 	printf("Eq. 1:\n");
-	eq1.in(&eq1, true, 512);
+	eq1.in(&eq1);
 	printf("Eq. 2:\n");
-	eq2.in(&eq2, true, 512);
+	eq2.in(&eq2);
 	if (format_eq(&eq1) == true && format_eq(&eq2) == true)
 	{
 		if (eq1.compare(&eq1, eq2.c_str(&eq2)) == true)

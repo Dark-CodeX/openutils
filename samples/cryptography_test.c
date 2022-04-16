@@ -5,21 +5,9 @@ int main(void)
 	sstring msg = new_sstring(1, "");
 	sstring key = new_sstring(1, "");
 	printf("MESSAGE:\n");
-	if (msg.in(&msg, true, 1024 * 1024) == false)
-	{
-		printf("ERR: could not get the message.\n");
-		msg.destructor(&msg);
-		key.destructor(&key);
-		return -1;
-	}
+	msg.in(&msg);
 	printf("KEY:\n");
-	if (key.in(&key, true, 1024 * 1024) == false)
-	{
-		printf("ERR: could not get the key.\n");
-		msg.destructor(&msg);
-		key.destructor(&key);
-		return -1;
-	}
+	key.in(&key);
 	printf("ENCRYPTED MESSAGE:\n");
 	if (msg.encrypt(&msg, key.c_str(&key)) == false)
 	{
