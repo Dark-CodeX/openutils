@@ -2107,10 +2107,10 @@ char *_sstring_soundex(sstring *a)
 		size_t s = 1, len = a->str.len;
 		const char *map = "01230120022455012623010202"; // not stored in heap memory, do not free it
 		char c, *res = calloc(5, sizeof(char));
-		res[0] = toupper(a->str.src[0]);
+		res[0] = toupper((unsigned char)a->str.src[0]);
 		for (size_t i = 1; i < len; ++i)
 		{
-			c = toupper(a->str.src[i]) - 65;
+			c = toupper((unsigned char)a->str.src[i]) - 65;
 			if (c >= 0 && c <= 25) // from ASCII table
 			{
 				if (map[(size_t)c] != '\0')
@@ -2503,13 +2503,13 @@ bool _sstring_to_morse_code(sstring *a)
 	if (a && a->str.src && a->str.init == true)
 	{
 		for (size_t i = 0; i < a->str.len; i++)
-			if (!isdigit(a->str.src[i]) && !isalpha(a->str.src[i]) && a->str.src[i] != ' ')
+			if (!isdigit((unsigned char)a->str.src[i]) && !isalpha((unsigned char)a->str.src[i]) && a->str.src[i] != ' ')
 				return false;
 		char *buff = calloc(a->str.len * 8 + 1, sizeof(char));
 		size_t track = 0;
 		for (size_t i = 0; i < a->str.len; i++)
 		{
-			if (isdigit(a->str.src[i]))
+			if (isdigit((unsigned char)a->str.src[i]))
 				fast_strncat(buff, morse_code[(size_t)a->str.src[i] - 48].code, &track);
 			else if (a->str.src[i] == ' ')
 				fast_strncat(buff, morse_code[(size_t)36].code, &track);
@@ -2730,9 +2730,9 @@ parse_t _sstring_parse(sstring *a)
 			}
 			else if (a->str.src[i] == 32)
 				i++, len++;
-			else if (isdigit(a->str.src[i]))
+			else if (isdigit((unsigned char)a->str.src[i]))
 			{
-				while (isdigit(a->str.src[i]))
+				while (isdigit((unsigned char)a->str.src[i]))
 					i++;
 				len++;
 			}
@@ -2776,10 +2776,10 @@ parse_t _sstring_parse(sstring *a)
 				fast_strncat(pt.src[sigma], _sstring_c_str(&toks), &track);
 				pt.type[sigma++] = WHITESPACE;
 			}
-			else if (isdigit(a->str.src[i]))
+			else if (isdigit((unsigned char)a->str.src[i]))
 			{
 				_sstring_clear(&toks);
-				while (isdigit(a->str.src[i]))
+				while (isdigit((unsigned char)a->str.src[i]))
 					_sstring_append_char(&toks, a->str.src[i++]);
 				pt.src[sigma] = calloc(_sstring_end_sstring(&toks) + 1, sizeof(char));
 				track = 0;

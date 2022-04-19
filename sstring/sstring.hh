@@ -1783,13 +1783,13 @@ namespace openutils
 	bool sstring::to_morse_code()
 	{
 		for (std::size_t i = 0; i < this->len; i++)
-			if (!std::isdigit(this->src[i]) && !std::isalpha(this->src[i]) && this->src[i] != ' ')
+			if (!std::isdigit((unsigned char)this->src[i]) && !std::isalpha((unsigned char)this->src[i]) && this->src[i] != ' ')
 				return false;
 		char *buff = (char *)std::calloc((this->len * 8) + 1, sizeof(char));
 		std::size_t track = 0;
 		for (std::size_t i = 0; i < this->len; i++)
 		{
-			if (std::isdigit(this->src[i]))
+			if (std::isdigit((unsigned char)this->src[i]))
 				fast_strncat(buff, morse_code[(std::size_t)this->src[i] - 48].code, track);
 			else if (this->src[i] == ' ')
 				fast_strncat(buff, morse_code[(std::size_t)36].code, track);
@@ -1997,9 +1997,9 @@ namespace openutils
 			}
 			else if (this->src[i] == 32)
 				i++, len++;
-			else if (std::isdigit(this->src[i]))
+			else if (std::isdigit((unsigned char)this->src[i]))
 			{
-				while (std::isdigit(this->src[i]))
+				while (std::isdigit((unsigned char)this->src[i]))
 					i++;
 				len++;
 			}
@@ -2034,10 +2034,10 @@ namespace openutils
 				toks.append_char(this->src[i++]);
 				pt.add(toks.c_str(), WHITESPACE);
 			}
-			else if (std::isdigit(this->src[i]))
+			else if (std::isdigit((unsigned char)this->src[i]))
 			{
 				toks.clear();
-				while (std::isdigit(this->src[i]))
+				while (std::isdigit((unsigned char)this->src[i]))
 					toks.append_char(this->src[i++]);
 				pt.add(toks.c_str(), INTEGER);
 			}
