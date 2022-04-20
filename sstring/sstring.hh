@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.hh" under "sstring" directory
- * sstring: version 1.6.9
+ * sstring: version 1.7.0
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -30,7 +30,8 @@
 
 #ifdef __cplusplus
 
-#pragma once
+#ifndef SSTRING_DEFINED
+#define SSTRING_DEFINED
 
 #include <ostream>
 #include <cstdlib>
@@ -40,10 +41,11 @@
 #include <numeric>
 #include <climits>
 #include <functional>
+#include <cassert>
 #include "binary.h"
 #include "morse_code.h"
 
-#define sstring_version "1.6.9"
+#define sstring_version "1.7.0"
 
 namespace std
 {
@@ -57,9 +59,7 @@ namespace std
 			long long power_of_p = 1;
 			long long hash_val = 0;
 
-			std::size_t len = std::strlen(str);
-
-			for (std::size_t i = 0; i < len; i++)
+			for (std::size_t i = 0; str[i] != 0; i++)
 			{
 				hash_val = (hash_val + (str[i] - 97 + 1) * power_of_p) % m;
 				power_of_p = (power_of_p * p) % m;
@@ -78,9 +78,7 @@ namespace std
 			long long power_of_p = 1;
 			long long hash_val = 0;
 
-			std::size_t len = std::strlen((const char *)str);
-
-			for (std::size_t i = 0; i < len; i++)
+			for (std::size_t i = 0; str[i] != 0; i++)
 			{
 				hash_val = (hash_val + (str[i] - 97 + 1) * power_of_p) % m;
 				power_of_p = (power_of_p * p) % m;
@@ -103,8 +101,6 @@ namespace openutils
 	 * @param size where to append `src`
 	 */
 	void fast_strncat(char *dest, const char *src, std::size_t &size);
-	int strcmp_void(const void *a1, const void *a2);
-	int compare_chars(const void *c1, const void *c2);
 
 	class sstring
 	{
@@ -314,11 +310,29 @@ namespace openutils
 				size += 1;
 	}
 
+#ifndef EXIT_HEAP_FAIL
+#define EXIT_HEAP_FAIL
+	static inline void exit_heap_fail(const void *ptr)
+	{
+		if (!ptr)
+		{
+			fprintf(stderr, "err: can't allocate heap memory.");
+#if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+			fprintf(stderr, "\r\n");
+#else
+			fprintf(stderr, "\n");
+#endif
+			exit(EXIT_FAILURE);
+		}
+	}
+#endif
+
 	sstring::sstring(const char *src, std::size_t alloc_size)
 	{
 		if (src)
 		{
 			this->src = (char *)std::calloc(std::strlen(src) + 1, sizeof(char));
+			exit_heap_fail(this->src);
 			std::size_t l = 0;
 			fast_strncat(this->src, src, l);
 			this->len = l;
@@ -326,6 +340,7 @@ namespace openutils
 		else
 		{
 			this->src = (char *)std::calloc(alloc_size + 1, sizeof(char));
+			exit_heap_fail(this->src);
 			this->len = 0;
 		}
 	}
@@ -333,6 +348,7 @@ namespace openutils
 	sstring::sstring(const sstring &other)
 	{
 		this->src = (char *)std::calloc(1, sizeof(char));
+		exit_heap_fail(this->src);
 		this->len = 0;
 		this->set(other.c_str());
 	}
@@ -349,6 +365,7 @@ namespace openutils
 	{
 		std::size_t len = sizeof(char) * list.size(), currlen = 0;
 		this->src = (char *)std::calloc(len + 1, sizeof(char));
+		exit_heap_fail(this->src);
 		for (std::initializer_list<char>::const_iterator i = list.begin(); i != list.end() && *i != '\0'; i++)
 			this->src[currlen++] = *i;
 		this->len = currlen;
@@ -357,6 +374,7 @@ namespace openutils
 	sstring::sstring(std::initializer_list<sstring> list)
 	{
 		this->src = (char *)std::calloc(2, sizeof(char));
+		exit_heap_fail(this->src);
 		this->len = 0;
 		for (std::initializer_list<sstring>::const_iterator i = list.begin(); i != list.end(); i++)
 			this->append(i->c_str());
@@ -365,6 +383,7 @@ namespace openutils
 	sstring::sstring(std::initializer_list<const char *> list)
 	{
 		this->src = (char *)std::calloc(2, sizeof(char));
+		exit_heap_fail(this->src);
 		this->len = 0;
 		for (std::initializer_list<const char *>::const_iterator i = list.begin(); i != list.end(); i++)
 			this->append(*i);
@@ -373,6 +392,7 @@ namespace openutils
 	sstring::sstring(const char c)
 	{
 		this->src = (char *)std::calloc(2, sizeof(char));
+		exit_heap_fail(this->src);
 		this->len = 0;
 		this->set_char(c);
 	}
@@ -384,6 +404,7 @@ namespace openutils
 			std::free(this->src);
 			std::size_t len = std::strlen(src);
 			this->src = (char *)std::calloc(len + 1, sizeof(char));
+			exit_heap_fail(this->src);
 			std::strcpy(this->src, src);
 			this->len = len;
 		}
@@ -395,6 +416,7 @@ namespace openutils
 		{
 			std::free(this->src);
 			this->src = (char *)std::calloc(2, sizeof(char));
+			exit_heap_fail(this->src);
 			std::strncpy(this->src, &c, 1);
 			this->len = 1;
 		}
@@ -407,6 +429,7 @@ namespace openutils
 		{
 			std::free(this->src);
 			this->src = (char *)std::calloc(N + 1, sizeof(char));
+			exit_heap_fail(this->src);
 			std::strncpy(this->src, src, N);
 			this->len = N;
 		}
@@ -417,12 +440,14 @@ namespace openutils
 		if (len > 0)
 		{
 			char *buff = (char *)std::calloc(len + 1, sizeof(char));
+			exit_heap_fail(buff);
 			// random ascii character betweem 32 and 126, inclusive
 			for (std::size_t i = 0; i < len; i++)
 				buff[i] = (rand() % (126 - 32 + 1)) + 32;
 			std::free(this->src);
 			this->src = (char *)std::calloc(len + 1, sizeof(char));
-			std::strcpy(this->src, (const char *)buff);
+			exit_heap_fail(this->src);
+			std::strcpy(this->src, buff);
 			std::free(buff);
 			this->len = len;
 		}
@@ -445,16 +470,18 @@ namespace openutils
 			if (char_between != '\0')
 				cnt_t += len + 1;
 			char *buff = (char *)std::calloc(cnt_t + 1, sizeof(char)), bw[3] = "\0\0";
+			exit_heap_fail(buff);
 			std::size_t track = 0;
 			for (std::size_t i = from; i < till; i++)
 			{
 				fast_strncat(buff, src[i], track);
 				if (i < till - 1 && (bw[0] = char_between) != '\0')
-					fast_strncat(buff, (const char *)bw, track);
+					fast_strncat(buff, bw, track);
 			}
 			std::free(this->src);
 			this->src = (char *)std::calloc(track + 1, sizeof(char));
-			std::strcpy(this->src, (const char *)buff);
+			exit_heap_fail(this->src);
+			std::strcpy(this->src, buff);
 			this->len = track;
 			std::free(buff);
 			return true;
@@ -476,6 +503,7 @@ namespace openutils
 			{
 				std::free(this->src);
 				this->src = (char *)std::calloc(l + 1, sizeof(char));
+				exit_heap_fail(this->src);
 				std::strcpy(this->src, src);
 				this->len = l;
 			}
@@ -497,6 +525,7 @@ namespace openutils
 			{
 				std::free(this->src);
 				this->src = (char *)std::calloc(2, sizeof(char));
+				exit_heap_fail(this->src);
 				std::strncpy(this->src, &c, 1);
 				this->len = 1;
 			}
@@ -505,7 +534,7 @@ namespace openutils
 				this->src = (char *)std::realloc(this->src, (sizeof(char) * 2) + (len + 1));
 				char __dat[3] = "\0\0";
 				__dat[0] = c;
-				fast_strncat(this->src, (const char *)__dat, len);
+				fast_strncat(this->src, __dat, len);
 				this->len = len;
 			}
 		}
@@ -521,6 +550,7 @@ namespace openutils
 			{
 				std::free(this->src);
 				this->src = (char *)std::calloc(N + 1, sizeof(char));
+				exit_heap_fail(this->src);
 				std::strncpy(this->src, src, N); // copy `src` to `a`.
 				this->len = N;
 			}
@@ -528,8 +558,9 @@ namespace openutils
 			{
 				this->src = (char *)std::realloc(this->src, sizeof(char) * (N + len + 1));
 				char *buff = (char *)std::calloc(N + 1, sizeof(char));
+				exit_heap_fail(buff);
 				std::strncpy(buff, src, N);
-				fast_strncat(this->src, (const char *)buff, len);
+				fast_strncat(this->src, buff, len);
 				std::free(buff);
 				this->len = len;
 			}
@@ -545,19 +576,22 @@ namespace openutils
 			{
 				std::free(this->src);
 				this->src = (char *)std::calloc(l + 1, sizeof(char));
+				exit_heap_fail(this->src);
 				std::strcpy(this->src, src); // copy `src` to `a`.
 				this->len = l;
 			}
 			else
 			{
 				char *buff = (char *)std::calloc(l + len + 1, sizeof(char));
+				exit_heap_fail(buff);
 				std::size_t track = 0;
 				fast_strncat(buff, src, track);
-				fast_strncat(buff, (const char *)this->src, track);
+				fast_strncat(buff, this->src, track);
 				std::free(this->src);
 				this->src = (char *)std::calloc(track + 1, sizeof(char));
+				exit_heap_fail(this->src);
 				track = 0;
-				fast_strncat(this->src, (const char *)buff, track);
+				fast_strncat(this->src, buff, track);
 				std::free(buff);
 				this->len = track;
 			}
@@ -573,6 +607,7 @@ namespace openutils
 			{
 				std::free(this->src);
 				this->src = (char *)std::calloc(2, sizeof(char));
+				exit_heap_fail(this->src);
 				std::strncpy(this->src, &c, 1); // copy `c` to `a`.
 				this->len = len + 1;
 			}
@@ -582,12 +617,14 @@ namespace openutils
 				___c[0] = c;
 				std::size_t track = 0;
 				char *buff = (char *)std::calloc(len + 1 + 2, sizeof(char));
-				fast_strncat(buff, (const char *)___c, track);
-				fast_strncat(buff, (const char *)this->src, track);
+				exit_heap_fail(buff);
+				fast_strncat(buff, ___c, track);
+				fast_strncat(buff, this->src, track);
 				std::free(this->src);
 				this->src = (char *)std::calloc(track + 1, sizeof(char));
+				exit_heap_fail(this->src);
 				track = 0;
-				fast_strncat(this->src, (const char *)buff, track);
+				fast_strncat(this->src, buff, track);
 				std::free(buff);
 				this->len = track;
 			}
@@ -604,19 +641,22 @@ namespace openutils
 			{
 				std::free(this->src);
 				this->src = (char *)std::calloc(N + 1, sizeof(char));
+				exit_heap_fail(this->src);
 				std::strncpy(this->src, src, N); // copy `src` to `a`.
 				this->len = N;
 			}
 			else
 			{
 				char *buff = (char *)std::calloc(len + N + 1, sizeof(char));
+				exit_heap_fail(buff);
 				std::strncpy(buff, src, N);
 				std::size_t track = N;
-				fast_strncat(buff, (const char *)this->src, track);
+				fast_strncat(buff, this->src, track);
 				std::free(this->src);
 				this->src = (char *)std::calloc(track + 1, sizeof(char));
+				exit_heap_fail(this->src);
 				track = 0;
-				fast_strncat(this->src, (const char *)buff, track);
+				fast_strncat(this->src, buff, track);
 				std::free(buff);
 				this->len = track;
 			}
@@ -641,20 +681,22 @@ namespace openutils
 				cnt_t += len + 1;
 			std::size_t slen = this->len, track = 0;
 			char *buff = (char *)std::calloc(cnt_t + slen + 1, sizeof(char)), bw[3] = "\0\0";
-			fast_strncat(buff, (const char *)this->src, track);
+			exit_heap_fail(buff);
+			fast_strncat(buff, this->src, track);
 
 			if (slen > 0 && (bw[0] = char_between) != '\0')
-				fast_strncat(buff, (const char *)bw, track);
+				fast_strncat(buff, bw, track);
 			for (std::size_t i = from; i < till; i++)
 			{
 				fast_strncat(buff, src[i], track);
 				if (i < till - 1 && (bw[0] = char_between) != '\0')
-					fast_strncat(buff, (const char *)bw, track);
+					fast_strncat(buff, bw, track);
 			}
 			std::free(this->src);
 			this->src = (char *)std::calloc(track + 1, sizeof(char));
+			exit_heap_fail(this->src);
 			track = 0;
-			fast_strncat(this->src, (const char *)buff, track);
+			fast_strncat(this->src, buff, track);
 			std::free(buff);
 			this->len = track;
 			return true;
@@ -680,19 +722,21 @@ namespace openutils
 				cnt_t += len + 1;
 			std::size_t slen = this->len, track = 0;
 			char *buff = (char *)std::calloc(cnt_t + slen + 1, sizeof(char)), bw[3] = "\0\0";
+			exit_heap_fail(buff);
 			for (std::size_t i = from; i < till; i++)
 			{
 				fast_strncat(buff, src[i], track);
 				if (i < till - 1 && (bw[0] = char_between) != '\0')
-					fast_strncat(buff, (const char *)bw, track);
+					fast_strncat(buff, bw, track);
 			}
 			if (cnt_t > 2 && (bw[0] = char_between) != '\0')
-				fast_strncat(buff, (const char *)bw, track);
-			fast_strncat(buff, (const char *)this->src, track);
+				fast_strncat(buff, bw, track);
+			fast_strncat(buff, this->src, track);
 			std::free(this->src);
 			this->src = (char *)calloc(track + 1, sizeof(char));
+			exit_heap_fail(this->src);
 			track = 0;
-			fast_strncat(this->src, (const char *)buff, track);
+			fast_strncat(this->src, buff, track);
 			std::free(buff);
 			this->len = track;
 		}
@@ -740,13 +784,13 @@ namespace openutils
 
 	std::size_t sstring::length() const
 	{
-		return std::strlen((const char *)this->src);
+		return std::strlen(this->src);
 	}
 
 	bool sstring::compare(const char *T1) const
 	{
 		if (T1)
-			if (std::strcmp((const char *)this->src, T1) == 0)
+			if (std::strcmp(this->src, T1) == 0)
 				return true;
 		return false;
 	}
@@ -754,7 +798,7 @@ namespace openutils
 	bool sstring::compare_upto(const char *T1, std::size_t N) const
 	{
 		if (T1)
-			if (std::strncmp((const char *)this->src, T1, N) == 0)
+			if (std::strncmp(this->src, T1, N) == 0)
 				return true;
 		return false;
 	}
@@ -805,16 +849,17 @@ namespace openutils
 		if (old && new_)
 		{
 			std::size_t i, count_old = 0, len_o = std::strlen(old), len_n = std::strlen(new_);
-			const char *temp = (const char *)this->src;
+			const char *temp = this->src;
 			for (i = 0; temp[i] != '\0'; ++i)
 			{
-				if (std::strstr((const char *)&temp[i], old) == &temp[i])
+				if (std::strstr(&temp[i], old) == &temp[i])
 				{
 					count_old++;
 					i += len_o - 1;
 				}
 			}
 			char *buff = (char *)std::calloc(i + count_old * (len_n - len_o) + 1, sizeof(char));
+			exit_heap_fail(buff);
 			i = 0;
 			while (*temp)
 			{
@@ -830,16 +875,17 @@ namespace openutils
 			}
 			std::free(this->src);
 			this->src = (char *)std::calloc(i + 1, sizeof(char));
+			exit_heap_fail(this->src);
 			this->len = i;
 			i = 0;
-			fast_strncat(this->src, (const char *)buff, i);
+			fast_strncat(this->src, buff, i);
 			std::free(buff);
 		}
 	}
 
 	const char *sstring::c_str() const
 	{
-		return (const char *)this->src;
+		return this->src;
 	}
 
 	bool sstring::save(const char *location) const
@@ -849,7 +895,7 @@ namespace openutils
 			std::FILE *f = std::fopen(location, "wb");
 			if (f != nullptr)
 			{
-				std::fwrite((const char *)this->src, this->len, sizeof(char), f);
+				std::fwrite(this->src, this->len, sizeof(char), f);
 				std::fclose(f);
 				return true;
 			}
@@ -864,7 +910,7 @@ namespace openutils
 			std::FILE *f = std::fopen(location, "ab");
 			if (f != nullptr)
 			{
-				std::fwrite((const char *)this->src, this->len, sizeof(char), f);
+				std::fwrite(this->src, this->len, sizeof(char), f);
 				std::fclose(f);
 				return true;
 			}
@@ -884,6 +930,7 @@ namespace openutils
 				std::fseek(f, 0, SEEK_SET);
 				std::free(this->src);
 				this->src = (char *)std::calloc(len + 1, sizeof(char));
+				exit_heap_fail(this->src);
 				std::fread(this->src, len, sizeof(char), f);
 				std::fclose(f);
 				this->len = len;
@@ -897,6 +944,7 @@ namespace openutils
 	{
 		std::free(this->src);
 		this->src = (char *)std::calloc(1, sizeof(char));
+		exit_heap_fail(this->src);
 		this->len = 0;
 	}
 
@@ -933,6 +981,7 @@ namespace openutils
 	{
 		std::size_t len = this->len, size = 0;
 		char *buff = (char *)std::calloc((2 * (len * 8)) + 1, sizeof(char));
+		exit_heap_fail(buff);
 		for (std::size_t i = 0; i < len; ++i)
 		{
 			fast_strncat(buff, binary_data[(std::size_t)this->src[i]], size);
@@ -941,8 +990,9 @@ namespace openutils
 		}
 		std::free(this->src);
 		this->src = (char *)std::calloc(size + 1, sizeof(char));
+		exit_heap_fail(this->src);
 		size = 0;
-		fast_strncat(this->src, (const char *)buff, size);
+		fast_strncat(this->src, buff, size);
 		this->len = size;
 		std::free(buff);
 	}
@@ -972,6 +1022,7 @@ namespace openutils
 		if ((len - cnt) % 8 != 0 && ((len - cnt) / 8) != (cnt + 1))
 			return false;
 		char *buff = (char *)std::calloc((len / 8) + 1, sizeof(char));
+		exit_heap_fail(buff);
 		char bin[9] = "\0", store[2] = "\0";
 		char c = '\0';
 		std::size_t z = 0;
@@ -981,7 +1032,7 @@ namespace openutils
 			{
 				c = std::strtol(bin, (char **)nullptr, 2);
 				store[0] = c;
-				fast_strncat(buff, (const char *)store, z);
+				fast_strncat(buff, store, z);
 				j = 0;
 			}
 			if (i == len - 1)
@@ -995,8 +1046,9 @@ namespace openutils
 		}
 		std::free(this->src);
 		this->src = (char *)std::calloc(z + 1, sizeof(char));
+		exit_heap_fail(this->src);
 		z = 0;
-		fast_strncat(this->src, (const char *)buff, z);
+		fast_strncat(this->src, buff, z);
 		this->len = z;
 		std::free(buff);
 		return true;
@@ -1026,7 +1078,7 @@ namespace openutils
 	bool sstring::contains(const char *str) const
 	{
 		if (str)
-			if (std::strstr((const char *)this->src, str) != nullptr)
+			if (std::strstr(this->src, str) != nullptr)
 				return true;
 		return false;
 	}
@@ -1048,6 +1100,7 @@ namespace openutils
 		std::size_t cnt = 0, map_append = 0, o = 0;
 		bool check = false;
 		char *set_char = (char *)std::calloc(len + 1, sizeof(char));
+		exit_heap_fail(set_char);
 		for (cnt = 0; cnt < len; cnt++)
 		{
 			check = false;
@@ -1066,9 +1119,10 @@ namespace openutils
 			}
 		}
 		std::free(this->src);
-		std::size_t set_len = std::strlen((const char *)set_char);
+		std::size_t set_len = std::strlen(set_char);
 		this->src = (char *)std::calloc(set_len + 1, sizeof(char));
-		std::strcpy(this->src, (const char *)set_char);
+		exit_heap_fail(this->src);
+		std::strcpy(this->src, set_char);
 		this->len = set_len;
 		std::free(set_char);
 	}
@@ -1079,7 +1133,8 @@ namespace openutils
 		{
 			std::free(dest.src);
 			dest.src = (char *)std::calloc(this->len + 1, sizeof(char));
-			std::strcpy(dest.src, (const char *)this->src);
+			exit_heap_fail(dest.src);
+			std::strcpy(dest.src, this->src);
 			dest.len = this->len;
 			return true;
 		}
@@ -1089,6 +1144,7 @@ namespace openutils
 	void sstring::to_hexadecimal()
 	{
 		char *buff = (char *)std::calloc((this->len * 2) + 1, sizeof(char));
+		exit_heap_fail(buff);
 		std::size_t i = 0, j = 0;
 		while (this->src[i] != '\0')
 		{
@@ -1097,8 +1153,9 @@ namespace openutils
 		}
 		std::free(this->src);
 		this->src = (char *)std::calloc(j + 1, sizeof(char));
+		exit_heap_fail(this->src);
 		j = 0;
-		fast_strncat(this->src, (const char *)buff, j);
+		fast_strncat(this->src, buff, j);
 		this->len = j;
 		std::free(buff);
 	}
@@ -1137,6 +1194,7 @@ namespace openutils
 		if (len % 2 != 0)
 			return false;
 		char *buff = (char *)std::calloc((len) / 2 + 1, sizeof(char));
+		exit_heap_fail(buff);
 		char bin[3] = "\0", store[2] = "\0";
 		char c = '\0';
 		std::size_t z = 0;
@@ -1147,22 +1205,23 @@ namespace openutils
 				bin[j] = this->src[i];
 				c = std::strtol(bin, (char **)nullptr, 16);
 				store[0] = c;
-				fast_strncat(buff, (const char *)store, z);
+				fast_strncat(buff, store, z);
 			}
 			if (j == 2)
 			{
 				j = 0;
 				c = std::strtol(bin, (char **)nullptr, 16);
 				store[0] = c;
-				fast_strncat(buff, (const char *)store, z);
+				fast_strncat(buff, store, z);
 			}
 			bin[j] = this->src[i];
 			j++;
 		}
 		std::free(this->src);
 		this->src = (char *)std::calloc(z + 1, sizeof(char));
+		exit_heap_fail(this->src);
 		z = 0;
-		fast_strncat(this->src, (const char *)buff, z);
+		fast_strncat(this->src, buff, z);
 		this->len = z;
 		std::free(buff);
 		return true;
@@ -1172,9 +1231,9 @@ namespace openutils
 	{
 		if (sub)
 		{
-			char *buff = (char *)std::strstr((const char *)this->src, sub);
+			char *buff = (char *)std::strstr(this->src, sub);
 			if (buff)
-				return (std::size_t)this->len - std::strlen((const char *)buff);
+				return (std::size_t)this->len - std::strlen(buff);
 		}
 		return (std::size_t)-1;
 	}
@@ -1182,6 +1241,7 @@ namespace openutils
 	void sstring::in()
 	{
 		char *ptr = (char *)std::calloc(2, sizeof(char)), ch;
+		exit_heap_fail(ptr);
 		std::size_t len = 0;
 		while ((ch = std::getchar()))
 		{
@@ -1193,6 +1253,7 @@ namespace openutils
 		ptr[len] = 0;
 		std::free(this->src);
 		this->src = (char *)std::calloc(len + 1, sizeof(char));
+		exit_heap_fail(this->src);
 		fast_strncat(this->src, ptr, this->len);
 		std::free(ptr);
 	}
@@ -1201,6 +1262,7 @@ namespace openutils
 	{
 		std::size_t len = this->len, cnt = 0;
 		char *temp = (char *)std::calloc(len + 1, sizeof(char)), *tok;
+		exit_heap_fail(temp);
 		std::strcpy(temp, this->src);
 		tok = std::strtok(temp, "\n");
 		while (tok)
@@ -1214,7 +1276,7 @@ namespace openutils
 			std::free(temp);
 			return sstring(nullptr);
 		}
-		sstring res = sstring((const char *)tok);
+		sstring res = sstring(tok);
 		std::free(temp);
 		return res;
 	}
@@ -1236,7 +1298,8 @@ namespace openutils
 		if (sub && sub[0] != '\0')
 		{
 			char *buff = (char *)std::calloc(this->len + 1, sizeof(char));
-			std::strcpy(buff, (const char *)this->src);
+			exit_heap_fail(buff);
+			std::strcpy(buff, this->src);
 			std::size_t len_s = std::strlen(sub), cnt = 0;
 			{
 				char *temp = buff;
@@ -1250,9 +1313,10 @@ namespace openutils
 				std::free(temp);
 			}
 			std::free(this->src);
-			std::size_t len_buff = std::strlen((const char *)buff);
+			std::size_t len_buff = std::strlen(buff);
 			this->src = (char *)std::calloc(len_buff + 1, sizeof(char));
-			std::strcpy(this->src, (const char *)buff);
+			exit_heap_fail(this->src);
+			std::strcpy(this->src, buff);
 			std::free(buff);
 			this->len = len_buff;
 			return cnt;
@@ -1265,6 +1329,7 @@ namespace openutils
 		if (c != '\0')
 		{
 			char *buff = (char *)std::calloc(this->len + 1, sizeof(char));
+			exit_heap_fail(buff);
 			std::size_t cnt = 0;
 			for (std::size_t i = 0, k = 0; this->src[i] != '\0'; i++)
 			{
@@ -1277,9 +1342,10 @@ namespace openutils
 					cnt++;
 			}
 			std::free(this->src);
-			std::size_t buff_len = std::strlen((const char *)buff);
+			std::size_t buff_len = std::strlen(buff);
 			this->src = (char *)std::calloc(buff_len + 1, sizeof(char));
-			std::strcpy(this->src, (const char *)buff);
+			exit_heap_fail(this->src);
+			std::strcpy(this->src, buff);
 			std::free(buff);
 			this->len = buff_len;
 			return cnt;
@@ -1292,6 +1358,7 @@ namespace openutils
 		if (c != '\0')
 		{
 			char *buff = (char *)std::calloc(this->len + 1, sizeof(char));
+			exit_heap_fail(buff);
 			std::size_t p = 0, i = 0, cnt = 0;
 			while (this->src[p] != '\0')
 			{
@@ -1306,9 +1373,10 @@ namespace openutils
 			}
 			buff[i] = '\0';
 			std::free(this->src);
-			std::size_t buff_len = std::strlen((const char *)buff);
+			std::size_t buff_len = std::strlen(buff);
 			this->src = (char *)std::calloc(buff_len + 1, sizeof(char));
-			std::strcpy(this->src, (const char *)buff);
+			exit_heap_fail(this->src);
+			std::strcpy(this->src, buff);
 			std::free(buff);
 			this->len = buff_len;
 			return cnt;
@@ -1322,6 +1390,7 @@ namespace openutils
 		if (till > len || from > len || from > till)
 			return cnt;
 		char *buff = (char *)std::calloc((len - (till - from) + 1), sizeof(char));
+		exit_heap_fail(buff);
 		for (std::size_t i = 0, k = 0; i < len; i++)
 		{
 			if (i == from)
@@ -1336,9 +1405,10 @@ namespace openutils
 			}
 		}
 		std::free(this->src);
-		std::size_t buff_len = std::strlen((const char *)buff);
+		std::size_t buff_len = std::strlen(buff);
 		this->src = (char *)std::calloc(buff_len + 1, sizeof(char));
-		std::strcpy(this->src, (const char *)buff);
+		exit_heap_fail(this->src);
+		std::strcpy(this->src, buff);
 		std::free(buff);
 		this->len = buff_len;
 		return cnt;
@@ -1350,15 +1420,17 @@ namespace openutils
 		if (till > len || from > len || from > till)
 			return false;
 		char *buff = (char *)std::calloc(((till - from) + 1), sizeof(char));
+		exit_heap_fail(buff);
 		for (std::size_t i = from, k = 0; i < till; i++)
 		{
 			buff[k] = this->src[i];
 			k++;
 		}
 		std::free(this->src);
-		std::size_t buff_len = std::strlen((const char *)buff);
+		std::size_t buff_len = std::strlen(buff);
 		this->src = (char *)std::calloc(buff_len + 1, sizeof(char));
-		std::strcpy(this->src, (const char *)buff);
+		exit_heap_fail(this->src);
+		std::strcpy(this->src, buff);
 		std::free(buff);
 		this->len = buff_len;
 		return true;
@@ -1388,6 +1460,7 @@ namespace openutils
 		{
 			std::size_t len1 = this->len, len2 = std::strlen(src), x, y, last, old;
 			std::size_t *cols = (std::size_t *)std::calloc(len1 + 1, sizeof(std::size_t));
+			exit_heap_fail(cols);
 			for (y = 1; y <= len1; y++)
 				cols[y] = y;
 			for (x = 1; x <= len2; x++)
@@ -1413,6 +1486,7 @@ namespace openutils
 		{
 			std::size_t len1 = this->len, len2 = std::strlen(src), x, y, last, old;
 			std::size_t *cols = (std::size_t *)std::calloc(len1 + 1, sizeof(std::size_t));
+			exit_heap_fail(cols);
 			for (y = 1; y <= len1; y++)
 				cols[y] = y;
 			for (x = 1; x <= len2; x++)
@@ -1438,7 +1512,7 @@ namespace openutils
 		if (what)
 		{
 			std::size_t cnt = 0, len = std::strlen(what);
-			const char *sub = (const char *)this->src;
+			const char *sub = this->src;
 			while ((sub = std::strstr(sub, what)))
 			{
 				cnt++;
@@ -1494,7 +1568,7 @@ namespace openutils
 				s++;
 			}
 		}
-		res.len = std::strlen((const char *)res.src); // not big deal just 4 character (if nothing goes wrong)
+		res.len = std::strlen(res.src); // not big deal just 4 character (if nothing goes wrong)
 		return res;
 	}
 
@@ -1512,8 +1586,10 @@ namespace openutils
 		if (cnt == 0)
 			return sstring(nullptr);
 		char *temp = (char *)std::calloc(len + 1, sizeof(char));
+		exit_heap_fail(temp);
 		std::strcpy(temp, this->src);
 		char **buff = (char **)std::calloc(cnt + 1, sizeof(char *)), *tok = strtok(temp, dl);
+		exit_heap_fail(buff);
 		while (tok != nullptr)
 		{
 			buff[l] = tok;
@@ -1547,7 +1623,9 @@ namespace openutils
 		std::size_t cnt = 0, map_append = 0, o = 0;
 		bool check = false;
 		char *map_char = (char *)std::calloc(len + 1, sizeof(char));
+		exit_heap_fail(map_char);
 		std::size_t *map_cnt = (std::size_t *)std::calloc(len + 1, sizeof(std::size_t));
+		exit_heap_fail(map_cnt);
 		for (cnt = 0; cnt < len; cnt++)
 		{
 			check = false;
@@ -1589,6 +1667,7 @@ namespace openutils
 		{
 			std::size_t len = this->len, cnt = 0;
 			char *temp = (char *)std::calloc(len + 1, sizeof(char)), *tok;
+			exit_heap_fail(temp);
 			std::strcpy(temp, this->src);
 			tok = std::strtok(temp, str);
 			while (tok)
@@ -1602,12 +1681,13 @@ namespace openutils
 			if (cnt == 0)
 				return split_t(0);
 			temp = (char *)std::calloc(len + 1, sizeof(char));
+			exit_heap_fail(temp);
 			std::strcpy(temp, this->src);
 			tok = std::strtok(temp, str);
 			split_t x(cnt + 1);
 			while (tok)
 			{
-				x.add((const char *)tok);
+				x.add(tok);
 				tok = std::strtok(nullptr, str);
 				if (!tok)
 					break;
@@ -1640,6 +1720,7 @@ namespace openutils
 				std::fseek(f, 0, SEEK_SET);
 				std::free(this->src);
 				this->src = (char *)std::calloc(len + 1, sizeof(char));
+				exit_heap_fail(this->src);
 				std::fread(this->src, len, sizeof(char), f);
 				std::fclose(f);
 				return len;
@@ -1705,6 +1786,7 @@ namespace openutils
 			std::size_t len = this->len, val = std::hash<const char *>()(key) % 128;
 			bool add = true;
 			char *buff = (char *)std::calloc(len + 1, sizeof(char));
+			exit_heap_fail(buff);
 			for (std::size_t i = 0; this->src[i] != '\0'; i++)
 			{
 				if (add == true && this->src[i] + val > '\0')
@@ -1725,8 +1807,9 @@ namespace openutils
 			}
 			std::free(this->src);
 			this->src = (char *)std::calloc(len + 1, sizeof(char));
+			exit_heap_fail(this->src);
 			len = 0;
-			fast_strncat(this->src, (const char *)buff, len);
+			fast_strncat(this->src, buff, len);
 			this->len = len;
 			std::free(buff);
 			return true;
@@ -1741,6 +1824,7 @@ namespace openutils
 			std::size_t len = this->len, val = std::hash<const char *>()(key) % 128;
 			bool add_invr = true;
 			char *buff = (char *)std::calloc(len + 1, sizeof(char));
+			exit_heap_fail(buff);
 			for (std::size_t i = 0; this->src[i] != '\0'; i++)
 			{
 				if (add_invr == true && this->src[i] + val > '\0')
@@ -1761,8 +1845,9 @@ namespace openutils
 			}
 			std::free(this->src);
 			this->src = (char *)std::calloc(len + 1, sizeof(char));
+			exit_heap_fail(this->src);
 			len = 0;
-			fast_strncat(this->src, (const char *)buff, len);
+			fast_strncat(this->src, buff, len);
 			this->len = len;
 			std::free(buff);
 			return true;
@@ -1786,6 +1871,7 @@ namespace openutils
 			if (!std::isdigit((unsigned char)this->src[i]) && !std::isalpha((unsigned char)this->src[i]) && this->src[i] != ' ')
 				return false;
 		char *buff = (char *)std::calloc((this->len * 8) + 1, sizeof(char));
+		exit_heap_fail(buff);
 		std::size_t track = 0;
 		for (std::size_t i = 0; i < this->len; i++)
 		{
@@ -1805,8 +1891,9 @@ namespace openutils
 		}
 		std::free(this->src);
 		this->src = (char *)std::calloc(track + 1, sizeof(char));
+		exit_heap_fail(this->src);
 		track = 0;
-		fast_strncat(this->src, (const char *)buff, track);
+		fast_strncat(this->src, buff, track);
 		std::free(buff);
 		this->len = track;
 		return true;
@@ -1827,6 +1914,8 @@ namespace openutils
 			}
 		}
 		char *buff = (char *)std::calloc(this->len + 1, sizeof(char)), *temp = (char *)std::calloc(9, sizeof(char));
+		exit_heap_fail(buff);
+		exit_heap_fail(temp);
 		std::size_t track = 0, x = 0;
 		char arr[3] = "\0\0";
 		for (std::size_t i = 0, k = 0; i < this->len; i++, k++)
@@ -1838,7 +1927,7 @@ namespace openutils
 				while ((std::strcmp(temp, morse_code[x].code)) != 0)
 					x++;
 				arr[0] = morse_code[x].character;
-				fast_strncat(buff, (const char *)arr, track);
+				fast_strncat(buff, arr, track);
 			}
 			if (this->src[i] == ' ')
 			{
@@ -1846,7 +1935,7 @@ namespace openutils
 				while ((std::strcmp(temp, morse_code[x].code)) != 0)
 					x++;
 				arr[0] = morse_code[x].character;
-				fast_strncat(buff, (const char *)arr, track);
+				fast_strncat(buff, arr, track);
 				memset(temp, 0, 8);
 				k = 0;
 			}
@@ -1854,8 +1943,9 @@ namespace openutils
 		}
 		std::free(this->src);
 		this->src = (char *)std::calloc(track + 1, sizeof(char));
+		exit_heap_fail(this->src);
 		track = 0;
-		fast_strncat(this->src, (const char *)buff, track);
+		fast_strncat(this->src, buff, track);
 		std::free(buff);
 		std::free(temp);
 		this->len = track;
@@ -2077,6 +2167,7 @@ namespace openutils
 				len += std::strlen(toks[i].c_str());
 			std::free(this->src);
 			this->src = (char *)std::calloc(len + 1, sizeof(char));
+			exit_heap_fail(this->src);
 			len = 0;
 			for (std::size_t i = 0; i < toks.length(); i++)
 				fast_strncat(this->src, toks[i].c_str(), len);
@@ -2094,14 +2185,16 @@ namespace openutils
 		if (buffer_length >= buff_l)
 		{
 			char *buff = (char *)std::calloc(buffer_length + 1, sizeof(char));
+			exit_heap_fail(buff);
 			std::va_list ar;
 			va_start(ar, __format__);
 			std::vsnprintf(buff, buffer_length, __format__, ar);
 			va_end(ar);
 			std::free(this->src);
-			this->src = (char *)std::calloc(std::strlen((const char *)buff) + 1, sizeof(char));
+			this->src = (char *)std::calloc(std::strlen(buff) + 1, sizeof(char));
+			exit_heap_fail(this->src);
 			std::size_t len = 0;
-			fast_strncat(this->src, (const char *)buff, len);
+			fast_strncat(this->src, buff, len);
 			this->len = len;
 			std::free(buff);
 			return true;
@@ -2117,13 +2210,14 @@ namespace openutils
 		if (buffer_length >= buff_l)
 		{
 			char *buff = (char *)std::calloc(buffer_length + 1, sizeof(char));
+			exit_heap_fail(buff);
 			std::va_list ar;
 			va_start(ar, __format__);
 			std::vsnprintf(buff, buffer_length, __format__, ar);
 			va_end(ar);
-			this->src = (char *)std::realloc(this->src, sizeof(char) * (std::strlen((const char *)buff) + this->len + 1));
+			this->src = (char *)std::realloc(this->src, sizeof(char) * (std::strlen(buff) + this->len + 1));
 			std::size_t len = this->len;
-			fast_strncat(this->src, (const char *)buff, len);
+			fast_strncat(this->src, buff, len);
 			this->len = len;
 			std::free(buff);
 			return true;
@@ -2315,7 +2409,7 @@ namespace openutils
 	{
 		if (this != &__s)
 		{
-			free(this->src);
+			std::free(this->src);
 			this->len = __s.len;
 			this->src = __s.src;
 			__s.src = nullptr;
@@ -2332,7 +2426,7 @@ namespace openutils
 
 	sstring::~sstring()
 	{
-		free(this->src);
+		std::free(this->src);
 		this->len = 0;
 	}
 
@@ -2373,84 +2467,84 @@ namespace openutils
 	{
 		char s[std::numeric_limits<std::size_t>::digits + 1] = {};
 		std::snprintf(s, std::numeric_limits<std::size_t>::digits + 1, "%p", ptr);
-		return sstring((const char *)s);
+		return sstring(s);
 	}
 
 	sstring sstring::to_sstring(signed short int x)
 	{
 		char s[std::numeric_limits<signed short int>::digits + 2] = {};
 		std::snprintf(s, std::numeric_limits<signed short int>::digits + 2, "%hi", x);
-		return sstring((const char *)s);
+		return sstring(s);
 	}
 
 	sstring sstring::to_sstring(unsigned short int x)
 	{
 		char s[std::numeric_limits<unsigned short int>::digits + 1] = {};
 		std::snprintf(s, std::numeric_limits<unsigned short int>::digits + 1, "%hu", x);
-		return sstring((const char *)s);
+		return sstring(s);
 	}
 
 	sstring sstring::to_sstring(signed int x)
 	{
 		char s[std::numeric_limits<signed int>::digits + 2] = {};
 		std::snprintf(s, std::numeric_limits<signed int>::digits + 2, "%d", x);
-		return sstring((const char *)s);
+		return sstring(s);
 	}
 
 	sstring sstring::to_sstring(unsigned int x)
 	{
 		char s[std::numeric_limits<unsigned int>::digits + 1] = {};
 		std::snprintf(s, std::numeric_limits<unsigned int>::digits + 1, "%i", x);
-		return sstring((const char *)s);
+		return sstring(s);
 	}
 
 	sstring sstring::to_sstring(signed long int x)
 	{
 		char s[std::numeric_limits<signed long int>::digits + 2] = {};
 		std::snprintf(s, std::numeric_limits<signed long int>::digits + 2, "%ld", x);
-		return sstring((const char *)s);
+		return sstring(s);
 	}
 
 	sstring sstring::to_sstring(unsigned long int x)
 	{
 		char s[std::numeric_limits<unsigned long int>::digits + 1] = {};
 		std::snprintf(s, std::numeric_limits<unsigned long int>::digits + 1, "%lu", x);
-		return sstring((const char *)s);
+		return sstring(s);
 	}
 
 	sstring sstring::to_sstring(signed long long int x)
 	{
 		char s[std::numeric_limits<signed long long int>::digits + 2] = {};
 		std::snprintf(s, std::numeric_limits<signed long long int>::digits + 2, "%lld", x);
-		return sstring((const char *)s);
+		return sstring(s);
 	}
 
 	sstring sstring::to_sstring(unsigned long long int x)
 	{
 		char s[std::numeric_limits<unsigned long long int>::digits + 1] = {};
 		std::snprintf(s, std::numeric_limits<unsigned long long int>::digits + 1, "%llu", x);
-		return sstring((const char *)s);
+		return sstring(s);
 	}
 
 	sstring sstring::to_sstring(float x)
 	{
 		char s[std::numeric_limits<float>::digits + 2] = {};
 		std::snprintf(s, std::numeric_limits<float>::digits + 2, "%f", x);
-		return sstring((const char *)s);
+		return sstring(s);
 	}
 
 	sstring sstring::to_sstring(double x)
 	{
 		char s[std::numeric_limits<double>::digits + 2];
 		std::snprintf(s, std::numeric_limits<double>::digits + 2, "%lf", x);
-		return sstring((const char *)s);
+		return sstring(s);
 	}
 
 	sstring sstring::to_sstring(long double x)
 	{
 		char s[std::numeric_limits<long double>::digits + 2];
 		std::snprintf(s, std::numeric_limits<long double>::digits + 2, "%Lf", x);
-		return sstring((const char *)s);
+		return sstring(s);
 	}
 
 	sstring sstring::get_random(const std::size_t &len)
@@ -2489,7 +2583,9 @@ namespace openutils
 	parse_t::parse_t(std::size_t len)
 	{
 		this->src = (char **)std::calloc(len, sizeof(char *));
+		exit_heap_fail(this->src);
 		this->type = (enum parse_token *)std::calloc(len, sizeof(enum parse_token));
+		exit_heap_fail(this->type);
 		this->len = 0;
 		this->cap = len;
 	}
@@ -2501,6 +2597,7 @@ namespace openutils
 			if (this->len > this->cap)
 				return false;
 			this->src[this->len] = (char *)std::calloc(std::strlen(src) + 1, sizeof(char));
+			exit_heap_fail(this->src[this->len]);
 			std::size_t l = 0;
 			fast_strncat(this->src[this->len], src, l);
 			this->type[this->len++] = type;
@@ -2551,17 +2648,20 @@ namespace openutils
 		if (this != &__pt)
 		{
 			for (std::size_t i = 0; i < this->len; i++)
-				free(this->src[i]);
-			free(this->src);
-			free(this->type);
+				std::free(this->src[i]);
+			std::free(this->src);
+			std::free(this->type);
 			this->len = __pt.len;
 			this->cap = __pt.cap;
 
 			this->src = (char **)std::calloc(this->cap, sizeof(char *));
+			exit_heap_fail(this->src);
 			this->type = (enum parse_token *)std::calloc(this->cap, sizeof(enum parse_token));
+			exit_heap_fail(this->type);
 			for (std::size_t i = 0; i < this->len; i++)
 			{
 				this->src[i] = (char *)std::calloc(std::strlen(__pt.src[i]) + 1, sizeof(char));
+				exit_heap_fail(this->src[i]);
 				std::size_t pos = 0; // temp variable note string length of `__st.src[i]` is only counted once because if we use `std::strcpy` it will also transverse through the string
 				fast_strncat(this->src[i], __pt.src[i], pos);
 				this->type[i] = __pt.type[i];
@@ -2573,9 +2673,9 @@ namespace openutils
 	parse_t::~parse_t()
 	{
 		for (std::size_t i = 0; i < this->len; i++)
-			free(this->src[i]);
-		free(this->src);
-		free(this->type);
+			std::free(this->src[i]);
+		std::free(this->src);
+		std::free(this->type);
 		this->len = 0;
 		this->cap = 0;
 	}
@@ -2583,6 +2683,7 @@ namespace openutils
 	split_t::split_t(std::size_t len)
 	{
 		this->src = (char **)std::calloc(len, sizeof(char *));
+		exit_heap_fail(this->src);
 		this->len = 0;
 		this->cap = len;
 	}
@@ -2594,6 +2695,7 @@ namespace openutils
 			if (this->len > this->cap)
 				return false;
 			this->src[this->len] = (char *)std::calloc(std::strlen(src) + 1, sizeof(char));
+			exit_heap_fail(this->src[this->len]);
 			std::size_t l = 0;
 			fast_strncat(this->src[this->len++], src, l);
 			return true;
@@ -2633,15 +2735,17 @@ namespace openutils
 		if (this != &__st)
 		{
 			for (std::size_t i = 0; i < this->len; i++)
-				free(this->src[i]);
-			free(this->src);
+				std::free(this->src[i]);
+			std::free(this->src);
 			this->len = __st.len;
 			this->cap = __st.cap;
 
 			this->src = (char **)std::calloc(this->cap, sizeof(char *));
+			exit_heap_fail(this->src);
 			for (std::size_t i = 0; i < this->len; i++)
 			{
 				this->src[i] = (char *)std::calloc(std::strlen(__st.src[i]) + 1, sizeof(char));
+				exit_heap_fail(this->src[i]);
 				std::size_t pos = 0; // temp variable note string length of `__st.src[i]` is only counted once because if we use `std::strcpy` it will also transverse through the string
 				fast_strncat(this->src[i], __st.src[i], pos);
 			}
@@ -2652,8 +2756,8 @@ namespace openutils
 	split_t::~split_t()
 	{
 		for (std::size_t i = 0; i < this->len; i++)
-			free(this->src[i]);
-		free(this->src);
+			std::free(this->src[i]);
+		std::free(this->src);
 		this->len = 0;
 		this->cap = 0;
 	}
@@ -2671,4 +2775,5 @@ namespace std
 	};
 };
 
+#endif
 #endif
