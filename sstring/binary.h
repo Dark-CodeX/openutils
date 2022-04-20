@@ -1,35 +1,36 @@
 /**
-* This header file is written reduce time complexity of `to_binary` function under `sstring` struct.
-* Author: Tushar Chaurasia (https://github.com/Dark-CodeX/)
-* Commit to this repository at https://github.com/Dark-CodeX/sstring.git
-* You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
-* File: "binary.h" under "sstring" directory
-* sstring: version 1.6.9
-* 
-* MIT License
-* 
-* Copyright (c) 2022 Tushar Chaurasia
-* 
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-* 
-* The above copyright notice and this permission notice shall be included in all
-* copies or substantial portions of the Software.
-* 
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-* SOFTWARE.
-*/
+ * This header file is written reduce time complexity of `to_binary` function under `sstring` struct.
+ * Author: Tushar Chaurasia (https://github.com/Dark-CodeX/)
+ * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
+ * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
+ * File: "binary.h" under "sstring" directory
+ * sstring: version 1.7.0
+ *
+ * MIT License
+ *
+ * Copyright (c) 2022 Tushar Chaurasia
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
-#pragma once
+#ifndef SSTRING_BINARY_DEFINED
+#define SSTRING_BINARY_DEFINED
 
 static const char *binary_data[] =
 	{
@@ -48,3 +49,5 @@ static const char *binary_data[] =
 		"01101100", "01101101", "01101110", "01101111", "01110000", "01110001", "01110010", "01110011", "01110100",
 		"01110101", "01110110", "01110111", "01111000", "01111001", "01111010", "01111011", "01111100", "01111101",
 		"01111110", "01111111"};
+
+#endif

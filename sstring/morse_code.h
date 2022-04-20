@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "morse_code.h" under "sstring" directory
-* sstring: version 1.6.9
+* sstring: version 1.7.0
 * 
 * MIT License
 * 
@@ -29,7 +29,8 @@
 * SOFTWARE.
 */
 
-#pragma once
+#ifndef SSTRING_MORSE_DEFINED
+#define SSTRING_MORSE_DEFINED
 
 struct morse_code
 {
@@ -74,3 +75,5 @@ struct morse_code
 		{"-.--", 'y'},
 		{"--..", 'z'},
 		{".......", ' '}};
+
+#endif
