@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 1.6.9
+ * sstring: version 1.7.0
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -30,11 +30,12 @@
 
 #ifndef __cplusplus
 
-#pragma once
+#ifndef SSTRING_DEFINED
+#define SSTRING_DEFINED
 
 typedef struct __string__ sstring;
 
-#define sstring_version "1.6.9"
+#define sstring_version "1.7.0"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -860,6 +861,24 @@ void fast_strncat(char *dest, const char *src, size_t *size)
 			*size += 1;
 }
 
+#ifndef EXIT_HEAP_FAIL
+#define EXIT_HEAP_FAIL
+static inline void exit_heap_fail(const void *ptr);
+static inline void exit_heap_fail(const void *ptr)
+{
+	if (!ptr)
+	{
+		fprintf(stderr, "err: can't allocate heap memory.");
+#if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+		fprintf(stderr, "\r\n");
+#else
+		fprintf(stderr, "\n");
+#endif
+		exit(EXIT_FAILURE);
+	}
+}
+#endif
+
 void _sstring_set(sstring *a, const char *src)
 {
 	if (a && src && a->str.init == true && a->str.src)
@@ -867,6 +886,7 @@ void _sstring_set(sstring *a, const char *src)
 		free(a->str.src);
 		size_t len = strlen(src);
 		a->str.src = calloc(len + 1, sizeof(char));
+		exit_heap_fail(a->str.src);
 		strcpy(a->str.src, src);
 		a->str.len = len;
 	}
@@ -878,6 +898,7 @@ void _sstring_set_char(sstring *a, const char c)
 	{
 		free(a->str.src);
 		a->str.src = calloc(2, sizeof(char));
+		exit_heap_fail(a->str.src);
 		strncpy(a->str.src, &c, 1);
 		a->str.len = 1;
 	}
@@ -890,6 +911,7 @@ void _sstring_set_upto(sstring *a, const char *src, size_t N)
 	{
 		free(a->str.src);
 		a->str.src = calloc(N + 1, sizeof(char));
+		exit_heap_fail(a->str.src);
 		strncpy(a->str.src, src, N);
 		a->str.len = N;
 	}
@@ -900,12 +922,14 @@ void _sstring_set_random(sstring *a, const size_t len)
 	if (a && a->str.init == true && a->str.src && len > 0)
 	{
 		char *buff = calloc(len + 1, sizeof(char));
+		exit_heap_fail(buff);
 		// random ascii character betweem 32 and 126, inclusive
 		for (size_t i = 0; i < len; i++)
 			buff[i] = (rand() % (126 - 32 + 1)) + 32;
 		free(a->str.src);
 		a->str.src = calloc(len + 1, sizeof(char));
-		strcpy(a->str.src, (const char *)buff);
+		exit_heap_fail(a->str.src);
+		strcpy(a->str.src, buff);
 		free(buff);
 		a->str.len = len;
 	}
@@ -940,16 +964,18 @@ void _sstring_set_array(sstring *a, const char **src, char char_between, size_t 
 			if (char_between != '\0')
 				cnt_t += len + 1;
 			char *buff = calloc(cnt_t + 1, sizeof(char)), bw[3] = "\0\0";
+			exit_heap_fail(buff);
 			size_t track = 0;
 			for (size_t i = from; i < till; i++)
 			{
 				fast_strncat(buff, src[i], &track);
 				if (i < till - 1 && (bw[0] = char_between) != '\0')
-					fast_strncat(buff, (const char *)bw, &track);
+					fast_strncat(buff, bw, &track);
 			}
 			free(a->str.src);
 			a->str.src = calloc(track + 1, sizeof(char));
-			strcpy(a->str.src, (const char *)buff);
+			exit_heap_fail(a->str.src);
+			strcpy(a->str.src, buff);
 			a->str.len = track;
 			free(buff);
 		}
@@ -960,7 +986,7 @@ char *_sstring_get(sstring *a)
 {
 	if (a && a->str.init == true && a->str.src)
 		return a->str.src;
-	return (char *)NULL;
+	return NULL;
 }
 
 void _sstring_append(sstring *a, const char *src)
@@ -972,12 +998,14 @@ void _sstring_append(sstring *a, const char *src)
 		{
 			free(a->str.src); // used calloc in `init_str` function
 			a->str.src = calloc(l + 1, sizeof(char));
+			exit_heap_fail(a->str.src);
 			strcpy(a->str.src, src); // copy `src` to `a`.
 			a->str.len = l;
 		}
 		else
 		{
 			a->str.src = realloc(a->str.src, sizeof(char) * (l + len + 1));
+			exit_heap_fail(a->str.src);
 			fast_strncat(a->str.src, src, &len);
 			a->str.len = len;
 		}
@@ -993,15 +1021,17 @@ void _sstring_append_char(sstring *a, const char c)
 		{
 			free(a->str.src); // used calloc in `init_str` function
 			a->str.src = calloc(2, sizeof(char));
+			exit_heap_fail(a->str.src);
 			strncpy(a->str.src, &c, 1); // copy `c` to `a`.
 			a->str.len = 1;
 		}
 		else
 		{
 			a->str.src = realloc(a->str.src, (sizeof(char) * 2) + (len + 1));
+			exit_heap_fail(a->str.src);
 			char __dat[3] = "\0\0";
 			__dat[0] = c;
-			fast_strncat(a->str.src, (const char *)__dat, &len);
+			fast_strncat(a->str.src, __dat, &len);
 			a->str.len = len;
 		}
 	}
@@ -1017,15 +1047,18 @@ void _sstring_append_upto(sstring *a, const char *src, size_t N)
 		{
 			free(a->str.src); // used calloc in `init_str` function
 			a->str.src = calloc(N + 1, sizeof(char));
+			exit_heap_fail(a->str.src);
 			strncpy(a->str.src, src, N); // copy `src` to `a`.
 			a->str.len = N;
 		}
 		else
 		{
 			a->str.src = realloc(a->str.src, sizeof(char) * (N + len + 1));
+			exit_heap_fail(a->str.src);
 			char *buff = calloc(N + 1, sizeof(char));
+			exit_heap_fail(buff);
 			strncpy(buff, src, N);
-			fast_strncat(a->str.src, (const char *)buff, &len);
+			fast_strncat(a->str.src, buff, &len);
 			free(buff);
 			a->str.len = len;
 		}
@@ -1041,19 +1074,22 @@ void _sstring_append_start(sstring *a, const char *src)
 		{
 			free(a->str.src); // used calloc in `init_str` function
 			a->str.src = calloc(l + 1, sizeof(char));
+			exit_heap_fail(a->str.src);
 			strcpy(a->str.src, src); // copy `src` to `a`.
 			a->str.len = l;
 		}
 		else
 		{
 			char *buff = calloc(l + len + 1, sizeof(char));
+			exit_heap_fail(buff);
 			size_t track = 0;
 			fast_strncat(buff, src, &track);
-			fast_strncat(buff, (const char *)a->str.src, &track);
+			fast_strncat(buff, a->str.src, &track);
 			free(a->str.src);
 			a->str.src = calloc(track + 1, sizeof(char));
+			exit_heap_fail(a->str.src);
 			track = 0;
-			fast_strncat(a->str.src, (const char *)buff, &track);
+			fast_strncat(a->str.src, buff, &track);
 			free(buff);
 			a->str.len = track;
 		}
@@ -1069,6 +1105,7 @@ void _sstring_append_start_char(sstring *a, const char c)
 		{
 			free(a->str.src); // used calloc in `init_str` function
 			a->str.src = calloc(2, sizeof(char));
+			exit_heap_fail(a->str.src);
 			strncpy(a->str.src, &c, 1); // copy `c` to `a`.
 			a->str.len = len + 1;
 		}
@@ -1078,12 +1115,14 @@ void _sstring_append_start_char(sstring *a, const char c)
 			___c[0] = c;
 			size_t track = 0;
 			char *buff = calloc(2 + len + 1, sizeof(char));
-			fast_strncat(buff, (const char *)___c, &track);
-			fast_strncat(buff, (const char *)a->str.src, &track);
+			exit_heap_fail(buff);
+			fast_strncat(buff, ___c, &track);
+			fast_strncat(buff, a->str.src, &track);
 			free(a->str.src);
 			a->str.src = calloc(track + 1, sizeof(char));
+			exit_heap_fail(a->str.src);
 			track = 0;
-			fast_strncat(a->str.src, (const char *)buff, &track);
+			fast_strncat(a->str.src, buff, &track);
 			free(buff);
 			a->str.len = track;
 		}
@@ -1100,19 +1139,22 @@ void _sstring_append_start_upto(sstring *a, const char *src, size_t N)
 		{
 			free(a->str.src); // used calloc in `init_str` function
 			a->str.src = calloc(N + 1, sizeof(char));
+			exit_heap_fail(a->str.src);
 			strncpy(a->str.src, src, N); // copy `src` to `a`.
 			a->str.len = N;
 		}
 		else
 		{
 			char *buff = calloc(len + N + 1, sizeof(char));
+			exit_heap_fail(buff);
 			strncpy(buff, src, N);
 			size_t track = N;
-			fast_strncat(buff, (const char *)a->str.src, &track);
+			fast_strncat(buff, a->str.src, &track);
 			free(a->str.src);
 			a->str.src = calloc(track + 1, sizeof(char));
+			exit_heap_fail(a->str.src);
 			track = 0;
-			fast_strncat(a->str.src, (const char *)buff, &track);
+			fast_strncat(a->str.src, buff, &track);
 			free(buff);
 			a->str.len = track;
 		}
@@ -1149,20 +1191,22 @@ void _sstring_append_array(sstring *a, const char **src, char char_between, size
 				cnt_t += len + 1;
 			size_t slen = a->str.len, track = 0;
 			char *buff = calloc(cnt_t + slen + 1, sizeof(char)), bw[3] = "\0\0";
-			fast_strncat(buff, (const char *)a->str.src, &track);
+			exit_heap_fail(buff);
+			fast_strncat(buff, a->str.src, &track);
 
 			if (slen > 0 && (bw[0] = char_between) != '\0')
-				fast_strncat(buff, (const char *)bw, &track);
+				fast_strncat(buff, bw, &track);
 			for (size_t i = from; i < till; i++)
 			{
 				fast_strncat(buff, src[i], &track);
 				if (i < till - 1 && (bw[0] = char_between) != '\0')
-					fast_strncat(buff, (const char *)bw, &track);
+					fast_strncat(buff, bw, &track);
 			}
 			free(a->str.src);
 			a->str.src = calloc(track + 1, sizeof(char));
+			exit_heap_fail(a->str.src);
 			track = 0;
-			fast_strncat(a->str.src, (const char *)buff, &track);
+			fast_strncat(a->str.src, buff, &track);
 			free(buff);
 			a->str.len = track;
 		}
@@ -1199,19 +1243,21 @@ void _sstring_append_start_array(sstring *a, const char **src, char char_between
 				cnt_t += len + 1;
 			size_t slen = a->str.len, track = 0;
 			char *buff = calloc(cnt_t + slen + 1, sizeof(char)), bw[3] = "\0\0";
+			exit_heap_fail(buff);
 			for (size_t i = from; i < till; i++)
 			{
 				fast_strncat(buff, src[i], &track);
 				if (i < till - 1 && (bw[0] = char_between) != '\0')
-					fast_strncat(buff, (const char *)bw, &track);
+					fast_strncat(buff, bw, &track);
 			}
 			if (cnt_t > 2 && (bw[0] = char_between) != '\0')
-				fast_strncat(buff, (const char *)bw, &track);
-			fast_strncat(buff, (const char *)a->str.src, &track);
+				fast_strncat(buff, bw, &track);
+			fast_strncat(buff, a->str.src, &track);
 			free(a->str.src);
 			a->str.src = calloc(track + 1, sizeof(char));
+			exit_heap_fail(a->str.src);
 			track = 0;
-			fast_strncat(a->str.src, (const char *)buff, &track);
+			fast_strncat(a->str.src, buff, &track);
 			free(buff);
 			a->str.len = track;
 		}
@@ -1269,7 +1315,7 @@ size_t _sstring_last_index_of(sstring *a, char ch)
 size_t _sstring_length(sstring *a)
 {
 	if (a && a->str.src && a->str.init == true)
-		return strlen((const char *)a->str.src);
+		return strlen(a->str.src);
 	return (size_t)0;
 }
 
@@ -1277,7 +1323,7 @@ bool _sstring_compare(sstring *a, const char *T1)
 {
 	if (a && T1 && a->str.init == true && a->str.src)
 	{
-		if (strcmp((const char *)a->str.src, T1) == 0)
+		if (strcmp(a->str.src, T1) == 0)
 			return true;
 	}
 	return false;
@@ -1287,7 +1333,7 @@ bool _sstring_compare_upto(sstring *a, const char *T1, size_t N)
 {
 	if (a && T1 && a->str.init == true && a->str.src)
 	{
-		if (strncmp((const char *)a->str.src, T1, N) == 0)
+		if (strncmp(a->str.src, T1, N) == 0)
 			return true;
 	}
 	return false;
@@ -1343,16 +1389,17 @@ void _sstring_replace(sstring *a, const char *old, const char *new_)
 	if (a && old && new_ && a->str.init == true && a->str.src)
 	{
 		size_t i, count_old = 0, len_o = strlen(old), len_n = strlen(new_);
-		const char *temp = (const char *)a->str.src;
+		const char *temp = a->str.src;
 		for (i = 0; temp[i] != '\0'; ++i)
 		{
-			if (strstr((const char *)&temp[i], old) == &temp[i])
+			if (strstr(&temp[i], old) == &temp[i])
 			{
 				count_old++;
 				i += len_o - 1;
 			}
 		}
 		char *buff = calloc((i + count_old * (len_n - len_o) + 1), sizeof(char));
+		exit_heap_fail(buff);
 		i = 0;
 		while (*temp)
 		{
@@ -1368,9 +1415,10 @@ void _sstring_replace(sstring *a, const char *old, const char *new_)
 		}
 		free(a->str.src);
 		a->str.src = calloc(i + 1, sizeof(char));
+		exit_heap_fail(a->str.src);
 		a->str.len = i;
 		i = 0;
-		fast_strncat(a->str.src, (const char *)buff, &i);
+		fast_strncat(a->str.src, buff, &i);
 		free(buff);
 	}
 }
@@ -1390,8 +1438,8 @@ bool _sstring_destructor(sstring *a)
 const char *_sstring_c_str(sstring *a)
 {
 	if (a && a->str.init == true && a->str.src)
-		return (const char *)a->str.src;
-	return (const char *)NULL;
+		return a->str.src;
+	return NULL;
 }
 
 bool _sstring_save(sstring *a, const char *location)
@@ -1401,7 +1449,7 @@ bool _sstring_save(sstring *a, const char *location)
 		FILE *f = fopen(location, "wb");
 		if (f != NULL)
 		{
-			fwrite((const char *)a->str.src, a->str.len, sizeof(char), f);
+			fwrite(a->str.src, a->str.len, sizeof(char), f);
 			fclose(f);
 			return true;
 		}
@@ -1416,7 +1464,7 @@ bool _sstring_append_file(sstring *a, const char *location)
 		FILE *f = fopen(location, "ab");
 		if (f != NULL)
 		{
-			fwrite((const char *)a->str.src, a->str.len, sizeof(char), f);
+			fwrite(a->str.src, a->str.len, sizeof(char), f);
 			fclose(f);
 			return true;
 		}
@@ -1436,6 +1484,7 @@ bool _sstring_open(sstring *a, const char *location)
 			fseek(f, 0, SEEK_SET);
 			free(a->str.src);
 			a->str.src = calloc(len + 1, sizeof(char));
+			exit_heap_fail(a->str.src);
 			fread(a->str.src, len, sizeof(char), f);
 			fclose(f);
 			a->str.len = len;
@@ -1451,6 +1500,7 @@ bool _sstring_clear(sstring *a)
 	{
 		free(a->str.src);
 		a->str.src = calloc(1, sizeof(char));
+		exit_heap_fail(a->str.src);
 		a->str.len = 0;
 		a->str.init = true;
 		return true;
@@ -1512,6 +1562,7 @@ void _sstring_to_binary(sstring *a)
 	{
 		size_t len = a->str.len, size = 0;
 		char *buff = calloc(((2 * (len * 8)) + 1), sizeof(char));
+		exit_heap_fail(buff);
 		for (size_t i = 0; i < len; ++i)
 		{
 			fast_strncat(buff, binary_data[(size_t)a->str.src[i]], &size);
@@ -1520,8 +1571,9 @@ void _sstring_to_binary(sstring *a)
 		}
 		free(a->str.src);
 		a->str.src = calloc(size + 1, sizeof(char));
+		exit_heap_fail(a->str.src);
 		size = 0;
-		fast_strncat(a->str.src, (const char *)buff, &size);
+		fast_strncat(a->str.src, buff, &size);
 		a->str.len = size;
 		free(buff);
 	}
@@ -1567,6 +1619,7 @@ bool _sstring_from_binary(sstring *a)
 		if (valid == true)
 		{
 			char *buff = calloc((len / 8) + 1, sizeof(char));
+			exit_heap_fail(buff);
 			char bin[9] = "\0", store[2] = "\0";
 			char c = '\0';
 			size_t z = 0;
@@ -1574,15 +1627,15 @@ bool _sstring_from_binary(sstring *a)
 			{
 				if (a->str.src[i] == ' ')
 				{
-					c = strtol(bin, (char **)NULL, 2);
+					c = strtol(bin, NULL, 2);
 					store[0] = c;
-					fast_strncat(buff, (const char *)store, &z);
+					fast_strncat(buff, store, &z);
 					j = 0;
 				}
 				if (i == len - 1)
 				{
 					bin[j] = a->str.src[i]; // append last character
-					c = strtol(bin, (char **)NULL, 2);
+					c = strtol(bin, NULL, 2);
 					store[0] = c;
 					fast_strncat(buff, store, &z);
 				}
@@ -1590,8 +1643,9 @@ bool _sstring_from_binary(sstring *a)
 			}
 			free(a->str.src);
 			a->str.src = calloc(z + 1, sizeof(char));
+			exit_heap_fail(a->str.src);
 			z = 0;
-			fast_strncat(a->str.src, (const char *)buff, &z);
+			fast_strncat(a->str.src, buff, &z);
 			a->str.len = z;
 			free(buff);
 		}
@@ -1627,7 +1681,7 @@ double _sstring_entropy(sstring *a)
 bool _sstring_contains(sstring *a, const char *str)
 {
 	if (a && a->str.src && a->str.init == true && str)
-		if (strstr((const char *)a->str.src, str) != NULL)
+		if (strstr(a->str.src, str) != NULL)
 			return true;
 	return false;
 }
@@ -1638,7 +1692,7 @@ size_t _sstring_contains_char(sstring *a, const char c)
 	{
 		for (size_t i = 0; a->str.src[i] != '\0'; i++)
 			if (a->str.src[i] == c)
-				return (size_t)i;
+				return i;
 	}
 	return (size_t)-1;
 }
@@ -1651,6 +1705,7 @@ void _sstring_to_set(sstring *a)
 		size_t cnt = 0, map_append = 0, o = 0;
 		bool check = false;
 		char *set_char = calloc(len + 1, sizeof(char));
+		exit_heap_fail(set_char);
 		for (cnt = 0; cnt < len; cnt++)
 		{
 			check = false;
@@ -1669,9 +1724,10 @@ void _sstring_to_set(sstring *a)
 			}
 		}
 		free(a->str.src);
-		size_t set_len = strlen((const char *)set_char);
+		size_t set_len = strlen(set_char);
 		a->str.src = calloc(set_len + 1, sizeof(char));
-		strcpy(a->str.src, (const char *)set_char);
+		exit_heap_fail(a->str.src);
+		strcpy(a->str.src, set_char);
 		a->str.len = set_len;
 		free(set_char);
 	}
@@ -1683,7 +1739,8 @@ bool _sstring_copy(sstring *a, sstring *dest)
 	{
 		free(dest->str.src);
 		dest->str.src = calloc(a->str.len + 1, sizeof(char));
-		strcpy(dest->str.src, (const char *)a->str.src);
+		exit_heap_fail(dest->str.src);
+		strcpy(dest->str.src, a->str.src);
 		dest->str.len = a->str.len;
 		return true;
 	}
@@ -1695,16 +1752,18 @@ void _sstring_to_hexadecimal(sstring *a)
 	if (a && a->str.src && a->str.init == true)
 	{
 		char *buff = calloc((a->str.len * 2) + 1, sizeof(char));
+		exit_heap_fail(buff);
 		size_t i = 0, j = 0;
 		while (a->str.src[i] != '\0')
 		{
-			sprintf((char *)buff + j, "%02X", a->str.src[i]);
+			sprintf(buff + j, "%02X", a->str.src[i]);
 			i++, j += 2;
 		}
 		free(a->str.src);
 		a->str.src = calloc(j + 1, sizeof(char));
+		exit_heap_fail(a->str.src);
 		j = 0;
-		fast_strncat(a->str.src, (const char *)buff, &j);
+		fast_strncat(a->str.src, buff, &j);
 		a->str.len = j;
 		free(buff);
 	}
@@ -1753,6 +1812,7 @@ bool _sstring_from_hexadecimal(sstring *a)
 		if (valid == true)
 		{
 			char *buff = calloc((len) / 2 + 1, sizeof(char));
+			exit_heap_fail(buff);
 			char bin[3] = "\0", store[2] = "\0";
 			char c = '\0';
 			size_t z = 0;
@@ -1761,24 +1821,25 @@ bool _sstring_from_hexadecimal(sstring *a)
 				if (i == len - 1)
 				{
 					bin[j] = a->str.src[i];
-					c = strtol(bin, (char **)NULL, 16);
+					c = strtol(bin, NULL, 16);
 					store[0] = c;
-					fast_strncat(buff, (const char *)store, &z);
+					fast_strncat(buff, store, &z);
 				}
 				if (j == 2)
 				{
 					j = 0;
-					c = strtol(bin, (char **)NULL, 16);
+					c = strtol(bin, NULL, 16);
 					store[0] = c;
-					fast_strncat(buff, (const char *)store, &z);
+					fast_strncat(buff, store, &z);
 				}
 				bin[j] = a->str.src[i];
 				j++;
 			}
 			free(a->str.src);
 			a->str.src = calloc(z + 1, sizeof(char));
+			exit_heap_fail(a->str.src);
 			z = 0;
-			fast_strncat(a->str.src, (const char *)buff, &z);
+			fast_strncat(a->str.src, buff, &z);
 			a->str.len = z;
 			free(buff);
 		}
@@ -1792,12 +1853,12 @@ size_t _sstring_find(sstring *a, const char *sub)
 	{
 		char *buff;
 #ifdef __cplusplus
-		buff = (char *)strstr((const char *)a->str.src, sub);
+		buff = (char *)strstr(a->str.src, sub);
 #else
-		buff = strstr((const char *)a->str.src, sub);
+		buff = strstr(a->str.src, sub);
 #endif
 		if (buff != NULL)
-			return (size_t)a->str.len - strlen((const char *)buff); // buff is subset of a, if buff != NULL
+			return (size_t)a->str.len - strlen(buff); // buff is subset of a, if buff != NULL
 	}
 	return (size_t)-1;
 }
@@ -1807,6 +1868,7 @@ void _sstring_in(sstring *a)
 	if (a && a->str.src && a->str.init == true)
 	{
 		char *ptr = calloc(2, sizeof(char)), ch;
+		exit_heap_fail(ptr);
 		size_t len = 0;
 		while ((ch = getchar()))
 		{
@@ -1814,10 +1876,12 @@ void _sstring_in(sstring *a)
 				break;
 			ptr[len++] = ch;
 			ptr = realloc(ptr, len + 1);
+			exit_heap_fail(ptr);
 		}
 		ptr[len] = 0;
 		free(a->str.src);
 		a->str.src = calloc(len + 1, sizeof(char));
+		exit_heap_fail(a->str.src);
 		fast_strncat(a->str.src, ptr, &a->str.len);
 		free(ptr);
 	}
@@ -1829,6 +1893,7 @@ char *_sstring_getline(sstring *a, size_t line)
 	{
 		size_t len = a->str.len, cnt = 0;
 		char *temp = calloc(len + 1, sizeof(char)), *tok;
+		exit_heap_fail(temp);
 		strcpy(temp, a->str.src);
 		tok = strtok(temp, "\n");
 		while (tok)
@@ -1840,14 +1905,15 @@ char *_sstring_getline(sstring *a, size_t line)
 		if (cnt == 0 || tok == NULL)
 		{
 			free(temp);
-			return (char *)NULL;
+			return NULL;
 		}
-		char *res = calloc(strlen((const char *)tok) + 1, sizeof(char));
-		strcpy(res, (const char *)tok);
+		char *res = calloc(strlen(tok) + 1, sizeof(char));
+		exit_heap_fail(res);
+		strcpy(res, tok);
 		free(temp);
 		return res;
 	}
-	return (char *)NULL;
+	return NULL;
 }
 
 void _sstring_reverse(sstring *a)
@@ -1870,7 +1936,8 @@ size_t _sstring_remove(sstring *a, const char *sub)
 	if (a && a->str.src && a->str.init == true && sub && sub[0] != '\0')
 	{
 		char *buff = calloc(a->str.len + 1, sizeof(char));
-		strcpy(buff, (const char *)a->str.src);
+		exit_heap_fail(buff);
+		strcpy(buff, a->str.src);
 		size_t len_s = strlen(sub), cnt = 0;
 		{
 			char *temp = buff;
@@ -1884,9 +1951,10 @@ size_t _sstring_remove(sstring *a, const char *sub)
 			free(temp);
 		}
 		free(a->str.src);
-		size_t len_buff = strlen((const char *)buff);
+		size_t len_buff = strlen(buff);
 		a->str.src = calloc(len_buff + 1, sizeof(char));
-		strcpy(a->str.src, (const char *)buff);
+		exit_heap_fail(a->str.src);
+		strcpy(a->str.src, buff);
 		free(buff);
 		a->str.len = len_buff;
 		return cnt;
@@ -1899,6 +1967,7 @@ size_t _sstring_remove_char(sstring *a, const char c)
 	if (a && a->str.src && a->str.init == true && c != '\0')
 	{
 		char *buff = calloc(a->str.len + 1, sizeof(char));
+		exit_heap_fail(buff);
 		size_t cnt = 0;
 		for (size_t i = 0, k = 0; a->str.src[i] != '\0'; i++)
 		{
@@ -1911,9 +1980,10 @@ size_t _sstring_remove_char(sstring *a, const char c)
 				cnt++;
 		}
 		free(a->str.src);
-		size_t buff_len = strlen((const char *)buff);
+		size_t buff_len = strlen(buff);
 		a->str.src = calloc(buff_len + 1, sizeof(char));
-		strcpy(a->str.src, (const char *)buff);
+		exit_heap_fail(a->str.src);
+		strcpy(a->str.src, buff);
 		free(buff);
 		a->str.len = buff_len;
 		return cnt;
@@ -1926,6 +1996,7 @@ size_t _sstring_remove_extra_char(sstring *a, const char c)
 	if (a && a->str.src && a->str.init == true && c != '\0')
 	{
 		char *buff = calloc(a->str.len + 1, sizeof(char));
+		exit_heap_fail(buff);
 		size_t p = 0, i = 0, cnt = 0;
 		while (a->str.src[p] != '\0')
 		{
@@ -1940,9 +2011,10 @@ size_t _sstring_remove_extra_char(sstring *a, const char c)
 		}
 		buff[i] = '\0';
 		free(a->str.src);
-		size_t buff_len = strlen((const char *)buff);
+		size_t buff_len = strlen(buff);
 		a->str.src = calloc(buff_len + 1, sizeof(char));
-		strcpy(a->str.src, (const char *)buff);
+		exit_heap_fail(a->str.src);
+		strcpy(a->str.src, buff);
 		free(buff);
 		a->str.len = buff_len;
 		return cnt;
@@ -1958,6 +2030,7 @@ size_t _sstring_remove_range(sstring *a, size_t from, size_t till)
 		if (till > len || from > len || from > till)
 			return cnt;
 		char *buff = calloc((len - (till - from) + 1), sizeof(char));
+		exit_heap_fail(buff);
 		for (size_t i = 0, k = 0; i < len; i++)
 		{
 			if (i == from)
@@ -1972,9 +2045,10 @@ size_t _sstring_remove_range(sstring *a, size_t from, size_t till)
 			}
 		}
 		free(a->str.src);
-		size_t buff_len = strlen((const char *)buff);
+		size_t buff_len = strlen(buff);
 		a->str.src = calloc(buff_len + 1, sizeof(char));
-		strcpy(a->str.src, (const char *)buff);
+		exit_heap_fail(a->str.src);
+		strcpy(a->str.src, buff);
 		free(buff);
 		a->str.len = buff_len;
 		return cnt;
@@ -1990,15 +2064,17 @@ bool _sstring_intersect(sstring *a, size_t from, size_t till)
 		if (till > len || from > len || from > till)
 			return false;
 		char *buff = calloc((till - from) + 1, sizeof(char));
+		exit_heap_fail(buff);
 		for (size_t i = from, k = 0; i < till; i++)
 		{
 			buff[k] = a->str.src[i];
 			k++;
 		}
 		free(a->str.src);
-		size_t buff_len = strlen((const char *)buff);
+		size_t buff_len = strlen(buff);
 		a->str.src = calloc(buff_len + 1, sizeof(char));
-		strcpy(a->str.src, (const char *)buff);
+		exit_heap_fail(a->str.src);
+		strcpy(a->str.src, buff);
 		free(buff);
 		a->str.len = buff_len;
 		return true;
@@ -2076,7 +2152,7 @@ size_t _sstring_count(sstring *a, const char *what)
 	if (a && a->str.src && a->str.init == true && what)
 	{
 		size_t cnt = 0, len = strlen(what);
-		const char *sub = (const char *)a->str.src;
+		const char *sub = a->str.src;
 		while ((sub = strstr(sub, what)))
 		{
 			cnt++;
@@ -2107,6 +2183,7 @@ char *_sstring_soundex(sstring *a)
 		size_t s = 1, len = a->str.len;
 		const char *map = "01230120022455012623010202"; // not stored in heap memory, do not free it
 		char c, *res = calloc(5, sizeof(char));
+		exit_heap_fail(res);
 		res[0] = toupper((unsigned char)a->str.src[0]);
 		for (size_t i = 1; i < len; ++i)
 		{
@@ -2135,12 +2212,12 @@ char *_sstring_soundex(sstring *a)
 		}
 		return res;
 	}
-	return (char *)(NULL);
+	return NULL;
 }
 
 int strcmp_void(const void *a1, const void *a2)
 {
-	return strcmp((const char *)a1, (const char *)a2);
+	return strcmp(a1, a2);
 }
 
 char *_sstring_most_used(sstring *a, const char *dl)
@@ -2150,10 +2227,12 @@ char *_sstring_most_used(sstring *a, const char *dl)
 		size_t len = a->str.len, cnt = 0, l = 0;
 		cnt = a->count(a, dl);
 		if (cnt == 0)
-			return (char *)NULL;
+			return NULL;
 		char *temp = calloc(len + 1, sizeof(char));
+		exit_heap_fail(temp);
 		strcpy(temp, a->str.src);
 		char **buff = calloc(cnt + 1, sizeof(char *)), *tok = strtok(temp, dl);
+		exit_heap_fail(buff);
 		while (tok != NULL)
 		{
 			buff[l] = tok;
@@ -2175,13 +2254,14 @@ char *_sstring_most_used(sstring *a, const char *dl)
 				m = curr;
 			}
 		}
-		char *x = calloc(strlen((const char *)res) + 1, sizeof(char));
+		char *x = calloc(strlen(res) + 1, sizeof(char));
+		exit_heap_fail(x);
 		strcpy(x, res);
 		free(temp);
 		free(buff);
 		return x;
 	}
-	return (char *)NULL;
+	return NULL;
 }
 
 char _sstring_most_used_char(sstring *a)
@@ -2192,7 +2272,9 @@ char _sstring_most_used_char(sstring *a)
 		size_t cnt = 0, map_append = 0, o = 0;
 		bool check = false;
 		char *map_char = calloc(len + 1, sizeof(char));
+		exit_heap_fail(map_char);
 		size_t *map_cnt = calloc(len + 1, sizeof(size_t));
+		exit_heap_fail(map_cnt);
 		for (cnt = 0; cnt < len; cnt++)
 		{
 			check = false;
@@ -2235,10 +2317,11 @@ split_t _sstring_split(sstring *a, const char *dl)
 	if (a && a->str.src && a->str.init == true && dl && dl[0] != '\0')
 	{
 		split_t x;
-		x.data = (char **)NULL;
+		x.data = NULL;
 		x.len = 0;
 		size_t len = a->str.len, cnt = 0;
 		char *temp = calloc(len + 1, sizeof(char)), *tok;
+		exit_heap_fail(temp);
 		strcpy(temp, a->str.src);
 		tok = strtok(temp, dl);
 		while (tok)
@@ -2252,13 +2335,16 @@ split_t _sstring_split(sstring *a, const char *dl)
 		if (cnt == 0)
 			return x;
 		temp = calloc(len + 1, sizeof(char));
+		exit_heap_fail(temp);
 		strcpy(temp, a->str.src);
 		x.data = calloc(cnt + 1, sizeof(char *));
+		exit_heap_fail(x.data);
 		tok = strtok(temp, dl);
 		while (tok)
 		{
-			x.data[x.len] = calloc(strlen((const char *)tok) + 1, sizeof(char));
-			strcpy(x.data[x.len], (const char *)tok);
+			x.data[x.len] = calloc(strlen(tok) + 1, sizeof(char));
+			exit_heap_fail(x.data[x.len]);
+			strcpy(x.data[x.len], tok);
 			x.len++;
 			tok = strtok(NULL, dl);
 			if (!tok)
@@ -2268,7 +2354,7 @@ split_t _sstring_split(sstring *a, const char *dl)
 		return x;
 	}
 	split_t x;
-	x.data = (char **)NULL;
+	x.data = NULL;
 	x.len = 0;
 	return x;
 }
@@ -2295,8 +2381,10 @@ size_t _sstring_open_binary(sstring *a, const char *location)
 			size_t len = ftell(f);
 			fseek(f, 0, SEEK_SET);
 			unsigned char *_temp_ = calloc(len + 1, sizeof(unsigned char));
+			exit_heap_fail(_temp_);
 			free(a->str.src);
 			a->str.src = calloc(len + 1, sizeof(char));
+			exit_heap_fail(a->str.src);
 			fread(_temp_, len, sizeof(unsigned char), f);
 			memcpy(a->str.src, (const void *)_temp_, len);
 			fclose(f);
@@ -2312,6 +2400,7 @@ bool _sstring_save_binary(sstring *a, const char *location, size_t len)
 	if (a && a->str.src && a->str.init == true && location)
 	{
 		unsigned char *_temp_ = calloc(len + 1, sizeof(unsigned char));
+		exit_heap_fail(_temp_);
 		memcpy(_temp_, (const void *)a->str.src, len);
 		FILE *f = fopen(location, "wb");
 		if (f != NULL)
@@ -2331,6 +2420,7 @@ bool _sstring_append_binary(sstring *a, const char *location, size_t len)
 	if (a && a->str.src && a->str.init == true && location)
 	{
 		unsigned char *_temp_ = calloc(len + 1, sizeof(unsigned char));
+		exit_heap_fail(_temp_);
 		memcpy(_temp_, (const void *)a->str.src, len);
 		FILE *f = fopen(location, "ab");
 		if (f != NULL)
@@ -2351,6 +2441,7 @@ size_t _sstring_add_binary(sstring *a, const char *data, size_t len)
 	{
 		size_t size = len;
 		a->str.src = realloc(a->str.src, (sizeof(char) * (len + strlen(data) + 1)));
+		exit_heap_fail(a->str.src);
 		fast_strncat(a->str.src, data, &size);
 		return size - len; // total data written
 	}
@@ -2379,6 +2470,7 @@ bool _sstring_encrypt(sstring *a, const char *key)
 		size_t len = a->str.len;
 		bool add = true;
 		char *buff = calloc(len + 1, sizeof(char));
+		exit_heap_fail(buff);
 		for (size_t i = 0; a->str.src[i] != '\0'; i++)
 		{
 			if (add == true && a->str.src[i] + val > '\0')
@@ -2399,8 +2491,9 @@ bool _sstring_encrypt(sstring *a, const char *key)
 		}
 		free(a->str.src);
 		a->str.src = calloc(len + 1, sizeof(char));
+		exit_heap_fail(a->str.src);
 		len = 0;
-		fast_strncat(a->str.src, (const char *)buff, &len);
+		fast_strncat(a->str.src, buff, &len);
 		a->str.len = len;
 		free(buff);
 		return true;
@@ -2418,6 +2511,7 @@ bool _sstring_decrypt(sstring *a, const char *key)
 		size_t len = a->str.len;
 		bool add_inrv = true;
 		char *buff = calloc(len + 1, sizeof(char));
+		exit_heap_fail(buff);
 		for (size_t i = 0; a->str.src[i] != '\0'; i++)
 		{
 			if (add_inrv == true && a->str.src[i] - val > '\0')
@@ -2438,8 +2532,9 @@ bool _sstring_decrypt(sstring *a, const char *key)
 		}
 		free(a->str.src);
 		a->str.src = calloc(len + 1, sizeof(char));
+		exit_heap_fail(a->str.src);
 		len = 0;
-		fast_strncat(a->str.src, (const char *)buff, &len);
+		fast_strncat(a->str.src, buff, &len);
 		a->str.len = len;
 		free(buff);
 		return true;
@@ -2506,6 +2601,7 @@ bool _sstring_to_morse_code(sstring *a)
 			if (!isdigit((unsigned char)a->str.src[i]) && !isalpha((unsigned char)a->str.src[i]) && a->str.src[i] != ' ')
 				return false;
 		char *buff = calloc(a->str.len * 8 + 1, sizeof(char));
+		exit_heap_fail(buff);
 		size_t track = 0;
 		for (size_t i = 0; i < a->str.len; i++)
 		{
@@ -2525,8 +2621,9 @@ bool _sstring_to_morse_code(sstring *a)
 		}
 		free(a->str.src);
 		a->str.src = calloc(track + 1, sizeof(char));
+		exit_heap_fail(a->str.src);
 		track = 0;
-		fast_strncat(a->str.src, (const char *)buff, &track);
+		fast_strncat(a->str.src, buff, &track);
 		free(buff);
 		a->str.len = track;
 		return true;
@@ -2551,6 +2648,8 @@ bool _sstring_from_morse_code(sstring *a)
 			}
 		}
 		char *buff = calloc(a->str.len + 1, sizeof(char)), *temp = calloc(8, sizeof(char));
+		exit_heap_fail(buff);
+		exit_heap_fail(temp);
 		size_t track = 0, x = 0;
 		char arr[3] = "\0\0";
 		for (size_t i = 0, k = 0; i < a->str.len; i++, k++)
@@ -2562,7 +2661,7 @@ bool _sstring_from_morse_code(sstring *a)
 				while ((strcmp(temp, morse_code[x].code)) != 0)
 					x++;
 				arr[0] = morse_code[x].character;
-				fast_strncat(buff, (const char *)arr, &track);
+				fast_strncat(buff, arr, &track);
 			}
 			if (a->str.src[i] == ' ')
 			{
@@ -2570,7 +2669,7 @@ bool _sstring_from_morse_code(sstring *a)
 				while ((strcmp(temp, morse_code[x].code)) != 0)
 					x++;
 				arr[0] = morse_code[x].character;
-				fast_strncat(buff, (const char *)arr, &track);
+				fast_strncat(buff, arr, &track);
 				memset(temp, 0, 8);
 				k = 0;
 			}
@@ -2578,8 +2677,9 @@ bool _sstring_from_morse_code(sstring *a)
 		}
 		free(a->str.src);
 		a->str.src = calloc(track + 1, sizeof(char));
+		exit_heap_fail(a->str.src);
 		track = 0;
-		fast_strncat(a->str.src, (const char *)buff, &track);
+		fast_strncat(a->str.src, buff, &track);
 		free(buff);
 		free(temp);
 		a->str.len = track;
@@ -2672,6 +2772,7 @@ bool _sstring_insert(sstring *a, const char *src, size_t index)
 	{
 		size_t len = strlen(src);
 		a->str.src = realloc(a->str.src, sizeof(char) * (a->str.len + len + 1));
+		exit_heap_fail(a->str.src);
 		for (size_t i = a->str.len; i >= index; i--)
 		{
 			a->str.src[i + len] = a->str.src[i];
@@ -2747,12 +2848,14 @@ parse_t _sstring_parse(sstring *a)
 					i++, len++;
 			}
 			else
-				return (parse_t){.src = (char **)NULL, .length = 0, .type = (enum parse_token *)NULL};
+				return (parse_t){.src = NULL, .length = 0, .type = NULL};
 		}
 		len++;
 		parse_t pt;
 		pt.src = calloc(len, sizeof(char *));
 		pt.type = calloc(len, sizeof(enum parse_token));
+		exit_heap_fail(pt.src);
+		exit_heap_fail(pt.type);
 		sstring toks = new_sstring(1, NULL);
 		size_t sigma = 0, track = 0;
 		for (size_t i = 0; i < a->str.len;)
@@ -2763,6 +2866,7 @@ parse_t _sstring_parse(sstring *a)
 				while ((a->str.src[i] >= 97 && a->str.src[i] <= 122) || (a->str.src[i] >= 65 && a->str.src[i] <= 90))
 					_sstring_append_char(&toks, a->str.src[i++]);
 				pt.src[sigma] = calloc(_sstring_end_sstring(&toks) + 1, sizeof(char));
+				exit_heap_fail(pt.src[sigma]);
 				track = 0;
 				fast_strncat(pt.src[sigma], _sstring_c_str(&toks), &track);
 				pt.type[sigma++] = WORD;
@@ -2772,6 +2876,7 @@ parse_t _sstring_parse(sstring *a)
 				_sstring_clear(&toks);
 				_sstring_append_char(&toks, a->str.src[i++]);
 				pt.src[sigma] = calloc(_sstring_end_sstring(&toks) + 1, sizeof(char));
+				exit_heap_fail(pt.src[sigma]);
 				track = 0;
 				fast_strncat(pt.src[sigma], _sstring_c_str(&toks), &track);
 				pt.type[sigma++] = WHITESPACE;
@@ -2782,6 +2887,7 @@ parse_t _sstring_parse(sstring *a)
 				while (isdigit((unsigned char)a->str.src[i]))
 					_sstring_append_char(&toks, a->str.src[i++]);
 				pt.src[sigma] = calloc(_sstring_end_sstring(&toks) + 1, sizeof(char));
+				exit_heap_fail(pt.src[sigma]);
 				track = 0;
 				fast_strncat(pt.src[sigma], _sstring_c_str(&toks), &track);
 				pt.type[sigma++] = INTEGER;
@@ -2794,6 +2900,7 @@ parse_t _sstring_parse(sstring *a)
 					_sstring_clear(&toks);
 					_sstring_set_char(&toks, a->str.src[i++]);
 					pt.src[sigma] = calloc(_sstring_end_sstring(&toks) + 1, sizeof(char));
+					exit_heap_fail(pt.src[sigma]);
 					track = 0;
 					fast_strncat(pt.src[sigma], _sstring_c_str(&toks), &track);
 					pt.type[sigma++] = ESC_SEQ;
@@ -2807,16 +2914,18 @@ parse_t _sstring_parse(sstring *a)
 					_sstring_clear(&toks);
 					_sstring_set_char(&toks, a->str.src[i++]);
 					pt.src[sigma] = calloc(_sstring_end_sstring(&toks) + 1, sizeof(char));
+					exit_heap_fail(pt.src[sigma]);
 					track = 0;
 					fast_strncat(pt.src[sigma], _sstring_c_str(&toks), &track);
 					pt.type[sigma++] = SPECIAL_CHAR;
 				}
 			}
 			else
-				return (parse_t){.src = (char **)NULL, .length = 0, .type = (enum parse_token *)NULL};
+				return (parse_t){.src = NULL, .length = 0, .type = NULL};
 		}
 		// append \0 as the end of file or string
 		pt.src[sigma] = calloc(1, sizeof(char));
+		exit_heap_fail(pt.src[sigma]);
 		track = 0;
 		fast_strncat(pt.src[sigma], "\0", &track);
 		pt.type[sigma++] = NULL_END;
@@ -2824,7 +2933,7 @@ parse_t _sstring_parse(sstring *a)
 		pt.length = sigma;
 		return pt;
 	}
-	return (parse_t){.src = (char **)NULL, .length = 0, .type = (enum parse_token *)NULL};
+	return (parse_t){.src = NULL, .length = 0, .type = NULL};
 }
 
 bool _sstring_from_parse_t(sstring *a, parse_t *toks)
@@ -2833,12 +2942,13 @@ bool _sstring_from_parse_t(sstring *a, parse_t *toks)
 	{
 		size_t len = 0;
 		for (size_t i = 0; i < toks->length; i++)
-			len += strlen((const char *)toks->src[i]);
+			len += strlen(toks->src[i]);
 		free(a->str.src);
 		a->str.src = calloc(len + 1, sizeof(char));
+		exit_heap_fail(a->str.src);
 		len = 0;
 		for (size_t i = 0; i < toks->length; i++)
-			fast_strncat(a->str.src, (const char *)toks->src[i], &len);
+			fast_strncat(a->str.src, toks->src[i], &len);
 		a->str.len = len;
 		return true;
 	}
@@ -2853,14 +2963,16 @@ bool _sstring_set_formatted(sstring *a, size_t buffer_length, const char *__form
 	if (a && a->str.src && a->str.init == true && buffer_length >= buff_l)
 	{
 		char *buff = calloc(buffer_length + 1, sizeof(char));
+		exit_heap_fail(buff);
 		va_list ar;
 		va_start(ar, __format__);
 		vsnprintf(buff, buffer_length, __format__, ar);
 		va_end(ar);
 		free(a->str.src);
-		a->str.src = calloc(strlen((const char *)buff) + 1, sizeof(char));
+		a->str.src = calloc(strlen(buff) + 1, sizeof(char));
+		exit_heap_fail(a->str.src);
 		size_t len = 0;
-		fast_strncat(a->str.src, (const char *)buff, &len);
+		fast_strncat(a->str.src, buff, &len);
 		a->str.len = len;
 		free(buff);
 		return true;
@@ -2876,13 +2988,15 @@ bool _sstring_append_formatted(sstring *a, size_t buffer_length, const char *__f
 	if (a && a->str.src && a->str.init == true && buffer_length >= buff_l)
 	{
 		char *buff = calloc(buffer_length + 1, sizeof(char));
+		exit_heap_fail(buff);
 		va_list ar;
 		va_start(ar, __format__);
 		vsnprintf(buff, buffer_length, __format__, ar);
 		va_end(ar);
-		a->str.src = realloc(a->str.src, sizeof(char) * (strlen((const char *)buff) + a->str.len + 1));
+		a->str.src = realloc(a->str.src, sizeof(char) * (strlen(buff) + a->str.len + 1));
+		exit_heap_fail(a->str.src);
 		size_t len = a->str.len;
-		fast_strncat(a->str.src, (const char *)buff, &len);
+		fast_strncat(a->str.src, buff, &len);
 		a->str.len = len;
 		free(buff);
 		return true;
@@ -2895,6 +3009,7 @@ bool _sstring_resize(sstring *a, size_t new_len)
 	if (a && a->str.src && a->str.init == true && new_len > 0)
 	{
 		a->str.src = realloc(a->str.src, new_len);
+		exit_heap_fail(a->str.src);
 		return true;
 	}
 	return false;
@@ -3085,6 +3200,7 @@ bool init_sstr(sstring *a, size_t alloc_size)
 		a->nerr = (size_t)-1;
 
 		a->str.src = calloc(alloc_size + 1, sizeof(char));
+		exit_heap_fail(a->str.src);
 		a->str.len = 0;
 		a->str.init = true; // initialized properly
 		return true;
@@ -3092,4 +3208,5 @@ bool init_sstr(sstring *a, size_t alloc_size)
 	return false;
 }
 
+#endif
 #endif
