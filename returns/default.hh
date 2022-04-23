@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/returns.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "default.hh" under "returns" directory
- * returns version: 1.0.0
+ * returns version: 1.2.0
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -30,7 +30,12 @@
 
 #ifdef __cplusplus
 
-#pragma once
+#ifndef RETURNS_DEFAULT
+#define RETURNS_DEFAULT
+
+#ifndef returns_version
+#define returns_version "1.2.0"
+#endif
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #include <utility>
@@ -40,22 +45,24 @@
 
 namespace openutils
 {
-    class default_t
-    {
-    public:
-        template <typename T>
-        operator T &() const
-        {
-            static T __t[1] = {};
-            return __t[0];
-        }
+	class default_t
+	{
+	public:
+		template <typename T>
+		operator T &() const
+		{
+			static T __t[1] = {};
+			return __t[0];
+		}
 
-        template <typename T>
-        T &operator()(const T &t) const
-        {
-            static T __t[1] = {};
-            return (__t[0] = std::move(t));
-        }
-    };
+		template <typename T>
+		T &operator()(const T &t) const
+		{
+			static T __t[1] = {};
+			return (__t[0] = std::move(t));
+		}
+	};
 };
+
+#endif
 #endif
