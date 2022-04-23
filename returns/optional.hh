@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/returns.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "optional.hh" under "returns" directory
- * returns version: 1.0.0
+ * returns version: 1.2.0
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -30,166 +30,184 @@
 
 #ifdef __cplusplus
 
-#pragma once
+#ifndef RETURNS_OPTIONAL
+#define RETURNS_OPTIONAL
+
+#ifndef returns_version
+#define returns_version "1.2.0"
+#endif
+
+#include <cstdlib>
+#include <cstdio>
+
 namespace openutils
 {
-    struct optnull_t
-    {
-        enum ctor
-        {
-            ctr
-        };
-        explicit constexpr optnull_t(ctor) {}
-    };
+	struct optnull_t
+	{
+		enum ctor
+		{
+			ctr
+		};
+		explicit constexpr optnull_t(ctor) {}
+	};
 
-    inline constexpr optnull_t optnull{optnull_t::ctor::ctr};
+	inline constexpr optnull_t optnull{optnull_t::ctor::ctr};
 
-    template <typename T>
-    class optional_t
-    {
-    private:
-        bool has_value;
-        T *value;
+#ifndef EXIT_HEAP_FAIL
+#define EXIT_HEAP_FAIL
+	static inline void exit_heap_fail(const void *ptr)
+	{
+		if (!ptr)
+		{
+			fprintf(stderr, "err: can't allocate heap memory.");
+#if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
+			fprintf(stderr, "\r\n");
+#else
+			fprintf(stderr, "\n");
+#endif
+			exit(EXIT_FAILURE);
+		}
+	}
+#endif
 
-    public:
-        optional_t(optnull_t);
-        optional_t(const T &val);
-        optional_t(T &&val);
-        optional_t(const optional_t &opt);
-        optional_t(optional_t &&opt);
+	template <typename T>
+	class optional_t
+	{
+	private:
+		bool has_value;
+		T *value;
 
-        bool is_null() const;
-        T &get() const;
+	public:
+		optional_t(optnull_t);
+		optional_t(const T &val);
+		optional_t(T &&val);
+		optional_t(const optional_t &opt);
+		optional_t(optional_t &&opt);
 
-        void operator=(const optional_t &opt);
-        optional_t &operator=(optional_t &&opt);
-        bool operator==(optnull_t) const;
-        bool operator!=(optnull_t) const;
-        operator const void *() const;
-        ~optional_t();
-    };
+		bool is_null() const;
+		T &get() const;
 
-    template <typename T>
-    optional_t<T>::optional_t(optnull_t)
-    {
-        this->has_value = false;
-        this->value = nullptr;
-    }
+		void operator=(const optional_t &opt);
+		optional_t &operator=(optional_t &&opt);
+		bool operator==(optnull_t) const;
+		bool operator!=(optnull_t) const;
+		operator const void *() const;
+		~optional_t();
+	};
 
-    template <typename T>
-    optional_t<T>::optional_t(const T &val)
-    {
-        this->value = new T[1];
-        *this->value = val;
-        this->has_value = true;
-    }
+	template <typename T>
+	optional_t<T>::optional_t(optnull_t)
+	{
+		this->has_value = false;
+		this->value = nullptr;
+	}
 
-    template <typename T>
-    optional_t<T>::optional_t(T &&val)
-    {
-        this->value = new T[1];
-        *this->value = val;
-        this->has_value = true;
-    }
+	template <typename T>
+	optional_t<T>::optional_t(const T &val)
+	{
+		this->value = new T(val);
+		exit_heap_fail(this->value);
+		this->has_value = true;
+	}
 
-    template <typename T>
-    optional_t<T>::optional_t(const optional_t &opt)
-    {
-        this->has_value = opt.has_value;
-        if (opt.has_value == true)
-        {
-            this->value = new T[1];
-            *this->value = *opt.value;
-        }
-        else
-            this->value = nullptr;
-    }
+	template <typename T>
+	optional_t<T>::optional_t(T &&val)
+	{
+		this->value = new T(val);
+		exit_heap_fail(this->value);
+		this->has_value = true;
+	}
 
-    template <typename T>
-    optional_t<T>::optional_t(optional_t &&opt)
-    {
-        this->has_value = opt.has_value;
-        if (opt.has_value == true)
-        {
-            this->value = new T[1];
-            *this->value = *opt.value;
-        }
-        else
-            this->value = nullptr;
+	template <typename T>
+	optional_t<T>::optional_t(const optional_t &opt)
+	{
+		opt.has_value;
+		if (opt.has_value == true)
+		{
+			this->value = new T(*opt.value);
+			exit_heap_fail(this->value);
+			this->has_value = opt.has_value;
+		}
+	}
 
-        opt.has_value = false;
-        opt.value = nullptr;
-    }
+	template <typename T>
+	optional_t<T>::optional_t(optional_t &&opt)
+	{
+		if (opt.has_value == true)
+		{
+			this->value = new T(*opt.value);
+			exit_heap_fail(this->value);
+			this->has_value = opt.has_value;
+			opt.has_value = false;
+			opt.value = nullptr;
+		}
+	}
 
-    template <typename T>
-    bool optional_t<T>::is_null() const
-    {
-        return !(this->value && this->has_value);
-    }
-    template <typename T>
-    T &optional_t<T>::get() const
-    {
-        return *this->value;
-    }
+	template <typename T>
+	bool optional_t<T>::is_null() const
+	{
+		return !(this->value && this->has_value);
+	}
 
-    template <typename T>
-    void optional_t<T>::operator=(const optional_t &opt)
-    {
-        if (this->has_value == true)
-            delete[] this->value;
-        this->has_value = opt.has_value;
-        if (opt.has_value == true)
-        {
-            this->value = new T[1];
-            *this->value = *opt.value;
-        }
-        else
-            this->value = nullptr;
-    }
+	template <typename T>
+	T &optional_t<T>::get() const
+	{
+		return *this->value;
+	}
 
-    template <typename T>
-    optional_t<T> &optional_t<T>::operator=(optional_t &&opt)
-    {
-        if (*this != &opt)
-        {
-            if (this->has_value == true)
-                delete[] this->value;
-            this->has_value = opt.has_value;
-            if (opt.has_value == true)
-            {
-                this->value = new T[1];
-                *this->value = *opt.value;
-            }
-            else
-                this->value = nullptr;
-        }
-        return *this;
-    }
+	template <typename T>
+	void optional_t<T>::operator=(const optional_t &opt)
+	{
+		if (opt.has_value == true)
+		{
+			delete this->value;
+			this->value = new T(*opt.value);
+			exit_heap_fail(this->value);
+			this->has_value = opt.has_value;
+		}
+	}
 
-    template <typename T>
-    bool optional_t<T>::operator==(optnull_t) const
-    {
-        return this->is_null();
-    }
+	template <typename T>
+	optional_t<T> &optional_t<T>::operator=(optional_t &&opt)
+	{
+		if (*this != &opt)
+		{
+			if (opt.has_value == true)
+			{
+				delete this->value;
+				this->value = new T(*opt.value);
+				exit_heap_fail(this->value);
+				this->has_value = opt.has_value;
+			}
+		}
+		return *this;
+	}
 
-    template <typename T>
-    bool optional_t<T>::operator!=(optnull_t) const
-    {
-        return !this->is_null();
-    }
+	template <typename T>
+	bool optional_t<T>::operator==(optnull_t) const
+	{
+		return this->is_null();
+	}
 
-    template <typename T>
-    optional_t<T>::operator const void *() const
-    {
-        return this->value;
-    }
+	template <typename T>
+	bool optional_t<T>::operator!=(optnull_t) const
+	{
+		return !this->is_null();
+	}
 
-    template <typename T>
-    optional_t<T>::~optional_t()
-    {
-        if (this->has_value == true)
-            delete[] this->value;
-    }
+	template <typename T>
+	optional_t<T>::operator const void *() const
+	{
+		return this->value;
+	}
+
+	template <typename T>
+	optional_t<T>::~optional_t()
+	{
+		if (this->has_value == true)
+			delete this->value;
+	}
 };
 
+#endif
 #endif
