@@ -130,6 +130,8 @@ namespace openutils
 			this->value = new T(*opt.value);
 			exit_heap_fail(this->value);
 		}
+		else
+			this->value = nullptr;
 	}
 
 	template <typename T>
@@ -141,6 +143,8 @@ namespace openutils
 			exit_heap_fail(this->value);
 			opt.value = nullptr;
 		}
+		else
+			this->value = nullptr;
 	}
 
 	template <typename T>
@@ -154,7 +158,7 @@ namespace openutils
 	{
 		if (!this->value)
 		{
-			std::fprintf(stderr, "err: cannot de-reference a null-pointer.\n");
+			std::fprintf(stderr, "err: cannot de-reference a null-pointer\n");
 			std::exit(EXIT_FAILURE);
 		}
 		return *this->value;
@@ -165,7 +169,7 @@ namespace openutils
 	{
 		if (!this->value)
 		{
-			std::fprintf(stderr, "err: cannot de-reference a null-pointer.\n");
+			std::fprintf(stderr, "err: cannot de-reference a null-pointer\n");
 			std::exit(EXIT_FAILURE);
 		}
 		return *this->value;
@@ -176,7 +180,8 @@ namespace openutils
 	{
 		if (opt.value)
 		{
-			delete this->value;
+			if (this->value)
+				delete this->value;
 			this->value = new T(*opt.value);
 			exit_heap_fail(this->value);
 		}
@@ -189,7 +194,8 @@ namespace openutils
 		{
 			if (opt.value)
 			{
-				delete this->value;
+				if (this->value)
+					delete this->value;
 				this->value = new T(*opt.value);
 				exit_heap_fail(this->value);
 				opt.value = nullptr;
