@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/returns.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "default.hh" under "returns" directory
- * returns version: 1.2.0
+ * returns version: 1.2.2
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -34,7 +34,7 @@
 #define RETURNS_DEFAULT
 
 #ifndef returns_version
-#define returns_version "1.2.0"
+#define returns_version "1.2.2"
 #endif
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
