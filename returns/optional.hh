@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/returns.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "optional.hh" under "returns" directory
- * returns version: 1.2.0
+ * returns version: 1.2.2
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -34,7 +34,7 @@
 #define RETURNS_OPTIONAL
 
 #ifndef returns_version
-#define returns_version "1.2.0"
+#define returns_version "1.2.2"
 #endif
 
 #include <cstdlib>
@@ -59,13 +59,13 @@ namespace openutils
 	{
 		if (!ptr)
 		{
-			fprintf(stderr, "err: can't allocate heap memory.");
+			std::fprintf(stderr, "err: can't allocate heap memory.");
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-			fprintf(stderr, "\r\n");
+			std::fprintf(stderr, "\r\n");
 #else
-			fprintf(stderr, "\n");
+			std::fprintf(stderr, "\n");
 #endif
-			exit(EXIT_FAILURE);
+			std::exit(EXIT_FAILURE);
 		}
 	}
 #endif
@@ -74,10 +74,10 @@ namespace openutils
 	class optional_t
 	{
 	private:
-		bool has_value;
 		T *value;
 
 	public:
+		optional_t();
 		optional_t(optnull_t);
 		optional_t(const T &val);
 		optional_t(T &&val);
@@ -85,7 +85,8 @@ namespace openutils
 		optional_t(optional_t &&opt);
 
 		bool is_null() const;
-		T &get() const;
+		const T &get() const;
+		T &get();
 
 		void operator=(const optional_t &opt);
 		optional_t &operator=(optional_t &&opt);
@@ -96,9 +97,14 @@ namespace openutils
 	};
 
 	template <typename T>
+	optional_t<T>::optional_t()
+	{
+		this->value = nullptr;
+	}
+
+	template <typename T>
 	optional_t<T>::optional_t(optnull_t)
 	{
-		this->has_value = false;
 		this->value = nullptr;
 	}
 
@@ -107,7 +113,6 @@ namespace openutils
 	{
 		this->value = new T(val);
 		exit_heap_fail(this->value);
-		this->has_value = true;
 	}
 
 	template <typename T>
@@ -115,30 +120,25 @@ namespace openutils
 	{
 		this->value = new T(val);
 		exit_heap_fail(this->value);
-		this->has_value = true;
 	}
 
 	template <typename T>
 	optional_t<T>::optional_t(const optional_t &opt)
 	{
-		opt.has_value;
-		if (opt.has_value == true)
+		if (opt.value)
 		{
 			this->value = new T(*opt.value);
 			exit_heap_fail(this->value);
-			this->has_value = opt.has_value;
 		}
 	}
 
 	template <typename T>
 	optional_t<T>::optional_t(optional_t &&opt)
 	{
-		if (opt.has_value == true)
+		if (opt.value)
 		{
 			this->value = new T(*opt.value);
 			exit_heap_fail(this->value);
-			this->has_value = opt.has_value;
-			opt.has_value = false;
 			opt.value = nullptr;
 		}
 	}
@@ -146,24 +146,39 @@ namespace openutils
 	template <typename T>
 	bool optional_t<T>::is_null() const
 	{
-		return !(this->value && this->has_value);
+		return !(this->value);
 	}
 
 	template <typename T>
-	T &optional_t<T>::get() const
+	const T &optional_t<T>::get() const
 	{
+		if (!this->value)
+		{
+			std::fprintf(stderr, "err: cannot de-reference a null-pointer.\n");
+			std::exit(EXIT_FAILURE);
+		}
+		return *this->value;
+	}
+
+	template <typename T>
+	T &optional_t<T>::get()
+	{
+		if (!this->value)
+		{
+			std::fprintf(stderr, "err: cannot de-reference a null-pointer.\n");
+			std::exit(EXIT_FAILURE);
+		}
 		return *this->value;
 	}
 
 	template <typename T>
 	void optional_t<T>::operator=(const optional_t &opt)
 	{
-		if (opt.has_value == true)
+		if (opt.value)
 		{
 			delete this->value;
 			this->value = new T(*opt.value);
 			exit_heap_fail(this->value);
-			this->has_value = opt.has_value;
 		}
 	}
 
@@ -172,12 +187,12 @@ namespace openutils
 	{
 		if (*this != &opt)
 		{
-			if (opt.has_value == true)
+			if (opt.value)
 			{
 				delete this->value;
 				this->value = new T(*opt.value);
 				exit_heap_fail(this->value);
-				this->has_value = opt.has_value;
+				opt.value = nullptr;
 			}
 		}
 		return *this;
@@ -204,7 +219,7 @@ namespace openutils
 	template <typename T>
 	optional_t<T>::~optional_t()
 	{
-		if (this->has_value == true)
+		if (this->value)
 			delete this->value;
 	}
 };
