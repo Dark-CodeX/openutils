@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/map.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "map.hh" under "map" directory
- * map version: 1.6.3
+ * map version: 1.6.5
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -30,7 +30,8 @@
 
 #ifdef __cplusplus
 
-#pragma once
+#ifndef MAP_T
+#define MAP_T
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #include <utility>
@@ -44,10 +45,22 @@
 #include <initializer_list>
 #include <assert.h>
 
-#define map_t_version "1.6.3"
+#define map_t_version "1.6.5"
 
 namespace openutils
 {
+#ifndef EXIT_HEAP_FAIL
+#define EXIT_HEAP_FAIL
+	static inline void exit_heap_fail(const void *ptr)
+	{
+		if (!ptr)
+		{
+			std::fprintf(stderr, "err: can't allocate heap memory.\n");
+			std::exit(EXIT_FAILURE);
+		}
+	}
+#endif
+
 	/**
 	 * @brief Resizes an array with new space `new_size`, and copies previous elements to the new one.
 	 * NOTE: If your array is allocated using `malloc` or `calloc` then, do not use this function instead use `realloc` function defined in `stdlib.h`
@@ -63,6 +76,7 @@ namespace openutils
 		if (prev_size >= new_size)
 			return (T *)nullptr;
 		T *temp = new T[new_size]();
+		exit_heap_fail(temp);
 		for (std::size_t i = 0; i < prev_size; i++)
 			temp[i] = arr[i];
 		delete[] arr;
@@ -128,6 +142,7 @@ namespace openutils
 		void sort_values(compt c)
 		{
 			node_t<KEY, VALUE> *ptr = new node_t<KEY, VALUE>[this->len]();
+			exit_heap_fail(ptr);
 			for (std::size_t i = 0, k = 0; i < this->cap; i++)
 			{
 				node_t<KEY, VALUE> *vptr = this->table[i];
@@ -140,7 +155,7 @@ namespace openutils
 			std::sort(ptr, ptr + this->len, c);
 			delete[] this->keys;
 			this->keys = new KEY[this->k_cap]();
-
+			exit_heap_fail(this->keys);
 			for (std::size_t i = 0; i < this->len; i++)
 				this->keys[i] = ptr[i].key;
 			delete[] ptr;
@@ -161,8 +176,8 @@ namespace openutils
 		void operator=(const map_t &other);
 		map_t &operator=(map_t &&other);
 
-		VALUE operator[](KEY &&key) const;
-		VALUE operator[](const KEY &key) const;
+		const VALUE &operator[](KEY &&key) const;
+		const VALUE &operator[](const KEY &key) const;
 		VALUE &operator[](KEY &&key);
 		VALUE &operator[](const KEY &key);
 
@@ -182,7 +197,9 @@ namespace openutils
 		this->cap = capacity;
 		this->len = 0, this->key_len = 0, this->k_cap = 10;
 		this->table = new node_t<KEY, VALUE> *[this->cap]();
+		exit_heap_fail(this->table);
 		this->keys = new KEY[this->k_cap]();
+		exit_heap_fail(this->keys);
 		for (std::size_t i = 0; i < this->cap; i++)
 			this->table[i] = nullptr;
 		this->load_factor = load_factor;
@@ -193,7 +210,9 @@ namespace openutils
 	{
 		this->cap = 16, this->len = 0, this->key_len = 0, this->k_cap = 10;
 		this->table = new node_t<KEY, VALUE> *[this->cap]();
+		exit_heap_fail(this->table);
 		this->keys = new KEY[this->k_cap]();
+		exit_heap_fail(this->keys);
 		for (std::size_t i = 0; i < this->cap; i++)
 			this->table[i] = nullptr;
 		this->load_factor = other.load_factor;
@@ -227,7 +246,9 @@ namespace openutils
 		this->cap = list.size();
 		this->len = 0, this->key_len = 0, this->k_cap = 10;
 		this->table = new node_t<KEY, VALUE> *[this->cap]();
+		exit_heap_fail(this->table);
 		this->keys = new KEY[this->k_cap]();
+		exit_heap_fail(this->keys);
 		for (std::size_t i = 0; i < this->cap; i++)
 			this->table[i] = nullptr;
 		this->load_factor = 0.75f;
@@ -240,7 +261,9 @@ namespace openutils
 	{
 		this->cap = 16, this->k_cap = 10;
 		this->table = new node_t<KEY, VALUE> *[this->cap]();
+		exit_heap_fail(this->table);
 		this->keys = new KEY[this->k_cap]();
+		exit_heap_fail(this->keys);
 		for (std::size_t i = 0; i < this->cap; i++)
 			this->table[i] = nullptr;
 		this->len = 0, this->key_len = 0;
@@ -264,6 +287,7 @@ namespace openutils
 	{
 		std::size_t new_cap = this->cap * 2;
 		node_t<KEY, VALUE> **new_table = new node_t<KEY, VALUE> *[new_cap]();
+		exit_heap_fail(new_table);
 		for (std::size_t i = 0; i < new_cap; i++)
 			new_table[i] = nullptr;
 		for (std::size_t i = 0; i < this->cap; i++)
@@ -296,6 +320,7 @@ namespace openutils
 		}
 		this->keys[this->key_len++] = key;
 		node_t<KEY, VALUE> *new_node = new node_t<KEY, VALUE>();
+		exit_heap_fail(new_node);
 		new_node->key = key;
 		new_node->value = value;
 		new_node->next = this->table[hash];
@@ -389,8 +414,8 @@ namespace openutils
 				return cur->value;
 			cur = cur->next;
 		}
-		static VALUE __t[1] = {};
-		return (VALUE &)__t[0];
+		std::fprintf(stderr, "err: out-of-range\n");
+		std::exit(EXIT_FAILURE);
 	}
 
 	template <typename KEY, typename VALUE>
@@ -451,13 +476,9 @@ namespace openutils
 		}
 		delete[] this->keys;
 		this->keys = new KEY[this->k_cap]();
+		exit_heap_fail(this->keys);
 		this->len = 0, this->key_len = 0;
 	}
-
-	// template <typename KEY, typename VALUE>
-	// void map_t<KEY, VALUE>::sort_keys(compt c)
-	// {
-	// }
 
 	template <typename KEY, typename VALUE>
 	bool map_t<KEY, VALUE>::empty() const
@@ -556,16 +577,18 @@ namespace openutils
 		this->len = 0, this->cap = 16, this->key_len = 0, this->k_cap = 10;
 		this->load_factor = other.load_factor;
 		this->table = new node_t<KEY, VALUE> *[this->cap]();
+		exit_heap_fail(this->table);
 		for (std::size_t i = 0; i < this->cap; i++)
 			this->table[i] = nullptr;
 		this->keys = new KEY[this->k_cap]();
+		exit_heap_fail(this->keys);
 
 		for (map_t<KEY, VALUE>::iter i = other.iterator(); i.c_loop() != false; i.next())
 			this->add(i->key, i->value);
 	}
 
 	template <typename KEY, typename VALUE>
-	map_t<KEY, VALUE> &map_t<KEY, VALUE>::operator=(map_t &&other)
+	map_t<KEY, VALUE> &map_t<KEY, VALUE>::operator=(map_t &&other) noexcept
 	{
 		if (this != &other)
 		{
@@ -584,10 +607,11 @@ namespace openutils
 			this->len = 0, this->cap = 16, this->key_len = 0, this->k_cap = 10;
 			this->load_factor = other.load_factor;
 			this->table = new node_t<KEY, VALUE> *[this->cap]();
+			exit_heap_fail(this->table);
 			for (std::size_t i = 0; i < this->cap; i++)
 				this->table[i] = nullptr;
 			this->keys = new KEY[this->k_cap]();
-
+			exit_heap_fail(this->keys);
 			for (map_t<KEY, VALUE>::iter i = other.iterator(); i.c_loop() != false; i.next())
 				this->add(i->key, i->value);
 		}
@@ -595,7 +619,7 @@ namespace openutils
 	}
 
 	template <typename KEY, typename VALUE>
-	VALUE map_t<KEY, VALUE>::operator[](KEY &&key) const
+	const VALUE &map_t<KEY, VALUE>::operator[](KEY &&key) const
 	{
 		std::size_t hash = this->get_hash(key, this->cap);
 		node_t<KEY, VALUE> *cur = this->table[hash];
@@ -605,12 +629,12 @@ namespace openutils
 				return cur->value;
 			cur = cur->next;
 		}
-		static VALUE __t[1] = {};
-		return (VALUE &)__t[0];
+		std::fprintf(stderr, "err: out-of-range\n");
+		std::exit(EXIT_FAILURE);
 	}
 
 	template <typename KEY, typename VALUE>
-	VALUE map_t<KEY, VALUE>::operator[](const KEY &key) const
+	const VALUE &map_t<KEY, VALUE>::operator[](const KEY &key) const
 	{
 		std::size_t hash = this->get_hash(key, this->cap);
 		node_t<KEY, VALUE> *cur = this->table[hash];
@@ -620,8 +644,8 @@ namespace openutils
 				return cur->value;
 			cur = cur->next;
 		}
-		static VALUE __t[1] = {};
-		return (VALUE &)__t[0];
+		std::fprintf(stderr, "err: out-of-range\n");
+		std::exit(EXIT_FAILURE);
 	}
 
 	template <typename KEY, typename VALUE>
@@ -635,8 +659,8 @@ namespace openutils
 				return cur->value;
 			cur = cur->next;
 		}
-		static VALUE __t[1] = {};
-		return (VALUE &)__t[0];
+		std::fprintf(stderr, "err: out-of-range\n");
+		std::exit(EXIT_FAILURE);
 	}
 
 	template <typename KEY, typename VALUE>
@@ -650,8 +674,8 @@ namespace openutils
 				return cur->value;
 			cur = cur->next;
 		}
-		static VALUE __t[1] = {};
-		return (VALUE &)__t[0];
+		std::fprintf(stderr, "err: out-of-range\n");
+		std::exit(EXIT_FAILURE);
 	}
 
 	template <typename KEY, typename VALUE>
@@ -789,4 +813,5 @@ namespace std
 	};
 };
 
+#endif
 #endif
