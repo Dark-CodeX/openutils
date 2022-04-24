@@ -868,12 +868,7 @@ static inline void exit_heap_fail(const void *ptr)
 {
 	if (!ptr)
 	{
-		fprintf(stderr, "err: can't allocate heap memory.");
-#if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-		fprintf(stderr, "\r\n");
-#else
-		fprintf(stderr, "\n");
-#endif
+		fprintf(stderr, "err: can't allocate heap memory.\n");
 		exit(EXIT_FAILURE);
 	}
 }

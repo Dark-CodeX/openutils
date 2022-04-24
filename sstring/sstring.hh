@@ -316,12 +316,7 @@ namespace openutils
 	{
 		if (!ptr)
 		{
-			std::fprintf(stderr, "err: can't allocate heap memory.");
-#if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
-			std::fprintf(stderr, "\r\n");
-#else
-			std::fprintf(stderr, "\n");
-#endif
+			std::fprintf(stderr, "err: can't allocate heap memory.\n");
 			std::exit(EXIT_FAILURE);
 		}
 	}
