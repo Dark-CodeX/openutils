@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.h" under "vector" directory
- * vector version: 1.5.7
+ * vector version: 1.6.0
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -30,12 +30,25 @@
 
 #ifndef __cplusplus
 
-#pragma once
+#ifndef VECTOR_DEFINED
+#define VECTOR_DEFINED
 
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define vector_version "1.5.7"
+#define vector_version "1.6.0"
+
+#ifndef EXIT_HEAP_FAIL
+#define EXIT_HEAP_FAIL
+static inline void exit_heap_fail(const void *ptr)
+{
+	if (!ptr)
+	{
+		fprintf(stderr, "err: can't allocate heap memory.\n");
+		exit(EXIT_FAILURE);
+	}
+}
+#endif
 
 /**
  * Appends `data` to `vec` at the end.
@@ -43,15 +56,16 @@
  * @param data data to append
  */
 #define vector_add(vec, data)                                                         \
-    if (vec.init == true && vec.src && sizeof(vec._def[0]) == sizeof(data))           \
-    {                                                                                 \
-        if (vec.length == vec.capacity)                                               \
-        {                                                                             \
-            vec.capacity *= 3;                                                        \
-            vec.src = realloc(vec.src, (vec.capacity * sizeof(data)) + sizeof(data)); \
-        }                                                                             \
-        vec.src[vec.length++] = data;                                                 \
-    }
+	if (vec.init == true && vec.src && sizeof(vec._def[0]) == sizeof(data))           \
+	{                                                                                 \
+		if (vec.length == vec.capacity)                                               \
+		{                                                                             \
+			vec.capacity *= 3;                                                        \
+			vec.src = realloc(vec.src, (vec.capacity * sizeof(data)) + sizeof(data)); \
+			exit_heap_fail(vec.src);                                                  \
+		}                                                                             \
+		vec.src[vec.length++] = data;                                                 \
+	}
 
 /**
  * Removes data at `index` from `vec`.
@@ -59,16 +73,16 @@
  * @param index index of the data to be removed
  */
 #define vector_remove(vec, index)                          \
-    if (vec.init == true && vec.src && index < vec.length) \
-    {                                                      \
-        vec.src[index] = vec._def[0];                      \
-        for (size_t i = index; i < vec.length - 1; i++)    \
-        {                                                  \
-            vec.src[i] = vec.src[i + 1];                   \
-            vec.src[i + 1] = vec._def[0];                  \
-        }                                                  \
-        vec.length--;                                      \
-    }
+	if (vec.init == true && vec.src && index < vec.length) \
+	{                                                      \
+		vec.src[index] = vec._def[0];                      \
+		for (size_t i = index; i < vec.length - 1; i++)    \
+		{                                                  \
+			vec.src[i] = vec.src[i + 1];                   \
+			vec.src[i + 1] = vec._def[0];                  \
+		}                                                  \
+		vec.length--;                                      \
+	}
 
 /**
  * Returns `vec`'s length
@@ -88,13 +102,14 @@
  * @param vec vector
  */
 #define vector_clear(vec)                          \
-    if (vec.init == true && vec.src)               \
-    {                                              \
-        free(vec.src);                             \
-        vec.capacity = 10;                         \
-        vec.length = 0;                            \
-        vec.src = calloc(10, sizeof(vec._def[0])); \
-    }
+	if (vec.init == true && vec.src)               \
+	{                                              \
+		free(vec.src);                             \
+		vec.capacity = 10;                         \
+		vec.length = 0;                            \
+		vec.src = calloc(10, sizeof(vec._def[0])); \
+		exit_heap_fail(vec.src);                   \
+	}
 
 /**
  * Returns data at `index` from `vec`.
@@ -103,7 +118,7 @@
  * @returns data at `index`, if `index` is larger than `vec`'s length than default value of vector's data type is returned
  */
 #define vector_get(vec, index) \
-    ((vec.init == true && vec.src && index < vec.length) ? vec.src[index] : vec._def[0])
+	((vec.init == true && vec.src && index < vec.length) ? vec.src[index] : vec._def[0])
 
 /**
  * Assigns `data` at `index` in `vec`.
@@ -112,8 +127,8 @@
  * @param index index of the data
  */
 #define vector_set(vec, data, index)                                                              \
-    if (vec.init == true && vec.src && index < vec.length && sizeof(vec._def[0]) == sizeof(data)) \
-        vec.src[index] = data;
+	if (vec.init == true && vec.src && index < vec.length && sizeof(vec._def[0]) == sizeof(data)) \
+		vec.src[index] = data;
 
 /**
  * Swaps `vec[x1]` with `vec[x2]` and vice-versa.
@@ -123,12 +138,12 @@
  * @param type data type eg. int, char *, long, float
  */
 #define vector_swap(vec, type, x1, x2)                                     \
-    if (vec.init == true && vec.src && x1 < vec.length && x2 < vec.length) \
-    {                                                                      \
-        type x = vec.src[x1];                                              \
-        vec.src[x1] = vec.src[x2];                                         \
-        vec.src[x2] = x;                                                   \
-    }
+	if (vec.init == true && vec.src && x1 < vec.length && x2 < vec.length) \
+	{                                                                      \
+		type x = vec.src[x1];                                              \
+		vec.src[x1] = vec.src[x2];                                         \
+		vec.src[x2] = x;                                                   \
+	}
 
 /**
  * Free `vec.src`. Do not forget to use this function at the end.
@@ -136,12 +151,12 @@
  * @param vec vector
  */
 #define vector_destructor(vec)       \
-    if (vec.init == true && vec.src) \
-    {                                \
-        free(vec.src);               \
-        vec.length = 0;              \
-        vec.init = false;            \
-    }
+	if (vec.init == true && vec.src) \
+	{                                \
+		free(vec.src);               \
+		vec.length = 0;              \
+		vec.init = false;            \
+	}
 
 /**
  * Reverse `vec` means `vec[0]` = `vec[n]`, `vec[n]` = `vec[0]` and so on. NOTE: n is the length of `vec`.
@@ -149,16 +164,16 @@
  * @param type data type eg. int, char *, long, float
  */
 #define vector_reverse(vec, type)                     \
-    if (vec.init == true && vec.src)                  \
-    {                                                 \
-        type c;                                       \
-        for (size_t i = 0; i < vec.length / 2; i++)   \
-        {                                             \
-            c = vec.src[i];                           \
-            vec.src[i] = vec.src[vec.length - i - 1]; \
-            vec.src[vec.length - i - 1] = c;          \
-        }                                             \
-    }
+	if (vec.init == true && vec.src)                  \
+	{                                                 \
+		type c;                                       \
+		for (size_t i = 0; i < vec.length / 2; i++)   \
+		{                                             \
+			c = vec.src[i];                           \
+			vec.src[i] = vec.src[vec.length - i - 1]; \
+			vec.src[vec.length - i - 1] = c;          \
+		}                                             \
+	}
 
 /**
  * Finds `data` in `vec`.
@@ -167,19 +182,19 @@
  * @param result stores the result (index at which `data` was found, if not found -1 is assigned to `result`). NOTE: `result` data type should be `signed long long int`
  */
 #define vector_find(vec, data, result)                                                                                        \
-    if (vec.init == true && vec.src && sizeof(vec._def[0]) == sizeof(data) && sizeof(result) == sizeof(signed long long int)) \
-    {                                                                                                                         \
-        for (size_t i = 0; i < vec.length; i++)                                                                               \
-        {                                                                                                                     \
-            if (vec.src[i] == data)                                                                                           \
-            {                                                                                                                 \
-                result = i;                                                                                                   \
-                break;                                                                                                        \
-            }                                                                                                                 \
-            else                                                                                                              \
-                result = -1;                                                                                                  \
-        }                                                                                                                     \
-    }
+	if (vec.init == true && vec.src && sizeof(vec._def[0]) == sizeof(data) && sizeof(result) == sizeof(signed long long int)) \
+	{                                                                                                                         \
+		for (size_t i = 0; i < vec.length; i++)                                                                               \
+		{                                                                                                                     \
+			if (vec.src[i] == data)                                                                                           \
+			{                                                                                                                 \
+				result = i;                                                                                                   \
+				break;                                                                                                        \
+			}                                                                                                                 \
+			else                                                                                                              \
+				result = -1;                                                                                                  \
+		}                                                                                                                     \
+	}
 
 /**
  * Copies `vec`'s data to `vec2`. NOTE: `vec2` data type should be same as of `vec`'s data type.
@@ -187,13 +202,14 @@
  * @param vec2 vector
  */
 #define vector_copy(vec, vec2)                                                                                       \
-    if (vec.init == true && vec.src && vec2.init == true && vec2.src && sizeof(vec._def[0]) == sizeof(vec2._def[0])) \
-    {                                                                                                                \
-        free(vec2.src);                                                                                              \
-        vec2.src = calloc(vec.length, sizeof(vec2._def[0]));                                                         \
-        for (size_t i = 0; i < vec.length; i++)                                                                      \
-            vec2.src[vec2.length++] = vec.src[i];                                                                    \
-    }
+	if (vec.init == true && vec.src && vec2.init == true && vec2.src && sizeof(vec._def[0]) == sizeof(vec2._def[0])) \
+	{                                                                                                                \
+		free(vec2.src);                                                                                              \
+		vec2.src = calloc(vec.length, sizeof(vec2._def[0]));                                                         \
+		exit_heap_fail(vec.src);                                                                                     \
+		for (size_t i = 0; i < vec.length; i++)                                                                      \
+			vec2.src[vec2.length++] = vec.src[i];                                                                    \
+	}
 
 /**
  * Returns whether `vec` is initialized or not using.
@@ -208,19 +224,19 @@
  * @param result if assigned value is true then, `vec` and `vec2` are same. NOTE: `result` data type should be `int`
  */
 #define vector_compare(vec, vec2, result)                                                                                                                                              \
-    if (sizeof(result) == sizeof(int) && vec.init == true && vec.src && vec2.init == true && vec2.src && (vec.length == vec2.length) && (sizeof(vec._def[0]) == sizeof(vec2._def[0]))) \
-    {                                                                                                                                                                                  \
-        for (size_t i = 0; i < vec.length; i++)                                                                                                                                        \
-            if (vec.src[i] != vec2.src[i])                                                                                                                                             \
-            {                                                                                                                                                                          \
-                result = false;                                                                                                                                                        \
-                break;                                                                                                                                                                 \
-            }                                                                                                                                                                          \
-            else                                                                                                                                                                       \
-                result = true;                                                                                                                                                         \
-    }                                                                                                                                                                                  \
-    else                                                                                                                                                                               \
-        result = vec.length;
+	if (sizeof(result) == sizeof(int) && vec.init == true && vec.src && vec2.init == true && vec2.src && (vec.length == vec2.length) && (sizeof(vec._def[0]) == sizeof(vec2._def[0]))) \
+	{                                                                                                                                                                                  \
+		for (size_t i = 0; i < vec.length; i++)                                                                                                                                        \
+			if (vec.src[i] != vec2.src[i])                                                                                                                                             \
+			{                                                                                                                                                                          \
+				result = false;                                                                                                                                                        \
+				break;                                                                                                                                                                 \
+			}                                                                                                                                                                          \
+			else                                                                                                                                                                       \
+				result = true;                                                                                                                                                         \
+	}                                                                                                                                                                                  \
+	else                                                                                                                                                                               \
+		result = vec.length;
 
 /**
  * Inserts `data` at `nth` by moving items forward.
@@ -229,29 +245,30 @@
  * @param nth where to insert
  */
 #define vector_insert(vec, data, nth)                                                 \
-    if (nth <= vec.length)                                                            \
-    {                                                                                 \
-        if (vec.length == vec.capacity)                                               \
-        {                                                                             \
-            vec.capacity *= 3;                                                        \
-            vec.src = realloc(vec.src, (vec.capacity * sizeof(data)) + sizeof(data)); \
-        }                                                                             \
-        for (size_t i = vec.length; i >= nth; i--)                                    \
-        {                                                                             \
-            vec.src[i + 1] = vec.src[i];                                              \
-            vec.src[i] = vec._def[0];                                                 \
-            if (i == 0)                                                               \
-                break;                                                                \
-        }                                                                             \
-        vec.src[nth] = data;                                                          \
-        vec.length++;                                                                 \
-    }
+	if (nth <= vec.length)                                                            \
+	{                                                                                 \
+		if (vec.length == vec.capacity)                                               \
+		{                                                                             \
+			vec.capacity *= 3;                                                        \
+			vec.src = realloc(vec.src, (vec.capacity * sizeof(data)) + sizeof(data)); \
+			exit_heap_fail(var_name.src);                                             \
+		}                                                                             \
+		for (size_t i = vec.length; i >= nth; i--)                                    \
+		{                                                                             \
+			vec.src[i + 1] = vec.src[i];                                              \
+			vec.src[i] = vec._def[0];                                                 \
+			if (i == 0)                                                               \
+				break;                                                                \
+		}                                                                             \
+		vec.src[nth] = data;                                                          \
+		vec.length++;                                                                 \
+	}
 
 #define vector_sort(vec, compt)                                 \
-    if (vec.init == true && vec.src)                            \
-    {                                                           \
-        qsort(vec.src, vec.length, sizeof(vec._def[0]), compt); \
-    }
+	if (vec.init == true && vec.src)                            \
+	{                                                           \
+		qsort(vec.src, vec.length, sizeof(vec._def[0]), compt); \
+	}
 
 /**
  * Macro for initializing a `vector` struct.
@@ -259,17 +276,19 @@
  * @param type data type eg. int, char *, long, float or even a struct
  */
 #define vector(var_name, type)                                      \
-    struct var_name                                                 \
-    {                                                               \
-        type *src;                                                  \
-        size_t length;                                              \
-        size_t capacity;                                            \
-        int init;                                                   \
-        type _def[1];                                               \
-    } var_name;                                                     \
-    var_name.capacity = 10;                                         \
-    var_name.src = (type *)calloc(var_name.capacity, sizeof(type)); \
-    var_name.length = 0;                                            \
-    var_name.init = true;
+	struct var_name                                                 \
+	{                                                               \
+		type *src;                                                  \
+		size_t length;                                              \
+		size_t capacity;                                            \
+		int init;                                                   \
+		type _def[1];                                               \
+	} var_name;                                                     \
+	var_name.capacity = 10;                                         \
+	var_name.src = (type *)calloc(var_name.capacity, sizeof(type)); \
+	exit_heap_fail(var_name.src);                                   \
+	var_name.length = 0;                                            \
+	var_name.init = true;
 
+#endif
 #endif
