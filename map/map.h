@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/map.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "map.h" under "map" directory
- * map version: 1.6.3
+ * map version: 1.6.5
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -30,9 +30,10 @@
 
 #ifndef __cplusplus
 
-#pragma once
+#ifndef MAP_T
+#define MAP_T
 
-#define map_t_version "1.6.3"
+#define map_t_version "1.6.5"
 
 #include <stdlib.h>
 #include <stdbool.h>
@@ -518,4 +519,5 @@ int map_init(map_t *map, size_t capacity, float load_factor, size_t (*get_key_ha
 	return (int)map->init;
 }
 
+#endif
 #endif
