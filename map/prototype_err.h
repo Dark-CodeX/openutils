@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/map.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "prototype_err.h" under "map" directory
- * map: version 1.6.3
+ * map: version 1.6.5
  *
  * MIT License
  *
@@ -31,7 +31,8 @@
 
 #ifndef __cplusplus
 
-#pragma once
+#ifndef MAP_T_PROTOTYPE
+#define MAP_T_PROTOTYPE
 
 void make_null_array(void **ptr, size_t len);
 size_t _get_hash_map_t(map_t *map, void *key, size_t capacity);
@@ -72,4 +73,5 @@ void _destructor_map_t(map_t *map);
 
 map_t new_map_t(size_t (*get_key_hash)(void *key), size_t (*get_value_hash)(void *value), int (*equal)(void *key1, void *key2), size_t size_of_key, size_t size_of_val);
 int map_init(map_t *map, size_t capacity, float load_factor, size_t (*get_key_hash)(void *key), size_t (*get_value_hash)(void *value), int (*equal)(void *key1, void *key2), size_t size_of_key, size_t size_of_val);
+#endif
 #endif
