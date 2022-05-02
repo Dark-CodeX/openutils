@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 1.6.0
+ * vector version: 1.6.1
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -44,7 +44,7 @@
 #include <functional>
 #include <cstdio>
 
-#define vector_t_version "1.6.0"
+#define vector_t_version "1.6.1"
 
 namespace openutils
 {
@@ -90,6 +90,8 @@ namespace openutils
 		std::size_t find(T &&data) const;
 		std::size_t find(const T &data) const;
 		bool swap(const std::size_t &x1, const std::size_t &x2);
+		const T *&raw_data() const;
+		T *&raw_data();
 		typedef iter_vector_t<T> iter;
 		iter iterator() const;
 		iter reverse_iterator() const;
@@ -136,7 +138,7 @@ namespace openutils
 	}
 
 	template <typename T>
-	vector_t<T>::vector_t(T &&default_data, const std::size_t & capacity)
+	vector_t<T>::vector_t(T &&default_data, const std::size_t &capacity)
 	{
 		this->cap = capacity;
 		this->len = 0;
@@ -150,7 +152,7 @@ namespace openutils
 	}
 
 	template <typename T>
-	vector_t<T>::vector_t(const T &default_data, const std::size_t & capacity)
+	vector_t<T>::vector_t(const T &default_data, const std::size_t &capacity)
 	{
 		this->cap = capacity;
 		this->len = 0;
@@ -340,12 +342,13 @@ namespace openutils
 	}
 
 	template <typename T>
-	void vector_t<T>::erase(T &&default_data, const std::size_t & capacity)
+	void vector_t<T>::erase(T &&default_data, const std::size_t &capacity)
 	{
 		delete[] this->vec_data;
 		this->cap = capacity;
 		this->len = 0;
-		this->vec_data = new T[this->cap]();const std::size_t &it_heap_fail(this->vec_data);
+		this->vec_data = new T[this->cap]();
+		const std::size_t &it_heap_fail(this->vec_data);
 
 		for (std::size_t i = 0; i < this->cap; i++)
 		{
@@ -355,7 +358,7 @@ namespace openutils
 	}
 
 	template <typename T>
-	void vector_t<T>::erase(const T &default_data, const std::size_t & capacity)
+	void vector_t<T>::erase(const T &default_data, const std::size_t &capacity)
 	{
 		this->erase((T &&) default_data, capacity);
 	}
@@ -425,6 +428,12 @@ namespace openutils
 		}
 		return false;
 	}
+
+	template <typename T>
+	const T *&vector_t<T>::raw_data() const { return this->vec_data; }
+
+	template <typename T>
+	T *&vector_t<T>::raw_data() { return this->vec_data; }
 
 	template <typename T>
 	typename vector_t<T>::iter vector_t<T>::iterator() const
