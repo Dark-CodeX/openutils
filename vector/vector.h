@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.h" under "vector" directory
- * vector version: 1.6.0
+ * vector version: 1.6.1
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -36,7 +36,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define vector_version "1.6.0"
+#define vector_version "1.6.1"
 
 #ifndef EXIT_HEAP_FAIL
 #define EXIT_HEAP_FAIL
