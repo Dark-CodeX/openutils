@@ -1875,6 +1875,7 @@ void _sstring_in(sstring *a)
 		}
 		ptr[len] = 0;
 		free(a->str.src);
+		a->str.len = 0;
 		a->str.src = calloc(len + 1, sizeof(char));
 		exit_heap_fail(a->str.src);
 		fast_strncat(a->str.src, ptr, &a->str.len);

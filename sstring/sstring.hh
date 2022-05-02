@@ -1237,17 +1237,19 @@ namespace openutils
 	{
 		char *ptr = (char *)std::calloc(2, sizeof(char)), ch;
 		exit_heap_fail(ptr);
-		std::size_t len = 0;
+		std::size_t len_in = 0;
 		while ((ch = std::getchar()))
 		{
 			if (ch == 10 || ch == 0)
 				break;
-			ptr[len++] = ch;
-			ptr = (char *)std::realloc(ptr, len + 1);
+			ptr[len_in++] = ch;
+			ptr = (char *)std::realloc(ptr, len_in + 1);
+			exit_heap_fail(ptr);
 		}
-		ptr[len] = 0;
+		ptr[len_in] = 0;
 		std::free(this->src);
-		this->src = (char *)std::calloc(len + 1, sizeof(char));
+		this->len = 0;
+		this->src = (char *)std::calloc(len_in + 1, sizeof(char));
 		exit_heap_fail(this->src);
 		fast_strncat(this->src, ptr, this->len);
 		std::free(ptr);
