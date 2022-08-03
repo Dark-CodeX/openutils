@@ -43,7 +43,7 @@
 
 #include <functional>
 #include <initializer_list>
-#include <assert.h>
+#include <cstdio>
 
 #define map_t_version "1.6.5"
 
@@ -60,6 +60,9 @@ namespace openutils
 		}
 	}
 #endif
+
+#ifndef RESIZE_ARRAY_OPENUTILS
+#define RESIZE_ARRAY_OPENUTILS
 
 	/**
 	 * @brief Resizes an array with new space `new_size`, and copies previous elements to the new one.
@@ -82,6 +85,8 @@ namespace openutils
 		delete[] arr;
 		return temp;
 	}
+
+#endif
 
 	template <typename KEY, typename VALUE>
 	struct node_t
