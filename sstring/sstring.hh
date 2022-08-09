@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.hh" under "sstring" directory
- * sstring: version 1.7.0
+ * sstring: version 1.7.1
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -45,7 +45,7 @@
 #include "binary.h"
 #include "morse_code.h"
 
-#define sstring_version "1.7.0"
+#define sstring_version "1.7.1"
 
 namespace std
 {
@@ -2631,13 +2631,15 @@ namespace openutils
 
 	parse_t::parse_t(parse_t &&other) noexcept : src(nullptr), type(nullptr), len(0), cap(10)
 	{
-		src = other.src;
-		type = other.type;
-		len = other.len;
+		this->src = other.src;
+		this->type = other.type;
+		this->len = other.len;
+		this->cap = other.cap;
 
 		other.src = nullptr;
 		other.type = nullptr;
 		other.len = 0;
+		other.cap = 0;
 	}
 
 	parse_t &parse_t::operator=(parse_t &&__pt) noexcept
@@ -2651,18 +2653,13 @@ namespace openutils
 			this->len = __pt.len;
 			this->cap = __pt.cap;
 
-			this->src = (char **)std::calloc(this->cap, sizeof(char *));
-			exit_heap_fail(this->src);
-			this->type = (enum parse_token *)std::calloc(this->cap, sizeof(enum parse_token));
-			exit_heap_fail(this->type);
-			for (std::size_t i = 0; i < this->len; i++)
-			{
-				this->src[i] = (char *)std::calloc(std::strlen(__pt.src[i]) + 1, sizeof(char));
-				exit_heap_fail(this->src[i]);
-				std::size_t pos = 0; // temp variable note string length of `__st.src[i]` is only counted once because if we use `std::strcpy` it will also transverse through the string
-				fast_strncat(this->src[i], __pt.src[i], pos);
-				this->type[i] = __pt.type[i];
-			}
+			this->src = __pt.src;
+			this->type = __pt.type;
+
+			__pt.src = nullptr;
+			__pt.type = nullptr;
+			__pt.len = 0;
+			__pt.cap = 0;
 		}
 		return *this;
 	}
@@ -2721,10 +2718,13 @@ namespace openutils
 
 	split_t::split_t(split_t &&other) noexcept : src(nullptr), len(0), cap(10)
 	{
-		src = other.src;
-		len = other.len;
+		this->src = other.src;
+		this->len = other.len;
+		this->cap = other.cap;
+
 		other.src = nullptr;
 		other.len = 0;
+		other.cap = 0;
 	}
 
 	split_t &split_t::operator=(split_t &&__st) noexcept
@@ -2737,15 +2737,10 @@ namespace openutils
 			this->len = __st.len;
 			this->cap = __st.cap;
 
-			this->src = (char **)std::calloc(this->cap, sizeof(char *));
-			exit_heap_fail(this->src);
-			for (std::size_t i = 0; i < this->len; i++)
-			{
-				this->src[i] = (char *)std::calloc(std::strlen(__st.src[i]) + 1, sizeof(char));
-				exit_heap_fail(this->src[i]);
-				std::size_t pos = 0; // temp variable note string length of `__st.src[i]` is only counted once because if we use `std::strcpy` it will also transverse through the string
-				fast_strncat(this->src[i], __st.src[i], pos);
-			}
+			this->src = __st.src;
+			__st.src = nullptr;
+			__st.len = 0;
+			__st.cap = 0;
 		}
 		return *this;
 	}
