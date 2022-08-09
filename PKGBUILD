@@ -1,5 +1,5 @@
 pkgname="openutils-map"
-pkgver="1.6.5"
+pkgver="1.6.6"
 pkgrel="3"
 pkgdesc="Memory Safe Map Library in C/C++ language."
 arch=("x86_64" "i686")
@@ -8,7 +8,7 @@ depends=(gcc)
 license=("MIT")
 source=("https://raw.githubusercontent.com/Dark-CodeX/map/master/map/map.hh" "https://raw.githubusercontent.com/Dark-CodeX/map/master/map/map.h" "https://raw.githubusercontent.com/Dark-CodeX/map/master/map/prototype_err.h")
 
-sha512sums=("418accdd0d9924011ba714796fe748d7d9e0ccedde569efaecbeebef845b944847fcf8464048b59657de53ab5b7261e84df936f5f857395da965e853e930c68b" "c7868d6fb2cc2112858bd2f732f9aad3ef4377d76ae9acd1d0039c0dd316cbc947ae684223db200083db3e9fda0f65ee9ad3ec94842392060aae31ebe66d0228" "19c136c9f35bb1d4a65a1b32cbe9f202fd0841c2fabaed72b40c4edf4a69568eabedbe5f0d7e99c99141eca6faf9694f6531cbb5418437b6bb66fece1a0f6456")
+sha512sums=("c0d8273267f38f211812bcfb464d481449b80e291253c6cea3fcf027ababc85c657a9f7af77cc04fc457f92eab8df2045faf689dac5b07a76b7f1dbed2811b2f" "7e7f53d704a7d7fa721c758ea52f5b4116bc1b014c1df8951b3e7ece7f58b9d364c1624e7865342b3f34da458964329bcc75f857e252ada85006beb25fe17ccb" "919505f7130e32468d3be6703dfd97028f120d13b099b80b8e821e4e9fe208a3eed4d95e43b6d77cd2dfce4e96e401f49616e12ecf7cae9c9ea93e210db99068")
 
 package() {
 	echo "Memory Safe Map Library in C++ language."
