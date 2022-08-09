@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 1.6.1
+ * vector version: 1.6.2
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -44,7 +44,7 @@
 #include <functional>
 #include <cstdio>
 
-#define vector_t_version "1.6.1"
+#define vector_t_version "1.6.2"
 
 namespace openutils
 {
@@ -497,10 +497,11 @@ namespace openutils
 			delete[] this->vec_data;
 			this->len = __s.len;
 			this->cap = __s.cap;
-			this->vec_data = new T[this->cap]();
-			exit_heap_fail(this->vec_data);
-			for (std::size_t i = 0; i < __s.len; i++)
-				this->vec_data[i] = __s.vec_data[i];
+			this->vec_data = __s.vec_data;
+
+			__s.vec_data = nullptr;
+			__s.len = 0;
+			__s.cap = 0;
 		}
 		return *this;
 	}
