@@ -4,7 +4,7 @@
 	* #### **This library can be used in both C and C++.**
 	* #### This header file is *cross-platform*, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (19/19) functions passed.*
 
-* # Functions Defined v:1.6.5
+* # Functions Defined v:1.6.6
 ```
 add(key, value)
 add(node<key, value> *)
