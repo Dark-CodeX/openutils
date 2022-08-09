@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/map.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "map.hh" under "map" directory
- * map version: 1.6.5
+ * map version: 1.6.6
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -45,7 +45,7 @@
 #include <initializer_list>
 #include <cstdio>
 
-#define map_t_version "1.6.5"
+#define map_t_version "1.6.6"
 
 namespace openutils
 {
@@ -609,16 +609,22 @@ namespace openutils
 			}
 			delete[] this->table;
 			delete[] this->keys;
-			this->len = 0, this->cap = 16, this->key_len = 0, this->k_cap = 10;
+
+			this->cap = other.cap;
+			this->table = other.table;
+			this->key_len = other.key_len;
+			this->k_cap = other.k_cap;
+			this->keys = other.keys;
+			this->len = other.len;
 			this->load_factor = other.load_factor;
-			this->table = new node_t<KEY, VALUE> *[this->cap]();
-			exit_heap_fail(this->table);
-			for (std::size_t i = 0; i < this->cap; i++)
-				this->table[i] = nullptr;
-			this->keys = new KEY[this->k_cap]();
-			exit_heap_fail(this->keys);
-			for (map_t<KEY, VALUE>::iter i = other.iterator(); i.c_loop() != false; i.next())
-				this->add(i->key, i->value);
+
+			other.cap = 0;
+			other.table = nullptr;
+			other.len = 0;
+			other.load_factor = 0;
+			other.keys = nullptr;
+			other.key_len = 0;
+			other.k_cap = 0;
 		}
 		return *this;
 	}
