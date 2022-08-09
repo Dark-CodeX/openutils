@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/returns.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "optional.hh" under "returns" directory
- * returns version: 1.2.2
+ * returns version: 1.2.3
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -34,7 +34,7 @@
 #define RETURNS_OPTIONAL
 
 #ifndef returns_version
-#define returns_version "1.2.2"
+#define returns_version "1.2.3"
 #endif
 
 #include <cstdlib>
@@ -132,14 +132,8 @@ namespace openutils
 	template <typename T>
 	optional_t<T>::optional_t(optional_t &&opt)
 	{
-		if (opt.value)
-		{
-			this->value = new T(*opt.value);
-			exit_heap_fail(this->value);
-			opt.value = nullptr;
-		}
-		else
-			this->value = nullptr;
+		this->value = opt.value;
+		opt.value = nullptr;
 	}
 
 	template <typename T>
@@ -191,8 +185,7 @@ namespace openutils
 			{
 				if (this->value)
 					delete this->value;
-				this->value = new T(*opt.value);
-				exit_heap_fail(this->value);
+				this->value = opt.value;
 				opt.value = nullptr;
 			}
 		}
