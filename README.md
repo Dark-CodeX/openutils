@@ -7,6 +7,6 @@
 * # Installation
 	* #### To install on *arch linux* use **`PKGBUILD`**.
 	* #### To install on **any Operating System** use:
-		* #### [**GUI** Download Jar File (Cross-Platform)](https://github.com/Dark-CodeX/InstallRepos/releases/download/v1.0.0/InstallReposGUI.jar)
+		* #### [**GUI** Download Jar File (Cross-Platform)](https://github.com/Dark-CodeX/InstallRepos/releases/download/v1.1.0/InstallReposGUI.jar)
 
-		* #### [**CLI** Download Jar File (Cross-Platform)](https://github.com/Dark-CodeX/InstallRepos/releases/download/v1.0.0/InstallReposCLI.jar)
+		* #### [**CLI** Download Jar File (Cross-Platform)](https://github.com/Dark-CodeX/InstallRepos/releases/download/v1.1.0/InstallReposCLI.jar)
