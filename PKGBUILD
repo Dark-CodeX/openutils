@@ -11,8 +11,8 @@ source=(
 	"https://raw.githubusercontent.com/Dark-CodeX/date-time/main/date-time/time.hh")
 
 sha512sums=(
-	"b5e6bdf54aa6e008de409dea62ef7f703739c41db99c5d871faa27ffe87c5b624184a2bdd10d757cbce5aa17f4cd8965981f7f79d34a6fbc7e09b05ed29abe03"
-	"e0561229ed0cb180f225a16acdb3868ba563c501425ff2df3564eedde40d29e55146c64beca4094de3dcbbeb59ff8399c817d4cb6721e02aa8761e2f25e13800")
+	"e5b86decbe927de69de25948b3af268ee89a86326b9ed2c8ee0cb5dae514c81a35431088d23b5871d4dab5c7652ea7cc1fa9e5ef2c3f015917ce5aecf36529e4"
+	"2b7365765b2fbdbb7ff1f80c8157fd80c43c770fc46d41eb7d2a06d808568b3e4564ad8ed4070bef856fa48543d0ee5542c455ae5a24f3a319c810bdd51ca855")
 
 package() {
 	echo "Date and time classes for C++."
