@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.hh" under "sstring" directory
- * sstring: version 1.7.1
+ * sstring: version 1.7.2
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -45,7 +45,7 @@
 #include "binary.h"
 #include "morse_code.h"
 
-#define sstring_version "1.7.1"
+#define sstring_version "1.7.2"
 
 namespace std
 {
