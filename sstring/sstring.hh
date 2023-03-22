@@ -1240,7 +1240,7 @@ namespace openutils
 		{
 			char *buff = (char *)std::strstr(this->src + last_index, sub);
 			if (buff)
-				return (std::size_t)((this->len - last_index) - std::strlen(buff));
+				return (std::size_t)(this->len - std::strlen(buff));
 		}
 		return (std::size_t)-1;
 	}

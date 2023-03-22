@@ -1878,7 +1878,7 @@ size_t _sstring_find_next(sstring *a, size_t last_index, const char *sub)
 		buff = strstr(a->str.src + last_index, sub);
 #endif
 		if (buff != NULL)
-			return (size_t)((a->str.len - last_index) - strlen(buff)); // buff is subset of a, if buff != NULL
+			rreturn(size_t)(a->str.len - strlen(buff));
 	}
 	return (size_t)-1;
 }
