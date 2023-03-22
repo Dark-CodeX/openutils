@@ -473,6 +473,15 @@ struct __string__
 	size_t (*find)(sstring *a, const char *sub);
 
 	/**
+	 * Returns index of next occurrence of sub-string `sub` in `a`. Returns `nerr` if `sub` was not found in `a`.
+	 * @param a pointer to struct sstring
+	 * @param last_index index of last occurrence of sub-string `sub` in `a`
+	 * @param sub sub-string to find in `a`
+	 * @returns index of first occurrence of sub-string `sub` in `a`
+	 */
+	size_t (*find_next)(sstring *a, size_t last_index, const char *sub);
+
+	/**
 	 * Get input from user and then sets that input to `a`.
 	 * @param a pointer to struct sstring
 	 */
@@ -1858,6 +1867,22 @@ size_t _sstring_find(sstring *a, const char *sub)
 	return (size_t)-1;
 }
 
+size_t _sstring_find_next(sstring *a, size_t last_index, const char *sub)
+{
+	if (a && a->str.src && a->str.init == true && sub)
+	{
+		char *buff;
+#ifdef __cplusplus
+		buff = (char *)strstr(a->str.src + last_index, sub);
+#else
+		buff = strstr(a->str.src + last_index, sub);
+#endif
+		if (buff != NULL)
+			return (size_t)((a->str.len - last_index) - strlen(buff)); // buff is subset of a, if buff != NULL
+	}
+	return (size_t)-1;
+}
+
 void _sstring_in(sstring *a)
 {
 	if (a && a->str.src && a->str.init == true)
@@ -3148,6 +3173,7 @@ bool init_sstr(sstring *a, size_t alloc_size)
 		a->to_hexadecimal = _sstring_to_hexadecimal;
 		a->from_hexadecimal = _sstring_from_hexadecimal;
 		a->find = _sstring_find;
+		a->find_next = _sstring_find_next;
 		a->in = _sstring_in;
 		a->getline = _sstring_getline;
 		a->reverse = _sstring_reverse;

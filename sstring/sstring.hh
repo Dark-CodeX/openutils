@@ -159,6 +159,7 @@ namespace openutils
 		void to_hexadecimal();
 		bool from_hexadecimal();
 		std::size_t find(const char *sub) const;
+		std::size_t find_next(std::size_t last_index, const char *sub) const;
 		void in();
 		sstring getline(std::size_t line) const;
 		void reverse();
@@ -1229,6 +1230,17 @@ namespace openutils
 			char *buff = (char *)std::strstr(this->src, sub);
 			if (buff)
 				return (std::size_t)this->len - std::strlen(buff);
+		}
+		return (std::size_t)-1;
+	}
+
+	std::size_t sstring::find_next(std::size_t last_index, const char *sub) const
+	{
+		if (sub)
+		{
+			char *buff = (char *)std::strstr(this->src + last_index, sub);
+			if (buff)
+				return (std::size_t)((this->len - last_index) - std::strlen(buff));
 		}
 		return (std::size_t)-1;
 	}

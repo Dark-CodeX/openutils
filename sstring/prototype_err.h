@@ -1,33 +1,33 @@
 /**
-* This header file is written to solve `prototype` missing error. Do not include this file.
-* Author: Tushar Chaurasia (https://github.com/Dark-CodeX/)
-* Commit to this repository at https://github.com/Dark-CodeX/sstring.git
-* You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
-* File: "prototype_err.h" under "sstring" directory
-* sstring: version 1.7.1
-* 
-* MIT License
-* 
-* Copyright (c) 2022 Tushar Chaurasia
-* 
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-* 
-* The above copyright notice and this permission notice shall be included in all
-* copies or substantial portions of the Software.
-* 
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-* SOFTWARE.
-*/
+ * This header file is written to solve `prototype` missing error. Do not include this file.
+ * Author: Tushar Chaurasia (https://github.com/Dark-CodeX/)
+ * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
+ * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
+ * File: "prototype_err.h" under "sstring" directory
+ * sstring: version 1.7.1
+ *
+ * MIT License
+ *
+ * Copyright (c) 2022 Tushar Chaurasia
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 #ifndef SSTRING_PROTOTYPE_DEFINED
 #define SSTRING_PROTOTYPE_DEFINED
@@ -79,6 +79,7 @@ bool _sstring_copy(sstring *a, sstring *dest);
 void _sstring_to_hexadecimal(sstring *a);
 bool _sstring_from_hexadecimal(sstring *a);
 size_t _sstring_find(sstring *a, const char *sub);
+size_t _sstring_find_next(sstring *a, size_t last_index, const char *sub);
 void _sstring_in(sstring *a);
 char *_sstring_getline(sstring *a, size_t line);
 void _sstring_reverse(sstring *a);
