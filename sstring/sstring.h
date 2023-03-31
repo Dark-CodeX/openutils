@@ -2480,7 +2480,7 @@ bool _sstring_encrypt(sstring *a, const char *key)
 {
 	if (a && a->str.src && a->str.init == true && key)
 	{
-		sstring __temp__ = new_sstring(0, key);
+		sstring __temp__ = new_sstring(key);
 		size_t val = __temp__.hash(&__temp__) % 128;
 		__temp__.destructor(&__temp__);
 		size_t len = a->str.len;
@@ -2521,7 +2521,7 @@ bool _sstring_decrypt(sstring *a, const char *key)
 {
 	if (a && a->str.src && a->str.init == true && key)
 	{
-		sstring __temp__ = new_sstring(0, key);
+		sstring __temp__ = new_sstring(key);
 		size_t val = __temp__.hash(&__temp__) % 128;
 		__temp__.destructor(&__temp__);
 		size_t len = a->str.len;
@@ -2872,7 +2872,7 @@ parse_t _sstring_parse(sstring *a)
 		pt.type = calloc(len, sizeof(enum parse_token));
 		exit_heap_fail(pt.src);
 		exit_heap_fail(pt.type);
-		sstring toks = new_sstring(1, NULL);
+		sstring toks = new_sstring(NULL);
 		size_t sigma = 0, track = 0;
 		for (size_t i = 0; i < a->str.len;)
 		{
@@ -3091,14 +3091,13 @@ bool free_parse(parse_t *a)
 
 /**
  * Shortcut for initializing a `sstring` struct.
- * @param alloc_size amount of memory block to allocate `a`.
  * @param src data to assign by default, if `src` is NULL then nothing is assigned
  * @returns an initialized `sstring`
  */
-sstring new_sstring(size_t alloc_size, const char *src)
+sstring new_sstring(const char *src)
 {
 	sstring x;
-	init_sstr(&x, alloc_size);
+	init_sstr(&x);
 	if (src)
 		x.set(&x, src);
 	return x;
@@ -3117,9 +3116,8 @@ sstring new_sstring(size_t alloc_size, const char *src)
  * This function initializes `a`.
  * By the way use `SSTRING(x)` macro for shortcut.
  * @param a pointer to struct sstring
- * @param alloc_size amount of memory block to allocate `a`.
  */
-bool init_sstr(sstring *a, size_t alloc_size)
+bool init_sstr(sstring *a)
 {
 	if (a)
 	{
@@ -3216,7 +3214,7 @@ bool init_sstr(sstring *a, size_t alloc_size)
 		a->hash = _sstring_hash;
 		a->nerr = (size_t)-1;
 
-		a->str.src = calloc(alloc_size + 1, sizeof(char));
+		a->str.src = calloc(2, sizeof(char));
 		exit_heap_fail(a->str.src);
 		a->str.len = 0;
 		a->str.init = true; // initialized properly

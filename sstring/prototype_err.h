@@ -133,7 +133,7 @@ int compare_chars(const void *c1, const void *c2);
 int strcmp_void(const void *a1, const void *a2);
 bool free_parse(parse_t *a);
 bool free_split(split_t *a);
-sstring new_sstring(size_t alloc_size, const char *src);
-bool init_sstr(sstring *a, size_t alloc_size);
+sstring new_sstring(const char *src);
+bool init_sstr(sstring *a);
 
 #endif
