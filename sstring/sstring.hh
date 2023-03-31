@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.hh" under "sstring" directory
- * sstring: version 1.7.2
+ * sstring: version 1.7.4
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -45,7 +45,7 @@
 #include "binary.h"
 #include "morse_code.h"
 
-#define sstring_version "1.7.2"
+#define sstring_version "1.7.4"
 
 namespace std
 {
@@ -109,7 +109,8 @@ namespace openutils
 		std::size_t len;
 
 	public:
-		sstring(const char *src = nullptr, std::size_t alloc_size = 1UL);
+		sstring();
+		sstring(const char *src);
 		sstring(const sstring &other);
 		sstring(sstring &&other) noexcept;
 		sstring(std::initializer_list<char> list);
@@ -121,7 +122,7 @@ namespace openutils
 		void set_upto(const char *src, std::size_t N);
 		void set_random(const std::size_t len);
 		bool set_array(const char **src, char char_between, std::size_t from, std::size_t till, std::size_t len);
-		char *get() const;
+		char *&get();
 		void append(const char *src);
 		void append_char(const char c);
 		void append_upto(const char *src, std::size_t N);
@@ -250,6 +251,7 @@ namespace openutils
 		static sstring to_sstring(double x);
 		static sstring to_sstring(long double x);
 		static sstring get_random(const std::size_t &len);
+		static sstring get_input();
 		static sstring open_file(const sstring &location);
 		static sstring end_line();
 
@@ -323,7 +325,14 @@ namespace openutils
 	}
 #endif
 
-	sstring::sstring(const char *src, std::size_t alloc_size)
+	sstring::sstring()
+	{
+		this->src = (char *)std::calloc(2, sizeof(char));
+		exit_heap_fail(this->src);
+		this->len = 0;
+	}
+
+	sstring::sstring(const char *src)
 	{
 		if (src)
 		{
@@ -332,12 +341,6 @@ namespace openutils
 			std::size_t l = 0;
 			fast_strncat(this->src, src, l);
 			this->len = l;
-		}
-		else
-		{
-			this->src = (char *)std::calloc(alloc_size + 1, sizeof(char));
-			exit_heap_fail(this->src);
-			this->len = 0;
 		}
 	}
 
@@ -433,18 +436,13 @@ namespace openutils
 
 	void sstring::set_random(const std::size_t len)
 	{
-		if (len > 0)
+		if (len != 0)
 		{
-			char *buff = (char *)std::calloc(len + 1, sizeof(char));
-			exit_heap_fail(buff);
-			// random ascii character betweem 32 and 126, inclusive
-			for (std::size_t i = 0; i < len; i++)
-				buff[i] = (rand() % (126 - 32 + 1)) + 32;
 			std::free(this->src);
 			this->src = (char *)std::calloc(len + 1, sizeof(char));
 			exit_heap_fail(this->src);
-			std::strcpy(this->src, buff);
-			std::free(buff);
+			for (std::size_t i = 0; i < len; i++)
+				this->src[i] = (rand() % (126 - 32 + 1)) + 32;
 			this->len = len;
 		}
 	}
@@ -485,7 +483,7 @@ namespace openutils
 		return false;
 	}
 
-	char *sstring::get() const
+	char *&sstring::get()
 	{
 		return this->src;
 	}
@@ -1550,8 +1548,8 @@ namespace openutils
 		std::size_t s = 1, len = this->len;
 		const char *map = "01230120022455012623010202"; // not stored in heap memory, do not free it
 		char c;
-		sstring res = sstring(nullptr, 5);
-		res.src[0] = std::toupper(this->src[0]);
+		char res[5] = {};
+		res[0] = std::toupper(this->src[0]);
 		for (std::size_t i = 1; i < len; ++i)
 		{
 			c = std::toupper(this->src[i]) - 65;
@@ -1561,7 +1559,7 @@ namespace openutils
 				{
 					if (map[(std::size_t)c] != res[s - 1])
 					{
-						res.src[s] = map[(std::size_t)c];
+						res[s] = map[(std::size_t)c];
 						s++;
 					}
 					if (s > 3)
@@ -1573,12 +1571,11 @@ namespace openutils
 		{
 			while (s <= 3)
 			{
-				res.src[s] = '0';
+				res[s] = '0';
 				s++;
 			}
 		}
-		res.len = std::strlen(res.src); // not big deal just 4 character (if nothing goes wrong)
-		return res;
+		return sstring(res);
 	}
 
 	int strcmp_void(const void *a1, const void *a2)
@@ -2560,6 +2557,13 @@ namespace openutils
 	{
 		sstring x;
 		x.set_random(len);
+		return x;
+	}
+
+	sstring sstring::get_input()
+	{
+		sstring x;
+		x.in();
 		return x;
 	}
 
