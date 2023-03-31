@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 1.7.2
+ * sstring: version 1.7.4
  * MIT License
  *
  * Copyright (c) 2022 Tushar Chaurasia
@@ -35,7 +35,7 @@
 
 typedef struct __string__ sstring;
 
-#define sstring_version "1.7.2"
+#define sstring_version "1.7.4"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -923,18 +923,13 @@ void _sstring_set_upto(sstring *a, const char *src, size_t N)
 
 void _sstring_set_random(sstring *a, const size_t len)
 {
-	if (a && a->str.init == true && a->str.src && len > 0)
+	if (a && a->str.init == true && a->str.src && len != 0)
 	{
-		char *buff = calloc(len + 1, sizeof(char));
-		exit_heap_fail(buff);
-		// random ascii character betweem 32 and 126, inclusive
-		for (size_t i = 0; i < len; i++)
-			buff[i] = (rand() % (126 - 32 + 1)) + 32;
 		free(a->str.src);
 		a->str.src = calloc(len + 1, sizeof(char));
 		exit_heap_fail(a->str.src);
-		strcpy(a->str.src, buff);
-		free(buff);
+		for (size_t i = 0; i < len; i++)
+			a->str.src[i] = (rand() % (126 - 32 + 1)) + 32;
 		a->str.len = len;
 	}
 }
@@ -1878,7 +1873,7 @@ size_t _sstring_find_next(sstring *a, size_t last_index, const char *sub)
 		buff = strstr(a->str.src + last_index, sub);
 #endif
 		if (buff != NULL)
-			rreturn(size_t)(a->str.len - strlen(buff));
+			return (size_t)(a->str.len - strlen(buff));
 	}
 	return (size_t)-1;
 }
