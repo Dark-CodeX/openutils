@@ -4,7 +4,7 @@
 * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
 * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
 * File: "morse_code.h" under "sstring" directory
-* sstring: version 1.7.2
+* sstring: version 1.7.4
 * 
 * MIT License
 * 
