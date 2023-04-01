@@ -3109,7 +3109,7 @@ sstring new_sstring(const char *src)
  */
 #define SSTRING(x) \
 	sstring x;     \
-	init_sstr(&x, 1);
+	init_sstr(&x);
 
 /**
  * Always use this function after any `sstring` declaration.
