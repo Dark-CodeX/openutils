@@ -11,7 +11,7 @@ static const char *tokens[] =
 
 int main(void)
 {
-	sstring x = new_sstring(0, NULL);
+	sstring x = new_sstring(NULL);
 	x.open(&x, "linear_eq_test.c");
 	parse_t p = x.parse(&x);
 	for (size_t i = 0; i < p.length; i++)

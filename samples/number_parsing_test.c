@@ -2,7 +2,7 @@
 
 int main(int argc, char const **argv)
 {
-	sstring x = new_sstring(1, NULL), num = new_sstring(1, NULL);
+	sstring x = new_sstring(NULL), num = new_sstring(NULL);
 	x.set_array(&x, argv, ' ', 1, argc, argc);
 	short decimal = 0;
 	parse_t parse = x.parse(&x);

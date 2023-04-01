@@ -95,7 +95,7 @@ int format_eq(sstring *e)
 					format[k++] = e->str.src[i];
 			}
 			e->destructor(e);
-			init_sstr(e, 1);
+			init_sstr(e);
 			e->set(e, (const char *)format);
 			free(format);
 			return true;
@@ -110,7 +110,7 @@ struct coefficient parse_eq(sstring *a)
 	struct coefficient x = (struct coefficient){.C = INFINITY, .X = INFINITY, .X2 = INFINITY};
 	if (a && a->str.src && a->str.init == true)
 	{
-		sstring buff_x = new_sstring(1, NULL), buff_y = new_sstring(1, NULL), buff_c = new_sstring(1, NULL);
+		sstring buff_x = new_sstring(NULL), buff_y = new_sstring(NULL), buff_c = new_sstring(NULL);
 		size_t i = 0, k = 0, j = 0;
 		for (; a->str.src[i] != 'x' && a->str.src[i] != '\0'; i++)
 			buff_x.append_char(&buff_x, a->str.src[i]);
@@ -181,7 +181,7 @@ struct sol solve(struct coefficient *x)
 
 int main(void)
 {
-	sstring eq = new_sstring(1, NULL);
+	sstring eq = new_sstring(NULL);
 	printf("Eq. 1\n");
 	eq.in(&eq);
 	if (format_eq(&eq) == true)

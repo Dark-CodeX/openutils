@@ -84,7 +84,7 @@ expr_t format(parse_t *parse)
 sstring solve(expr_t e);
 sstring solve(expr_t e)
 {
-	sstring Q = new_sstring(1, "");
+	sstring Q = new_sstring("");
 	if (e.x == '\0' || e.y == '\0' || e.sign == -1 || e.power == (size_t)-1)
 		return Q;
 	short is_odd_term = true;
@@ -104,7 +104,7 @@ sstring solve(expr_t e)
 
 int main(void)
 {
-	sstring exp = new_sstring(1, NULL);
+	sstring exp = new_sstring(NULL);
 	exp.in(&exp);
 
 	parse_t parse = exp.parse(&exp);

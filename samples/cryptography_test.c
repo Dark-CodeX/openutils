@@ -2,8 +2,8 @@
 
 int main(void)
 {
-	sstring msg = new_sstring(1, "");
-	sstring key = new_sstring(1, "");
+	sstring msg = new_sstring("");
+	sstring key = new_sstring("");
 	printf("MESSAGE:\n");
 	msg.in(&msg);
 	printf("KEY:\n");
