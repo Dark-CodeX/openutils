@@ -200,6 +200,18 @@ namespace openutils
 			delete this->t2;
 		}
 	}
+
+	template <typename FIRST, typename SECOND>
+	heap_pair<FIRST, SECOND> heap_pair<FIRST, SECOND>::make_heap_pair(const FIRST &T1, const SECOND &T2)
+	{
+		return heap_pair<FIRST, SECOND>(T1, T2);
+	}
+
+	template <typename FIRST, typename SECOND>
+	heap_pair<FIRST, SECOND> heap_pair<FIRST, SECOND>::make_heap_pair(FIRST &&T1, SECOND &&T2)
+	{
+		return heap_pair<FIRST, SECOND>(T1, T2);
+	}
 }
 
 #endif
