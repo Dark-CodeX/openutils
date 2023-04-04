@@ -10,7 +10,7 @@ source=(
 	"https://raw.githubusercontent.com/Dark-CodeX/heap-pair/main/heap-pair/heap-pair.hh")
 
 sha512sums=(
-	"48d8db39a71d3e8c44667a6619a581f73926f3b5962d2165ea927b37bf8b5d1b6ac5996d1e9aadae53dbc8bef051223062596d61c6397fd3730c015ef563b649")
+	"a236141e8b113d81e780754008221e3d3a3aa5acada62a7123bd3f86d96be72ff5af2bc5a1bc7c3c3c3715536301d957707f6039cfb04904bd9e9e0f5ed2865b")
 
 package() {
 	echo "heap-pair template class for C++."
