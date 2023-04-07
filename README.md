@@ -4,8 +4,8 @@
 	* #### **This library have most of the functions of a high level language and some functions are not even defined in high level language like `entropy`, `to_binary`, `to_hexadecimal`, `parse`, `encrypt`, `distance` and *even more*.**
 	* #### **This library has 91 pre-defined functions.**
 	* #### This header file is *cross-platform*, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (91/91) functions passed.*
-	* #### Documents are in the header(`"sstring/sstring.h"`) file itself. Be sure to suggest any changes.
-* # Functions Defined v:1.7.4
+	* #### Documents are in the header(`"sstring/sstring.h"` and `"sstring/sstring.hh"`) file itself. Be sure to suggest any changes.
+* # Functions Defined v:2.0.0
 ```
 set
 set_char
