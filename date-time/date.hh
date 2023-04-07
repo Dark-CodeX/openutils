@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/date-time.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "date.hh" under "date-time" directory
- * date-time: version 1.0.0
+ * date-time: version 1.0.1
  * MIT License
  *
  * Copyright (c) 2023 Tushar Chaurasia
@@ -36,7 +36,7 @@
 #include <cstdlib>
 #include <openutils/sstring/sstring.hh>
 
-#define date_time_version "1.0.0"
+#define date_time_version "1.0.1"
 
 namespace openutils
 {
@@ -152,57 +152,57 @@ namespace openutils
 	date::date(const openutils::sstring &str)
 	{
 		unsigned int m = 0, d = 0, y = 0;
-		openutils::parse_t parse = str.parse();
+		vector_t<heap_pair<sstring, enum lexer_token>> parse = str.lexer();
 		std::size_t n = 0;
-		while (parse.get_type(n) != openutils::parse_token::NULL_END)
+		while (parse.get(n).second() != openutils::lexer_token::NULL_END)
 		{
-			if (parse.get_type(n) == openutils::parse_token::INTEGER && n == 0)
+			if (parse.get(n).second() == openutils::lexer_token::INTEGER && n == 0)
 			{
-				d = std::strtoull(parse[n].c_str(), nullptr, 10);
+				d = std::strtoull(parse[n].first().c_str(), nullptr, 10);
 				n++;
 			}
 			else
 			{
-				std::fprintf(stderr, "err: `%s` in `%s` should be a day (integer).\n", parse[n].c_str(), str.c_str());
+				std::fprintf(stderr, "err: `%s` in `%s` should be a day (integer).\n", parse[n].first().c_str(), str.c_str());
 				std::exit(EXIT_FAILURE);
 			}
-			if (parse.get_type(n) != openutils::parse_token::SPECIAL_CHAR && n == 1)
+			if (parse.get(n).second() != openutils::lexer_token::SPECIAL_CHAR && n == 1)
 			{
-				std::fprintf(stderr, "err: `%s` in `%s` should be a separator between day and month.\n", parse[n].c_str(), str.c_str());
-				std::exit(EXIT_FAILURE);
-			}
-			else
-				n++;
-			if (parse.get_type(n) == openutils::parse_token::INTEGER && n == 2)
-			{
-				m = std::strtoull(parse[n].c_str(), nullptr, 10);
-				n++;
-			}
-			else
-			{
-				std::fprintf(stderr, "err: `%s` in `%s` should be a month (integer).\n", parse[n].c_str(), str.c_str());
-				std::exit(EXIT_FAILURE);
-			}
-			if (parse.get_type(n) != openutils::parse_token::SPECIAL_CHAR && n == 3)
-			{
-				std::fprintf(stderr, "err: `%s` in `%s` should be a separator between month and year.\n", parse[n].c_str(), str.c_str());
+				std::fprintf(stderr, "err: `%s` in `%s` should be a separator between day and month.\n", parse[n].first().c_str(), str.c_str());
 				std::exit(EXIT_FAILURE);
 			}
 			else
 				n++;
-			if (parse.get_type(n) == openutils::parse_token::INTEGER && n == 4)
+			if (parse.get(n).second() == openutils::lexer_token::INTEGER && n == 2)
 			{
-				y = std::strtoull(parse[n].c_str(), nullptr, 10);
+				m = std::strtoull(parse[n].first().c_str(), nullptr, 10);
 				n++;
 			}
 			else
 			{
-				std::fprintf(stderr, "err: `%s` in `%s` should be a year (integer).\n", parse[n].c_str(), str.c_str());
+				std::fprintf(stderr, "err: `%s` in `%s` should be a month (integer).\n", parse[n].first().c_str(), str.c_str());
+				std::exit(EXIT_FAILURE);
+			}
+			if (parse.get(n).second() != openutils::lexer_token::SPECIAL_CHAR && n == 3)
+			{
+				std::fprintf(stderr, "err: `%s` in `%s` should be a separator between month and year.\n", parse[n].first().c_str(), str.c_str());
+				std::exit(EXIT_FAILURE);
+			}
+			else
+				n++;
+			if (parse.get(n).second() == openutils::lexer_token::INTEGER && n == 4)
+			{
+				y = std::strtoull(parse[n].first().c_str(), nullptr, 10);
+				n++;
+			}
+			else
+			{
+				std::fprintf(stderr, "err: `%s` in `%s` should be a year (integer).\n", parse[n].first().c_str(), str.c_str());
 				std::exit(EXIT_FAILURE);
 			}
 			if (parse.length() != n + 1)
 			{
-				std::fprintf(stderr, "err: `%s` in `%s` is exceeding the date format (DD/MM/YYYY).\n", parse[n].c_str(), str.c_str());
+				std::fprintf(stderr, "err: `%s` in `%s` is exceeding the date format (DD/MM/YYYY).\n", parse[n].first().c_str(), str.c_str());
 				std::exit(EXIT_FAILURE);
 			}
 		}

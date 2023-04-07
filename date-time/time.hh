@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/date-time.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "time.hh" under "date-time" directory
- * date-time: version 1.0.0
+ * date-time: version 1.0.1
  * MIT License
  *
  * Copyright (c) 2023 Tushar Chaurasia
@@ -37,7 +37,7 @@
 #include <openutils/sstring/sstring.hh>
 #include <iostream>
 
-#define date_time_version "1.0.0"
+#define date_time_version "1.0.1"
 
 namespace openutils
 {
@@ -134,57 +134,57 @@ namespace openutils
 	time::time(const openutils::sstring &str)
 	{
 		unsigned int h = 0, m = 0, s = 0;
-		openutils::parse_t parse = str.parse();
+		vector_t<heap_pair<sstring, enum lexer_token>> parse = str.lexer();
 		std::size_t n = 0;
-		while (parse.get_type(n) != openutils::parse_token::NULL_END)
+		while (parse.get(n).second() != openutils::lexer_token::NULL_END)
 		{
-			if (parse.get_type(n) == openutils::parse_token::INTEGER && n == 0)
+			if (parse.get(n).second() == openutils::lexer_token::INTEGER && n == 0)
 			{
-				h = std::strtoull(parse[n].c_str(), nullptr, 10);
+				h = std::strtoull(parse[n].first().c_str(), nullptr, 10);
 				n++;
 			}
 			else
 			{
-				std::fprintf(stderr, "err: `%s` in `%s` should be a hour (integer).\n", parse[n].c_str(), str.c_str());
+				std::fprintf(stderr, "err: `%s` in `%s` should be a hour (integer).\n", parse[n].first().c_str(), str.c_str());
 				std::exit(EXIT_FAILURE);
 			}
-			if (parse.get_type(n) != openutils::parse_token::SPECIAL_CHAR && n == 1)
+			if (parse.get(n).second() != openutils::lexer_token::SPECIAL_CHAR && n == 1)
 			{
-				std::fprintf(stderr, "err: `%s` in `%s` should be a separator between hour and minute.\n", parse[n].c_str(), str.c_str());
-				std::exit(EXIT_FAILURE);
-			}
-			else
-				n++;
-			if (parse.get_type(n) == openutils::parse_token::INTEGER && n == 2)
-			{
-				m = std::strtoull(parse[n].c_str(), nullptr, 10);
-				n++;
-			}
-			else
-			{
-				std::fprintf(stderr, "err: `%s` in `%s` should be a minute (integer).\n", parse[n].c_str(), str.c_str());
-				std::exit(EXIT_FAILURE);
-			}
-			if (parse.get_type(n) != openutils::parse_token::SPECIAL_CHAR && n == 3)
-			{
-				std::fprintf(stderr, "err: `%s` in `%s` should be a separator between minute and second.\n", parse[n].c_str(), str.c_str());
+				std::fprintf(stderr, "err: `%s` in `%s` should be a separator between hour and minute.\n", parse[n].first().c_str(), str.c_str());
 				std::exit(EXIT_FAILURE);
 			}
 			else
 				n++;
-			if (parse.get_type(n) == openutils::parse_token::INTEGER && n == 4)
+			if (parse.get(n).second() == openutils::lexer_token::INTEGER && n == 2)
 			{
-				s = std::strtoull(parse[n].c_str(), nullptr, 10);
+				m = std::strtoull(parse[n].first().c_str(), nullptr, 10);
 				n++;
 			}
 			else
 			{
-				std::fprintf(stderr, "err: `%s` in `%s` should be a second (integer).\n", parse[n].c_str(), str.c_str());
+				std::fprintf(stderr, "err: `%s` in `%s` should be a minute (integer).\n", parse[n].first().c_str(), str.c_str());
+				std::exit(EXIT_FAILURE);
+			}
+			if (parse.get(n).second() != openutils::lexer_token::SPECIAL_CHAR && n == 3)
+			{
+				std::fprintf(stderr, "err: `%s` in `%s` should be a separator between minute and second.\n", parse[n].first().c_str(), str.c_str());
+				std::exit(EXIT_FAILURE);
+			}
+			else
+				n++;
+			if (parse.get(n).second()== openutils::lexer_token::INTEGER && n == 4)
+			{
+				s = std::strtoull(parse[n].first().c_str(), nullptr, 10);
+				n++;
+			}
+			else
+			{
+				std::fprintf(stderr, "err: `%s` in `%s` should be a second (integer).\n", parse[n].first().c_str(), str.c_str());
 				std::exit(EXIT_FAILURE);
 			}
 			if (parse.length() != n + 1)
 			{
-				std::fprintf(stderr, "err: `%s` in `%s` is exceeding the time format (HH:MM:SS).\n", parse[n].c_str(), str.c_str());
+				std::fprintf(stderr, "err: `%s` in `%s` is exceeding the time format (HH:MM:SS).\n", parse[n].first().c_str(), str.c_str());
 				std::exit(EXIT_FAILURE);
 			}
 		}
