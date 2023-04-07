@@ -25,7 +25,11 @@ int main()
 
 	std::cout << "REMOVE:\nBEFORE: `" << testString << "`\n";
 	std::cout << sstring::to_sstring(testString.remove("puls from").compare("Fear  to anger; anger  to hatred; hatred  to conflict; conflict  to suffering.")) << "\n";
-	std::cout << "AFTER: `" << testString << "`\n";
+	std::cout << "AFTER: `" << testString << "`\n\n\n";
 
+	std::cout << "MOST_USED:\n";
+	sstring y = testString.replace(";", "").remove_extra_char(' ').most_used(" ");
+	std::cout << y << "\n";
+	std::cout << sstring::to_sstring(y == "to") << std::endl;
 	return 0;
 }
