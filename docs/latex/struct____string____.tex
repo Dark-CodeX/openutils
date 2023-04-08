@@ -1,0 +1,1610 @@
+\hypertarget{struct____string____}{}\doxysection{\+\_\+\+\_\+string\+\_\+\+\_\+ Struct Reference}
+\label{struct____string____}\index{\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{struct____string_____a054748558c0db077824a9844e2a89323}\label{struct____string_____a054748558c0db077824a9844e2a89323}} 
+\mbox{\hyperlink{struct____str____}{\+\_\+\+\_\+str\+\_\+\+\_\+}} {\bfseries str}
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____ab2cdbfeea1741ac048e7757dd2da88b0}{set}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____afa0267145d200eb43fdb2d6aac6c7dad}{set\+\_\+char}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char c)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____a79d2ab02aa159f47bdcb048a38547777}{set\+\_\+upto}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src, size\+\_\+t N)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____a96bb1c3f6c6fcbb5ba0547c4186be229}{set\+\_\+random}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const size\+\_\+t len)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____a66e9e130b1bcc6ec40a652d88e84c854}{set\+\_\+array}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$$\ast$src, char char\+\_\+between, size\+\_\+t from, size\+\_\+t till, size\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Sets {\ttfamily src} array to {\ttfamily a}. NOTE\+: {\ttfamily from}, {\ttfamily till} belongs to \mbox{[}0, sizeof({\ttfamily src})\mbox{]}. Set {\ttfamily char\+\_\+between} to 0 if you want nothing to append in-\/between. NOTE\+: {\ttfamily src\mbox{[}till\mbox{]}} is not included in resultant string. \end{DoxyCompactList}\item 
+char $\ast$($\ast$ \mbox{\hyperlink{struct____string_____a9c9b8250731aec163c204826a6042dda}{get}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____a9aa3efab321d77ecba4539ff0edf5158}{append}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____ac3dde611362598e3d8909b7683968145}{append\+\_\+char}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char c)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____a8b7455d95c567adb16bc64fa75947cf7}{append\+\_\+upto}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src, size\+\_\+t N)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____a1a1b22e2c91dcb6b0c14f3b4d315af3c}{append\+\_\+start}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____aa4dd161b40c3751cc63c5235c8e8294a}{append\+\_\+start\+\_\+char}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char c)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____a559d1312c51578df989ba11fa5f3534f}{append\+\_\+start\+\_\+upto}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src, size\+\_\+t N)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____afd585f45f5bfa1ed72e262bdeae2364d}{append\+\_\+array}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$$\ast$src, char char\+\_\+between, size\+\_\+t from, size\+\_\+t till, size\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Appends {\ttfamily src} array to {\ttfamily a} at the end. NOTE\+: {\ttfamily from}, {\ttfamily till} belongs to \mbox{[}0, sizeof({\ttfamily src})\mbox{]}. Set {\ttfamily char\+\_\+between} to 0 if you want nothing to append in-\/between. NOTE\+: {\ttfamily src\mbox{[}till\mbox{]}} is not included in resultant string. \end{DoxyCompactList}\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____a4139013fe66e0fdf146d3613baaedaba}{append\+\_\+start\+\_\+array}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$$\ast$src, char char\+\_\+between, size\+\_\+t from, size\+\_\+t till, size\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Appends {\ttfamily src} array to {\ttfamily a} at the starting. NOTE\+: {\ttfamily from}, {\ttfamily till} belongs to \mbox{[}0, sizeof({\ttfamily src})\mbox{]}. Set {\ttfamily char\+\_\+between} to 0 if you want nothing to append in-\/between. NOTE\+: {\ttfamily src\mbox{[}till\mbox{]}} is not included in resultant string. \end{DoxyCompactList}\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a7fe834833c9e6cf10beff626d458731b}{empty}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____af2e631904e23487eb3c79f4a5cde7867}{replace\+\_\+char}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char old, const char new\+\_\+)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____aba32b8a74b5bfea8e5cc1f0c44201273}{char\+\_\+set}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char what, size\+\_\+t where)
+\item 
+char($\ast$ \mbox{\hyperlink{struct____string_____affb6a80eddce78ccfc8d0935e14e80b1}{char\+\_\+get}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t where)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____a2aa9de2b54c548b40ef350f5ef0f5fdc}{last\+\_\+index\+\_\+of}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, char ch)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____a7dacd229557008911400b19df1bea36b}{length}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a593daa76b1cb95a0b5c018e59e0f3ddf}{compare}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$T1)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a6c0629c5fcf7b2a8ca1fc3669f270aa0}{compare\+\_\+upto}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$T1, size\+\_\+t N)
+\item 
+int($\ast$ \mbox{\hyperlink{struct____string_____a566a4862aaf637159b35e974037893f1}{lexicographical\+\_\+comparison}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$str)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____af566fb85575c4390e344bba52a059891}{print}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, bool add\+\_\+next\+\_\+line, const char $\ast$\+\_\+\+\_\+format\+\_\+\+\_\+,...)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____aa5720d69df89f7b9d2fc1b0d0e0a0c7c}{replace}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$old, const char $\ast$new\+\_\+)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a6ed4910facb1a8e63089612ef0b977b7}{destructor}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+const char $\ast$($\ast$ \mbox{\hyperlink{struct____string_____a45389af9eabd5e35d2e3d048666deae4}{c\+\_\+str}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a5dd722be23eecdc4d90ab3ed9605aa06}{save}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$location)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____ad1fd97696b7f4c109bfb5e84054114a5}{append\+\_\+file}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$location)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____af168afd0c2bb6191ae0ead1cdd90f403}{open}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$location)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a8381612230c4d3381941a0243d5f1477}{clear}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____a359f031abb8ab878f91406327d90d05a}{to\+\_\+upper}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____a4bbf47a056dbc7dbecfe732f06404636}{to\+\_\+lower}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____aaacbd05e217d84a31987e7e510a45f3a}{swap\+\_\+case}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a9456979ebb3b0894dbeee0e236c8e1c1}{is\+\_\+initialized}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____a38b7553cbac40e0ad7d4804056056c89}{to\+\_\+binary}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a8c74377a3162827df0f3fdc81a62f881}{from\+\_\+binary}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+double($\ast$ \mbox{\hyperlink{struct____string_____ab2871f690823e2f97edd559edf5933b7}{entropy}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____aaebc92c59dbb365a7b32408cd03f614b}{contains}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$str)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____abbb57dd1790e1c9bf8f1eb2141d90f43}{contains\+\_\+char}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char c)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____a56b6d7040805c2ddbdd93c502210ca6d}{to\+\_\+set}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____ac4e494b9ae6bd413d9dc2727ffd8b005}{copy}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, \mbox{\hyperlink{struct____string____}{sstring}} $\ast$dest)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____a86ddbd9716e53461f95ec6e871a9ff93}{to\+\_\+hexadecimal}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a68f9e2fdf9eaba63169bf37dc819f1e4}{from\+\_\+hexadecimal}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____a2272c34d5c2a1a63641cb0deadee1aef}{find}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$sub)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____ac9df92593dd327a459a3003a343958be}{find\+\_\+next}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t last\+\_\+index, const char $\ast$sub)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____a973330adfed1d048703c813e79b50aa1}{in}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+char $\ast$($\ast$ \mbox{\hyperlink{struct____string_____aa78adc2a506f3d0ae27b6076d92cb0ad}{getline}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t line)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____a034d1e68dcd609806a9e3807f145d2ae}{reverse}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____aa7bede87182b22077118263cf6179f29}{remove}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$sub)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____a3bae0c1827854da3afb08fc2c039618a}{remove\+\_\+char}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, char c)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____a396cec4cbc364ed38c78b6d1a1c25c11}{remove\+\_\+extra\+\_\+char}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, char c)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____a02d4b3b336764686aa68dbb99636f640}{remove\+\_\+range}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t from, size\+\_\+t till)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a941bb19367349a46c5876dafdc743b11}{intersect}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t from, size\+\_\+t till)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____a8a6301b48065a98e59abab3547718e94}{distance}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____aa5c7b0ce271c0ef144a41a62119ab455}{edit\+\_\+distance}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src)
+\item 
+double($\ast$ \mbox{\hyperlink{struct____string_____aa2b0393d13ee7707bf45294c0be59329}{percentage\+\_\+matched}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____a89150004658fd548a10dcc440a4b7094}{count}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$what)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____a32b52f240f56015fed0a778e2c4262e6}{count\+\_\+char}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char what)
+\item 
+char $\ast$($\ast$ \mbox{\hyperlink{struct____string_____a9297500aa2cbe3ef891898cc7244b136}{soundex}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+char $\ast$($\ast$ \mbox{\hyperlink{struct____string_____abd214c1cd4ea2c469343e7f617a17776}{most\+\_\+used}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$dl)
+\item 
+char($\ast$ \mbox{\hyperlink{struct____string_____a189d3641422381418ebd8bf7e94d5f44}{most\+\_\+used\+\_\+char}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+\mbox{\hyperlink{structsplit__t}{split\+\_\+t}}($\ast$ \mbox{\hyperlink{struct____string_____a8b5c448d75ce136ab4b7b0c98f7848d3}{split}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$dl)
+\item 
+void($\ast$ \mbox{\hyperlink{struct____string_____ae5d99952c845fd8f5c085137efe477eb}{sort}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____a223d1b62dfb8eeb59734dcf91c8d4301}{open\+\_\+binary}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$location)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a404db7ba661807f1ef8fe7268a85860f}{save\+\_\+binary}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$location, size\+\_\+t len)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a087959e3433d9598056f6b56a70c6b79}{append\+\_\+binary}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$location, size\+\_\+t len)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____aca4ae27aae4a964aeda49110f433eb8c}{add\+\_\+binary}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$data, size\+\_\+t len)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a5b042e6aaddbfeb1970e54fef8988b7e}{print\+\_\+binary}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t len)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____ad7bd2947ba114873cb0bfe3b22fcda64}{encrypt}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$key)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____ae90e3c33775b6811efc44481022824b7}{decrypt}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$key)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____a0a54de0d64355c956cc305240e5e6bcd}{begin}} )(void)
+\item 
+\mbox{\hyperlink{struct____iterator____}{iter\+\_\+sstring}}($\ast$ \mbox{\hyperlink{struct____string_____a7580b2c96b79bdc9bd52a3e3578a83ad}{iterator}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+\mbox{\hyperlink{struct____iterator____}{iter\+\_\+sstring}}($\ast$ \mbox{\hyperlink{struct____string_____a2a29a464c41b07c35fd3099e57fcd45b}{reverse\+\_\+iterator}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____ae76e21f180cb98e53debc92c05c6047c}{end}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____acb30d2963ecab724d31771734b66b1c0}{to\+\_\+morse\+\_\+code}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____aea8f13c68f4c27772d454e1afc51c1b5}{from\+\_\+morse\+\_\+code}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a66bfae1fd37f2771c96cf5f1fa30a2b3}{is\+\_\+digit}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a0f86c8b9b1c42cf836d55b7eac6624f9}{is\+\_\+decimal}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____ad9275a59b264cbd321b2759090fa9523}{is\+\_\+ascii}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a676ab24242dfe91b6b16048caa39967c}{is\+\_\+alphabetic}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a2b1b3c1b40f9d5eeb801941631cd97e4}{format\+\_\+escape\+\_\+sequence}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____afbee2688727ee9458ae573a7acffbbc7}{insert}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src, size\+\_\+t index)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a049b55e1bc9e0492977378a8345faeb1}{starts\+\_\+with}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a1d67c69c1c50623ab464ade8a5569377}{ends\+\_\+with}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src)
+\item 
+\mbox{\hyperlink{struct____parse____}{parse\+\_\+t}}($\ast$ \mbox{\hyperlink{struct____string_____a4683e98fafa5d619fec9e1e461b7e7d6}{parse}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____ae00a0a5bc8a5a6bc4c1f7dac54e09e71}{from\+\_\+parse\+\_\+t}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, \mbox{\hyperlink{struct____parse____}{parse\+\_\+t}} $\ast$toks)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____ab254ee102406159e5c382e5fa3e82049}{set\+\_\+formatted}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t buffer\+\_\+length, const char $\ast$\+\_\+\+\_\+format\+\_\+\+\_\+,...)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a1b711bcee540dd4de2c1ffc671acf232}{append\+\_\+formatted}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t buffer\+\_\+length, const char $\ast$\+\_\+\+\_\+format\+\_\+\+\_\+,...)
+\item 
+bool($\ast$ \mbox{\hyperlink{struct____string_____a85095e47f8d2cf0bf6fdc311f23a8348}{resize}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t new\+\_\+len)
+\item 
+size\+\_\+t($\ast$ \mbox{\hyperlink{struct____string_____adcb1f1b354eabc7d429b5dd07d4dadbb}{hash}} )(\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)
+\item 
+size\+\_\+t \mbox{\hyperlink{struct____string_____a69a5415ddbb9e515b957211277ea7f55}{nerr}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{struct____string_____aca4ae27aae4a964aeda49110f433eb8c}\label{struct____string_____aca4ae27aae4a964aeda49110f433eb8c}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!add\_binary@{add\_binary}}
+\index{add\_binary@{add\_binary}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{add\_binary}{add\_binary}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::add\+\_\+binary) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$data, size\+\_\+t len)}
+
+Appends the content of {\ttfamily data} to {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em data} & data to add to {\ttfamily a} \\
+\hline
+{\em len} & length of the {\ttfamily a} (returned value of {\ttfamily open\+\_\+binary} function) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+size of data written in bytes, if returned value is 0 then no data is written 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a9aa3efab321d77ecba4539ff0edf5158}\label{struct____string_____a9aa3efab321d77ecba4539ff0edf5158}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!append@{append}}
+\index{append@{append}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{append}{append}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::append) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src)}
+
+Appends {\ttfamily src} to {\ttfamily a} at the end. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em src} & string to append \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____afd585f45f5bfa1ed72e262bdeae2364d}\label{struct____string_____afd585f45f5bfa1ed72e262bdeae2364d}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!append\_array@{append\_array}}
+\index{append\_array@{append\_array}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{append\_array}{append\_array}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::append\+\_\+array) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$$\ast$src, char char\+\_\+between, size\+\_\+t from, size\+\_\+t till, size\+\_\+t len)}
+
+
+
+Appends {\ttfamily src} array to {\ttfamily a} at the end. NOTE\+: {\ttfamily from}, {\ttfamily till} belongs to \mbox{[}0, sizeof({\ttfamily src})\mbox{]}. Set {\ttfamily char\+\_\+between} to 0 if you want nothing to append in-\/between. NOTE\+: {\ttfamily src\mbox{[}till\mbox{]}} is not included in resultant string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em src} & string array to append \\
+\hline
+{\em char\+\_\+between} & character to append between {\ttfamily src\mbox{[}x\mbox{]}} and {\ttfamily src\mbox{[}x + 1\mbox{]}} \\
+\hline
+{\em from} & point to start appending {\ttfamily src\mbox{[}from\mbox{]}} \\
+\hline
+{\em till} & append till {\ttfamily src\mbox{[}till\mbox{]}} \\
+\hline
+{\em len} & length of {\ttfamily src} array \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____a087959e3433d9598056f6b56a70c6b79}\label{struct____string_____a087959e3433d9598056f6b56a70c6b79}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!append\_binary@{append\_binary}}
+\index{append\_binary@{append\_binary}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{append\_binary}{append\_binary}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::append\+\_\+binary) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$location, size\+\_\+t len)}
+
+Appends the content of {\ttfamily a} to the file at {\ttfamily location}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em location} & file to be appended \\
+\hline
+{\em len} & length of the data (returned value of {\ttfamily open\+\_\+binary} function) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if appended, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____ac3dde611362598e3d8909b7683968145}\label{struct____string_____ac3dde611362598e3d8909b7683968145}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!append\_char@{append\_char}}
+\index{append\_char@{append\_char}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{append\_char}{append\_char}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::append\+\_\+char) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char c)}
+
+Appends {\ttfamily c} to {\ttfamily a} at the end. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em c} & character to append \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____ad1fd97696b7f4c109bfb5e84054114a5}\label{struct____string_____ad1fd97696b7f4c109bfb5e84054114a5}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!append\_file@{append\_file}}
+\index{append\_file@{append\_file}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{append\_file}{append\_file}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::append\+\_\+file) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$location)}
+
+Appends {\ttfamily a} at {\ttfamily location}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em location} & where to append \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if appended successfully, otherwise return false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a1b711bcee540dd4de2c1ffc671acf232}\label{struct____string_____a1b711bcee540dd4de2c1ffc671acf232}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!append\_formatted@{append\_formatted}}
+\index{append\_formatted@{append\_formatted}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{append\_formatted}{append\_formatted}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::append\+\_\+formatted) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t buffer\+\_\+length, const char $\ast$\+\_\+\+\_\+format\+\_\+\+\_\+,...)}
+
+Appends {\ttfamily \+\_\+\+\_\+format\+\_\+\+\_\+} to {\ttfamily a} with formatting. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em buffer\+\_\+length} & length of {\ttfamily \+\_\+\+\_\+format\+\_\+\+\_\+} along with variable length {\ttfamily ...} \\
+\hline
+{\em \+\_\+\+\_\+format\+\_\+\+\_\+} & string containing the formatting instructions \\
+\hline
+{\em ...} & variables \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if task completed, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a1a1b22e2c91dcb6b0c14f3b4d315af3c}\label{struct____string_____a1a1b22e2c91dcb6b0c14f3b4d315af3c}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!append\_start@{append\_start}}
+\index{append\_start@{append\_start}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{append\_start}{append\_start}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::append\+\_\+start) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src)}
+
+Appends {\ttfamily src} to {\ttfamily a} at the starting. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em src} & string to append \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____a4139013fe66e0fdf146d3613baaedaba}\label{struct____string_____a4139013fe66e0fdf146d3613baaedaba}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!append\_start\_array@{append\_start\_array}}
+\index{append\_start\_array@{append\_start\_array}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{append\_start\_array}{append\_start\_array}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::append\+\_\+start\+\_\+array) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$$\ast$src, char char\+\_\+between, size\+\_\+t from, size\+\_\+t till, size\+\_\+t len)}
+
+
+
+Appends {\ttfamily src} array to {\ttfamily a} at the starting. NOTE\+: {\ttfamily from}, {\ttfamily till} belongs to \mbox{[}0, sizeof({\ttfamily src})\mbox{]}. Set {\ttfamily char\+\_\+between} to 0 if you want nothing to append in-\/between. NOTE\+: {\ttfamily src\mbox{[}till\mbox{]}} is not included in resultant string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em src} & string array to append \\
+\hline
+{\em char\+\_\+between} & character to append between {\ttfamily src\mbox{[}x\mbox{]}} and {\ttfamily src\mbox{[}x + 1\mbox{]}} \\
+\hline
+{\em from} & point to start appending {\ttfamily src\mbox{[}from\mbox{]}} \\
+\hline
+{\em till} & append till {\ttfamily src\mbox{[}till\mbox{]}} \\
+\hline
+{\em len} & length of {\ttfamily src} array \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____aa4dd161b40c3751cc63c5235c8e8294a}\label{struct____string_____aa4dd161b40c3751cc63c5235c8e8294a}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!append\_start\_char@{append\_start\_char}}
+\index{append\_start\_char@{append\_start\_char}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{append\_start\_char}{append\_start\_char}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::append\+\_\+start\+\_\+char) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char c)}
+
+Appends {\ttfamily c} to {\ttfamily a} at the starting. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em c} & character to append \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____a559d1312c51578df989ba11fa5f3534f}\label{struct____string_____a559d1312c51578df989ba11fa5f3534f}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!append\_start\_upto@{append\_start\_upto}}
+\index{append\_start\_upto@{append\_start\_upto}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{append\_start\_upto}{append\_start\_upto}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::append\+\_\+start\+\_\+upto) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src, size\+\_\+t N)}
+
+Appends {\ttfamily src} to {\ttfamily a} at the starting upto {\ttfamily N}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em src} & string to append \\
+\hline
+{\em N} & append upto a number \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____a8b7455d95c567adb16bc64fa75947cf7}\label{struct____string_____a8b7455d95c567adb16bc64fa75947cf7}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!append\_upto@{append\_upto}}
+\index{append\_upto@{append\_upto}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{append\_upto}{append\_upto}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::append\+\_\+upto) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src, size\+\_\+t N)}
+
+Appends {\ttfamily src} to {\ttfamily a} at the end upto {\ttfamily N}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em src} & string to append \\
+\hline
+{\em N} & append upto a number \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____a0a54de0d64355c956cc305240e5e6bcd}\label{struct____string_____a0a54de0d64355c956cc305240e5e6bcd}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!begin@{begin}}
+\index{begin@{begin}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{begin}{begin}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::begin) (void)}
+
+Returns first index of {\ttfamily sstring}, i.\+e, 0. \begin{DoxyReturn}{Returns}
+0 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a45389af9eabd5e35d2e3d048666deae4}\label{struct____string_____a45389af9eabd5e35d2e3d048666deae4}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!c\_str@{c\_str}}
+\index{c\_str@{c\_str}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{c\_str}{c\_str}}
+{\footnotesize\ttfamily const char $\ast$($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::c\+\_\+str) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Returns {\ttfamily a} as {\ttfamily const char $\ast$}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+return {\ttfamily a} as {\ttfamily const char $\ast$} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____affb6a80eddce78ccfc8d0935e14e80b1}\label{struct____string_____affb6a80eddce78ccfc8d0935e14e80b1}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!char\_get@{char\_get}}
+\index{char\_get@{char\_get}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{char\_get}{char\_get}}
+{\footnotesize\ttfamily char($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::char\+\_\+get) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t where)}
+
+Returns character from {\ttfamily a} at {\ttfamily where}. Only returns if {\ttfamily where} is less than size of {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em where} & get an element from where in {\ttfamily a} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+character from {\ttfamily a} at {\ttfamily where}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____aba32b8a74b5bfea8e5cc1f0c44201273}\label{struct____string_____aba32b8a74b5bfea8e5cc1f0c44201273}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!char\_set@{char\_set}}
+\index{char\_set@{char\_set}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{char\_set}{char\_set}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::char\+\_\+set) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char what, size\+\_\+t where)}
+
+Sets {\ttfamily what} at {\ttfamily where} in {\ttfamily a}. Only sets if {\ttfamily where} is less than size of {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em what} & character to set \\
+\hline
+{\em where} & sets {\ttfamily what} at a fixed position \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____a8381612230c4d3381941a0243d5f1477}\label{struct____string_____a8381612230c4d3381941a0243d5f1477}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!clear@{clear}}
+\index{clear@{clear}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{clear}{clear}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::clear) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Clears {\ttfamily a} using {\ttfamily calloc} function defined in \texorpdfstring{$<$}{<}stdlib.\+h\texorpdfstring{$>$}{>} header. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if cleared successfully, otherwise return false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a593daa76b1cb95a0b5c018e59e0f3ddf}\label{struct____string_____a593daa76b1cb95a0b5c018e59e0f3ddf}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!compare@{compare}}
+\index{compare@{compare}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{compare}{compare}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::compare) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$T1)}
+
+Compares {\ttfamily a} against {\ttfamily T1}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em T1} & string to compare with \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+return true if true, otherwise return false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a6c0629c5fcf7b2a8ca1fc3669f270aa0}\label{struct____string_____a6c0629c5fcf7b2a8ca1fc3669f270aa0}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!compare\_upto@{compare\_upto}}
+\index{compare\_upto@{compare\_upto}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{compare\_upto}{compare\_upto}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::compare\+\_\+upto) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$T1, size\+\_\+t N)}
+
+Compares {\ttfamily a} against {\ttfamily T1} upto {\ttfamily N}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em T1} & string to compare with \\
+\hline
+{\em N} & compare upto a number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+return true if true, otherwise return false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____aaebc92c59dbb365a7b32408cd03f614b}\label{struct____string_____aaebc92c59dbb365a7b32408cd03f614b}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!contains@{contains}}
+\index{contains@{contains}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{contains}{contains}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::contains) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$str)}
+
+Returns true if contains {\ttfamily str}, otherwise returns false. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em str} & string to be tested \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if contains, otherwise return false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____abbb57dd1790e1c9bf8f1eb2141d90f43}\label{struct____string_____abbb57dd1790e1c9bf8f1eb2141d90f43}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!contains\_char@{contains\_char}}
+\index{contains\_char@{contains\_char}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{contains\_char}{contains\_char}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::contains\+\_\+char) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char c)}
+
+If character was found returns its index (first occurrence only) in {\ttfamily a}, otherwise returns {\ttfamily nerr}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em c} & character to be tested \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+If character was found returns its index (first occurrence only) in {\ttfamily a}, otherwise returns {\ttfamily nerr}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____ac4e494b9ae6bd413d9dc2727ffd8b005}\label{struct____string_____ac4e494b9ae6bd413d9dc2727ffd8b005}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!copy@{copy}}
+\index{copy@{copy}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{copy}{copy}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::copy) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, \mbox{\hyperlink{struct____string____}{sstring}} $\ast$dest)}
+
+Copies {\ttfamily a} to {\ttfamily dest}. If copied successfully then, returns true otherwise false. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em dest} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+If copied successfully then, returns true otherwise false. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a89150004658fd548a10dcc440a4b7094}\label{struct____string_____a89150004658fd548a10dcc440a4b7094}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!count@{count}}
+\index{count@{count}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{count}{count}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::count) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$what)}
+
+Counts the number of occurrence of {\ttfamily what} in {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em what} & string to find in {\ttfamily a} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+number of occurrence of {\ttfamily what} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a32b52f240f56015fed0a778e2c4262e6}\label{struct____string_____a32b52f240f56015fed0a778e2c4262e6}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!count\_char@{count\_char}}
+\index{count\_char@{count\_char}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{count\_char}{count\_char}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::count\+\_\+char) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char what)}
+
+Counts the number of occurrence of {\ttfamily what} in {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em what} & character to find in {\ttfamily a} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+number of occurrence of {\ttfamily what} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____ae90e3c33775b6811efc44481022824b7}\label{struct____string_____ae90e3c33775b6811efc44481022824b7}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!decrypt@{decrypt}}
+\index{decrypt@{decrypt}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{decrypt}{decrypt}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::decrypt) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$key)}
+
+Decrypts {\ttfamily a} using positional modulus for {\ttfamily key}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if decrypted, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a6ed4910facb1a8e63089612ef0b977b7}\label{struct____string_____a6ed4910facb1a8e63089612ef0b977b7}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!destructor@{destructor}}
+\index{destructor@{destructor}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{destructor}{destructor}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::destructor) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Frees {\ttfamily a}\textquotesingle{}s content. Do not forget to use this function at the end. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if freed successfully, otherwise return false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a8a6301b48065a98e59abab3547718e94}\label{struct____string_____a8a6301b48065a98e59abab3547718e94}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!distance@{distance}}
+\index{distance@{distance}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{distance}{distance}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::distance) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src)}
+
+Calculates hamming distance (From Information Theory) between two strings. NOTE\+: string\textquotesingle{}s length should be same. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em src} & second string to compare with \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns {\ttfamily nerr} if length does not match, otherwise number of characters didn\textquotesingle{}t matched. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____aa5c7b0ce271c0ef144a41a62119ab455}\label{struct____string_____aa5c7b0ce271c0ef144a41a62119ab455}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!edit\_distance@{edit\_distance}}
+\index{edit\_distance@{edit\_distance}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{edit\_distance}{edit\_distance}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::edit\+\_\+distance) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src)}
+
+Returns {\ttfamily Levenshtein Distance} (From Information Theory) against {\ttfamily src}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em src} & string to be matched \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+edit distance 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a7fe834833c9e6cf10beff626d458731b}\label{struct____string_____a7fe834833c9e6cf10beff626d458731b}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!empty@{empty}}
+\index{empty@{empty}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{empty}{empty}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::empty) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Checks whether {\ttfamily a} is empty or not. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+return true if empty, otherwise return false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____ad7bd2947ba114873cb0bfe3b22fcda64}\label{struct____string_____ad7bd2947ba114873cb0bfe3b22fcda64}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!encrypt@{encrypt}}
+\index{encrypt@{encrypt}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{encrypt}{encrypt}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::encrypt) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$key)}
+
+Encrypts {\ttfamily a} using positional modulus for {\ttfamily key}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if encrypted, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____ae76e21f180cb98e53debc92c05c6047c}\label{struct____string_____ae76e21f180cb98e53debc92c05c6047c}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!end@{end}}
+\index{end@{end}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{end}{end}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::end) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Returns last index of {\ttfamily a}, without using {\ttfamily strlen} function. Should be used in any loop. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+last index of {\ttfamily a}, without using {\ttfamily strlen} function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a1d67c69c1c50623ab464ade8a5569377}\label{struct____string_____a1d67c69c1c50623ab464ade8a5569377}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!ends\_with@{ends\_with}}
+\index{ends\_with@{ends\_with}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{ends\_with}{ends\_with}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::ends\+\_\+with) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src)}
+
+Checks whether {\ttfamily a} ends with {\ttfamily src}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em src} & string to check \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if ends with {\ttfamily src}, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____ab2871f690823e2f97edd559edf5933b7}\label{struct____string_____ab2871f690823e2f97edd559edf5933b7}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!entropy@{entropy}}
+\index{entropy@{entropy}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{entropy}{entropy}}
+{\footnotesize\ttfamily double($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::entropy) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Calculates the entropy using {\ttfamily Shannon\textquotesingle{}s entropy} formula, which was introduced in his 1948 paper \char`\"{}\+A Mathematical Theory of Communication\char`\"{}. For more information \href{https://en.wikipedia.org/wiki/Entropy_(information_theory)}{\texttt{ https\+://en.\+wikipedia.\+org/wiki/\+Entropy\+\_\+(information\+\_\+theory)}} 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+entropy of {\ttfamily a}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a2272c34d5c2a1a63641cb0deadee1aef}\label{struct____string_____a2272c34d5c2a1a63641cb0deadee1aef}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!find@{find}}
+\index{find@{find}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{find}{find}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::find) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$sub)}
+
+Returns index of first occurrence of sub-\/string {\ttfamily sub} in {\ttfamily a}. Returns {\ttfamily nerr} if {\ttfamily sub} was not found in {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em sub} & sub-\/string to find in {\ttfamily a} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+index of first occurrence of sub-\/string {\ttfamily sub} in {\ttfamily a} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____ac9df92593dd327a459a3003a343958be}\label{struct____string_____ac9df92593dd327a459a3003a343958be}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!find\_next@{find\_next}}
+\index{find\_next@{find\_next}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{find\_next}{find\_next}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::find\+\_\+next) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t last\+\_\+index, const char $\ast$sub)}
+
+Returns index of next occurrence of sub-\/string {\ttfamily sub} in {\ttfamily a}. Returns {\ttfamily nerr} if {\ttfamily sub} was not found in {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em last\+\_\+index} & index of last occurrence of sub-\/string {\ttfamily sub} in {\ttfamily a} \\
+\hline
+{\em sub} & sub-\/string to find in {\ttfamily a} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+index of first occurrence of sub-\/string {\ttfamily sub} in {\ttfamily a} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a2b1b3c1b40f9d5eeb801941631cd97e4}\label{struct____string_____a2b1b3c1b40f9d5eeb801941631cd97e4}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!format\_escape\_sequence@{format\_escape\_sequence}}
+\index{format\_escape\_sequence@{format\_escape\_sequence}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{format\_escape\_sequence}{format\_escape\_sequence}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::format\+\_\+escape\+\_\+sequence) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Formats {\ttfamily a} according to escape sequences. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if all formatted, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a8c74377a3162827df0f3fdc81a62f881}\label{struct____string_____a8c74377a3162827df0f3fdc81a62f881}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!from\_binary@{from\_binary}}
+\index{from\_binary@{from\_binary}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{from\_binary}{from\_binary}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::from\+\_\+binary) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Converts {\ttfamily a} from base 2 (as binary) to string. Not executed if {\ttfamily a} is not in binary form i.\+e, \mbox{[}1, 0\mbox{]}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if converted successfully, otherwise returns false. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a68f9e2fdf9eaba63169bf37dc819f1e4}\label{struct____string_____a68f9e2fdf9eaba63169bf37dc819f1e4}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!from\_hexadecimal@{from\_hexadecimal}}
+\index{from\_hexadecimal@{from\_hexadecimal}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{from\_hexadecimal}{from\_hexadecimal}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::from\+\_\+hexadecimal) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Converts {\ttfamily a} from base 16 (as hexadecimal) to string. Not executed if {\ttfamily a} is not in hexadecimal form. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if converted successfully, otherwise returns false. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____aea8f13c68f4c27772d454e1afc51c1b5}\label{struct____string_____aea8f13c68f4c27772d454e1afc51c1b5}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!from\_morse\_code@{from\_morse\_code}}
+\index{from\_morse\_code@{from\_morse\_code}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{from\_morse\_code}{from\_morse\_code}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::from\+\_\+morse\+\_\+code) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Converts morse code to simple readable {\ttfamily sstring}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if converted, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____ae00a0a5bc8a5a6bc4c1f7dac54e09e71}\label{struct____string_____ae00a0a5bc8a5a6bc4c1f7dac54e09e71}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!from\_parse\_t@{from\_parse\_t}}
+\index{from\_parse\_t@{from\_parse\_t}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{from\_parse\_t}{from\_parse\_t}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::from\+\_\+parse\+\_\+t) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, \mbox{\hyperlink{struct____parse____}{parse\+\_\+t}} $\ast$toks)}
+
+Converts {\ttfamily toks} to {\ttfamily sstring}, and then assigns it to {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em toks} & pointer to struct parse\+\_\+t \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if converted, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a9c9b8250731aec163c204826a6042dda}\label{struct____string_____a9c9b8250731aec163c204826a6042dda}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!get@{get}}
+\index{get@{get}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{get}{get}}
+{\footnotesize\ttfamily char $\ast$($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::get) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Returns {\ttfamily a} as {\ttfamily char $\ast$}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+return {\ttfamily a} as {\ttfamily char $\ast$} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____aa78adc2a506f3d0ae27b6076d92cb0ad}\label{struct____string_____aa78adc2a506f3d0ae27b6076d92cb0ad}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!getline@{getline}}
+\index{getline@{getline}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{getline}{getline}}
+{\footnotesize\ttfamily char $\ast$($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::getline) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t line)}
+
+Returns content of {\ttfamily line} from {\ttfamily a}. If {\ttfamily line} does not exists it returns NULL. NOTE\+: free the returned value when not in use, or before exiting the program. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{char}\ *line\ =\ a.getline(\&a,\ 7);}
+\DoxyCodeLine{free(line);}
+
+\end{DoxyCode}
+ 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em line} & line number to be returned \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+content of {\ttfamily line} from {\ttfamily a}. If {\ttfamily line}does not exists it returns NULL 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____adcb1f1b354eabc7d429b5dd07d4dadbb}\label{struct____string_____adcb1f1b354eabc7d429b5dd07d4dadbb}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!hash@{hash}}
+\index{hash@{hash}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{hash}{hash}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::hash) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Returns hash of {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+hash of {\ttfamily a} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a973330adfed1d048703c813e79b50aa1}\label{struct____string_____a973330adfed1d048703c813e79b50aa1}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!in@{in}}
+\index{in@{in}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{in}{in}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::in) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Get input from user and then sets that input to {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____afbee2688727ee9458ae573a7acffbbc7}\label{struct____string_____afbee2688727ee9458ae573a7acffbbc7}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!insert@{insert}}
+\index{insert@{insert}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{insert}{insert}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::insert) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src, size\+\_\+t index)}
+
+Inserts {\ttfamily src} into {\ttfamily a} at {\ttfamily index}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em src} & string to insert \\
+\hline
+{\em index} & where to insert {\ttfamily src} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if inserted {\ttfamily src} into {\ttfamily a}, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a941bb19367349a46c5876dafdc743b11}\label{struct____string_____a941bb19367349a46c5876dafdc743b11}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!intersect@{intersect}}
+\index{intersect@{intersect}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{intersect}{intersect}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::intersect) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t from, size\+\_\+t till)}
+
+Assings characters to {\ttfamily a} between {\ttfamily from} and {\ttfamily till}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em from} & where to start assigning characters \\
+\hline
+{\em till} & when to stop assigning characters \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if assigned, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a676ab24242dfe91b6b16048caa39967c}\label{struct____string_____a676ab24242dfe91b6b16048caa39967c}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!is\_alphabetic@{is\_alphabetic}}
+\index{is\_alphabetic@{is\_alphabetic}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{is\_alphabetic}{is\_alphabetic}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::is\+\_\+alphabetic) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Checks whether all characters of {\ttfamily a} is alphabetic or not. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if all character were alphabetic, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____ad9275a59b264cbd321b2759090fa9523}\label{struct____string_____ad9275a59b264cbd321b2759090fa9523}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!is\_ascii@{is\_ascii}}
+\index{is\_ascii@{is\_ascii}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{is\_ascii}{is\_ascii}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::is\+\_\+ascii) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Checks whether all characters of {\ttfamily a} is ascii or not. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if all character were ascii, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a0f86c8b9b1c42cf836d55b7eac6624f9}\label{struct____string_____a0f86c8b9b1c42cf836d55b7eac6624f9}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!is\_decimal@{is\_decimal}}
+\index{is\_decimal@{is\_decimal}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{is\_decimal}{is\_decimal}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::is\+\_\+decimal) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Checks whether {\ttfamily a} is decimal or not. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if all character were decimal, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a66bfae1fd37f2771c96cf5f1fa30a2b3}\label{struct____string_____a66bfae1fd37f2771c96cf5f1fa30a2b3}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!is\_digit@{is\_digit}}
+\index{is\_digit@{is\_digit}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{is\_digit}{is\_digit}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::is\+\_\+digit) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Checks whether all characters of {\ttfamily a} is digit or not. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if all character were digit, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a9456979ebb3b0894dbeee0e236c8e1c1}\label{struct____string_____a9456979ebb3b0894dbeee0e236c8e1c1}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!is\_initialized@{is\_initialized}}
+\index{is\_initialized@{is\_initialized}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{is\_initialized}{is\_initialized}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::is\+\_\+initialized) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Returns whether {\ttfamily a} is initialized or not using {\ttfamily init\+\_\+sstr} function. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if initialized, otherwise return nothing because this method have to be initialized using {\ttfamily init\+\_\+sstr} function. Use {\ttfamily \+\_\+is\+\_\+initialized} function to get a result i.\+e, true or false. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a7580b2c96b79bdc9bd52a3e3578a83ad}\label{struct____string_____a7580b2c96b79bdc9bd52a3e3578a83ad}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!iterator@{iterator}}
+\index{iterator@{iterator}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{iterator}{iterator}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct____iterator____}{iter\+\_\+sstring}}($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::iterator) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Returns an iterator which traverse through {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+an initialized {\ttfamily iter\+\_\+sstring} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a2aa9de2b54c548b40ef350f5ef0f5fdc}\label{struct____string_____a2aa9de2b54c548b40ef350f5ef0f5fdc}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!last\_index\_of@{last\_index\_of}}
+\index{last\_index\_of@{last\_index\_of}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{last\_index\_of}{last\_index\_of}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::last\+\_\+index\+\_\+of) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, char ch)}
+
+Returns the index of {\ttfamily ch} from the ending of {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em ch} & character to find \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the index of {\ttfamily ch} if found, otherwise {\ttfamily nerr} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a7dacd229557008911400b19df1bea36b}\label{struct____string_____a7dacd229557008911400b19df1bea36b}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!length@{length}}
+\index{length@{length}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{length}{length}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::length) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Returns length of {\ttfamily a} using {\ttfamily strlen} function, does not include the count of NUL(0). 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+length of {\ttfamily a} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a566a4862aaf637159b35e974037893f1}\label{struct____string_____a566a4862aaf637159b35e974037893f1}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!lexicographical\_comparison@{lexicographical\_comparison}}
+\index{lexicographical\_comparison@{lexicographical\_comparison}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{lexicographical\_comparison}{lexicographical\_comparison}}
+{\footnotesize\ttfamily int($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::lexicographical\+\_\+comparison) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$str)}
+
+A lexicographical comparison is the kind of comparison generally used to sort strings alphabetically. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em str} & string to compare with \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+difference between ASCII characters or if starting of both the strings are same then it returns the difference between the length, otherwise 0 is returned if strings are equal 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____abd214c1cd4ea2c469343e7f617a17776}\label{struct____string_____abd214c1cd4ea2c469343e7f617a17776}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!most\_used@{most\_used}}
+\index{most\_used@{most\_used}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{most\_used}{most\_used}}
+{\footnotesize\ttfamily char $\ast$($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::most\+\_\+used) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$dl)}
+
+Returns the word which was most occurred in {\ttfamily a}. NOTE\+: By {\ttfamily word}, I mean text separated by whitespace. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{char}\ *most\ =\ a.most\_used(\&a);}
+\DoxyCodeLine{free(most);}
+
+\end{DoxyCode}
+ 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em dl} & string to separate \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+most used / occurred word in {\ttfamily a} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a189d3641422381418ebd8bf7e94d5f44}\label{struct____string_____a189d3641422381418ebd8bf7e94d5f44}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!most\_used\_char@{most\_used\_char}}
+\index{most\_used\_char@{most\_used\_char}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{most\_used\_char}{most\_used\_char}}
+{\footnotesize\ttfamily char($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::most\+\_\+used\+\_\+char) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Returns the character which was most occurred in {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+most used / occurred character in {\ttfamily a} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a69a5415ddbb9e515b957211277ea7f55}\label{struct____string_____a69a5415ddbb9e515b957211277ea7f55}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!nerr@{nerr}}
+\index{nerr@{nerr}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{nerr}{nerr}}
+{\footnotesize\ttfamily size\+\_\+t \+\_\+\+\_\+string\+\_\+\+\_\+\+::nerr}
+
+Value returned when an error is occurred. \mbox{\Hypertarget{struct____string_____af168afd0c2bb6191ae0ead1cdd90f403}\label{struct____string_____af168afd0c2bb6191ae0ead1cdd90f403}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!open@{open}}
+\index{open@{open}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{open}{open}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::open) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$location)}
+
+Opens file at {\ttfamily location} and then sets {\ttfamily a} the contents of the file. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em location} & file to open \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if opened successfully, otherwise return false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a223d1b62dfb8eeb59734dcf91c8d4301}\label{struct____string_____a223d1b62dfb8eeb59734dcf91c8d4301}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!open\_binary@{open\_binary}}
+\index{open\_binary@{open\_binary}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{open\_binary}{open\_binary}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::open\+\_\+binary) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$location)}
+
+Opens file at {\ttfamily location} for binary I/O. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em location} & file to be opened \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+size of the file in bytes 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a4683e98fafa5d619fec9e1e461b7e7d6}\label{struct____string_____a4683e98fafa5d619fec9e1e461b7e7d6}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!parse@{parse}}
+\index{parse@{parse}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{parse}{parse}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct____parse____}{parse\+\_\+t}}($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::parse) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Parse {\ttfamily a} into tokens and returns a {\ttfamily parse\+\_\+t} struct. NOTE\+: Use {\ttfamily free\+\_\+parse} function to avoid memory leaks. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\ttfamily parse\+\_\+t} struct with length, token and token type 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____aa2b0393d13ee7707bf45294c0be59329}\label{struct____string_____aa2b0393d13ee7707bf45294c0be59329}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!percentage\_matched@{percentage\_matched}}
+\index{percentage\_matched@{percentage\_matched}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{percentage\_matched}{percentage\_matched}}
+{\footnotesize\ttfamily double($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::percentage\+\_\+matched) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src)}
+
+Returns percentage matched against {\ttfamily src} using {\ttfamily Levenshtein Distance} algorithm (From Information Theory). 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em src} & string to be matched \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+percentage matched, NOTE\+: returned value belongs to \mbox{[}0, 100\mbox{]} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____af566fb85575c4390e344bba52a059891}\label{struct____string_____af566fb85575c4390e344bba52a059891}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!print@{print}}
+\index{print@{print}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{print}{print}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::print) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, bool add\+\_\+next\+\_\+line, const char $\ast$\+\_\+\+\_\+format\+\_\+\+\_\+,...)}
+
+Prints {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em add\+\_\+next\+\_\+line} & set 0 if append next line, otherwise set 1 \\
+\hline
+{\em \+\_\+\+\_\+format\+\_\+\+\_\+} & arguments for ... \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____a5b042e6aaddbfeb1970e54fef8988b7e}\label{struct____string_____a5b042e6aaddbfeb1970e54fef8988b7e}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!print\_binary@{print\_binary}}
+\index{print\_binary@{print\_binary}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{print\_binary}{print\_binary}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::print\+\_\+binary) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t len)}
+
+Prints {\ttfamily a} till {\ttfamily len}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em len} & length of the data (returned value of {\ttfamily open\+\_\+binary} function) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if appended, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____aa7bede87182b22077118263cf6179f29}\label{struct____string_____aa7bede87182b22077118263cf6179f29}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!remove@{remove}}
+\index{remove@{remove}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{remove}{remove}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::remove) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$sub)}
+
+Removes all occurrence of sub-\/string {\ttfamily sub} from {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em sub} & sub-\/string to remove \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+total number of characters removed 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a3bae0c1827854da3afb08fc2c039618a}\label{struct____string_____a3bae0c1827854da3afb08fc2c039618a}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!remove\_char@{remove\_char}}
+\index{remove\_char@{remove\_char}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{remove\_char}{remove\_char}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::remove\+\_\+char) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, char c)}
+
+Removes all occurrence of character {\ttfamily c} from {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em c} & character to remove \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+total number of characters removed 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a396cec4cbc364ed38c78b6d1a1c25c11}\label{struct____string_____a396cec4cbc364ed38c78b6d1a1c25c11}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!remove\_extra\_char@{remove\_extra\_char}}
+\index{remove\_extra\_char@{remove\_extra\_char}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{remove\_extra\_char}{remove\_extra\_char}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::remove\+\_\+extra\+\_\+char) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, char c)}
+
+Removes all extra occurrence of character {\ttfamily c} from {\ttfamily a}. Eg.\+: \char`\"{}\+Hello\+\_\+\+\_\+1\char`\"{} -\/\texorpdfstring{$>$}{>} \char`\"{}\+Hello\+\_\+1\char`\"{}, here {\ttfamily c} was underscore(\textquotesingle{}\+\_\+\textquotesingle{}). Mainly used to remove extra whitespaces from a string. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em c} & character to remove \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+total number of characters removed 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a02d4b3b336764686aa68dbb99636f640}\label{struct____string_____a02d4b3b336764686aa68dbb99636f640}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!remove\_range@{remove\_range}}
+\index{remove\_range@{remove\_range}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{remove\_range}{remove\_range}}
+{\footnotesize\ttfamily size\+\_\+t($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::remove\+\_\+range) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t from, size\+\_\+t till)}
+
+Removes characters between {\ttfamily from} and {\ttfamily till}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em from} & where to start removing characters \\
+\hline
+{\em till} & when to stop removing characters \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+total number of characters removed 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____aa5720d69df89f7b9d2fc1b0d0e0a0c7c}\label{struct____string_____aa5720d69df89f7b9d2fc1b0d0e0a0c7c}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!replace@{replace}}
+\index{replace@{replace}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{replace}{replace}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::replace) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$old, const char $\ast$new\+\_\+)}
+
+Replaces {\ttfamily old} in {\ttfamily a} with {\ttfamily new\+\_\+}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em old} & what to replace \\
+\hline
+{\em new\+\_\+} & replace with \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____af2e631904e23487eb3c79f4a5cde7867}\label{struct____string_____af2e631904e23487eb3c79f4a5cde7867}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!replace\_char@{replace\_char}}
+\index{replace\_char@{replace\_char}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{replace\_char}{replace\_char}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::replace\+\_\+char) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char old, const char new\+\_\+)}
+
+Linear time complexity, O(n), where n is the length of the char array. Replaces {\ttfamily old} to {\ttfamily new}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em old} & old character (character to be replaced) \\
+\hline
+{\em new\+\_\+} & new character (character to be replaced with) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____a85095e47f8d2cf0bf6fdc311f23a8348}\label{struct____string_____a85095e47f8d2cf0bf6fdc311f23a8348}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!resize@{resize}}
+\index{resize@{resize}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{resize}{resize}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::resize) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t new\+\_\+len)}
+
+Resizes {\ttfamily a} with new size {\ttfamily new\+\_\+len}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em new\+\_\+len} & new length of {\ttfamily a} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if resized, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a034d1e68dcd609806a9e3807f145d2ae}\label{struct____string_____a034d1e68dcd609806a9e3807f145d2ae}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!reverse@{reverse}}
+\index{reverse@{reverse}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{reverse}{reverse}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::reverse) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Reverse a string means \char`\"{}\+ABCD\char`\"{} -\/\texorpdfstring{$>$}{>} \char`\"{}\+DCBA\char`\"{}. Time complexity\+: O(N / 2), where N is the length of the {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____a2a29a464c41b07c35fd3099e57fcd45b}\label{struct____string_____a2a29a464c41b07c35fd3099e57fcd45b}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!reverse\_iterator@{reverse\_iterator}}
+\index{reverse\_iterator@{reverse\_iterator}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{reverse\_iterator}{reverse\_iterator}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct____iterator____}{iter\+\_\+sstring}}($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::reverse\+\_\+iterator) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Returns an iterator which traverse through {\ttfamily a} in reverse order. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+an initialized {\ttfamily iter\+\_\+sstring} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a5dd722be23eecdc4d90ab3ed9605aa06}\label{struct____string_____a5dd722be23eecdc4d90ab3ed9605aa06}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!save@{save}}
+\index{save@{save}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{save}{save}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::save) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$location)}
+
+Saves {\ttfamily a} at {\ttfamily location}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em location} & where to save \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if saved successfully, otherwise return false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a404db7ba661807f1ef8fe7268a85860f}\label{struct____string_____a404db7ba661807f1ef8fe7268a85860f}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!save\_binary@{save\_binary}}
+\index{save\_binary@{save\_binary}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{save\_binary}{save\_binary}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::save\+\_\+binary) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$location, size\+\_\+t len)}
+
+Saves the content of {\ttfamily a} to the file at {\ttfamily location}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em location} & file to be saved \\
+\hline
+{\em len} & length of the data (returned value of {\ttfamily open\+\_\+binary} function) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if saved, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____ab2cdbfeea1741ac048e7757dd2da88b0}\label{struct____string_____ab2cdbfeea1741ac048e7757dd2da88b0}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!set@{set}}
+\index{set@{set}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{set}{set}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::set) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src)}
+
+Sets {\ttfamily src} to {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em src} & string to assign \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____a66e9e130b1bcc6ec40a652d88e84c854}\label{struct____string_____a66e9e130b1bcc6ec40a652d88e84c854}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!set\_array@{set\_array}}
+\index{set\_array@{set\_array}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{set\_array}{set\_array}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::set\+\_\+array) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$$\ast$src, char char\+\_\+between, size\+\_\+t from, size\+\_\+t till, size\+\_\+t len)}
+
+
+
+Sets {\ttfamily src} array to {\ttfamily a}. NOTE\+: {\ttfamily from}, {\ttfamily till} belongs to \mbox{[}0, sizeof({\ttfamily src})\mbox{]}. Set {\ttfamily char\+\_\+between} to 0 if you want nothing to append in-\/between. NOTE\+: {\ttfamily src\mbox{[}till\mbox{]}} is not included in resultant string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em src} & string array to assign \\
+\hline
+{\em char\+\_\+between} & character to append between {\ttfamily src\mbox{[}x\mbox{]}} and {\ttfamily src\mbox{[}x + 1\mbox{]}} \\
+\hline
+{\em from} & point to start assigning {\ttfamily src\mbox{[}from\mbox{]}} \\
+\hline
+{\em till} & assign till {\ttfamily src\mbox{[}till\mbox{]}} \\
+\hline
+{\em len} & length of {\ttfamily src} array \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____afa0267145d200eb43fdb2d6aac6c7dad}\label{struct____string_____afa0267145d200eb43fdb2d6aac6c7dad}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!set\_char@{set\_char}}
+\index{set\_char@{set\_char}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{set\_char}{set\_char}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::set\+\_\+char) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char c)}
+
+Sets {\ttfamily c} to {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em c} & character to assign \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____ab254ee102406159e5c382e5fa3e82049}\label{struct____string_____ab254ee102406159e5c382e5fa3e82049}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!set\_formatted@{set\_formatted}}
+\index{set\_formatted@{set\_formatted}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{set\_formatted}{set\_formatted}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::set\+\_\+formatted) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, size\+\_\+t buffer\+\_\+length, const char $\ast$\+\_\+\+\_\+format\+\_\+\+\_\+,...)}
+
+Assigns {\ttfamily \+\_\+\+\_\+format\+\_\+\+\_\+} to {\ttfamily a} with formatting. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em buffer\+\_\+length} & length of {\ttfamily \+\_\+\+\_\+format\+\_\+\+\_\+} along with variable length {\ttfamily ...} \\
+\hline
+{\em \+\_\+\+\_\+format\+\_\+\+\_\+} & string containing the format instructions \\
+\hline
+{\em ...} & variables \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if task completed, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a96bb1c3f6c6fcbb5ba0547c4186be229}\label{struct____string_____a96bb1c3f6c6fcbb5ba0547c4186be229}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!set\_random@{set\_random}}
+\index{set\_random@{set\_random}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{set\_random}{set\_random}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::set\+\_\+random) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const size\+\_\+t len)}
+
+Sets random data to {\ttfamily a}. NOTE\+: length should be greater than 0, (not equal to 0). Well, no error and result if assigned 0. NOTE\+: use srand function before calling this function. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{srand((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})(time(NULL)\ *\ getpid()\ *\ getpid()\ +\ getpid()));}
+
+\end{DoxyCode}
+ OR you can use {\ttfamily srand} function with the memory reference of any pointer. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em len} & size of random string \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____a79d2ab02aa159f47bdcb048a38547777}\label{struct____string_____a79d2ab02aa159f47bdcb048a38547777}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!set\_upto@{set\_upto}}
+\index{set\_upto@{set\_upto}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{set\_upto}{set\_upto}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::set\+\_\+upto) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src, size\+\_\+t N)}
+
+Sets {\ttfamily src} to {\ttfamily a} upto {\ttfamily N}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em src} & string to assign \\
+\hline
+{\em N} & sets upto a number \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____ae5d99952c845fd8f5c085137efe477eb}\label{struct____string_____ae5d99952c845fd8f5c085137efe477eb}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!sort@{sort}}
+\index{sort@{sort}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{sort}{sort}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::sort) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Sort each character using merge sort algorithm. NOTE\+: character are sorted in ascending order using ASCII comparison. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____a9297500aa2cbe3ef891898cc7244b136}\label{struct____string_____a9297500aa2cbe3ef891898cc7244b136}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!soundex@{soundex}}
+\index{soundex@{soundex}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{soundex}{soundex}}
+{\footnotesize\ttfamily char $\ast$($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::soundex) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Encodes {\ttfamily a} to 4 characters long string which can be compared to other {\ttfamily soundex} returned value. This function is used to compare two names by their pronunciation. NOTE\+: free the returned value when not in use, or before exiting the program. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{char}\ *sdx\ =\ a.soundex(\&a);}
+\DoxyCodeLine{free(sdx);}
+
+\end{DoxyCode}
+ 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string generated by this function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a8b5c448d75ce136ab4b7b0c98f7848d3}\label{struct____string_____a8b5c448d75ce136ab4b7b0c98f7848d3}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!split@{split}}
+\index{split@{split}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{split}{split}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structsplit__t}{split\+\_\+t}}($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::split) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$dl)}
+
+Splits {\ttfamily a} when {\ttfamily dl} is found. NOTE\+: {\ttfamily dl} is not included in the splitted string. NOTE\+: use {\ttfamily free\+\_\+split} to avoid memory leak. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{struct____string_____a8b5c448d75ce136ab4b7b0c98f7848d3}{split}}\ sp\ =\ a.split(\&a,\ \textcolor{stringliteral}{"{}-\/"{}});}
+\DoxyCodeLine{free\_split(\&sp);}
+
+\end{DoxyCode}
+ 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em dl} & delimiter string \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+splitted string as {\ttfamily split} struct with its length. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a049b55e1bc9e0492977378a8345faeb1}\label{struct____string_____a049b55e1bc9e0492977378a8345faeb1}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!starts\_with@{starts\_with}}
+\index{starts\_with@{starts\_with}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{starts\_with}{starts\_with}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::starts\+\_\+with) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a, const char $\ast$src)}
+
+Checks whether {\ttfamily a} starts with {\ttfamily src}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+{\em src} & string to check \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if starts with {\ttfamily src}, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____aaacbd05e217d84a31987e7e510a45f3a}\label{struct____string_____aaacbd05e217d84a31987e7e510a45f3a}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!swap\_case@{swap\_case}}
+\index{swap\_case@{swap\_case}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{swap\_case}{swap\_case}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::swap\+\_\+case) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Converts upper case letters to lower case and vice-\/versa of {\ttfamily a}. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____a38b7553cbac40e0ad7d4804056056c89}\label{struct____string_____a38b7553cbac40e0ad7d4804056056c89}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!to\_binary@{to\_binary}}
+\index{to\_binary@{to\_binary}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{to\_binary}{to\_binary}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::to\+\_\+binary) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Converts {\ttfamily a} (as string) to base 2 (as binary). 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____a86ddbd9716e53461f95ec6e871a9ff93}\label{struct____string_____a86ddbd9716e53461f95ec6e871a9ff93}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!to\_hexadecimal@{to\_hexadecimal}}
+\index{to\_hexadecimal@{to\_hexadecimal}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{to\_hexadecimal}{to\_hexadecimal}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::to\+\_\+hexadecimal) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Converts {\ttfamily a} (as string) to base 16 (as hexadecimal). 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____a4bbf47a056dbc7dbecfe732f06404636}\label{struct____string_____a4bbf47a056dbc7dbecfe732f06404636}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!to\_lower@{to\_lower}}
+\index{to\_lower@{to\_lower}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{to\_lower}{to\_lower}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::to\+\_\+lower) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Converts {\ttfamily a} to lower case. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____acb30d2963ecab724d31771734b66b1c0}\label{struct____string_____acb30d2963ecab724d31771734b66b1c0}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!to\_morse\_code@{to\_morse\_code}}
+\index{to\_morse\_code@{to\_morse\_code}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{to\_morse\_code}{to\_morse\_code}}
+{\footnotesize\ttfamily bool($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::to\+\_\+morse\+\_\+code) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Converts {\ttfamily a} to morse code. NOTE\+: {\ttfamily a} should only contain (A-\/Z), (a-\/z), (0-\/9) and WHITESPACE. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if converted, otherwise false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{struct____string_____a56b6d7040805c2ddbdd93c502210ca6d}\label{struct____string_____a56b6d7040805c2ddbdd93c502210ca6d}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!to\_set@{to\_set}}
+\index{to\_set@{to\_set}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{to\_set}{to\_set}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::to\+\_\+set) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Assigns {\ttfamily a} as a set. (From Set Theory) 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{struct____string_____a359f031abb8ab878f91406327d90d05a}\label{struct____string_____a359f031abb8ab878f91406327d90d05a}} 
+\index{\_\_string\_\_@{\_\_string\_\_}!to\_upper@{to\_upper}}
+\index{to\_upper@{to\_upper}!\_\_string\_\_@{\_\_string\_\_}}
+\doxysubsubsection{\texorpdfstring{to\_upper}{to\_upper}}
+{\footnotesize\ttfamily void($\ast$ \+\_\+\+\_\+string\+\_\+\+\_\+\+::to\+\_\+upper) (\mbox{\hyperlink{struct____string____}{sstring}} $\ast$a)}
+
+Converts {\ttfamily a} to upper case. 
+\begin{DoxyParams}{Parameters}
+{\em a} & pointer to struct sstring \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+sstring.\+h\end{DoxyCompactItemize}

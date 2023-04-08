@@ -1,0 +1,15 @@
+var searchData=
+[
+  ['add_5fbinary_0',['add_binary',['../classopenutils_1_1sstring.html#a3800932a9900013dfa77f644119ca3ff',1,'openutils::sstring']]],
+  ['append_1',['append',['../classopenutils_1_1sstring.html#aad149533908925537497dc7adf7d18ad',1,'openutils::sstring::append(const char *str)'],['../classopenutils_1_1sstring.html#ab99593b466e7c452007275dbb088b316',1,'openutils::sstring::append(const sstring &amp;str)']]],
+  ['append_5farray_2',['append_array',['../classopenutils_1_1sstring.html#ae057358cc76948bd9e0b29587c6da750',1,'openutils::sstring::append_array(const vector_t&lt; char * &gt; &amp;vec, const char *between=nullptr)'],['../classopenutils_1_1sstring.html#a00e518ba01c1bdc98ae406810e032622',1,'openutils::sstring::append_array(const vector_t&lt; sstring &gt; &amp;vec, const char *between=nullptr)']]],
+  ['append_5fbinary_3',['append_binary',['../classopenutils_1_1sstring.html#aa6c4e93539499e4da1e5c05d3b843898',1,'openutils::sstring']]],
+  ['append_5fchar_4',['append_char',['../classopenutils_1_1sstring.html#a94aebf05b2abaf05a03ee4e0ea3b74c7',1,'openutils::sstring']]],
+  ['append_5ffile_5',['append_file',['../classopenutils_1_1sstring.html#a8407b3d3c61884f0fb5a56d6844e0c6b',1,'openutils::sstring::append_file(const char *location) const'],['../classopenutils_1_1sstring.html#ae4d74770971fb930b98ba015d68cd489',1,'openutils::sstring::append_file(const sstring &amp;location) const']]],
+  ['append_5fformatted_6',['append_formatted',['../classopenutils_1_1sstring.html#aa3002fb47a58b08d5a57163a17f77fd5',1,'openutils::sstring']]],
+  ['append_5fstart_7',['append_start',['../classopenutils_1_1sstring.html#a893b35b65880c62a6676b38fee89fcbe',1,'openutils::sstring::append_start(const char *str)'],['../classopenutils_1_1sstring.html#a85124fbbf53691ec3b59288f9eeeb788',1,'openutils::sstring::append_start(const sstring &amp;str)']]],
+  ['append_5fstart_5farray_8',['append_start_array',['../classopenutils_1_1sstring.html#a50fde1a15df3b360af431be246ede7f1',1,'openutils::sstring::append_start_array(const vector_t&lt; char * &gt; &amp;vec, const char *between=nullptr)'],['../classopenutils_1_1sstring.html#a1abd1007eca6b243bb734b123ab872a6',1,'openutils::sstring::append_start_array(const vector_t&lt; sstring &gt; &amp;vec, const char *between=nullptr)']]],
+  ['append_5fstart_5fchar_9',['append_start_char',['../classopenutils_1_1sstring.html#a0588393cc7e4abe83bf0ec836c7d49c8',1,'openutils::sstring']]],
+  ['append_5fstart_5fupto_10',['append_start_upto',['../classopenutils_1_1sstring.html#a85a80a9f14d88bccd4704dfb35291002',1,'openutils::sstring::append_start_upto(const char *str, std::size_t N)'],['../classopenutils_1_1sstring.html#a9e4d836d65ec8f01a79098b256d2f931',1,'openutils::sstring::append_start_upto(const sstring &amp;str, std::size_t N)']]],
+  ['append_5fupto_11',['append_upto',['../classopenutils_1_1sstring.html#a84ae82781233ad8c6335c4a1bfa56d53',1,'openutils::sstring::append_upto(const char *str, std::size_t N)'],['../classopenutils_1_1sstring.html#abe20d89031e0140f60a43b114947b892',1,'openutils::sstring::append_upto(const sstring &amp;str, std::size_t N)']]]
+];
