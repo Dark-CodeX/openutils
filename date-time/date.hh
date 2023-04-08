@@ -5,27 +5,35 @@
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "date.hh" under "date-time" directory
  * date-time: version 1.0.1
- * MIT License
+ * BSD 3-Clause License
  *
- * Copyright (c) 2023 Tushar Chaurasia
+ * Copyright (c) 2023, Tushar Chaurasia
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its
+ *    contributors may be used to endorse or promote products derived from
+ *    this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
  */
 
 #ifndef DATE_H
@@ -54,24 +62,24 @@ namespace openutils
 		date(const unsigned int &day_, const unsigned int &month_, const unsigned int &year_);
 		date(const openutils::sstring &str);
 		signed long long int days_between(const date &dt) const;
-		unsigned int days_beginning(void) const;
-		void add(const date &dt);
-		void add(const signed long long int &skip_days);
-		void substract(const date &dt);
-		void substract(const signed long long int &skip_days);
-		bool is_leap(void) const;
-		date get_ctime(void) const;
-		openutils::sstring to_string() const;
+		unsigned int days_beginning() const;
+		date &add(const date &dt);
+		date &add(const signed long long int &skip_days);
+		date &substract(const date &dt);
+		date &substract(const signed long long int &skip_days);
+		bool is_leap() const;
+		date get_ctime() const;
+		sstring to_string() const;
 		date operator+(const date &dt) const;
 		date operator+(const signed long long int &skip_days) const;
 		date operator-(const date &dt) const;
 		date operator-(const signed long long int &skip_days) const;
-		void operator+=(const date &dt);
-		void operator+=(const signed long long int &skip_days);
-		void operator-=(const date &dt);
-		void operator-=(const signed long long int &skip_days);
-		void operator=(const date &dt);
-		void operator=(date &&dt);
+		date &operator+=(const date &dt);
+		date &operator+=(const signed long long int &skip_days);
+		date &operator-=(const date &dt);
+		date &operator-=(const signed long long int &skip_days);
+		date &operator=(const date &dt);
+		date &operator=(date &&dt);
 		bool operator>(const date &dt) const;
 		bool operator<(const date &dt) const;
 		bool operator>=(const date &dt) const;
@@ -232,7 +240,7 @@ namespace openutils
 		return (n1 - n2);
 	}
 
-	unsigned int date::days_beginning(void) const
+	unsigned int date::days_beginning() const
 	{
 		unsigned int os = this->day;
 		switch (this->month - 1)
@@ -276,7 +284,7 @@ namespace openutils
 		return os;
 	}
 
-	void date::add(const date &dt)
+	date &date::add(const date &dt)
 	{
 		unsigned long long int days_bw = this->days_between(dt);
 		std::tm ti = {};
@@ -289,9 +297,11 @@ namespace openutils
 		this->year = ti.tm_year + 1900;
 		this->month = ti.tm_mon + 1;
 		this->day = ti.tm_mday;
+
+		return *this;
 	}
 
-	void date::add(const signed long long int &skip_days)
+	date &date::add(const signed long long int &skip_days)
 	{
 		std::tm ti = {};
 		ti.tm_year = this->year - 1900;
@@ -303,9 +313,11 @@ namespace openutils
 		this->year = ti.tm_year + 1900;
 		this->month = ti.tm_mon + 1;
 		this->day = ti.tm_mday;
+
+		return *this;
 	}
 
-	void date::substract(const date &dt)
+	date &date::substract(const date &dt)
 	{
 		unsigned long long int days_bw = this->days_between(dt);
 		std::tm ti = {};
@@ -318,9 +330,11 @@ namespace openutils
 		this->year = ti.tm_year + 1900;
 		this->month = ti.tm_mon + 1;
 		this->day = ti.tm_mday;
+
+		return *this;
 	}
 
-	void date::substract(const signed long long int &skip_days)
+	date &date::substract(const signed long long int &skip_days)
 	{
 		std::tm ti = {};
 		ti.tm_year = this->year - 1900;
@@ -332,14 +346,16 @@ namespace openutils
 		this->year = ti.tm_year + 1900;
 		this->month = ti.tm_mon + 1;
 		this->day = ti.tm_mday;
+
+		return *this;
 	}
 
-	bool date::is_leap(void) const
+	bool date::is_leap() const
 	{
 		return this->is_leap(this->year);
 	}
 
-	date date::get_ctime(void) const
+	date date::get_ctime() const
 	{
 		date x = date();
 		return x;
@@ -349,7 +365,7 @@ namespace openutils
 	{
 		openutils::sstring x;
 		x.set_formatted(1024, "%i/%i/%i", this->day, this->month, this->year);
-		return x;
+		return std::move(x);
 	}
 
 	date date::operator+(const date &dt) const
@@ -380,38 +396,50 @@ namespace openutils
 		return d;
 	}
 
-	void date::operator+=(const date &dt)
+	date &date::operator+=(const date &dt)
 	{
 		this->add(dt);
+		return *this;
 	}
 
-	void date::operator+=(const signed long long int &skip_days)
+	date &date::operator+=(const signed long long int &skip_days)
 	{
 		this->add(skip_days);
+		return *this;
 	}
 
-	void date::operator-=(const date &dt)
+	date &date::operator-=(const date &dt)
 	{
 		this->substract(dt);
+		return *this;
 	}
 
-	void date::operator-=(const signed long long int &skip_days)
+	date &date::operator-=(const signed long long int &skip_days)
 	{
 		this->substract(skip_days);
+		return *this;
 	}
 
-	void date::operator=(const date &dt)
+	date &date::operator=(const date &dt)
 	{
-		this->year = dt.year;
-		this->month = dt.month;
-		this->day = dt.day;
+		if (this != &dt)
+		{
+			this->year = dt.year;
+			this->month = dt.month;
+			this->day = dt.day;
+		}
+		return *this;
 	}
 
-	void date::operator=(date &&dt)
+	date &date::operator=(date &&dt)
 	{
-		this->year = dt.year;
-		this->month = dt.month;
-		this->day = dt.day;
+		if (this != &dt)
+		{
+			this->year = dt.year;
+			this->month = dt.month;
+			this->day = dt.day;
+		}
+		return *this;
 	}
 
 	bool date::operator>(const date &dt) const
@@ -485,7 +513,7 @@ namespace openutils
 			}
 		}
 	}
-	
+
 	bool date::operator<=(const date &dt) const
 	{
 		if (this->year > dt.year)

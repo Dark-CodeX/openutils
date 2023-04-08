@@ -5,27 +5,35 @@
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "time.hh" under "date-time" directory
  * date-time: version 1.0.1
- * MIT License
+ * BSD 3-Clause License
  *
- * Copyright (c) 2023 Tushar Chaurasia
+ * Copyright (c) 2023, Tushar Chaurasia
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its
+ *    contributors may be used to endorse or promote products derived from
+ *    this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
  */
 
 #ifndef TIME_H
@@ -52,24 +60,24 @@ namespace openutils
 		time(time &&t);
 		time(const unsigned int &hour_, const unsigned int &minute_, const unsigned int &second_);
 		time(const openutils::sstring &str);
-		void add(const time &t);
-		void add(const unsigned long &skip_sec);
-		void substract(const time &t);
-		void substract(const unsigned long &skip_sec);
+		time &add(const time &t);
+		time &add(const unsigned long &skip_sec);
+		time &substract(const time &t);
+		time &substract(const unsigned long &skip_sec);
 		unsigned long seconds_between(const time &FINAL) const;
-		time get_ctime(void) const;
-		bool is_am(void) const;
+		time get_ctime() const;
+		bool is_am() const;
 		sstring to_string(bool AMPM = true) const;
 		time operator+(const time &dt) const;
 		time operator+(const unsigned long &skip_sec) const;
 		time operator-(const time &dt) const;
 		time operator-(const unsigned long &skip_sec) const;
-		void operator+=(const time &dt);
-		void operator+=(const unsigned long &skip_sec);
-		void operator-=(const time &dt);
-		void operator-=(const unsigned long &skip_sec);
-		void operator=(const time &dt);
-		void operator=(time &&dt);
+		time &operator+=(const time &dt);
+		time &operator+=(const unsigned long &skip_sec);
+		time &operator-=(const time &dt);
+		time &operator-=(const unsigned long &skip_sec);
+		time &operator=(const time &dt);
+		time &operator=(time &&dt);
 		bool operator>(const time &dt) const;
 		bool operator<(const time &dt) const;
 		bool operator>=(const time &dt) const;
@@ -172,7 +180,7 @@ namespace openutils
 			}
 			else
 				n++;
-			if (parse.get(n).second()== openutils::lexer_token::INTEGER && n == 4)
+			if (parse.get(n).second() == openutils::lexer_token::INTEGER && n == 4)
 			{
 				s = std::strtoull(parse[n].first().c_str(), nullptr, 10);
 				n++;
@@ -191,7 +199,7 @@ namespace openutils
 		*this = time(h, m, s);
 	}
 
-	void time::add(const time &t)
+	time &time::add(const time &t)
 	{
 		unsigned long sec_bw = this->seconds_between(t);
 		std::tm i_tm = {};
@@ -204,9 +212,11 @@ namespace openutils
 		this->hour = i_tm.tm_hour;
 		this->minute = i_tm.tm_min;
 		this->second = i_tm.tm_sec;
+
+		return *this;
 	}
 
-	void time::add(const unsigned long &skip_sec)
+	time &time::add(const unsigned long &skip_sec)
 	{
 		std::tm i_tm = {};
 		i_tm.tm_hour = this->hour;
@@ -218,9 +228,11 @@ namespace openutils
 		this->hour = i_tm.tm_hour;
 		this->minute = i_tm.tm_min;
 		this->second = i_tm.tm_sec;
+
+		return *this;
 	}
 
-	void time::substract(const time &t)
+	time &time::substract(const time &t)
 	{
 		unsigned long sec_bw = this->seconds_between(t);
 		std::tm i_tm = {};
@@ -233,9 +245,11 @@ namespace openutils
 		this->hour = i_tm.tm_hour;
 		this->minute = i_tm.tm_min;
 		this->second = i_tm.tm_sec;
+
+		return *this;
 	}
 
-	void time::substract(const unsigned long &skip_sec)
+	time &time::substract(const unsigned long &skip_sec)
 	{
 		std::tm i_tm = {};
 		i_tm.tm_hour = this->hour;
@@ -247,6 +261,8 @@ namespace openutils
 		this->hour = i_tm.tm_hour;
 		this->minute = i_tm.tm_min;
 		this->second = i_tm.tm_sec;
+
+		return *this;
 	}
 
 	unsigned long time::seconds_between(const time &FINAL) const
@@ -261,13 +277,13 @@ namespace openutils
 		return std::difftime(f, i);
 	}
 
-	time time::get_ctime(void) const
+	time time::get_ctime() const
 	{
 		time x = time();
 		return x;
 	}
 
-	bool time::is_am(void) const
+	bool time::is_am() const
 	{
 		return this->hour < 12;
 	}
@@ -281,7 +297,7 @@ namespace openutils
 			return x;
 		}
 		x.set_formatted(1024, "%i:%i:%i", this->hour, this->minute, this->second);
-		return x;
+		return std::move(x);
 	}
 
 	time time::operator+(const time &dt) const
@@ -312,38 +328,50 @@ namespace openutils
 		return d;
 	}
 
-	void time::operator+=(const time &dt)
+	time &time::operator+=(const time &dt)
 	{
 		this->add(dt);
+		return *this;
 	}
 
-	void time::operator+=(const unsigned long &skip_sec)
+	time &time::operator+=(const unsigned long &skip_sec)
 	{
 		this->add(skip_sec);
+		return *this;
 	}
 
-	void time::operator-=(const time &dt)
+	time &time::operator-=(const time &dt)
 	{
 		this->substract(dt);
+		return *this;
 	}
 
-	void time::operator-=(const unsigned long &skip_sec)
+	time &time::operator-=(const unsigned long &skip_sec)
 	{
 		this->substract(skip_sec);
+		return *this;
 	}
 
-	void time::operator=(const time &dt)
+	time &time::operator=(const time &dt)
 	{
-		this->hour = dt.hour;
-		this->minute = dt.minute;
-		this->second = dt.second;
+		if (this != &dt)
+		{
+			this->hour = dt.hour;
+			this->minute = dt.minute;
+			this->second = dt.second;
+		}
+		return *this;
 	}
 
-	void time::operator=(time &&dt)
+	time &time::operator=(time &&dt)
 	{
-		this->hour = dt.hour;
-		this->minute = dt.minute;
-		this->second = dt.second;
+		if (this != &dt)
+		{
+			this->hour = dt.hour;
+			this->minute = dt.minute;
+			this->second = dt.second;
+		}
+		return *this;
 	}
 
 	bool time::operator>(const time &dt) const
