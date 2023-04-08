@@ -5,27 +5,34 @@
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.hh" under "sstring" directory
  * sstring: version 2.0.0
- * MIT License
+ * BSD 3-Clause License
  *
- * Copyright (c) 2023 Tushar Chaurasia
+ * Copyright (c) 2023, Tushar Chaurasia
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its
+ *    contributors may be used to endorse or promote products derived from
+ *    this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef SSTRING_DEFINED
@@ -931,13 +938,52 @@ namespace openutils
 		 */
 		sstring &decrypt(const sstring &key);
 
+		/**
+		 * @brief Returns const iterator for beginning
+		 * @return const beginning of iterator
+		 */
 		const char *cbegin() const;
+
+		/**
+		 * @brief Returns const iterator for ending
+		 * @return const ending of iterator
+		 */
 		const char *cend() const;
+
+		/**
+		 * @brief Returns iterator for beginning
+		 * @return beginning of iterator
+		 */
 		char *begin();
+
+		/**
+		 * @brief Returns iterator for ending
+		 * @return ending of iterator
+		 */
 		char *end();
+
+		/**
+		 * @brief Returns const reverse iterator for beginning
+		 * @return const reverse beginning of iterator
+		 */
 		const char *crbegin() const;
+
+		/**
+		 * @brief Returns const reverse iterator for ending
+		 * @return const reverse ending of iterator
+		 */
 		const char *crend() const;
+
+		/**
+		 * @brief Returns reverse iterator for beginning
+		 * @return reverse beginning of iterator
+		 */
 		char *rbegin();
+
+		/**
+		 * @brief Returns reverse iterator for ending
+		 * @return reverse ending of iterator
+		 */
 		char *rend();
 
 		/**
@@ -1214,13 +1260,68 @@ namespace openutils
 		 */
 		bool operator==(const sstring &str) const;
 
+		/**
+		 * @brief Does lexicographical comparison between `this->src` and `str`
+		 * @param str string to be compared
+		 * @return true if `this->src` is less than `str`;
+		 * @return false if `this->src` is greater than `str`
+		 */
 		bool operator<(const char *str) const;
+
+		/**
+		 * @brief Does lexicographical comparison between `this->src` and `str`
+		 * @param str string to be compared
+		 * @return true if `this->src` is less than `str`;
+		 * @return false if `this->src` is greater than `str`
+		 */
 		bool operator<(const sstring &str) const;
+
+		/**
+		 * @brief Does lexicographical comparison between `this->src` and `str`
+		 * @param str string to be compared
+		 * @return true if `this->src` is greater than `str`;
+		 * @return false if `this->src` is less than `str`
+		 */
 		bool operator>(const char *str) const;
+
+		/**
+		 * @brief Does lexicographical comparison between `this->src` and `str`
+		 * @param str string to be compared
+		 * @return true if `this->src` is greater than `str`;
+		 * @return false if `this->src` is less than `str`
+		 */
 		bool operator>(const sstring &str) const;
+
+		/**
+		 * @brief Does lexicographical comparison between `this->src` and `str`
+		 * @param str string to be compared
+		 * @return true if `this->src` is less than or equal to `str`;
+		 * @return false if `this->src` is greater than or equal to `str`
+		 */
 		bool operator<=(const char *str) const;
+
+		/**
+		 * @brief Does lexicographical comparison between `this->src` and `str`
+		 * @param str string to be compared
+		 * @return true if `this->src` is less than or equal to `str`;
+		 * @return false if `this->src` is greater than or equal to `str`
+		 */
 		bool operator<=(const sstring &str) const;
+
+		/**
+		 * @brief Does lexicographical comparison between `this->src` and `str`
+		 * @param str string to be compared
+		 * @return true if `this->src` is greater than or equal to `str`;
+		 * @return false if `this->src` is less than or equal to `str`
+		 */
 		bool operator>=(const char *str) const;
+
+		/**
+		 * @brief Does lexicographical comparison between `this->src` and `str`
+		 * @param str string to be compared
+		 * @return true if `this->src` is greater than or equal to `str`;
+		 * @return false if `this->src` is less than or equal to `str`
+		 */
 		bool operator>=(const sstring &str) const;
 
 		/**
@@ -1254,7 +1355,7 @@ namespace openutils
 		friend std::ostream &operator<<(std::ostream &out, const sstring &obj);
 
 		/**
-		 * @brief Destroy the sstring object
+		 * @brief Destroy the sstring object. NOTE: Calling this function explicitly can cause double-free error
 		 */
 		~sstring();
 
