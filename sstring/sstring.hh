@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.hh" under "sstring" directory
- * sstring: version 2.0.0
+ * sstring: version 2.0.2
  * BSD 3-Clause License
  *
  * Copyright (c) 2023, Tushar Chaurasia
@@ -53,7 +53,7 @@
 #include <openutils/map/map.hh>
 #include <ostream>
 
-#define sstring_version "2.0.0"
+#define sstring_version "2.0.2"
 
 namespace std
 {
@@ -122,6 +122,55 @@ namespace openutils
 		}
 	}
 #endif
+
+	/**
+	 * @brief Searches and returns the first occurrence of `needle` in `haystack`.
+	 * @brief Time comeplexity of this function is O(m + n), where m is the length of `haystack` and n is the length of `needle`.
+	 * @brief This function uses the Knuth–Morris–Pratt or KMP algorithm, for more information visit: https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm#
+	 * @param haystack string to search for the substring
+	 * @param haystack_len length of `haystack`
+	 * @param needle substring to search for within `haystack`
+	 * @return If `needle` is found within `haystack`, it returns a pointer to the first occurrence of `needle` in `haystack`, else if `needle` is not found, it returns nullptr
+	 */
+	char *fast_strstr(const char *haystack, std::size_t haystack_len, const char *needle)
+	{
+		if (!haystack || !needle || haystack_len == 0)
+			return nullptr;
+		std::size_t needle_len = std::strlen(needle);
+		if (needle_len == 0)
+			return (char *)haystack;
+		int *prefix = static_cast<int *>(std::malloc(needle_len * sizeof(int)));
+		if (!prefix)
+		{
+			std::fprintf(stderr, "err: can't allocate heap memory.\n");
+			std::exit(EXIT_FAILURE);
+		}
+		prefix[0] = 0;
+		int k = 0;
+		for (std::size_t q = 1; q < needle_len; ++q)
+		{
+			while (k > 0 && needle[k] != needle[q])
+				k = prefix[k - 1];
+			if (needle[k] == needle[q])
+				k += 1;
+			prefix[q] = k;
+		}
+		int q = 0;
+		for (std::size_t i = 0; i < haystack_len; ++i)
+		{
+			while (q > 0 && needle[q] != haystack[i])
+				q = prefix[q - 1];
+			if (needle[q] == haystack[i])
+				q += 1;
+			if (q == (int)needle_len)
+			{
+				std::free(prefix);
+				return (char *)(haystack + i - needle_len + 1);
+			}
+		}
+		std::free(prefix);
+		return nullptr;
+	}
 
 	enum lexer_token
 	{
@@ -2550,7 +2599,7 @@ namespace openutils
 	bool sstring::contains(const char *str) const
 	{
 		if (str && this->src)
-			if (std::strstr(this->src, str) != nullptr)
+			if (fast_strstr(this->src, this->len, str) != nullptr)
 				return true;
 		return false;
 	}
@@ -2656,7 +2705,7 @@ namespace openutils
 	{
 		if (sub && this->src)
 		{
-			char *buff = std::strstr(this->src, sub);
+			char *buff = fast_strstr(this->src, this->len, sub);
 			if (buff)
 				return this->len - std::strlen(buff);
 		}
@@ -2672,7 +2721,7 @@ namespace openutils
 	{
 		if (sub && this->src)
 		{
-			char *buff = std::strstr(this->src + last_index, sub);
+			char *buff = fast_strstr(this->src + last_index, this->len - last_index, sub);
 			if (buff)
 				return this->len - std::strlen(buff);
 		}
@@ -3003,7 +3052,7 @@ namespace openutils
 		{
 			std::size_t cnt = 0, len = std::strlen(what);
 			const char *sub = this->src;
-			while ((sub = std::strstr(sub, what)))
+			while ((sub = fast_strstr(sub, std::strlen(sub), what)))
 			{
 				cnt++;
 				sub += len;
@@ -3203,11 +3252,15 @@ namespace openutils
 		{
 			if (!this->src)
 			{
-				this->set(data);
+				this->len = 0;
+				this->src = static_cast<char *>(std::calloc(bin_len + 1, sizeof(char)));
+				exit_heap_fail(this->src);
+				fast_strncat(this->src, data, this->len);
 				return *this;
 			}
-			this->src = static_cast<char *>(std::realloc(this->src, bin_len + std::strlen(data) + 1));
-			fast_strncat(this->src, data, bin_len);
+			this->src = static_cast<char *>(std::realloc(this->src, this->len + bin_len + 1));
+			exit_heap_fail(this->src);
+			fast_strncat(this->src, data, this->len);
 		}
 		return *this;
 	}
