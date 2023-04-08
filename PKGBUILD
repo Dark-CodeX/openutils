@@ -5,12 +5,12 @@ pkgdesc="heap-pair template class for C++."
 arch=("x86_64" "i686")
 conflicts=('openutils-heap_pair')
 depends=(gcc)
-license=("MIT")
+license=("BSD 3-Clause License")
 source=(
 	"https://raw.githubusercontent.com/Dark-CodeX/heap-pair/main/heap-pair/heap-pair.hh")
 
 sha512sums=(
-	"a236141e8b113d81e780754008221e3d3a3aa5acada62a7123bd3f86d96be72ff5af2bc5a1bc7c3c3c3715536301d957707f6039cfb04904bd9e9e0f5ed2865b")
+	"23d447d847068d59fbfff7fcc03076ae848edc42f58568e786536df2d013f8956fab3e17085e6232c1c0ea9ddb96cb4ad3beb7bd2bfdacc2e44c60b85e732451")
 
 package() {
 	echo "heap-pair template class for C++."
