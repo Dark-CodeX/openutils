@@ -2784,7 +2784,7 @@ namespace openutils
 		}
 		sstring res = sstring(tok);
 		std::free(temp);
-		return res;
+		return std::move(res);
 	}
 
 	sstring &sstring::reverse()
@@ -3142,7 +3142,7 @@ namespace openutils
 				ret.set(i->key.c_str());
 				break;
 			}
-			return ret;
+			return std::move(ret);
 		}
 		return sstring();
 	}
@@ -3198,7 +3198,7 @@ namespace openutils
 					break;
 			}
 			std::free(temp);
-			return x;
+			return std::move(x);
 		}
 		return vector_t<sstring>(1);
 	}
@@ -3438,7 +3438,7 @@ namespace openutils
 		sstring ret;
 		ret.src = buff;
 		ret.len = sub_len;
-		return ret;
+		return std::move(ret);
 	}
 
 	vector_t<sstring> sstring::to_argv() const
@@ -3461,7 +3461,7 @@ namespace openutils
 			else
 				args.add(spt[i++]);
 		}
-		return args;
+		return std::move(args);
 	}
 
 	sstring &sstring::to_morse_code()
@@ -3739,7 +3739,7 @@ namespace openutils
 				return vector_t<heap_pair<sstring, enum lexer_token>>(1);
 		}
 		vec.add({sstring("\0"), lexer_token::NULL_END});
-		return vec;
+		return std::move(vec);
 	}
 
 	sstring &sstring::from_lexer(const vector_t<heap_pair<sstring, enum lexer_token>> &toks)
@@ -3862,21 +3862,21 @@ namespace openutils
 	{
 		sstring x = sstring(this->src);
 		x.append_char(c);
-		return x;
+		return std::move(x);
 	}
 
 	sstring sstring::operator+(const char *str) const
 	{
 		sstring x = sstring(this->src);
 		x.append(str);
-		return x;
+		return std::move(x);
 	}
 
 	sstring sstring::operator+(const sstring &str) const
 	{
 		sstring x = sstring(this->src);
 		x.append(str.src);
-		return x;
+		return std::move(x);
 	}
 
 	sstring &sstring::operator+=(const char c)
@@ -4047,9 +4047,9 @@ namespace openutils
 
 	sstring sstring::to_sstring(char str)
 	{
-		sstring x(nullptr);
+		sstring x;
 		x.set_char(str);
-		return x;
+		return std::move(x);
 	}
 
 	sstring sstring::to_sstring(bool boolean)
@@ -4059,12 +4059,13 @@ namespace openutils
 			x = "true";
 		else
 			x = "false";
-		return x;
+		return std::move(x);
 	}
 
 	sstring sstring::to_sstring(const char *str)
 	{
-		return sstring(str);
+		sstring x = str;
+		return std::move(x);
 	}
 
 	sstring sstring::to_sstring(void *ptr)
@@ -4155,21 +4156,21 @@ namespace openutils
 	{
 		sstring x;
 		x.set_random(len);
-		return x;
+		return std::move(x);
 	}
 
 	sstring sstring::get_input()
 	{
 		sstring x;
 		x.in();
-		return x;
+		return std::move(x);
 	}
 
 	sstring sstring::open_file(const sstring &location)
 	{
 		sstring x;
 		x.open(location.c_str());
-		return x;
+		return std::move(x);
 	}
 
 	sstring sstring::end_line()
