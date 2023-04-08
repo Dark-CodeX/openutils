@@ -5,14 +5,14 @@ pkgdesc="Date and time classes for C++."
 arch=("x86_64" "i686")
 conflicts=('openutils-date_time')
 depends=(gcc)
-license=("MIT")
+license=("BSD 3-Clause License")
 source=(
 	"https://raw.githubusercontent.com/Dark-CodeX/date-time/main/date-time/date.hh"
 	"https://raw.githubusercontent.com/Dark-CodeX/date-time/main/date-time/time.hh")
 
 sha512sums=(
-	"8693cc873491c1e288022d884793260b70ecbdc9acd37a283479a63494d00696684f320817acc1108657b7f9bcb3763420d791c4500feda538c5c46f7d1d30c4"
-	"398d1ceb2333e5961b5b8313c17a4b092bfc446ade5f4e2327e80cf5608da2fbccdbaaa18021a5c94aeaf124572de12a3a1421c311e950198354a57d2e342107")
+	"9a1b463ba237c6a5d0ab634c942d4039f683292507da4ebf4ec5f3cd62538dd7fde0103edc8e17b413d0a494258f95f1f336e7ae481e884b5abce275665c6a23"
+	"f50fa42101ab01bf81e63d899af6e2b541cc57aeeb9d3be95cc7752318c21acf1932a14042a3e609743e1082b029520175809350bc7dd42af0b987b9dc8985c8")
 
 package() {
 	echo "Date and time classes for C++."
