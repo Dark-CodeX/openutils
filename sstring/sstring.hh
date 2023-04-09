@@ -3079,11 +3079,15 @@ namespace openutils
 		return this->distance(str.src);
 	}
 
+#ifndef MIN3
+#define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
+#endif
+
 	std::size_t sstring::edit_distance(const char *str) const
 	{
 		if (str && this->src)
 		{
-			std::size_t len_str = std::strlen(src), x, y, last, old;
+			std::size_t len_str = std::strlen(str), x, y, last, old;
 			std::size_t *cols = static_cast<std::size_t *>(std::calloc(this->len + 1, sizeof(std::size_t)));
 			exit_heap_fail(cols);
 			for (y = 1; y <= this->len; y++)
@@ -3094,7 +3098,7 @@ namespace openutils
 				for (y = 1, last = x - 1; y <= this->len; y++)
 				{
 					old = cols[y];
-					cols[y] = ((cols[y] + 1) < (cols[y - 1] + 1) ? ((cols[y] + 1) < (last + (this->src[y - 1] == src[x - 1] ? 0 : 1)) ? (cols[y] + 1) : (last + (this->src[y - 1] == src[x - 1] ? 0 : 1))) : ((cols[y - 1] + 1) < (last + (this->src[y - 1] == src[x - 1] ? 0 : 1)) ? (cols[y - 1] + 1) : (last + (this->src[y - 1] == src[x - 1] ? 0 : 1))));
+					cols[y] = MIN3(cols[y] + 1, cols[y - 1] + 1, last + (this->src[y - 1] == str[x - 1] ? 0 : 1));
 					last = old;
 				}
 			}
@@ -3114,25 +3118,10 @@ namespace openutils
 	{
 		if (str && this->src)
 		{
-			std::size_t len_str = std::strlen(src), x, y, last, old;
-			std::size_t *cols = static_cast<std::size_t *>(std::calloc(this->len + 1, sizeof(std::size_t)));
-			exit_heap_fail(cols);
-			for (y = 1; y <= this->len; y++)
-				cols[y] = y;
-			for (x = 1; x <= len_str; x++)
-			{
-				cols[0] = x;
-				for (y = 1, last = x - 1; y <= this->len; y++)
-				{
-					old = cols[y];
-					cols[y] = ((cols[y] + 1) < (cols[y - 1] + 1) ? ((cols[y] + 1) < (last + (this->src[y - 1] == src[x - 1] ? 0 : 1)) ? (cols[y] + 1) : (last + (this->src[y - 1] == src[x - 1] ? 0 : 1))) : ((cols[y - 1] + 1) < (last + (this->src[y - 1] == src[x - 1] ? 0 : 1)) ? (cols[y - 1] + 1) : (last + (this->src[y - 1] == src[x - 1] ? 0 : 1))));
-					last = old;
-				}
-			}
+			std::size_t len_str = std::strlen(str);
 			std::size_t max = ((this->len > len_str) ? this->len : len_str);
-			std::size_t r = cols[this->len];
-			std::free(cols);
-			return (max - r) * 100.0L / max;
+			std::size_t edit_dis = this->edit_distance(str);
+			return (max - edit_dis) * 100.0 / max;
 		}
 		return -1;
 	}
@@ -3146,12 +3135,12 @@ namespace openutils
 	{
 		if (what && this->src)
 		{
-			std::size_t cnt = 0, len = std::strlen(what);
+			std::size_t cnt = 0, what_len = std::strlen(what);
 			const char *sub = this->src;
 			while ((sub = fast_strstr(sub, std::strlen(sub), what)))
 			{
 				cnt++;
-				sub += len;
+				sub += what_len;
 			}
 			return cnt;
 		}
