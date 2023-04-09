@@ -5,7 +5,7 @@
 	* #### **This library has 91 pre-defined functions.**
 	* #### This header file is *cross-platform*, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (91/91) functions passed.*
 	* #### Documents are in the header(`"sstring/sstring.h"` and `"sstring/sstring.hh"`) file itself. Be sure to suggest any changes.
-* # Functions Defined v:2.0.2
+* ## Functions Defined v:2.1.0
 ```
 set
 set_char
@@ -99,9 +99,11 @@ append_formatted
 resize
 hash
 ```
-* # BUILD
+* ## Testing
 	* #### **For testing use:** *`gcc -g -W -Wall -Wextra -Wuninitialized -Wstrict-aliasing -ggdb3 -std=c17 -Wextra -pedantic -Wmissing-prototypes -Wstrict-prototypes -Wold-style-definition samples/test.c -lm -o test` **and then** `valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt ./test "Hello World Hello!123"`*
-* # Installation
+* ## Build Docs
+	* `cd ./sstring ; doxygen -g ; doxygen ; cd ./html ; <web_browser> ./index.html`
+* ## Installation
 	* #### To install on *arch linux* use **`PKGBUILD`**.
 	* #### To install on **any Operating System** use:
 		* #### [**GUI** Download Jar File (Cross-Platform)](https://github.com/Dark-CodeX/InstallRepos/releases/download/v1.1.0/InstallReposGUI.jar)
