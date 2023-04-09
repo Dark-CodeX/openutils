@@ -1423,11 +1423,11 @@ namespace openutils
 		static void sort(char **arr, const std::size_t len);
 
 		/**
-		 * @brief Returns `str` as sstring
-		 * @param str character to assign
-		 * @return `str` as sstring
+		 * @brief Returns `c` as sstring
+		 * @param c character to assign
+		 * @return `c` as sstring
 		 */
-		static sstring to_sstring(char str);
+		static sstring to_sstring(char c);
 
 		/**
 		 * @brief Returns `boolean` as sstring
@@ -1716,8 +1716,7 @@ namespace openutils
 				std::free(this->src);
 			this->src = static_cast<char *>(std::calloc(2, sizeof(char)));
 			exit_heap_fail(this->src);
-			std::strncpy(this->src, &c, 1);
-			this->len = 1;
+			this->src[this->len++] = c;
 		}
 		return *this;
 	}
@@ -1875,15 +1874,14 @@ namespace openutils
 			{
 				this->src = static_cast<char *>(std::realloc(this->src, this->len + 2));
 				exit_heap_fail(this->src);
-				this->src[++this->len] = c;
 			}
 			else
 			{
 				this->src = static_cast<char *>(std::calloc(2, sizeof(char)));
 				exit_heap_fail(this->src);
 				this->len = 0;
-				this->src[this->len++] = c;
 			}
+			this->src[this->len++] = c;
 		}
 		return *this;
 	}
@@ -4045,10 +4043,10 @@ namespace openutils
 				  { return sstring(a) < sstring(b); });
 	}
 
-	sstring sstring::to_sstring(char str)
+	sstring sstring::to_sstring(char c)
 	{
 		sstring x;
-		x.set_char(str);
+		x.set_char(c);
 		return std::move(x);
 	}
 
