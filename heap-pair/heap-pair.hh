@@ -4,25 +4,25 @@
  * Commit to this repository at https://github.com/Dark-CodeX/heap-pair.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "heap-pair.hh" under "heap-pair" directory
- * heap-pair: version 1.0.0
+ * heap-pair: version 1.0.1
  * BSD 3-Clause License
- * 
+ *
  * Copyright (c) 2023, Tushar Chaurasia
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice, this
  *    list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. Neither the name of the copyright holder nor the names of its
  *    contributors may be used to endorse or promote products derived from
  *    this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,8 +41,9 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <utility>
 
-#define heap_pair_version "1.0.0"
+#define heap_pair_version "1.0.1"
 
 namespace openutils
 {
@@ -74,6 +75,8 @@ namespace openutils
 		heap_pair(heap_pair &&pair) noexcept;
 		const FIRST &first() const;
 		const SECOND &second() const;
+		FIRST &first();
+		SECOND &second();
 		heap_pair &operator=(const heap_pair &pair);
 		heap_pair &operator=(heap_pair &&pair) noexcept;
 		~heap_pair();
@@ -157,6 +160,28 @@ namespace openutils
 	}
 
 	template <typename FIRST, typename SECOND>
+	FIRST &heap_pair<FIRST, SECOND>::first()
+	{
+		if (!this->t1)
+		{
+			std::fprintf(stderr, "err: cannot de-reference a null-pointer\n");
+			std::exit(EXIT_FAILURE);
+		}
+		return *this->t1;
+	}
+
+	template <typename FIRST, typename SECOND>
+	SECOND &heap_pair<FIRST, SECOND>::second()
+	{
+		if (!this->t2)
+		{
+			std::fprintf(stderr, "err: cannot de-reference a null-pointer\n");
+			std::exit(EXIT_FAILURE);
+		}
+		return *this->t2;
+	}
+
+	template <typename FIRST, typename SECOND>
 	heap_pair<FIRST, SECOND> &heap_pair<FIRST, SECOND>::operator=(const heap_pair &pair)
 	{
 		if (this != &pair)
@@ -212,13 +237,15 @@ namespace openutils
 	template <typename FIRST, typename SECOND>
 	heap_pair<FIRST, SECOND> heap_pair<FIRST, SECOND>::make_heap_pair(const FIRST &T1, const SECOND &T2)
 	{
-		return heap_pair<FIRST, SECOND>(T1, T2);
+		heap_pair<FIRST, SECOND> x = heap_pair<FIRST, SECOND>(T1, T2);
+		return return std::move(x);
 	}
 
 	template <typename FIRST, typename SECOND>
 	heap_pair<FIRST, SECOND> heap_pair<FIRST, SECOND>::make_heap_pair(FIRST &&T1, SECOND &&T2)
 	{
-		return heap_pair<FIRST, SECOND>(T1, T2);
+		heap_pair<FIRST, SECOND> x = heap_pair<FIRST, SECOND>(T1, T2);
+		return return std::move(x);
 	}
 }
 
