@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.hh" under "sstring" directory
- * sstring: version 2.0.2
+ * sstring: version 2.1.0
  * BSD 3-Clause License
  *
  * Copyright (c) 2023, Tushar Chaurasia
@@ -53,7 +53,7 @@
 #include <openutils/map/map.hh>
 #include <ostream>
 
-#define sstring_version "2.0.2"
+#define sstring_version "2.1.0"
 
 namespace std
 {
@@ -104,7 +104,7 @@ namespace openutils
 	 * @param src string to be appended
 	 * @param size where to append `src`
 	 */
-	void fast_strncat(char *dest, const char *src, std::size_t &size)
+	static inline void fast_strncat(char *dest, const char *src, std::size_t &size)
 	{
 		if (dest && src)
 			while ((dest[size] = *src++))
@@ -132,7 +132,7 @@ namespace openutils
 	 * @param needle substring to search for within `haystack`
 	 * @return If `needle` is found within `haystack`, it returns a pointer to the first occurrence of `needle` in `haystack`, else if `needle` is not found, it returns nullptr
 	 */
-	char *fast_strstr(const char *haystack, std::size_t haystack_len, const char *needle)
+	static inline char *fast_strstr(const char *haystack, std::size_t haystack_len, const char *needle) noexcept(true)
 	{
 		if (!haystack || !needle || haystack_len == 0)
 			return nullptr;
@@ -170,6 +170,19 @@ namespace openutils
 		}
 		std::free(prefix);
 		return nullptr;
+	}
+
+	/**
+	 * @brief Initialize zero of every character between `from_where` and `till_move` in `ptr`, this function is generally used after `std::realloc()` to initialize the pointer with zeroes.
+	 * @param ptr string to initialize zeroes
+	 * @param from_where starting index
+	 * @param till_where ending index
+	 */
+	static inline void init_n_zeroes(char *ptr, std::size_t from_where, std::size_t till_where)
+	{
+		if (ptr)
+			for (std::size_t i = from_where; i < till_where; i++)
+				ptr[i] = 0;
 	}
 
 	enum lexer_token
@@ -635,19 +648,19 @@ namespace openutils
 		sstring &clear();
 
 		/**
-		 * Converts all characters to upper case
+		 * @brief Converts all characters to upper case
 		 * @return sstring& reference to current object
 		 */
 		sstring &to_upper();
 
 		/**
-		 * Converts all characters to lower case
+		 * @brief Converts all characters to lower case
 		 * @return sstring& reference to current object
 		 */
 		sstring &to_lower();
 
 		/**
-		 * Converts upper case characters to lower case and vice-versa
+		 * @brief Converts upper case characters to lower case and vice-versa
 		 * @return sstring& reference to current object
 		 */
 		sstring &swap_case();
@@ -665,10 +678,38 @@ namespace openutils
 		sstring &from_binary();
 
 		/**
-		 * Calculates the entropy using `Shannon's entropy` formula, which was introduced in his 1948 paper "A Mathematical Theory of Communication". For more information https://en.wikipedia.org/wiki/Entropy_(information_theory)
+		 * @brief Calculates the entropy using `Shannon's entropy` formula, which was introduced in his 1948 paper "A Mathematical Theory of Communication". For more information https://en.wikipedia.org/wiki/Entropy_(information_theory)
 		 * @returns entropy of `this->src`
 		 */
 		double entropy() const;
+
+		/**
+		 * @brief Password entropy is a measurement of how unpredictable a password is.
+		 * <table>
+		 *		<tr>
+		 *			<th>Entropy Value Range</th>
+		 *			<th>Strength</th>
+		 *		</tr>
+		 *		<tr>
+		 *			<td>0 - 28</td>
+		 *			<td>Very Weak</td>
+		 *		</tr>
+		 *		<tr>
+		 *			<td>29 - 35</td>
+		 *			<td>Medium</td>
+		 *		</tr>
+		 *		<tr>
+		 *			<td>60 - 127</td>
+		 *			<td>Strong</td>
+		 *		</tr>
+		 *		<tr>
+		 *			<td>128 - ...</td>
+		 *			<td>Very Strong</td>
+		 *		</tr>
+		 * </table>
+		 * @return password entropy
+		 */
+		double password_entropy() const;
 
 		/**
 		 * @brief Returns whether `str` is in `this->src` or not
@@ -1874,6 +1915,7 @@ namespace openutils
 			{
 				this->src = static_cast<char *>(std::realloc(this->src, this->len + 2));
 				exit_heap_fail(this->src);
+				init_n_zeroes(this->src, this->len, this->len + 2);
 			}
 			else
 			{
@@ -2594,6 +2636,62 @@ namespace openutils
 		return -1;
 	}
 
+	double sstring::password_entropy() const
+	{
+		if (!this->src)
+			return 0;
+		// formula = E = L * log2(R)
+		std::size_t R = 0;
+		//					  0      1      2      3         4
+		// 					digit, lower, upper, special, other_ascii
+		bool is_added[5] = {false, false, false, false, false};
+
+		for (std::size_t i = 0; i < this->len; i++)
+		{
+			if (std::isdigit(this->src[i]))
+			{
+				if (is_added[0] == false)
+				{
+					R += 10;
+					is_added[0] = true;
+				}
+			}
+			else if (std::islower(this->src[i]))
+			{
+				if (is_added[1] == false)
+				{
+					R += 26;
+					is_added[1] = true;
+				}
+			}
+			else if (std::isupper(this->src[i]))
+			{
+				if (is_added[2] == false)
+				{
+					R += 26;
+					is_added[2] = true;
+				}
+			}
+			else if ((this->src[i] >= 32 && this->src[i] <= 47) || (this->src[i] >= 58 && this->src[i] <= 64) || (this->src[i] >= 91 && this->src[i] <= 96) || (this->src[i] >= 123 && this->src[i] < 127))
+			{
+				if (is_added[3] == false)
+				{
+					R += 33;
+					is_added[3] = true;
+				}
+			}
+			else
+			{
+				if (is_added[4] == false)
+				{
+					R += 33;
+					is_added[4] = true;
+				}
+			}
+		}
+		return (double)this->len * std::log2(R);
+	}
+
 	bool sstring::contains(const char *str) const
 	{
 		if (str && this->src)
@@ -2630,7 +2728,7 @@ namespace openutils
 				frequencies[*p - CHAR_MIN] += 1;
 			}
 
-			char *buff = static_cast<char *>(calloc(MAX, sizeof(char)));
+			char *buff = static_cast<char *>(std::calloc(MAX, sizeof(char)));
 			exit_heap_fail(buff);
 			std::size_t z = 0;
 			for (size_t i = 0; i < MAX; i++)
@@ -3807,13 +3905,19 @@ namespace openutils
 
 	bool sstring::resize(std::size_t new_len)
 	{
-		if (new_len > 0)
+		if (new_len > 0 && new_len > this->len)
 		{
 			if (this->src)
-				this->src = static_cast<char *>(realloc(this->src, new_len));
+			{
+				this->src = static_cast<char *>(std::realloc(this->src, new_len));
+				exit_heap_fail(this->src);
+				init_n_zeroes(this->src, this->len, new_len);
+			}
 			else
+			{
 				this->src = static_cast<char *>(std::calloc(new_len, sizeof(char)));
-			exit_heap_fail(this->src);
+				exit_heap_fail(this->src);
+			}
 			return true;
 		}
 		return false;
