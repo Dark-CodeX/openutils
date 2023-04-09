@@ -238,14 +238,14 @@ namespace openutils
 	heap_pair<FIRST, SECOND> heap_pair<FIRST, SECOND>::make_heap_pair(const FIRST &T1, const SECOND &T2)
 	{
 		heap_pair<FIRST, SECOND> x = heap_pair<FIRST, SECOND>(T1, T2);
-		return return std::move(x);
+		return std::move(x);
 	}
 
 	template <typename FIRST, typename SECOND>
 	heap_pair<FIRST, SECOND> heap_pair<FIRST, SECOND>::make_heap_pair(FIRST &&T1, SECOND &&T2)
 	{
 		heap_pair<FIRST, SECOND> x = heap_pair<FIRST, SECOND>(T1, T2);
-		return return std::move(x);
+		return std::move(x);
 	}
 }
 
