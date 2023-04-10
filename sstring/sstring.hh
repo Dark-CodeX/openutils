@@ -4494,6 +4494,22 @@ namespace openutils
 		return sstring_t_view("\n");
 #endif
 	}
+
+	typedef openutils::sstring_t_view<char> sstring;
+	typedef openutils::sstring_t_view<unsigned char> usstring;
+	typedef openutils::sstring_t_view<wchar_t> wsstring;
+#if defined(__cpp_char8_t)
+	typedef openutils::sstring_t_view<char8_t> u8sstring;
+#endif
+	typedef openutils::sstring_t_view<char16_t> u16sstring;
+	typedef openutils::sstring_t_view<char32_t> u32sstring;
+
+	// sizeof(char) = 1 byte(s)
+	// sizeof(unsigned char) = 1 byte(s)
+	// sizeof(wchar_t) = 4 byte(s)
+	// sizeof(char8_t) = 1 byte(s)
+	// sizeof(char16_t) = 2 byte(s)
+	// sizeof(char32_t) = 4 byte(s)
 }
 
 namespace std
@@ -4507,21 +4523,5 @@ namespace std
 		}
 	};
 };
-
-typedef openutils::sstring_t_view<char> sstring;
-typedef openutils::sstring_t_view<unsigned char> usstring;
-typedef openutils::sstring_t_view<wchar_t> wsstring;
-#if defined(__cpp_char8_t)
-typedef openutils::sstring_t_view<char8_t> u8sstring;
-#endif
-typedef openutils::sstring_t_view<char16_t> u16sstring;
-typedef openutils::sstring_t_view<char32_t> u32sstring;
-
-// sizeof(char) = 1 byte(s)
-// sizeof(unsigned char) = 1 byte(s)
-// sizeof(wchar_t) = 4 byte(s)
-// sizeof(char8_t) = 1 byte(s)
-// sizeof(char16_t) = 2 byte(s)
-// sizeof(char32_t) = 4 byte(s)
 
 #endif
