@@ -136,6 +136,14 @@ namespace openutils
 		 */
 		static inline std::size_t sstr_strlen(const char *str);
 
+		/**
+		 * @brief Divide `str` into tokens separated by characters in `delim`.
+		 * @param str string to tokenize
+		 * @param delim separator
+		 * @return separated string
+		 */
+		static inline char *fast_strtok(char *str, const char *delim);
+
 	public:
 		/**
 		 * @brief Default constructor of sstring, it assigns nullptr to src and 0 to len
@@ -1028,9 +1036,10 @@ namespace openutils
 
 		/**
 		 * @brief Parses `this->src` as C-style argv in `main()` function
+		 * @param argv0 first argument of `char **argv` in `main()` function, default value is `nullptr`
 		 * @return arguments
 		 */
-		vector_t<sstring> to_argv() const;
+		vector_t<sstring> to_argv(const char *argv0 = nullptr) const;
 
 		/**
 		 * @brief Converts normal text to morse code
@@ -1588,6 +1597,8 @@ namespace openutils
 
 	inline int sstring::sstr_strcmp(const char *str1, const char *str2)
 	{
+		if (!str1 || !str2)
+			return -1;
 		int i = 0;
 		while (str1[i] != 0 && str2[i] != 0)
 		{
@@ -1595,11 +1606,14 @@ namespace openutils
 				return (str1[i] < str2[i]) ? -1 : 1;
 			i++;
 		}
-		return (str1[i] == 0 && str2[i] == 0) ? 0 : (str1[i] < str2[i]) ? -1 : 1;
+		return (str1[i] == 0 && str2[i] == 0) ? 0 : (str1[i] < str2[i]) ? -1
+																		: 1;
 	}
 
 	inline int sstring::sstr_strncmp(const char *str1, const char *str2, std::size_t n)
 	{
+		if (!str1 || !str2)
+			return -1;
 		int i = 0;
 		while (i < n && str1[i] != 0 && str2[i] != 0)
 		{
@@ -1614,6 +1628,8 @@ namespace openutils
 
 	inline std::size_t sstring::sstr_strlen(const char *str)
 	{
+		if (!str)
+			return 0;
 		std::size_t str_L = 0;
 		while (*str != 0)
 		{
@@ -1621,6 +1637,31 @@ namespace openutils
 			str++;
 		}
 		return str_L;
+	}
+
+	inline char *sstring::fast_strtok(char *str, const char *delim)
+	{
+		if (!delim)
+			return nullptr;
+		static char *token = nullptr; // maintains a static pointer variable
+		if (str != nullptr)
+			token = str;
+		else if (token == nullptr)
+			return nullptr;
+		char *p = sstring::fast_strstr(token, sstring::sstr_strlen(token), delim);
+		if (p != nullptr)
+		{
+			*p = 0;
+			char *tmp = token;
+			token = p + sstring::sstr_strlen(delim);
+			return tmp;
+		}
+		else
+		{
+			char *tmp = token;
+			token = nullptr;
+			return tmp;
+		}
 	}
 
 	sstring::sstring()
@@ -2892,12 +2933,12 @@ namespace openutils
 		exit_heap_fail(temp);
 
 		std::memmove(temp, this->src, this->len);
-		char *tok = std::strtok(temp, "\n");
+		char *tok = this->fast_strtok(temp, "\n");
 		while (tok)
 		{
 			if (cnt++ == line)
 				break;
-			tok = std::strtok(nullptr, "\n");
+			tok = this->fast_strtok(nullptr, "\n");
 		}
 		if (cnt == 0 || tok == nullptr)
 		{
@@ -3299,12 +3340,12 @@ namespace openutils
 			char *temp = static_cast<char *>(std::calloc(this->len + 1, sizeof(char)));
 			exit_heap_fail(temp);
 			std::memmove(temp, this->src, this->len);
-			char *tok = std::strtok(temp, str);
+			char *tok = this->fast_strtok(temp, str);
 			vector_t<sstring> x;
 			while (tok)
 			{
 				x.add(tok);
-				tok = std::strtok(nullptr, str);
+				tok = this->fast_strtok(nullptr, str);
 				if (!tok)
 					break;
 			}
@@ -3552,13 +3593,15 @@ namespace openutils
 		return std::move(ret);
 	}
 
-	vector_t<sstring> sstring::to_argv() const
+	vector_t<sstring> sstring::to_argv(const char *argv0) const
 	{
 		if (!this->src)
 			return vector_t<sstring>(1);
 
 		vector_t<sstring> spt = this->split(" ");
 		vector_t<sstring> args;
+		if (argv0)
+			args.add(argv0);
 		for (std::size_t i = 0; i < spt.length();)
 		{
 			if (spt[i][0] == '"')
