@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.hh" under "sstring" directory
- * sstring: version 2.1.0
+ * sstring: version 2.1.5
  * BSD 3-Clause License
  *
  * Copyright (c) 2023, Tushar Chaurasia
@@ -53,64 +53,10 @@
 #include <openutils/map/map.hh>
 #include <ostream>
 
-#define sstring_version "2.1.0"
-
-namespace std
-{
-	template <>
-	struct hash<const char *>
-	{
-		std::size_t operator()(const char *const &str) const
-		{
-			std::size_t p = 53;
-			std::size_t m = 1e9 + 9;
-			long long power_of_p = 1;
-			long long hash_val = 0;
-
-			for (std::size_t i = 0; str[i] != 0; i++)
-			{
-				hash_val = (hash_val + (str[i] - 97 + 1) * power_of_p) % m;
-				power_of_p = (power_of_p * p) % m;
-			}
-			return (hash_val % m + m) % m;
-		}
-	};
-
-	template <>
-	struct hash<const unsigned char *>
-	{
-		std::size_t operator()(const unsigned char *const &str) const
-		{
-			std::size_t p = 53;
-			std::size_t m = 1e9 + 9;
-			long long power_of_p = 1;
-			long long hash_val = 0;
-
-			for (std::size_t i = 0; str[i] != 0; i++)
-			{
-				hash_val = (hash_val + (str[i] - 97 + 1) * power_of_p) % m;
-				power_of_p = (power_of_p * p) % m;
-			}
-			return (hash_val % m + m) % m;
-		}
-	};
-} // namespace std
+#define sstring_version "2.1.5"
 
 namespace openutils
 {
-	/**
-	 * Linear time complexity = O(n), where n is the length of `src`. NOTE: `dest` must have enough space for `src`.
-	 * @param dest string where `src` is going to append
-	 * @param src string to be appended
-	 * @param size where to append `src`
-	 */
-	static inline void fast_strncat(char *dest, const char *src, std::size_t &size)
-	{
-		if (dest && src)
-			while ((dest[size] = *src++))
-				size += 1;
-	}
-
 #ifndef EXIT_HEAP_FAIL
 #define EXIT_HEAP_FAIL
 	static inline void exit_heap_fail(const void *ptr)
@@ -122,68 +68,6 @@ namespace openutils
 		}
 	}
 #endif
-
-	/**
-	 * @brief Searches and returns the first occurrence of `needle` in `haystack`.
-	 * @brief Time comeplexity of this function is O(m + n), where m is the length of `haystack` and n is the length of `needle`.
-	 * @brief This function uses the Knuth–Morris–Pratt or KMP algorithm, for more information visit: https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm#
-	 * @param haystack string to search for the substring
-	 * @param haystack_len length of `haystack`
-	 * @param needle substring to search for within `haystack`
-	 * @return If `needle` is found within `haystack`, it returns a pointer to the first occurrence of `needle` in `haystack`, else if `needle` is not found, it returns nullptr
-	 */
-	static inline char *fast_strstr(const char *haystack, std::size_t haystack_len, const char *needle) noexcept(true)
-	{
-		if (!haystack || !needle || haystack_len == 0)
-			return nullptr;
-		std::size_t needle_len = std::strlen(needle);
-		if (needle_len == 0)
-			return (char *)haystack;
-		int *prefix = static_cast<int *>(std::malloc(needle_len * sizeof(int)));
-		if (!prefix)
-		{
-			std::fprintf(stderr, "err: can't allocate heap memory.\n");
-			std::exit(EXIT_FAILURE);
-		}
-		prefix[0] = 0;
-		int k = 0;
-		for (std::size_t q = 1; q < needle_len; ++q)
-		{
-			while (k > 0 && needle[k] != needle[q])
-				k = prefix[k - 1];
-			if (needle[k] == needle[q])
-				k += 1;
-			prefix[q] = k;
-		}
-		int q = 0;
-		for (std::size_t i = 0; i < haystack_len; ++i)
-		{
-			while (q > 0 && needle[q] != haystack[i])
-				q = prefix[q - 1];
-			if (needle[q] == haystack[i])
-				q += 1;
-			if (q == (int)needle_len)
-			{
-				std::free(prefix);
-				return (char *)(haystack + i - needle_len + 1);
-			}
-		}
-		std::free(prefix);
-		return nullptr;
-	}
-
-	/**
-	 * @brief Initialize zero of every character between `from_where` and `till_move` in `ptr`, this function is generally used after `std::realloc()` to initialize the pointer with zeroes.
-	 * @param ptr string to initialize zeroes
-	 * @param from_where starting index
-	 * @param till_where ending index
-	 */
-	static inline void init_n_zeroes(char *ptr, std::size_t from_where, std::size_t till_where)
-	{
-		if (ptr)
-			for (std::size_t i = from_where; i < till_where; i++)
-				ptr[i] = 0;
-	}
 
 	enum lexer_token
 	{
@@ -200,6 +84,57 @@ namespace openutils
 	private:
 		char *src;
 		std::size_t len;
+
+		/**
+		 * Linear time complexity = O(n), where n is the length of `src`. NOTE: `dest` must have enough space for `src`.
+		 * @param dest string where `src` is going to append
+		 * @param src string to be appended
+		 * @param size where to append `src`
+		 */
+		static inline void fast_strncat(char *dest, const char *src, std::size_t &size);
+
+		/**
+		 * @brief Searches and returns the first occurrence of `needle` in `haystack`.
+		 * @brief Time comeplexity of this function is O(m + n), where m is the length of `haystack` and n is the length of `needle`.
+		 * @brief This function uses the Knuth–Morris–Pratt or KMP algorithm, for more information visit: https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm#
+		 * @param haystack string to search for the substring
+		 * @param haystack_len length of `haystack`
+		 * @param needle substring to search for within `haystack`
+		 * @return If `needle` is found within `haystack`, it returns a pointer to the first occurrence of `needle` in `haystack`, else if `needle` is not found, it returns nullptr
+		 */
+		static inline char *fast_strstr(const char *haystack, std::size_t haystack_len, const char *needle) noexcept(true);
+
+		/**
+		 * @brief Initialize zero of every character between `from_where` and `till_move` in `ptr`, this function is generally used after `std::realloc()` to initialize the pointer with zeroes.
+		 * @param ptr string to initialize zeroes
+		 * @param from_where starting index
+		 * @param till_where ending index
+		 */
+		static inline void init_n_zeroes(char *ptr, std::size_t from_where, std::size_t till_where);
+
+		/**
+		 * @brief Compares both string.
+		 * @param str1 string to compare
+		 * @param str2 string to compare
+		 * @return 0 if both strings were equal
+		 */
+		static inline int sstr_strcmp(const char *str1, const char *str2);
+
+		/**
+		 * @brief Compares both string till `n`.
+		 * @param str1 string to compare
+		 * @param str2 string to compare
+		 * @param n compare both strings till `n`
+		 * @return 0 if both strings were equal till `n`
+		 */
+		static inline int sstr_strncmp(const char *str1, const char *str2, std::size_t n);
+
+		/**
+		 * @brief Returns the length of `str`. NOTE: make sure `str` is null-terminated
+		 * @param str string
+		 * @return length of `str`
+		 */
+		static inline std::size_t sstr_strlen(const char *str);
 
 	public:
 		/**
@@ -516,7 +451,7 @@ namespace openutils
 		std::size_t last_index_of(char ch) const;
 
 		/**
-		 * @brief Returns the length of `this->src` without using `std::strlen`, it is done by keeping track in every function
+		 * @brief Returns the length of `this->src` without using `this->strlen()`, it is done by keeping track in every function
 		 * @return const std::size_t& returns the length of `this->src`
 		 */
 		const std::size_t &length() const;
@@ -1597,6 +1532,97 @@ namespace openutils
 
 	// definitions
 
+	inline void sstring::fast_strncat(char *dest, const char *src, std::size_t &size)
+	{
+		if (dest && src)
+			while ((dest[size] = *src++))
+				size += 1;
+	}
+
+	inline char *sstring::fast_strstr(const char *haystack, std::size_t haystack_len, const char *needle) noexcept(true)
+	{
+		if (!haystack || !needle || haystack_len == 0)
+			return nullptr;
+		std::size_t needle_len = sstring::sstr_strlen(needle);
+		if (needle_len == 0)
+			return (char *)haystack;
+		int *prefix = static_cast<int *>(std::malloc(needle_len * sizeof(int)));
+		if (!prefix)
+		{
+			std::fprintf(stderr, "err: can't allocate heap memory.\n");
+			std::exit(EXIT_FAILURE);
+		}
+		prefix[0] = 0;
+		int k = 0;
+		for (std::size_t q = 1; q < needle_len; ++q)
+		{
+			while (k > 0 && needle[k] != needle[q])
+				k = prefix[k - 1];
+			if (needle[k] == needle[q])
+				k += 1;
+			prefix[q] = k;
+		}
+		int q = 0;
+		for (std::size_t i = 0; i < haystack_len; ++i)
+		{
+			while (q > 0 && needle[q] != haystack[i])
+				q = prefix[q - 1];
+			if (needle[q] == haystack[i])
+				q += 1;
+			if (q == (int)needle_len)
+			{
+				std::free(prefix);
+				return (char *)(haystack + i - needle_len + 1);
+			}
+		}
+		std::free(prefix);
+		return nullptr;
+	}
+
+	inline void sstring::init_n_zeroes(char *ptr, std::size_t from_where, std::size_t till_where)
+	{
+		if (ptr)
+			for (std::size_t i = from_where; i < till_where; i++)
+				ptr[i] = 0;
+	}
+
+	inline int sstring::sstr_strcmp(const char *str1, const char *str2)
+	{
+		int i = 0;
+		while (str1[i] != 0 && str2[i] != 0)
+		{
+			if (str1[i] != str2[i])
+				return (str1[i] < str2[i]) ? -1 : 1;
+			i++;
+		}
+		return (str1[i] == 0 && str2[i] == 0) ? 0 : (str1[i] < str2[i]) ? -1 : 1;
+	}
+
+	inline int sstring::sstr_strncmp(const char *str1, const char *str2, std::size_t n)
+	{
+		int i = 0;
+		while (i < n && str1[i] != 0 && str2[i] != 0)
+		{
+			if (str1[i] != str2[i])
+				return (str1[i] < str2[i]) ? -1 : 1;
+			i++;
+		}
+		if (i == n)
+			return 0;
+		return (str1[i] < str2[i]) ? -1 : 1;
+	}
+
+	inline std::size_t sstring::sstr_strlen(const char *str)
+	{
+		std::size_t str_L = 0;
+		while (*str != 0)
+		{
+			str_L++;
+			str++;
+		}
+		return str_L;
+	}
+
 	sstring::sstring()
 	{
 		this->len = 0;
@@ -1624,10 +1650,10 @@ namespace openutils
 		if (str)
 		{
 			this->len = 0;
-			std::size_t str_len = std::strlen(str);
+			std::size_t str_len = this->sstr_strlen(str);
 			this->src = static_cast<char *>(std::calloc(str_len + 1, sizeof(char)));
 			exit_heap_fail(this->src);
-			fast_strncat(this->src, str, this->len);
+			this->fast_strncat(this->src, str, this->len);
 		}
 		else
 		{
@@ -1659,11 +1685,11 @@ namespace openutils
 		if (n != 0 && str)
 		{
 			this->len = 0;
-			std::size_t str_len = std::strlen(str) * n;
+			std::size_t str_len = this->sstr_strlen(str) * n;
 			this->src = static_cast<char *>(std::calloc(str_len + 1, sizeof(char)));
 			exit_heap_fail(this->src);
 			for (std::size_t i = 0; i < n; i++)
-				fast_strncat(this->src, str, this->len);
+				this->fast_strncat(this->src, str, this->len);
 		}
 		else
 		{
@@ -1679,7 +1705,7 @@ namespace openutils
 			this->len = 0;
 			this->src = static_cast<char *>(std::calloc(other.len + 1, sizeof(char)));
 			exit_heap_fail(this->src);
-			fast_strncat(this->src, other.src, this->len);
+			this->fast_strncat(this->src, other.src, this->len);
 		}
 		else
 		{
@@ -1736,10 +1762,10 @@ namespace openutils
 			if (this->src)
 				std::free(this->src);
 			this->len = 0;
-			std::size_t str_len = std::strlen(str);
+			std::size_t str_len = this->sstr_strlen(str);
 			this->src = static_cast<char *>(std::calloc(str_len + 1, sizeof(char)));
 			exit_heap_fail(this->src);
-			fast_strncat(this->src, str, this->len);
+			this->fast_strncat(this->src, str, this->len);
 		}
 		return *this;
 	}
@@ -1764,13 +1790,13 @@ namespace openutils
 
 	sstring &sstring::set_upto(const char *str, std::size_t N)
 	{
-		if (str && (N <= std::strlen(str)))
+		if (str && (N <= this->sstr_strlen(str)))
 		{
 			if (this->src)
 				std::free(this->src);
 			this->src = static_cast<char *>(std::calloc(N + 1, sizeof(char)));
 			exit_heap_fail(this->src);
-			std::strncpy(this->src, str, N);
+			std::memmove(this->src, str, N);
 			this->len = N;
 		}
 		return *this;
@@ -1805,12 +1831,12 @@ namespace openutils
 		std::size_t vec_str_len = 0, bw_len = 0;
 
 		if (between)
-			bw_len = std::strlen(between);
+			bw_len = this->sstr_strlen(between);
 
 		for (std::size_t i = 0; i < vec.length(); i++)
 		{
 			if (vec[i])
-				vec_str_len += std::strlen(vec[i]);
+				vec_str_len += this->sstr_strlen(vec[i]);
 		}
 
 		if (between)
@@ -1823,9 +1849,9 @@ namespace openutils
 		{
 			if (vec[i])
 			{
-				fast_strncat(this->src, vec[i], this->len);
+				this->fast_strncat(this->src, vec[i], this->len);
 				if (between)
-					fast_strncat(this->src, between, this->len);
+					this->fast_strncat(this->src, between, this->len);
 			}
 		}
 		return *this;
@@ -1840,7 +1866,7 @@ namespace openutils
 		std::size_t vec_str_len = 0, bw_len = 0;
 
 		if (between)
-			bw_len = std::strlen(between);
+			bw_len = this->sstr_strlen(between);
 
 		for (std::size_t i = 0; i < vec.length(); i++)
 		{
@@ -1858,9 +1884,9 @@ namespace openutils
 		{
 			if (vec[i].src)
 			{
-				fast_strncat(this->src, vec[i].src, this->len);
+				this->fast_strncat(this->src, vec[i].src, this->len);
 				if (between)
-					fast_strncat(this->src, between, this->len);
+					this->fast_strncat(this->src, between, this->len);
 			}
 		}
 		return *this;
@@ -1885,7 +1911,7 @@ namespace openutils
 	{
 		if (str)
 		{
-			std::size_t str_len = std::strlen(str);
+			std::size_t str_len = this->sstr_strlen(str);
 			if (this->src)
 			{
 				this->src = static_cast<char *>(std::realloc(this->src, this->len + str_len + 1));
@@ -1897,7 +1923,7 @@ namespace openutils
 				exit_heap_fail(this->src);
 				this->len = 0;
 			}
-			fast_strncat(this->src, str, this->len);
+			this->fast_strncat(this->src, str, this->len);
 		}
 		return *this;
 	}
@@ -1915,7 +1941,7 @@ namespace openutils
 			{
 				this->src = static_cast<char *>(std::realloc(this->src, this->len + 2));
 				exit_heap_fail(this->src);
-				init_n_zeroes(this->src, this->len, this->len + 2);
+				this->init_n_zeroes(this->src, this->len, this->len + 2);
 			}
 			else
 			{
@@ -1930,13 +1956,13 @@ namespace openutils
 
 	sstring &sstring::append_upto(const char *str, std::size_t N)
 	{
-		if (str && (N <= std::strlen(str)))
+		if (str && (N <= this->sstr_strlen(str)))
 		{
 			if (this->src)
 			{
 				this->src = static_cast<char *>(std::realloc(this->src, this->len + N + 1));
 				exit_heap_fail(this->src);
-				std::strncpy(this->src + this->len, str, N);
+				std::memmove(this->src + this->len, str, N);
 				this->len += N;
 			}
 			else
@@ -1944,7 +1970,7 @@ namespace openutils
 				this->src = static_cast<char *>(std::calloc(N + 1, sizeof(char)));
 				exit_heap_fail(this->src);
 				this->len = 0;
-				std::strncpy(this->src, str, N);
+				std::memmove(this->src, str, N);
 				this->len = N;
 			}
 		}
@@ -1960,14 +1986,14 @@ namespace openutils
 	{
 		if (str)
 		{
-			std::size_t str_len = std::strlen(str);
+			std::size_t str_len = this->sstr_strlen(str);
 			if (this->src)
 			{
 				char *buff = static_cast<char *>(std::calloc(str_len + this->len + 1, sizeof(char)));
 				exit_heap_fail(buff);
 				this->len = 0;
-				fast_strncat(buff, str, this->len);
-				fast_strncat(buff, this->src, this->len);
+				this->fast_strncat(buff, str, this->len);
+				this->fast_strncat(buff, this->src, this->len);
 
 				std::free(this->src);
 				this->src = buff;
@@ -1977,7 +2003,7 @@ namespace openutils
 				this->src = static_cast<char *>(std::calloc(str_len + 1, sizeof(char)));
 				exit_heap_fail(this->src);
 				this->len = 0;
-				fast_strncat(this->src, str, this->len);
+				this->fast_strncat(this->src, str, this->len);
 			}
 		}
 		return *this;
@@ -1997,8 +2023,8 @@ namespace openutils
 				char *buff = static_cast<char *>(std::calloc(this->len + 2, sizeof(char)));
 				exit_heap_fail(buff);
 				this->len = 1;
-				std::strncpy(buff, &c, 1);
-				fast_strncat(buff, this->src, this->len);
+				std::memmove(buff, &c, 1);
+				this->fast_strncat(buff, this->src, this->len);
 
 				std::free(this->src);
 				this->src = buff;
@@ -2007,7 +2033,7 @@ namespace openutils
 			{
 				this->src = static_cast<char *>(std::calloc(2, sizeof(char)));
 				exit_heap_fail(this->src);
-				std::strncpy(this->src, &c, 1);
+				std::memmove(this->src, &c, 1);
 				this->len = 1;
 			}
 		}
@@ -2016,15 +2042,15 @@ namespace openutils
 
 	sstring &sstring::append_start_upto(const char *str, std::size_t N)
 	{
-		if (str && (N <= std::strlen(str)))
+		if (str && (N <= this->sstr_strlen(str)))
 		{
 			if (this->src)
 			{
 				char *buff = static_cast<char *>(std::calloc(N + this->len + 1, sizeof(char)));
 				exit_heap_fail(buff);
 				this->len = N;
-				std::strncpy(buff, str, N);
-				fast_strncat(buff, this->src, this->len);
+				std::memmove(buff, str, N);
+				this->fast_strncat(buff, this->src, this->len);
 
 				std::free(this->src);
 				this->src = buff;
@@ -2033,7 +2059,7 @@ namespace openutils
 			{
 				this->src = static_cast<char *>(std::calloc(N + 1, sizeof(char)));
 				exit_heap_fail(this->src);
-				std::strncpy(this->src, str, N);
+				std::memmove(this->src, str, N);
 				this->len = N;
 			}
 		}
@@ -2052,12 +2078,12 @@ namespace openutils
 			std::size_t vec_str_len = 0, bw_len = 0;
 
 			if (between)
-				bw_len = std::strlen(between);
+				bw_len = this->sstr_strlen(between);
 
 			for (std::size_t i = 0; i < vec.length(); i++)
 			{
 				if (vec[i])
-					vec_str_len += std::strlen(vec[i]);
+					vec_str_len += this->sstr_strlen(vec[i]);
 			}
 
 			if (between)
@@ -2070,9 +2096,9 @@ namespace openutils
 			{
 				if (vec[i])
 				{
-					fast_strncat(this->src, vec[i], this->len);
+					this->fast_strncat(this->src, vec[i], this->len);
 					if (between)
-						fast_strncat(this->src, between, this->len);
+						this->fast_strncat(this->src, between, this->len);
 				}
 			}
 		}
@@ -2090,7 +2116,7 @@ namespace openutils
 			std::size_t vec_str_len = 0, bw_len = 0;
 
 			if (between)
-				bw_len = std::strlen(between);
+				bw_len = this->sstr_strlen(between);
 
 			for (std::size_t i = 0; i < vec.length(); i++)
 			{
@@ -2108,9 +2134,9 @@ namespace openutils
 			{
 				if (vec[i].src)
 				{
-					fast_strncat(this->src, vec[i].src, this->len);
+					this->fast_strncat(this->src, vec[i].src, this->len);
 					if (between)
-						fast_strncat(this->src, between, this->len);
+						this->fast_strncat(this->src, between, this->len);
 				}
 			}
 		}
@@ -2128,12 +2154,12 @@ namespace openutils
 			std::size_t vec_str_len = 0, bw_len = 0;
 
 			if (between)
-				bw_len = std::strlen(between);
+				bw_len = this->sstr_strlen(between);
 
 			for (std::size_t i = 0; i < vec.length(); i++)
 			{
 				if (vec[i])
-					vec_str_len += std::strlen(vec[i]);
+					vec_str_len += this->sstr_strlen(vec[i]);
 			}
 
 			if (between)
@@ -2142,13 +2168,13 @@ namespace openutils
 			char *buff = static_cast<char *>(std::calloc(this->len + vec_str_len + 1, sizeof(char)));
 			exit_heap_fail(buff);
 			std::size_t track = 0;
-			fast_strncat(buff, this->src, track);
+			this->fast_strncat(buff, this->src, track);
 
 			for (std::size_t i = 0; i < vec.length(); i++)
 			{
-				fast_strncat(buff, vec[i], track);
+				this->fast_strncat(buff, vec[i], track);
 				if (between)
-					fast_strncat(buff, between, track);
+					this->fast_strncat(buff, between, track);
 			}
 
 			std::free(this->src);
@@ -2169,7 +2195,7 @@ namespace openutils
 			std::size_t vec_str_len = 0, bw_len = 0;
 
 			if (between)
-				bw_len = std::strlen(between);
+				bw_len = this->sstr_strlen(between);
 
 			for (std::size_t i = 0; i < vec.length(); i++)
 			{
@@ -2183,13 +2209,13 @@ namespace openutils
 			char *buff = static_cast<char *>(std::calloc(this->len + vec_str_len + 1, sizeof(char)));
 			exit_heap_fail(buff);
 			std::size_t track = 0;
-			fast_strncat(buff, this->src, track);
+			this->fast_strncat(buff, this->src, track);
 
 			for (std::size_t i = 0; i < vec.length(); i++)
 			{
-				fast_strncat(buff, vec[i].src, track);
+				this->fast_strncat(buff, vec[i].src, track);
 				if (between)
-					fast_strncat(buff, between, track);
+					this->fast_strncat(buff, between, track);
 			}
 
 			std::free(this->src);
@@ -2232,7 +2258,7 @@ namespace openutils
 				indexes.add(occur);
 			}
 
-			std::size_t old_len = std::strlen(old), new_len = std::strlen(new_);
+			std::size_t old_len = this->sstr_strlen(old), new_len = this->sstr_strlen(new_);
 
 			// now we have got every points (indexes) where `old` is present
 
@@ -2248,9 +2274,9 @@ namespace openutils
 					buff[track] = this->src[k];
 				}
 				k += old_len;
-				fast_strncat(buff, new_, track);
+				this->fast_strncat(buff, new_, track);
 			}
-			fast_strncat(buff, this->src + indexes[indexes.length() - 1] + old_len, track);
+			this->fast_strncat(buff, this->src + indexes[indexes.length() - 1] + old_len, track);
 
 			std::free(this->src);
 			this->src = buff;
@@ -2338,7 +2364,7 @@ namespace openutils
 	bool sstring::compare(const char *T1) const
 	{
 		if (T1 && this->src)
-			if (std::strcmp(this->src, T1) == 0)
+			if (this->sstr_strcmp(this->src, T1) == 0)
 				return true;
 		return false;
 	}
@@ -2351,7 +2377,7 @@ namespace openutils
 	bool sstring::compare_upto(const char *T1, std::size_t N) const
 	{
 		if (T1 && this->src)
-			if (std::strncmp(this->src, T1, N) == 0)
+			if (this->sstr_strncmp(this->src, T1, N) == 0)
 				return true;
 		return false;
 	}
@@ -2388,7 +2414,7 @@ namespace openutils
 	int sstring::lexicographical_comparison(const char *str) const
 	{
 		if (!this->src)
-			return this->len - std::strlen(str);
+			return this->len - this->sstr_strlen(str);
 		std::size_t str_len = 0;
 		for (std::size_t i = 0; this->src[i] && str[str_len]; i++, str_len++)
 		{
@@ -2567,9 +2593,9 @@ namespace openutils
 
 			for (std::size_t i = 0; i < this->len; ++i)
 			{
-				fast_strncat(buff, binary_data[(std::size_t)this->src[i]], size);
+				this->fast_strncat(buff, binary_data[(std::size_t)this->src[i]], size);
 				if (i < this->len - 1)
-					fast_strncat(buff, " ", size);
+					this->fast_strncat(buff, " ", size);
 			}
 			std::free(this->src);
 			this->src = buff;
@@ -2592,14 +2618,14 @@ namespace openutils
 				if (this->src[i] == ' ')
 				{
 					store[0] = std::strtol(bin, nullptr, 2);
-					fast_strncat(buff, store, z);
+					this->fast_strncat(buff, store, z);
 					j = 0;
 				}
 				if (i == this->len - 1)
 				{
 					bin[j] = this->src[i]; // append last character
 					store[0] = std::strtol(bin, nullptr, 2);
-					fast_strncat(buff, store, z);
+					this->fast_strncat(buff, store, z);
 				}
 				bin[j] = this->src[i];
 			}
@@ -2695,7 +2721,7 @@ namespace openutils
 	bool sstring::contains(const char *str) const
 	{
 		if (str && this->src)
-			if (fast_strstr(this->src, this->len, str) != nullptr)
+			if (this->fast_strstr(this->src, this->len, str) != nullptr)
 				return true;
 		return false;
 	}
@@ -2778,13 +2804,13 @@ namespace openutils
 				{
 					hex[j] = this->src[i];
 					store[0] = std::strtol(hex, nullptr, 16);
-					fast_strncat(buff, store, z);
+					this->fast_strncat(buff, store, z);
 				}
 				if (j == 2)
 				{
 					j = 0;
 					store[0] = std::strtol(hex, nullptr, 16);
-					fast_strncat(buff, store, z);
+					this->fast_strncat(buff, store, z);
 				}
 				hex[j] = this->src[i];
 				j++;
@@ -2801,9 +2827,9 @@ namespace openutils
 	{
 		if (sub && this->src)
 		{
-			char *buff = fast_strstr(this->src, this->len, sub);
+			char *buff = this->fast_strstr(this->src, this->len, sub);
 			if (buff)
-				return this->len - std::strlen(buff);
+				return this->len - this->sstr_strlen(buff);
 		}
 		return this->nerr();
 	}
@@ -2817,9 +2843,9 @@ namespace openutils
 	{
 		if (sub && this->src)
 		{
-			char *buff = fast_strstr(this->src + last_index, this->len - last_index, sub);
+			char *buff = this->fast_strstr(this->src + last_index, this->len - last_index, sub);
 			if (buff)
-				return this->len - std::strlen(buff);
+				return this->len - this->sstr_strlen(buff);
 		}
 		return this->nerr();
 	}
@@ -2865,7 +2891,7 @@ namespace openutils
 		char *temp = static_cast<char *>(std::calloc(len + 1, sizeof(char)));
 		exit_heap_fail(temp);
 
-		std::strncpy(temp, this->src, this->len);
+		std::memmove(temp, this->src, this->len);
 		char *tok = std::strtok(temp, "\n");
 		while (tok)
 		{
@@ -2914,7 +2940,7 @@ namespace openutils
 				indexes.add(occur);
 			}
 
-			std::size_t sub_len = std::strlen(sub);
+			std::size_t sub_len = this->sstr_strlen(sub);
 			// now we have all indexes where sub has occurred
 
 			std::size_t buff_len = this->len - (sub_len * indexes.length());
@@ -2930,7 +2956,7 @@ namespace openutils
 				}
 				k += sub_len;
 			}
-			fast_strncat(buff, this->src + indexes[indexes.length() - 1] + sub_len, track);
+			this->fast_strncat(buff, this->src + indexes[indexes.length() - 1] + sub_len, track);
 
 			std::free(this->src);
 			this->src = buff;
@@ -3062,7 +3088,7 @@ namespace openutils
 	{
 		if (str && this->src)
 		{
-			if (std::strlen(src) == this->len)
+			if (this->sstr_strlen(src) == this->len)
 			{
 				std::size_t cnt = 0;
 				for (std::size_t i = 0; this->src[i] != 0; i++)
@@ -3087,7 +3113,7 @@ namespace openutils
 	{
 		if (str && this->src)
 		{
-			std::size_t len_str = std::strlen(str), x, y, last, old;
+			std::size_t len_str = this->sstr_strlen(str), x, y, last, old;
 			std::size_t *cols = static_cast<std::size_t *>(std::calloc(this->len + 1, sizeof(std::size_t)));
 			exit_heap_fail(cols);
 			for (y = 1; y <= this->len; y++)
@@ -3118,7 +3144,7 @@ namespace openutils
 	{
 		if (str && this->src)
 		{
-			std::size_t len_str = std::strlen(str);
+			std::size_t len_str = this->sstr_strlen(str);
 			std::size_t max = ((this->len > len_str) ? this->len : len_str);
 			std::size_t edit_dis = this->edit_distance(str);
 			return (max - edit_dis) * 100.0 / max;
@@ -3135,9 +3161,9 @@ namespace openutils
 	{
 		if (what && this->src)
 		{
-			std::size_t cnt = 0, what_len = std::strlen(what);
+			std::size_t cnt = 0, what_len = this->sstr_strlen(what);
 			const char *sub = this->src;
-			while ((sub = fast_strstr(sub, std::strlen(sub), what)))
+			while ((sub = this->fast_strstr(sub, this->sstr_strlen(sub), what)))
 			{
 				cnt++;
 				sub += what_len;
@@ -3272,7 +3298,7 @@ namespace openutils
 
 			char *temp = static_cast<char *>(std::calloc(this->len + 1, sizeof(char)));
 			exit_heap_fail(temp);
-			std::strncpy(temp, this->src, this->len);
+			std::memmove(temp, this->src, this->len);
 			char *tok = std::strtok(temp, str);
 			vector_t<sstring> x;
 			while (tok)
@@ -3340,12 +3366,12 @@ namespace openutils
 				this->len = 0;
 				this->src = static_cast<char *>(std::calloc(bin_len + 1, sizeof(char)));
 				exit_heap_fail(this->src);
-				fast_strncat(this->src, data, this->len);
+				this->fast_strncat(this->src, data, this->len);
 				return *this;
 			}
 			this->src = static_cast<char *>(std::realloc(this->src, this->len + bin_len + 1));
 			exit_heap_fail(this->src);
-			fast_strncat(this->src, data, this->len);
+			this->fast_strncat(this->src, data, this->len);
 		}
 		return *this;
 	}
@@ -3364,7 +3390,7 @@ namespace openutils
 	{
 		if (key && this->src)
 		{
-			std::size_t val = std::hash<const char *>()(key) % 128;
+			std::size_t val = sstring(key).hash() % 128;
 			bool add = true;
 
 			char *buff = static_cast<char *>(std::calloc(this->len + 1, sizeof(char)));
@@ -3404,7 +3430,7 @@ namespace openutils
 	{
 		if (key && this->src)
 		{
-			std::size_t val = std::hash<const char *>()(key) % 128;
+			std::size_t val = sstring(key).hash() % 128;
 			bool add_invr = true;
 
 			char *buff = static_cast<char *>(std::calloc(this->len + 1, sizeof(char)));
@@ -3518,7 +3544,7 @@ namespace openutils
 		char *buff = static_cast<char *>(std::calloc(sub_len + 1, sizeof(char)));
 		exit_heap_fail(buff);
 
-		strncpy(buff, this->src + index, sub_len);
+		std::memmove(buff, this->src + index, sub_len);
 
 		sstring ret;
 		ret.src = buff;
@@ -3564,18 +3590,18 @@ namespace openutils
 		for (std::size_t i = 0; i < this->len; i++)
 		{
 			if (std::isdigit((unsigned char)this->src[i]))
-				fast_strncat(buff, morse_code[(std::size_t)this->src[i] - 48].code, track);
+				this->fast_strncat(buff, morse_code[(std::size_t)this->src[i] - 48].code, track);
 			else if (this->src[i] == ' ')
-				fast_strncat(buff, morse_code[36].code, track);
+				this->fast_strncat(buff, morse_code[36].code, track);
 			else
 			{
 				if (this->src[i] >= 65 && this->src[i] <= 90)
-					fast_strncat(buff, morse_code[(std::size_t)this->src[i] - 55].code, track);
+					this->fast_strncat(buff, morse_code[(std::size_t)this->src[i] - 55].code, track);
 				else
-					fast_strncat(buff, morse_code[(std::size_t)this->src[i] - 87].code, track);
+					this->fast_strncat(buff, morse_code[(std::size_t)this->src[i] - 87].code, track);
 			}
 			if (i < this->len - 1)
-				fast_strncat(buff, " ", track);
+				this->fast_strncat(buff, " ", track);
 		}
 
 		std::free(this->src);
@@ -3612,19 +3638,19 @@ namespace openutils
 			{
 				x = 0;
 				temp[k] = this->src[i];
-				while ((std::strcmp(temp, morse_code[x].code)) != 0)
+				while ((this->sstr_strcmp(temp, morse_code[x].code)) != 0)
 					x++;
 				arr[0] = morse_code[x].character;
-				fast_strncat(buff, arr, track);
+				this->fast_strncat(buff, arr, track);
 			}
 			if (this->src[i] == ' ')
 			{
 				i++, x = 0;
-				while ((std::strcmp(temp, morse_code[x].code)) != 0)
+				while ((this->sstr_strcmp(temp, morse_code[x].code)) != 0)
 					x++;
 				arr[0] = morse_code[x].character;
-				fast_strncat(buff, arr, track);
-				memset(temp, 0, 8);
+				this->fast_strncat(buff, arr, track);
+				std::memset(temp, 0, 9);
 				k = 0;
 			}
 			temp[k] = this->src[i];
@@ -3713,7 +3739,7 @@ namespace openutils
 	{
 		if (str && this->src && index <= this->len)
 		{
-			std::size_t str_len = std::strlen(str);
+			std::size_t str_len = this->sstr_strlen(str);
 			this->src = static_cast<char *>(std::realloc(this->src, this->len + str_len + 1));
 			exit_heap_fail(this->src);
 
@@ -3724,7 +3750,7 @@ namespace openutils
 				if (i == 0)
 					break;
 			}
-			std::memcpy(this->src + index, str, str_len);
+			std::memmove(this->src + index, str, str_len);
 			this->len += str_len;
 		}
 		return *this;
@@ -3739,7 +3765,7 @@ namespace openutils
 	{
 		if (str && this->src)
 		{
-			if (std::strlen(str) > this->len)
+			if (this->sstr_strlen(str) > this->len)
 				return false;
 			for (std::size_t i = 0; str[i] != 0 && this->src[i] != 0; i++)
 				if (this->src[i] != str[i])
@@ -3758,7 +3784,7 @@ namespace openutils
 	{
 		if (str && this->src)
 		{
-			std::size_t str_len = std::strlen(str);
+			std::size_t str_len = this->sstr_strlen(str);
 			if (str_len > this->len)
 				return false;
 			for (std::size_t i = this->len - str_len, z = 0; str[z] != 0 && this->src[i] != 0; i++, z++)
@@ -3843,7 +3869,7 @@ namespace openutils
 			exit_heap_fail(this->src);
 
 			for (std::size_t i = 0; i < toks.length(); i++)
-				fast_strncat(this->src, toks[i].first().src, this->len);
+				this->fast_strncat(this->src, toks[i].first().src, this->len);
 		}
 		return *this;
 	}
@@ -3865,7 +3891,7 @@ namespace openutils
 			std::free(this->src);
 
 		this->src = buff;
-		this->len = std::strlen(buff);
+		this->len = this->sstr_strlen(buff);
 		return *this;
 	}
 
@@ -3885,7 +3911,7 @@ namespace openutils
 		if (!this->src)
 		{
 			this->src = buff;
-			this->len = std::strlen(buff);
+			this->len = this->sstr_strlen(buff);
 		}
 		else
 			this->append(buff);
@@ -3900,7 +3926,7 @@ namespace openutils
 			{
 				this->src = static_cast<char *>(std::realloc(this->src, new_len));
 				exit_heap_fail(this->src);
-				init_n_zeroes(this->src, this->len, new_len);
+				this->init_n_zeroes(this->src, this->len, new_len);
 			}
 			else
 			{
