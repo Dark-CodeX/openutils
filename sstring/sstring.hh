@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.hh" under "sstring" directory
- * sstring: version 2.1.5
+ * sstring: version 2.5.0
  * BSD 3-Clause License
  *
  * Copyright (c) 2023, Tushar Chaurasia
@@ -48,12 +48,14 @@
 #include <cstring>
 #include <functional>
 #include <numeric>
+#include <cwchar>
+#include <cuchar>
 #include <openutils/heap-pair/heap-pair.hh>
 #include <openutils/vector/vector.hh>
 #include <openutils/map/map.hh>
 #include <ostream>
 
-#define sstring_version "2.1.5"
+#define sstring_version "2.5.0"
 
 namespace openutils
 {
@@ -79,10 +81,15 @@ namespace openutils
 		NULL_END
 	} lexer_token;
 
-	class sstring
+	/**
+	 * @brief sstring_t_view for using same class for every character data type. NOTE: Every data type ends at 0 or NULL
+	 * @tparam T char, signed char, unsigned char, wchar_t, char8_t, char16_t and char32_t
+	 */
+	template <typename T>
+	class sstring_t_view
 	{
 	private:
-		char *src;
+		T *src;
 		std::size_t len;
 
 		/**
@@ -91,7 +98,7 @@ namespace openutils
 		 * @param src string to be appended
 		 * @param size where to append `src`
 		 */
-		static inline void fast_strncat(char *dest, const char *src, std::size_t &size);
+		static inline void fast_strncat(T *dest, const T *src, std::size_t &size);
 
 		/**
 		 * @brief Searches and returns the first occurrence of `needle` in `haystack`.
@@ -102,7 +109,7 @@ namespace openutils
 		 * @param needle substring to search for within `haystack`
 		 * @return If `needle` is found within `haystack`, it returns a pointer to the first occurrence of `needle` in `haystack`, else if `needle` is not found, it returns nullptr
 		 */
-		static inline char *fast_strstr(const char *haystack, std::size_t haystack_len, const char *needle) noexcept(true);
+		static inline T *fast_strstr(const T *haystack, std::size_t haystack_len, const T *needle) noexcept(true);
 
 		/**
 		 * @brief Initialize zero of every character between `from_where` and `till_move` in `ptr`, this function is generally used after `std::realloc()` to initialize the pointer with zeroes.
@@ -110,7 +117,7 @@ namespace openutils
 		 * @param from_where starting index
 		 * @param till_where ending index
 		 */
-		static inline void init_n_zeroes(char *ptr, std::size_t from_where, std::size_t till_where);
+		static inline void init_n_zeroes(T *ptr, std::size_t from_where, std::size_t till_where);
 
 		/**
 		 * @brief Compares both string.
@@ -118,7 +125,7 @@ namespace openutils
 		 * @param str2 string to compare
 		 * @return 0 if both strings were equal
 		 */
-		static inline int sstr_strcmp(const char *str1, const char *str2);
+		static inline int sstr_strcmp(const T *str1, const T *str2);
 
 		/**
 		 * @brief Compares both string till `n`.
@@ -127,14 +134,14 @@ namespace openutils
 		 * @param n compare both strings till `n`
 		 * @return 0 if both strings were equal till `n`
 		 */
-		static inline int sstr_strncmp(const char *str1, const char *str2, std::size_t n);
+		static inline int sstr_strncmp(const T *str1, const T *str2, std::size_t n);
 
 		/**
 		 * @brief Returns the length of `str`. NOTE: make sure `str` is null-terminated
 		 * @param str string
 		 * @return length of `str`
 		 */
-		static inline std::size_t sstr_strlen(const char *str);
+		static inline std::size_t sstr_strlen(const T *str);
 
 		/**
 		 * @brief Divide `str` into tokens separated by characters in `delim`.
@@ -142,247 +149,247 @@ namespace openutils
 		 * @param delim separator
 		 * @return separated string
 		 */
-		static inline char *fast_strtok(char *str, const char *delim);
+		static inline T *fast_strtok(T *str, const T *delim);
 
 	public:
 		/**
-		 * @brief Default constructor of sstring, it assigns nullptr to src and 0 to len
+		 * @brief Default constructor of sstring_t_view, it assigns nullptr to src and 0 to len
 		 */
-		sstring();
+		sstring_t_view();
 
 		/**
 		 * @brief Assigns `c`.
-		 * @param c char to assign
+		 * @param c character to assign
 		 */
-		sstring(const char c);
+		sstring_t_view(const T c);
 
 		/**
 		 * @brief Assigns `str`
-		 * @param str C-style null-terminated string
+		 * @param str string
 		 */
-		sstring(const char *str);
+		sstring_t_view(const T *str);
 
 		/**
 		 * @brief Assigns `c`, `n` times
-		 * @param c char to assign
+		 * @param c character to assign
 		 * @param n number of times `c` has to be repeated
 		 */
-		sstring(const char c, std::size_t n);
+		sstring_t_view(const T c, std::size_t n);
 
 		/**
 		 * @brief Assigns `str`, `n` times
-		 * @param str C-style null-terminated string
+		 * @param str string
 		 * @param n number of times `str` has to be repeated
 		 */
-		sstring(const char *str, std::size_t n);
+		sstring_t_view(const T *str, std::size_t n);
 
 		/**
-		 * @brief Copy constructor for sstring
-		 * @param other another sstring object
+		 * @brief Copy constructor for sstring_t_view
+		 * @param other another sstring_t_view object
 		 */
-		sstring(const sstring &other);
+		sstring_t_view(const sstring_t_view<T> &other);
 
 		/**
-		 * @brief Move constructor for sstring
-		 * @param other another sstring object
+		 * @brief Move constructor for sstring_t_view
+		 * @param other another sstring_t_view object
 		 */
-		sstring(sstring &&other) noexcept;
+		sstring_t_view(sstring_t_view<T> &&other) noexcept;
 
 		/**
-		 * @brief Assigns list of `char`s
-		 * @param list list of `char`s
+		 * @brief Assigns list of characters
+		 * @param list list of characters
 		 */
-		sstring(std::initializer_list<char> list);
+		sstring_t_view(std::initializer_list<T> list);
 
 		/**
-		 * @brief Assigns list of `sstring`s
-		 * @param list list of `sstring`s
+		 * @brief Assigns list of `sstring_t_view`s
+		 * @param list list of `sstring_t_view`s
 		 */
-		sstring(std::initializer_list<sstring> list);
-
-		/**
-		 * @brief Assigns `str`
-		 * @param str C-style null-terminated string
-		 * @return sstring& reference to current object
-		 */
-		sstring &set(const char *str);
+		sstring_t_view(std::initializer_list<sstring_t_view> list);
 
 		/**
 		 * @brief Assigns `str`
-		 * @param str sstring to assign
-		 * @return sstring& reference to current object
+		 * @param str string
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &set(const sstring &str);
+		sstring_t_view<T> &set(const T *str);
+
+		/**
+		 * @brief Assigns `str`
+		 * @param str sstring_t_view to assign
+		 * @return sstring_t_view& reference to current object
+		 */
+		sstring_t_view<T> &set(const sstring_t_view<T> &str);
 
 		/**
 		 * @brief Assigns `c`
-		 * @param c char to assign
-		 * @return sstring& reference to current object
+		 * @param c character to assign
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &set_char(const char c);
+		sstring_t_view<T> &set_char(const T c);
 
 		/**
 		 * @brief Assigns `str` upto `N`
-		 * @param str C-style null-terminated string
-		 * @param N number of char that has to be assigned
-		 * @return sstring& reference to current object
+		 * @param str string
+		 * @param N number of character that has to be assigned
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &set_upto(const char *str, std::size_t N);
+		sstring_t_view<T> &set_upto(const T *str, std::size_t N);
 
 		/**
 		 * @brief Assigns `str` upto `N`
-		 * @param str sstring to assign
-		 * @param N number of char that has to be assigned
-		 * @return sstring& reference to current object
+		 * @param str sstring_t_view to assign
+		 * @param N number of character that has to be assigned
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &set_upto(const sstring &str, std::size_t N);
+		sstring_t_view<T> &set_upto(const sstring_t_view<T> &str, std::size_t N);
 
 		/**
 		 * @brief Assigns random characters
 		 * @param rnd_len length of random characters
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &set_random(const std::size_t rnd_len);
+		sstring_t_view<T> &set_random(const std::size_t rnd_len);
 
 		/**
 		 * @brief Assigns `vec` with `between` between each iteration
-		 * @param vec vector of `char *` that has to be assigned
+		 * @param vec vector of `T *` that has to be assigned
 		 * @param between if `nullptr` then, nothing is added between each iteration
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &set_array(const vector_t<char *> &vec, const char *between = nullptr);
+		sstring_t_view<T> &set_array(const vector_t<T *> &vec, const T *between = nullptr);
 
 		/**
 		 * @brief Assigns `vec` with `between` between each iteration
-		 * @param vec vector of sstring that has to be assigned
+		 * @param vec vector of sstring_t_view that has to be assigned
 		 * @param between if `nullptr` then, nothing is added between each iteration
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &set_array(const vector_t<sstring> &vec, const char *between = nullptr);
+		sstring_t_view<T> &set_array(const vector_t<sstring_t_view> &vec, const T *between = nullptr);
 
 		/**
 		 * @brief Returns `this->src` by reference, and it can be modified [UNSAFE]
-		 * @return char*& reference to `this->src`
+		 * @return reference to `this->src`
 		 */
-		char *&get();
+		T *&get();
 
 		/**
-		 * @brief Returns `this->src` as `const char *`
-		 * @return const char* of `this->src`
+		 * @brief Returns `this->src` as `const T *`
+		 * @return const T* of `this->src`
 		 */
-		const char *c_str() const;
+		const T *c_str() const;
 
 		/**
 		 * @brief Get the reference of the current object
-		 * @return sstring& `*this`
+		 * @return sstring_t_view& `*this`
 		 */
-		sstring &get_ref();
+		sstring_t_view<T> &get_ref();
 
 		/**
 		 * @brief Appends `str`
-		 * @param str C-style null-terminated string
-		 * @return sstring& reference to current object
+		 * @param str string
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &append(const char *str);
+		sstring_t_view<T> &append(const T *str);
 
 		/**
 		 * @brief Appends `str`
-		 * @param str sstring to append
-		 * @return sstring& reference to current object
+		 * @param str sstring_t_view to append
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &append(const sstring &str);
+		sstring_t_view<T> &append(const sstring_t_view<T> &str);
 
 		/**
 		 * @brief Appends `c`
-		 * @param c char to append
-		 * @return sstring& reference to current object
+		 * @param c character to append
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &append_char(const char c);
+		sstring_t_view<T> &append_char(const T c);
 
 		/**
 		 * @brief Appends `str` upto `N`
-		 * @param str C-style null-terminated string
-		 * @param N number of char that has to be appended
-		 * @return sstring& reference to current object
+		 * @param str string
+		 * @param N number of character that has to be appended
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &append_upto(const char *str, std::size_t N);
+		sstring_t_view<T> &append_upto(const T *str, std::size_t N);
 
 		/**
 		 * @brief Appends `str` upto `N`
-		 * @param str sstring to append
-		 * @param N number of char that has to be appended
-		 * @return sstring& reference to current object
+		 * @param str sstring_t_view to append
+		 * @param N number of character that has to be appended
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &append_upto(const sstring &str, std::size_t N);
+		sstring_t_view<T> &append_upto(const sstring_t_view<T> &str, std::size_t N);
 
 		/**
 		 * @brief Appends `str` at index 0
-		 * @param str C-style null-terminated string
-		 * @return sstring& reference to current object
+		 * @param str string
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &append_start(const char *str);
+		sstring_t_view<T> &append_start(const T *str);
 
 		/**
 		 * @brief Appends `str` at index 0
-		 * @param str sstring to append
-		 * @return sstring& reference to current object
+		 * @param str sstring_t_view to append
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &append_start(const sstring &str);
+		sstring_t_view<T> &append_start(const sstring_t_view<T> &str);
 
 		/**
 		 * @brief Appends `c` at index 0
-		 * @param c char to append
-		 * @return sstring& reference to current object
+		 * @param c character to append
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &append_start_char(const char c);
+		sstring_t_view<T> &append_start_char(const T c);
 
 		/**
 		 * @brief Appends `str` upto `N` at index 0
-		 * @param str C-style null-terminated string
-		 * @param N number of char that has to be appended
-		 * @return sstring& reference to current object
+		 * @param str string
+		 * @param N number of character that has to be appended
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &append_start_upto(const char *str, std::size_t N);
+		sstring_t_view<T> &append_start_upto(const T *str, std::size_t N);
 
 		/**
 		 * @brief Appends `str` upto `N` at index 0
-		 * @param str sstring to append
-		 * @param N number of char that has to be appended
-		 * @return sstring& reference to current object
+		 * @param str sstring_t_view to append
+		 * @param N number of character that has to be appended
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &append_start_upto(const sstring &str, std::size_t N);
+		sstring_t_view<T> &append_start_upto(const sstring_t_view<T> &str, std::size_t N);
 
 		/**
 		 * @brief Appends `vec` with `between` between each iteration
-		 * @param vec vector of `char *` that has to be assigned
+		 * @param vec vector of `T *` that has to be assigned
 		 * @param between if `nullptr` then, nothing is added between each iteration
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &append_array(const vector_t<char *> &vec, const char *between = nullptr);
+		sstring_t_view<T> &append_array(const vector_t<T *> &vec, const T *between = nullptr);
 
 		/**
 		 * @brief Appends `vec` with `between` between each iteration
-		 * @param vec vector of sstring that has to be assigned
+		 * @param vec vector of sstring_t_view that has to be assigned
 		 * @param between if `nullptr` then, nothing is added between each iteration
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &append_array(const vector_t<sstring> &vec, const char *between = nullptr);
+		sstring_t_view<T> &append_array(const vector_t<sstring_t_view> &vec, const T *between = nullptr);
 
 		/**
 		 * @brief Appends `vec` with `between` between each iteration at index 0
-		 * @param vec vector of `char *` that has to be assigned
+		 * @param vec vector of `T *` that has to be assigned
 		 * @param between if `nullptr` then, nothing is added between each iteration
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &append_start_array(const vector_t<char *> &vec, const char *between = nullptr);
+		sstring_t_view<T> &append_start_array(const vector_t<T *> &vec, const T *between = nullptr);
 
 		/**
 		 * @brief Appends `vec` with `between` between each iteration at index 0
-		 * @param vec vector of sstring that has to be assigned
+		 * @param vec vector of sstring_t_view that has to be assigned
 		 * @param between if `nullptr` then, nothing is added between each iteration
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &append_start_array(const vector_t<sstring> &vec, const char *between = nullptr);
+		sstring_t_view<T> &append_start_array(const vector_t<sstring_t_view> &vec, const T *between = nullptr);
 
 		/**
 		 * @brief Tells whether `this->len` is 0 or not
@@ -402,61 +409,61 @@ namespace openutils
 		 * @brief Replaces `old` with `new_`
 		 * @param old what to replace
 		 * @param new_ replace with
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &replace(const char *old, const char *new_);
+		sstring_t_view<T> &replace(const T *old, const T *new_);
 
 		/**
 		 * @brief Replaces `old` with `new_`
 		 * @param old what to replace
 		 * @param new_ replace with
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &replace(const sstring &old, const sstring &new_);
+		sstring_t_view<T> &replace(const sstring_t_view<T> &old, const sstring_t_view<T> &new_);
 
 		/**
 		 * @brief Replaces `old` with `new_`
 		 * @param old what to replace
 		 * @param new_ replace with
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &replace_char(const char old, const char new_);
+		sstring_t_view<T> &replace_char(const T old, const T new_);
 
 		/**
 		 * @brief Changes character at `nth` with `new_char`
 		 * @param new_char new character
 		 * @param nth index of old character
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &char_set(const char new_char, std::size_t nth);
+		sstring_t_view<T> &char_set(const T new_char, std::size_t nth);
 
 		/**
 		 * @brief Returns character at `nth` index
 		 * @param nth index of character
-		 * @return char at `nth`
+		 * @return character at `nth`
 		 */
-		char char_get(std::size_t nth) const;
+		T char_get(std::size_t nth) const;
 
 		/**
 		 * @brief Returns reference of character at `nth` index
 		 * @param nth index of character
-		 * @return char& at `nth`
+		 * @return character reference at `nth`
 		 */
-		char &char_get(std::size_t nth);
+		T &char_get(std::size_t nth);
 
 		/**
 		 * @brief Returns the index of `ch` from starting
 		 * @param ch character to find
 		 * @return std::size_t index of `ch` if found, else `this->nerr()`
 		 */
-		std::size_t index_of(char ch) const;
+		std::size_t index_of(T ch) const;
 
 		/**
 		 * @brief Returns the index of `ch` from ending
 		 * @param ch character to find
 		 * @return std::size_t index of `ch` if found, else `this->nerr()`
 		 */
-		std::size_t last_index_of(char ch) const;
+		std::size_t last_index_of(T ch) const;
 
 		/**
 		 * @brief Returns the length of `this->src` without using `this->strlen()`, it is done by keeping track in every function
@@ -467,43 +474,43 @@ namespace openutils
 		/**
 		 * @brief Changes `this->len` to `new_length` [UNSAFE]
 		 * @param new_length new length that has to be assigned
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
 		std::size_t &change_length(std::size_t new_length);
 
 		/**
 		 * @brief Compares `T1` to `this->src`
-		 * @param T1 C-style null-terminated string
+		 * @param T1 string
 		 * @return true both strings are equal;
 		 * @return false both string are unequal
 		 */
-		bool compare(const char *T1) const;
+		bool compare(const T *T1) const;
 
 		/**
 		 * @brief Compares `T1` to `this->src`
-		 * @param T1 sstring to be compared
+		 * @param T1 sstring_t_view to be compared
 		 * @return true both strings are equal;
 		 * @return false both string are unequal
 		 */
-		bool compare(const sstring &T1) const;
+		bool compare(const sstring_t_view<T> &T1) const;
 
 		/**
 		 * @brief Compares `T1` to `this->src` upto `N`
-		 * @param T1 C-style null-terminated string
+		 * @param T1 string
 		 * @param N number to character that has to be compared
 		 * @return true both strings are equal upto `N`;
 		 * @return false both string are unequal upto `N`
 		 */
-		bool compare_upto(const char *T1, std::size_t N) const;
+		bool compare_upto(const T *T1, std::size_t N) const;
 
 		/**
 		 * @brief Compares `T1` to `this->src` upto `N`
-		 * @param T1 sstring to be compared
+		 * @param T1 sstring_t_view to be compared
 		 * @param N number to character that has to be compared
 		 * @return true both strings are equal upto `N`;
 		 * @return false both string are unequal upto `N`
 		 */
-		bool compare_upto(const sstring &T1, std::size_t N) const;
+		bool compare_upto(const sstring_t_view<T> &T1, std::size_t N) const;
 
 		/**
 		 * @brief Tells whether `*this` object changed after a function was called
@@ -511,30 +518,21 @@ namespace openutils
 		 * @return true changed;
 		 * @return false not changed
 		 */
-		bool is_changed(sstring &obj);
+		bool is_changed(sstring_t_view<T> &obj);
 
 		/**
 		 * @brief A lexicographical comparison is the kind of comparison generally used to sort strings alphabetically.
 		 * @param str string to compare with
 		 * @return difference between ASCII characters or if starting of both the strings are same then it returns the difference between the length, otherwise 0 is returned if strings are equal
 		 */
-		int lexicographical_comparison(const char *str) const;
+		int lexicographical_comparison(const T *str) const;
 
 		/**
 		 * @brief A lexicographical comparison is the kind of comparison generally used to sort strings alphabetically.
-		 * @param str sstring to compare with
+		 * @param str sstring_t_view to compare with
 		 * @return difference between ASCII characters or if starting of both the strings are same then it returns the difference between the length, otherwise 0 is returned if strings are equal
 		 */
-		int lexicographical_comparison(const sstring &str) const;
-
-		/**
-		 * @brief Prints `this->src` to `stdout` and then flush the buffer
-		 * @param add_next_line if true add `\n` at the end, otherwise no change
-		 * @param __format__ string containing the format instructions
-		 * @param ... arguments
-		 * @return std::size_t number of characters printed on `stdout`
-		 */
-		std::size_t print(bool add_next_line, const char *__format__, ...) const;
+		int lexicographical_comparison(const sstring_t_view<T> &str) const;
 
 		/**
 		 * @brief Saves `this->src` at `location` in the filesystem
@@ -542,7 +540,7 @@ namespace openutils
 		 * @return true file saved successfully
 		 * @return false file was NOT saved
 		 */
-		bool save(const char *location) const;
+		bool save(const T *location) const;
 
 		/**
 		 * @brief Saves `this->src` at `location` in the filesystem
@@ -550,7 +548,7 @@ namespace openutils
 		 * @return true file saved successfully
 		 * @return false file was NOT saved
 		 */
-		bool save(const sstring &location) const;
+		bool save(const sstring_t_view<T> &location) const;
 
 		/**
 		 * @brief Appends `this->src` at `location` in the filesystem
@@ -558,7 +556,7 @@ namespace openutils
 		 * @return true file appended successfully
 		 * @return false file was NOT appended
 		 */
-		bool append_file(const char *location) const;
+		bool append_file(const T *location) const;
 
 		/**
 		 * @brief Appends `this->src` at `location` in the filesystem
@@ -566,7 +564,7 @@ namespace openutils
 		 * @return true file appended successfully
 		 * @return false file was NOT appended
 		 */
-		bool append_file(const sstring &location) const;
+		bool append_file(const sstring_t_view<T> &location) const;
 
 		/**
 		 * @brief Opens `location` from the filesystem and assigns it's data to `this->src` and it's length to `this->len`
@@ -574,7 +572,7 @@ namespace openutils
 		 * @return true if file opened successfully
 		 * @return false if file was NOT opened
 		 */
-		bool open(const char *location);
+		bool open(const T *location);
 
 		/**
 		 * @brief Opens `location` from the filesystem and assigns it's data to `this->src` and it's length to `this->len`
@@ -582,43 +580,43 @@ namespace openutils
 		 * @return true if file opened successfully
 		 * @return false if file was NOT opened
 		 */
-		bool open(const sstring &location);
+		bool open(const sstring_t_view<T> &location);
 
 		/**
 		 * @brief Clears `this->src` and assigns it's value to `nullptr`
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &clear();
+		sstring_t_view<T> &clear();
 
 		/**
 		 * @brief Converts all characters to upper case
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &to_upper();
+		sstring_t_view<T> &to_upper();
 
 		/**
 		 * @brief Converts all characters to lower case
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &to_lower();
+		sstring_t_view<T> &to_lower();
 
 		/**
 		 * @brief Converts upper case characters to lower case and vice-versa
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &swap_case();
+		sstring_t_view<T> &swap_case();
 
 		/**
 		 * @brief Converts `this->src` to binary representation
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &to_binary();
+		sstring_t_view<T> &to_binary();
 
 		/**
 		 * @brief Converts binary representation to it's readable form
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &from_binary();
+		sstring_t_view<T> &from_binary();
 
 		/**
 		 * @brief Calculates the entropy using `Shannon's entropy` formula, which was introduced in his 1948 paper "A Mathematical Theory of Communication". For more information https://en.wikipedia.org/wiki/Entropy_(information_theory)
@@ -660,7 +658,7 @@ namespace openutils
 		 * @return true if `str` is present;
 		 * @return false if `str` was NOT present
 		 */
-		bool contains(const char *str) const;
+		bool contains(const T *str) const;
 
 		/**
 		 * @brief Returns whether `str` is in `this->src` or not
@@ -668,7 +666,7 @@ namespace openutils
 		 * @return true if `str` is present;
 		 * @return false if `str` was NOT present
 		 */
-		bool contains(const sstring &str) const;
+		bool contains(const sstring_t_view<T> &str) const;
 
 		/**
 		 * @brief Returns whether `c` is in `this->src` or not
@@ -676,39 +674,39 @@ namespace openutils
 		 * @return true if `c` is present;
 		 * @return false if `c` was NOT present
 		 */
-		std::size_t contains_char(const char c) const;
+		std::size_t contains_char(const T c) const;
 
 		/**
 		 * @brief Assigns `this->src` as a set, i.e., only unique characters will be present. (From Set Theory)
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &to_set();
+		sstring_t_view<T> &to_set();
 
 		/**
 		 * @brief Converts `this->src` (as string) to base 16 (as hexadecimal)
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &to_hexadecimal();
+		sstring_t_view<T> &to_hexadecimal();
 
 		/**
 		 * @brief Converts `this->src` from base 16 (as hexadecimal) to string
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &from_hexadecimal();
+		sstring_t_view<T> &from_hexadecimal();
 
 		/**
 		 * @brief Returns the index of first occurrence of `sub`
 		 * @param sub string to find
 		 * @return std::size_t index of `sub` if found, else `this->nerr()`
 		 */
-		std::size_t find(const char *sub) const;
+		std::size_t find(const T *sub) const;
 
 		/**
 		 * @brief Returns the index of first occurrence of `sub`
 		 * @param sub string to find
 		 * @return std::size_t index of `sub` if found, else `this->nerr()`
 		 */
-		std::size_t find(const sstring &sub) const;
+		std::size_t find(const sstring_t_view<T> &sub) const;
 
 		/**
 		 * @brief Returns the index of nth occurrence of `sub`
@@ -716,7 +714,7 @@ namespace openutils
 		 * @param sub string to find
 		 * @return std::size_t index of `sub` if found, else `this->nerr()`
 		 */
-		std::size_t find_next(std::size_t last_index, const char *sub) const;
+		std::size_t find_next(std::size_t last_index, const T *sub) const;
 
 		/**
 		 * @brief Returns the index of nth occurrence of `sub`
@@ -724,191 +722,191 @@ namespace openutils
 		 * @param sub string to find
 		 * @return std::size_t index of `sub` if found, else `this->nerr()`
 		 */
-		std::size_t find_next(std::size_t last_index, const sstring &sub) const;
+		std::size_t find_next(std::size_t last_index, const sstring_t_view<T> &sub) const;
 
 		/**
 		 * @brief Gets input from user, of any length
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &in();
+		sstring_t_view<T> &in();
 
 		/**
 		 * @brief Returns content of `line` from `this->src`, if `line` does not exists it returns `nullptr`.
 		 * @param line line number
-		 * @return sstring content of `line`, `nullptr` if `line` does NOT exists
+		 * @return sstring_t_view content of `line`, `nullptr` if `line` does NOT exists
 		 */
-		sstring getline(const std::size_t line) const;
+		sstring_t_view getline(const std::size_t line) const;
 
 		/**
 		 * @brief Reverses `this->src`
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &reverse();
+		sstring_t_view<T> &reverse();
 
 		/**
 		 * @brief Removes every occurrences of `sub`
 		 * @param sub string to remove
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &remove(const char *sub);
+		sstring_t_view<T> &remove(const T *sub);
 
 		/**
 		 * @brief Removes every occurrences of `sub`
 		 * @param sub string to remove
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &remove(const sstring &sub);
+		sstring_t_view<T> &remove(const sstring_t_view<T> &sub);
 
 		/**
 		 * @brief Removes every occurrences of `c`
 		 * @param sub character to remove
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &remove_char(const char c);
+		sstring_t_view<T> &remove_char(const T c);
 
 		/**
 		 * @brief Removes every EXTRA occurrences of `c`
 		 * @param sub character to remove
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &remove_extra_char(const char c);
+		sstring_t_view<T> &remove_extra_char(const T c);
 
 		/**
 		 * @brief Removes the content between `from` and `till` inclusive
 		 * @param from stating index
 		 * @param till ending index
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &remove_range(std::size_t from, std::size_t till);
+		sstring_t_view<T> &remove_range(std::size_t from, std::size_t till);
 
 		/**
 		 * @brief Assigns `this->src` the content between `from` and `till` inclusive
 		 * @param from stating index
 		 * @param till ending index
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &intersect(std::size_t from, std::size_t till);
+		sstring_t_view<T> &intersect(std::size_t from, std::size_t till);
 
 		/**
 		 * @brief Removes the first character from `this->src`
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &remove_first_char();
+		sstring_t_view<T> &remove_first_char();
 
 		/**
 		 * @brief Removes the last character from `this->src`
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &remove_last_char();
+		sstring_t_view<T> &remove_last_char();
 
 		/**
 		 * @brief Calculates hamming distance (From Information Theory) between two strings. NOTE: string's length should be same.
 		 * @param str string to compare with
 		 * @return returns `this->nerr()` if length does not match, otherwise number of characters didn't matched.
 		 */
-		std::size_t distance(const char *str) const;
+		std::size_t distance(const T *str) const;
 
 		/**
 		 * @brief Calculates hamming distance (From Information Theory) between two strings. NOTE: string's length should be same.
 		 * @param str string to compare with
 		 * @return returns `this->nerr()` if length does not match, otherwise number of characters didn't matched.
 		 */
-		std::size_t distance(const sstring &str) const;
+		std::size_t distance(const sstring_t_view<T> &str) const;
 
 		/**
 		 * @brief Returns `Levenshtein Distance` (From Information Theory) against `str`.
 		 * @param str string to be matched
 		 * @return edit distance
 		 */
-		std::size_t edit_distance(const char *str) const;
+		std::size_t edit_distance(const T *str) const;
 
 		/**
 		 * @brief Returns `Levenshtein Distance` (From Information Theory) against `str`.
 		 * @param str string to be matched
 		 * @return edit distance
 		 */
-		std::size_t edit_distance(const sstring &str) const;
+		std::size_t edit_distance(const sstring_t_view<T> &str) const;
 
 		/**
 		 * @brief Returns percentage matched against `str` using `Levenshtein Distance` algorithm (From Information Theory).
 		 * @param str string to be matched
 		 * @return percentage `this->src` matched with `str`
 		 */
-		double percentage_matched(const char *str) const;
+		double percentage_matched(const T *str) const;
 
 		/**
 		 * @brief Returns percentage matched against `str` using `Levenshtein Distance` algorithm (From Information Theory).
 		 * @param str string to be matched
 		 * @return percentage `this->src` matched with `str`
 		 */
-		double percentage_matched(const sstring &str) const;
+		double percentage_matched(const sstring_t_view<T> &str) const;
 
 		/**
 		 * @brief Counts the number of occurrence of `what`.
 		 * @param what string to count
 		 * @return number of occurrence of `what`
 		 */
-		std::size_t count(const char *what) const;
+		std::size_t count(const T *what) const;
 
 		/**
 		 * @brief Counts the number of occurrence of `what`.
 		 * @param what string to count
 		 * @return number of occurrence of `what`
 		 */
-		std::size_t count(const sstring &what) const;
+		std::size_t count(const sstring_t_view<T> &what) const;
 
 		/**
 		 * @brief Counts the number of occurrence of `what`.
 		 * @param what character to count
 		 * @return number of occurrence of `what`
 		 */
-		std::size_t count_char(const char what) const;
+		std::size_t count_char(const T what) const;
 
 		/**
 		 * @brief Encodes `this->src` to 4 characters long string which can be compared to other `soundex` returned value.
-		 * @return sstring generated by this function
+		 * @return sstring_t_view generated by this function
 		 */
-		sstring soundex() const;
+		sstring_t_view soundex() const;
 
 		/**
 		 * @brief Returns the most occurred string in `this->src` separated by `dl`
 		 * @param dl separator string
 		 * @return most occurred string
 		 */
-		sstring most_used(const char *dl) const;
+		sstring_t_view most_used(const T *dl) const;
 
 		/**
 		 * @brief Returns the most occurred string in `this->src` separated by `dl`
 		 * @param dl separator string
 		 * @return most occurred string
 		 */
-		sstring most_used(const sstring &dl) const;
+		sstring_t_view most_used(const sstring_t_view<T> &dl) const;
 
 		/**
 		 * @brief Returns the most occurred character in `this->src`
 		 * @return most occurred character
 		 */
-		char most_used_char() const;
+		T most_used_char() const;
 
 		/**
 		 * @brief Splits `this->src` using `str`
 		 * @param str separator string
-		 * @return vector of sstring separated by `str`
+		 * @return vector of sstring_t_view separated by `str`
 		 */
-		vector_t<sstring> split(const char *str) const;
+		vector_t<sstring_t_view> split(const T *str) const;
 
 		/**
 		 * @brief Splits `this->src` using `str`
 		 * @param str separator string
-		 * @return vector of sstring separated by `str`
+		 * @return vector of sstring_t_view separated by `str`
 		 */
-		vector_t<sstring> split(const sstring &str) const;
+		vector_t<sstring_t_view> split(const sstring_t_view<T> &str) const;
 
 		/**
 		 * @brief Sorts `this->src` using `std::sort`
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &sort();
+		sstring_t_view<T> &sort();
 
 		/**
 		 * @brief Saves the content of `this->src` to the file at `location`.
@@ -917,7 +915,7 @@ namespace openutils
 		 * @return true if saved
 		 * @return false if was NOT saved
 		 */
-		bool save_binary(const char *location, std::size_t bin_len) const;
+		bool save_binary(const T *location, std::size_t bin_len) const;
 
 		/**
 		 * @brief Appends the content of `this->src` to the file at `location`.
@@ -926,105 +924,98 @@ namespace openutils
 		 * @return true if appended
 		 * @return false if was NOT appended
 		 */
-		bool append_binary(const char *location, std::size_t bin_len) const;
+		bool append_binary(const T *location, std::size_t bin_len) const;
 
 		/**
 		 * @brief Appends the content of `data` to `this->src`
 		 * @param data data to append
 		 * @param bin_len length of `data`
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &add_binary(const char *data, std::size_t &bin_len);
-
-		/**
-		 * @brief Prints `this->len` till `len`
-		 * @param bin_len length of the data
-		 * @return number of character printed on `stdout`
-		 */
-		std::size_t print_binary(std::size_t bin_len) const;
+		sstring_t_view<T> &add_binary(const T *data, std::size_t &bin_len);
 
 		/**
 		 * @brief Encrypts `a` using hash of `key`
 		 * @param key key to encrypt
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &encrypt(const char *key);
+		sstring_t_view<T> &encrypt(const T *key);
 
 		/**
 		 * @brief Encrypts `a` using hash of `key`
 		 * @param key key to encrypt
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &encrypt(const sstring &key);
+		sstring_t_view<T> &encrypt(const sstring_t_view<T> &key);
 
 		/**
 		 * @brief Decrypts `a` using hash of `key`
 		 * @param key key to decrypt
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &decrypt(const char *key);
+		sstring_t_view<T> &decrypt(const T *key);
 
 		/**
 		 * @brief Decrypts `a` using hash of `key`
 		 * @param key key to decrypt
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &decrypt(const sstring &key);
+		sstring_t_view<T> &decrypt(const sstring_t_view<T> &key);
 
 		/**
 		 * @brief Returns const iterator for beginning
 		 * @return const beginning of iterator
 		 */
-		const char *cbegin() const;
+		const T *cbegin() const;
 
 		/**
 		 * @brief Returns const iterator for ending
 		 * @return const ending of iterator
 		 */
-		const char *cend() const;
+		const T *cend() const;
 
 		/**
 		 * @brief Returns iterator for beginning
 		 * @return beginning of iterator
 		 */
-		char *begin();
+		T *begin();
 
 		/**
 		 * @brief Returns iterator for ending
 		 * @return ending of iterator
 		 */
-		char *end();
+		T *end();
 
 		/**
 		 * @brief Returns const reverse iterator for beginning
 		 * @return const reverse beginning of iterator
 		 */
-		const char *crbegin() const;
+		const T *crbegin() const;
 
 		/**
 		 * @brief Returns const reverse iterator for ending
 		 * @return const reverse ending of iterator
 		 */
-		const char *crend() const;
+		const T *crend() const;
 
 		/**
 		 * @brief Returns reverse iterator for beginning
 		 * @return reverse beginning of iterator
 		 */
-		char *rbegin();
+		T *rbegin();
 
 		/**
 		 * @brief Returns reverse iterator for ending
 		 * @return reverse ending of iterator
 		 */
-		char *rend();
+		T *rend();
 
 		/**
 		 * @brief Swaps contents of current object to `__x`
-		 * @param __x reference to another sstring
-		 * @return sstring& reference to current object
+		 * @param __x reference to another sstring_t_view
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &swap(sstring &__x) noexcept;
+		sstring_t_view<T> &swap(sstring_t_view<T> &__x) noexcept;
 
 		/**
 		 * @brief Returns content from `index` to `index` + `sub_len`
@@ -1032,26 +1023,26 @@ namespace openutils
 		 * @param sub_len length of new content
 		 * @return content from `index` to `index` + `sub_len`
 		 */
-		sstring substr(std::size_t index, std::size_t sub_len = (std::size_t)-1) const;
+		sstring_t_view substr(std::size_t index, std::size_t sub_len = (std::size_t)-1) const;
 
 		/**
 		 * @brief Parses `this->src` as C-style argv in `main()` function
-		 * @param argv0 first argument of `char **argv` in `main()` function, default value is `nullptr`
+		 * @param argv0 first argument of `T **argv` in `main()` function, default value is `nullptr`
 		 * @return arguments
 		 */
-		vector_t<sstring> to_argv(const char *argv0 = nullptr) const;
+		vector_t<sstring_t_view> to_argv(const T *argv0 = nullptr) const;
 
 		/**
 		 * @brief Converts normal text to morse code
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &to_morse_code();
+		sstring_t_view<T> &to_morse_code();
 
 		/**
 		 * @brief Converts morse code to normal text
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &from_morse_code();
+		sstring_t_view<T> &from_morse_code();
 
 		/**
 		 * @brief Checks if `this->src` is only digits or not
@@ -1083,25 +1074,25 @@ namespace openutils
 
 		/**
 		 * @brief Formats `a` according to escape sequences.
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &format_escape_sequence();
+		sstring_t_view<T> &format_escape_sequence();
 
 		/**
 		 * @brief Inserts `str` into `this->src` at `index`.
 		 * @param str string to insert
 		 * @param index index where `str` is going to be inserted
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &insert(const char *str, std::size_t index);
+		sstring_t_view<T> &insert(const T *str, std::size_t index);
 
 		/**
 		 * @brief Inserts `str` into `this->src` at `index`.
 		 * @param str string to insert
 		 * @param index index where `str` is going to be inserted
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &insert(const sstring &str, std::size_t index);
+		sstring_t_view<T> &insert(const sstring_t_view<T> &str, std::size_t index);
 
 		/**
 		 * @brief Checks if `this->src` starts with `str`
@@ -1109,7 +1100,7 @@ namespace openutils
 		 * @return true if `this->src` starts with `str`;
 		 * @return false if `this->src` does NOT starts with `str`;
 		 */
-		bool starts_with(const char *str) const;
+		bool starts_with(const T *str) const;
 
 		/**
 		 * @brief Checks if `this->src` starts with `str`
@@ -1117,7 +1108,7 @@ namespace openutils
 		 * @return true if `this->src` starts with `str`;
 		 * @return false if `this->src` does NOT starts with `str`;
 		 */
-		bool starts_with(const sstring &str) const;
+		bool starts_with(const sstring_t_view<T> &str) const;
 
 		/**
 		 * @brief Checks if `this->src` ends with `str`
@@ -1125,7 +1116,7 @@ namespace openutils
 		 * @return true if `this->src` ends with `str`;
 		 * @return false if `this->src` does NOT ends with `str`;
 		 */
-		bool ends_with(const char *str) const;
+		bool ends_with(const T *str) const;
 
 		/**
 		 * @brief Checks if `this->src` ends with `str`
@@ -1133,38 +1124,38 @@ namespace openutils
 		 * @return true if `this->src` ends with `str`;
 		 * @return false if `this->src` does NOT ends with `str`;
 		 */
-		bool ends_with(const sstring &str) const;
+		bool ends_with(const sstring_t_view<T> &str) const;
 
 		/**
 		 * @brief Tokenize `this->src`.
 		 * @return returns tokenized vector with it's respective token
 		 */
-		vector_t<heap_pair<sstring, enum lexer_token>> lexer() const;
+		vector_t<heap_pair<sstring_t_view, enum lexer_token>> lexer() const;
 
 		/**
 		 * @brief Converts tokens to concentrated string
 		 * @param toks tokens
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &from_lexer(const vector_t<heap_pair<sstring, enum lexer_token>> &toks);
+		sstring_t_view<T> &from_lexer(const vector_t<heap_pair<sstring_t_view, enum lexer_token>> &toks);
 
 		/**
 		 * @brief Assigns `__format__` to `this->src` with formatting.
 		 * @param buffer_length length of `__format__` along with the variable length of `...`
 		 * @param __format__ string containing the format instructions
 		 * @param ... arguments
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &set_formatted(std::size_t buffer_length, const char *__format__, ...);
+		sstring_t_view<T> &set_formatted(std::size_t buffer_length, const char *__format__, ...);
 
 		/**
 		 * @brief Appends `__format__` to `this->src` with formatting.
 		 * @param buffer_length length of `__format__` along with the variable length of `...`
 		 * @param __format__ string containing the format instructions
 		 * @param ... arguments
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &append_formatted(std::size_t buffer_length, const char *__format__, ...);
+		sstring_t_view<T> &append_formatted(std::size_t buffer_length, const char *__format__, ...);
 
 		/**
 		 * @brief Resizes `this->src` with `new_len`, no loss of previous data happens if resized successfully
@@ -1183,116 +1174,116 @@ namespace openutils
 		/**
 		 * @brief Returns character at `n` index
 		 * @param n index of character
-		 * @return char at `n`
+		 * @return character at `n`
 		 */
-		char operator[](std::size_t n) const;
+		T operator[](std::size_t n) const;
 
 		/**
 		 * @brief Returns reference of character at `n` index
 		 * @param n index of character
-		 * @return char& at `n`
+		 * @return character reference at `n`
 		 */
-		char &operator[](std::size_t n);
+		T &operator[](std::size_t n);
 
 		/**
 		 * @brief Returns the addition of `this->src` and `c`
 		 * @param c character to add
-		 * @return sstring with `this->src` and `c`
+		 * @return sstring_t_view with `this->src` and `c`
 		 */
-		sstring operator+(const char c) const;
+		sstring_t_view operator+(const T c) const;
 
 		/**
 		 * @brief Returns the addition of `this->src` and `str`
 		 * @param str string to add
-		 * @return sstring with `this->src` and `str`
+		 * @return sstring_t_view with `this->src` and `str`
 		 */
-		sstring operator+(const char *str) const;
+		sstring_t_view operator+(const T *str) const;
 
 		/**
 		 * @brief Returns the addition of `this->src` and `str`
-		 * @param str sstring to add
-		 * @return sstring with `this->src` and `str`
+		 * @param str sstring_t_view to add
+		 * @return sstring_t_view with `this->src` and `str`
 		 */
-		sstring operator+(const sstring &str) const;
+		sstring_t_view operator+(const sstring_t_view<T> &str) const;
 
 		/**
 		 * @brief Appends `c`
 		 * @param c character to append
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &operator+=(const char c);
+		sstring_t_view<T> &operator+=(const T c);
 
 		/**
 		 * @brief Appends `str`
 		 * @param str string to append
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &operator+=(const char *str);
+		sstring_t_view<T> &operator+=(const T *str);
 
 		/**
 		 * @brief Appends `str`
-		 * @param str sstring to append
-		 * @return sstring& reference to current object
+		 * @param str sstring_t_view to append
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &operator+=(const sstring &str);
+		sstring_t_view<T> &operator+=(const sstring_t_view<T> &str);
 
 		/**
-		 * @brief Appends list of `char`s
-		 * @param list list of `char`s
-		 * @return sstring& reference to current object
+		 * @brief Appends list of characters
+		 * @param list list of characters
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &operator+=(std::initializer_list<char> list);
+		sstring_t_view<T> &operator+=(std::initializer_list<T> list);
 
 		/**
-		 * @brief Appends list of `sstring`s
-		 * @param list list of `sstring`s
-		 * @return sstring& reference to current object
+		 * @brief Appends list of `sstring_t_view`s
+		 * @param list list of `sstring_t_view`s
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &operator+=(std::initializer_list<sstring> list);
+		sstring_t_view<T> &operator+=(std::initializer_list<sstring_t_view> list);
 
 		/**
 		 * @brief Assigns `c`
 		 * @param c character to assign
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &operator=(const char c);
+		sstring_t_view<T> &operator=(const T c);
 
 		/**
 		 * @brief Assigns `str`
 		 * @param str string to assign
-		 * @return sstring& reference to current object
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &operator=(const char *str);
+		sstring_t_view<T> &operator=(const T *str);
 
 		/**
 		 * @brief Copy operator
-		 * @param str sstring to copy
-		 * @return sstring& reference to current object
+		 * @param str sstring_t_view to copy
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &operator=(const sstring &str);
+		sstring_t_view<T> &operator=(const sstring_t_view<T> &str);
 
 		/**
 		 * @brief Move operator
-		 * @param __s sstring to move
-		 * @return sstring& reference to current object
+		 * @param __s sstring_t_view to move
+		 * @return sstring_t_view& reference to current object
 		 */
-		sstring &operator=(sstring &&__s) noexcept;
+		sstring_t_view<T> &operator=(sstring_t_view<T> &&__s) noexcept;
 
 		/**
 		 * @brief Compares `str` to `this->src`
-		 * @param str C-style null-terminated string
+		 * @param str string
 		 * @return true both strings are equal;
 		 * @return false both string are unequal
 		 */
-		bool operator==(const char *str) const;
+		bool operator==(const T *str) const;
 
 		/**
 		 * @brief Compares `str` to `this->src`
-		 * @param str sstring to be compared
+		 * @param str sstring_t_view to be compared
 		 * @return true both strings are equal;
 		 * @return false both string are unequal
 		 */
-		bool operator==(const sstring &str) const;
+		bool operator==(const sstring_t_view<T> &str) const;
 
 		/**
 		 * @brief Does lexicographical comparison between `this->src` and `str`
@@ -1300,7 +1291,7 @@ namespace openutils
 		 * @return true if `this->src` is less than `str`;
 		 * @return false if `this->src` is greater than `str`
 		 */
-		bool operator<(const char *str) const;
+		bool operator<(const T *str) const;
 
 		/**
 		 * @brief Does lexicographical comparison between `this->src` and `str`
@@ -1308,7 +1299,7 @@ namespace openutils
 		 * @return true if `this->src` is less than `str`;
 		 * @return false if `this->src` is greater than `str`
 		 */
-		bool operator<(const sstring &str) const;
+		bool operator<(const sstring_t_view<T> &str) const;
 
 		/**
 		 * @brief Does lexicographical comparison between `this->src` and `str`
@@ -1316,7 +1307,7 @@ namespace openutils
 		 * @return true if `this->src` is greater than `str`;
 		 * @return false if `this->src` is less than `str`
 		 */
-		bool operator>(const char *str) const;
+		bool operator>(const T *str) const;
 
 		/**
 		 * @brief Does lexicographical comparison between `this->src` and `str`
@@ -1324,7 +1315,7 @@ namespace openutils
 		 * @return true if `this->src` is greater than `str`;
 		 * @return false if `this->src` is less than `str`
 		 */
-		bool operator>(const sstring &str) const;
+		bool operator>(const sstring_t_view<T> &str) const;
 
 		/**
 		 * @brief Does lexicographical comparison between `this->src` and `str`
@@ -1332,7 +1323,7 @@ namespace openutils
 		 * @return true if `this->src` is less than or equal to `str`;
 		 * @return false if `this->src` is greater than or equal to `str`
 		 */
-		bool operator<=(const char *str) const;
+		bool operator<=(const T *str) const;
 
 		/**
 		 * @brief Does lexicographical comparison between `this->src` and `str`
@@ -1340,7 +1331,7 @@ namespace openutils
 		 * @return true if `this->src` is less than or equal to `str`;
 		 * @return false if `this->src` is greater than or equal to `str`
 		 */
-		bool operator<=(const sstring &str) const;
+		bool operator<=(const sstring_t_view<T> &str) const;
 
 		/**
 		 * @brief Does lexicographical comparison between `this->src` and `str`
@@ -1348,7 +1339,7 @@ namespace openutils
 		 * @return true if `this->src` is greater than or equal to `str`;
 		 * @return false if `this->src` is less than or equal to `str`
 		 */
-		bool operator>=(const char *str) const;
+		bool operator>=(const T *str) const;
 
 		/**
 		 * @brief Does lexicographical comparison between `this->src` and `str`
@@ -1356,23 +1347,23 @@ namespace openutils
 		 * @return true if `this->src` is greater than or equal to `str`;
 		 * @return false if `this->src` is less than or equal to `str`
 		 */
-		bool operator>=(const sstring &str) const;
+		bool operator>=(const sstring_t_view<T> &str) const;
 
 		/**
 		 * @brief Compares `str` to `this->src`
-		 * @param str C-style null-terminated string
+		 * @param str string
 		 * @return true both strings are unequal;
 		 * @return false both string are equal
 		 */
-		bool operator!=(const char *str) const;
+		bool operator!=(const T *str) const;
 
 		/**
 		 * @brief Compares `str` to `this->src`
-		 * @param str sstring to be compared
+		 * @param str sstring_t_view to be compared
 		 * @return true both strings are unequal;
 		 * @return false both string are equal
 		 */
-		bool operator!=(const sstring &str) const;
+		bool operator!=(const sstring_t_view<T> &str) const;
 
 		/**
 		 * @brief Return value of many in-built functions when some error occurs
@@ -1381,180 +1372,174 @@ namespace openutils
 		constexpr inline std::size_t nerr() const noexcept;
 
 		/**
-		 * @brief Prints `obj` by `std::cout`
-		 * @param out reference of `std::ostream`
-		 * @param obj sstring to print
-		 * @return `this->src`
+		 * @brief Destroy the sstring_t_view object. NOTE: Calling this function explicitly can cause double-free error
 		 */
-		friend std::ostream &operator<<(std::ostream &out, const sstring &obj);
-
-		/**
-		 * @brief Destroy the sstring object. NOTE: Calling this function explicitly can cause double-free error
-		 */
-		~sstring();
+		~sstring_t_view();
 
 		/**
 		 * @brief Sorts `arr`
-		 * @param arr array of sstring
+		 * @param arr array of sstring_t_view
 		 * @param len length of `arr`
 		 */
-		static void sort(sstring *arr, const std::size_t len);
+		static void sort(sstring_t_view *arr, const std::size_t len);
 
 		/**
 		 * @brief Sorts `arr`
-		 * @param arr array of `char *`
+		 * @param arr array of `T *`
 		 * @param len length of `arr`
 		 */
-		static void sort(char **arr, const std::size_t len);
+		static void sort(T **arr, const std::size_t len);
 
 		/**
-		 * @brief Returns `c` as sstring
+		 * @brief Returns `c` as sstring_t_view
 		 * @param c character to assign
-		 * @return `c` as sstring
+		 * @return `c` as sstring_t_view
 		 */
-		static sstring to_sstring(char c);
+		static sstring_t_view to_sstring(T c);
 
 		/**
-		 * @brief Returns `boolean` as sstring
+		 * @brief Returns `boolean` as sstring_t_view
 		 * @param boolean bool value to assign
-		 * @return `boolean` as sstring
+		 * @return `boolean` as sstring_t_view
 		 */
-		static sstring to_sstring(bool boolean);
+		static sstring_t_view to_sstring(bool boolean);
 
 		/**
-		 * @brief Returns `str` as sstring
+		 * @brief Returns `str` as sstring_t_view
 		 * @param str string to assign
-		 * @return `str` as sstring
+		 * @return `str` as sstring_t_view
 		 */
-		static sstring to_sstring(const char *str);
+		static sstring_t_view to_sstring(const T *str);
 
 		/**
-		 * @brief Returns `ptr` as sstring
+		 * @brief Returns `ptr` as sstring_t_view
 		 * @param ptr pointer value
-		 * @return `ptr` as sstring
+		 * @return `ptr` as sstring_t_view
 		 */
-		static sstring to_sstring(void *ptr);
+		static sstring_t_view to_sstring(void *ptr);
 
 		/**
-		 * @brief Returns `x` as sstring
+		 * @brief Returns `x` as sstring_t_view
 		 * @param x number to assign
-		 * @return `x` as sstring
+		 * @return `x` as sstring_t_view
 		 */
-		static sstring to_sstring(signed short int x);
+		static sstring_t_view to_sstring(signed short int x);
 
 		/**
-		 * @brief Returns `x` as sstring
+		 * @brief Returns `x` as sstring_t_view
 		 * @param x number to assign
-		 * @return `x` as sstring
+		 * @return `x` as sstring_t_view
 		 */
-		static sstring to_sstring(unsigned short int x);
+		static sstring_t_view to_sstring(unsigned short int x);
 
 		/**
-		 * @brief Returns `x` as sstring
+		 * @brief Returns `x` as sstring_t_view
 		 * @param x number to assign
-		 * @return `x` as sstring
+		 * @return `x` as sstring_t_view
 		 */
-		static sstring to_sstring(signed int x);
+		static sstring_t_view to_sstring(signed int x);
 
 		/**
-		 * @brief Returns `x` as sstring
+		 * @brief Returns `x` as sstring_t_view
 		 * @param x number to assign
-		 * @return `x` as sstring
+		 * @return `x` as sstring_t_view
 		 */
-		static sstring to_sstring(unsigned int x);
+		static sstring_t_view to_sstring(unsigned int x);
 
 		/**
-		 * @brief Returns `x` as sstring
+		 * @brief Returns `x` as sstring_t_view
 		 * @param x number to assign
-		 * @return `x` as sstring
+		 * @return `x` as sstring_t_view
 		 */
-		static sstring to_sstring(signed long int x);
+		static sstring_t_view to_sstring(signed long int x);
 
 		/**
-		 * @brief Returns `x` as sstring
+		 * @brief Returns `x` as sstring_t_view
 		 * @param x number to assign
-		 * @return `x` as sstring
+		 * @return `x` as sstring_t_view
 		 */
-		static sstring to_sstring(unsigned long int x);
+		static sstring_t_view to_sstring(unsigned long int x);
 
 		/**
-		 * @brief Returns `x` as sstring
+		 * @brief Returns `x` as sstring_t_view
 		 * @param x number to assign
-		 * @return `x` as sstring
+		 * @return `x` as sstring_t_view
 		 */
-		static sstring to_sstring(signed long long int x);
+		static sstring_t_view to_sstring(signed long long int x);
 
 		/**
-		 * @brief Returns `x` as sstring
+		 * @brief Returns `x` as sstring_t_view
 		 * @param x number to assign
-		 * @return `x` as sstring
+		 * @return `x` as sstring_t_view
 		 */
-		static sstring to_sstring(unsigned long long int x);
+		static sstring_t_view to_sstring(unsigned long long int x);
 
 		/**
-		 * @brief Returns `x` as sstring
+		 * @brief Returns `x` as sstring_t_view
 		 * @param x decimal number to assign
-		 * @return `x` as sstring
+		 * @return `x` as sstring_t_view
 		 */
-		static sstring to_sstring(float x);
+		static sstring_t_view to_sstring(float x);
 
 		/**
-		 * @brief Returns `x` as sstring
+		 * @brief Returns `x` as sstring_t_view
 		 * @param x decimal number to assign
-		 * @return `x` as sstring
+		 * @return `x` as sstring_t_view
 		 */
-		static sstring to_sstring(double x);
+		static sstring_t_view to_sstring(double x);
 
 		/**
-		 * @brief Returns `x` as sstring
+		 * @brief Returns `x` as sstring_t_view
 		 * @param x decimal number to assign
-		 * @return `x` as sstring
+		 * @return `x` as sstring_t_view
 		 */
-		static sstring to_sstring(long double x);
+		static sstring_t_view to_sstring(long double x);
 
 		/**
-		 * @brief Returns random sstring of length `len`
-		 * @param len length of random sstring
-		 * @return random sstring of length `len`
+		 * @brief Returns random sstring_t_view of length `len`
+		 * @param len length of random sstring_t_view
+		 * @return random sstring_t_view of length `len`
 		 */
-		static sstring get_random(const std::size_t &len);
+		static sstring_t_view get_random(const std::size_t &len);
 
 		/**
 		 * @brief Returns user input.
 		 * @return user input
 		 */
-		static sstring get_input();
+		static sstring_t_view get_input();
 
 		/**
 		 * @brief Returns content of file at `location` in the filesystem
 		 * @param location location of file
 		 * @return content of file at `location` in the filesystem
 		 */
-		static sstring open_file(const sstring &location);
+		static sstring_t_view open_file(const sstring_t_view<T> &location);
 
 		/**
 		 * @brief Returns end line character with respect to operating system in use.
 		 * @return end line character with respect to operating system in use.
 		 */
-		static sstring end_line();
+		static sstring_t_view end_line();
 	};
 
 	// definitions
 
-	inline void sstring::fast_strncat(char *dest, const char *src, std::size_t &size)
+	template <typename T>
+	inline void sstring_t_view<T>::fast_strncat(T *dest, const T *src, std::size_t &size)
 	{
 		if (dest && src)
 			while ((dest[size] = *src++))
 				size += 1;
 	}
 
-	inline char *sstring::fast_strstr(const char *haystack, std::size_t haystack_len, const char *needle) noexcept(true)
+	template <typename T>
+	inline T *sstring_t_view<T>::fast_strstr(const T *haystack, std::size_t haystack_len, const T *needle) noexcept(true)
 	{
 		if (!haystack || !needle || haystack_len == 0)
 			return nullptr;
-		std::size_t needle_len = sstring::sstr_strlen(needle);
+		std::size_t needle_len = sstring_t_view<T>::sstr_strlen(needle);
 		if (needle_len == 0)
-			return (char *)haystack;
+			return (T *)haystack;
 		int *prefix = static_cast<int *>(std::malloc(needle_len * sizeof(int)));
 		if (!prefix)
 		{
@@ -1581,21 +1566,23 @@ namespace openutils
 			if (q == (int)needle_len)
 			{
 				std::free(prefix);
-				return (char *)(haystack + i - needle_len + 1);
+				return (T *)(haystack + i - needle_len + 1);
 			}
 		}
 		std::free(prefix);
 		return nullptr;
 	}
 
-	inline void sstring::init_n_zeroes(char *ptr, std::size_t from_where, std::size_t till_where)
+	template <typename T>
+	inline void sstring_t_view<T>::init_n_zeroes(T *ptr, std::size_t from_where, std::size_t till_where)
 	{
 		if (ptr)
 			for (std::size_t i = from_where; i < till_where; i++)
 				ptr[i] = 0;
 	}
 
-	inline int sstring::sstr_strcmp(const char *str1, const char *str2)
+	template <typename T>
+	inline int sstring_t_view<T>::sstr_strcmp(const T *str1, const T *str2)
 	{
 		if (!str1 || !str2)
 			return -1;
@@ -1610,7 +1597,8 @@ namespace openutils
 																		: 1;
 	}
 
-	inline int sstring::sstr_strncmp(const char *str1, const char *str2, std::size_t n)
+	template <typename T>
+	inline int sstring_t_view<T>::sstr_strncmp(const T *str1, const T *str2, std::size_t n)
 	{
 		if (!str1 || !str2)
 			return -1;
@@ -1626,7 +1614,8 @@ namespace openutils
 		return (str1[i] < str2[i]) ? -1 : 1;
 	}
 
-	inline std::size_t sstring::sstr_strlen(const char *str)
+	template <typename T>
+	inline std::size_t sstring_t_view<T>::sstr_strlen(const T *str)
 	{
 		if (!str)
 			return 0;
@@ -1639,43 +1628,46 @@ namespace openutils
 		return str_L;
 	}
 
-	inline char *sstring::fast_strtok(char *str, const char *delim)
+	template <typename T>
+	inline T *sstring_t_view<T>::fast_strtok(T *str, const T *delim)
 	{
 		if (!delim)
 			return nullptr;
-		static char *token = nullptr; // maintains a static pointer variable
+		static T *token = nullptr; // maintains a static pointer variable
 		if (str != nullptr)
 			token = str;
 		else if (token == nullptr)
 			return nullptr;
-		char *p = sstring::fast_strstr(token, sstring::sstr_strlen(token), delim);
+		T *p = sstring_t_view<T>::fast_strstr(token, sstring_t_view<T>::sstr_strlen(token), delim);
 		if (p != nullptr)
 		{
 			*p = 0;
-			char *tmp = token;
-			token = p + sstring::sstr_strlen(delim);
+			T *tmp = token;
+			token = p + sstring_t_view<T>::sstr_strlen(delim);
 			return tmp;
 		}
 		else
 		{
-			char *tmp = token;
+			T *tmp = token;
 			token = nullptr;
 			return tmp;
 		}
 	}
 
-	sstring::sstring()
+	template <typename T>
+	sstring_t_view<T>::sstring_t_view()
 	{
 		this->len = 0;
 		this->src = nullptr;
 	}
 
-	sstring::sstring(const char c)
+	template <typename T>
+	sstring_t_view<T>::sstring_t_view(const T c)
 	{
 		if (c != 0)
 		{
 			this->len = 0;
-			this->src = static_cast<char *>(std::calloc(2, sizeof(char)));
+			this->src = static_cast<T *>(std::calloc(2, sizeof(T)));
 			exit_heap_fail(this->src);
 			this->src[this->len++] = c;
 		}
@@ -1686,13 +1678,14 @@ namespace openutils
 		}
 	}
 
-	sstring::sstring(const char *str)
+	template <typename T>
+	sstring_t_view<T>::sstring_t_view(const T *str)
 	{
 		if (str)
 		{
 			this->len = 0;
 			std::size_t str_len = this->sstr_strlen(str);
-			this->src = static_cast<char *>(std::calloc(str_len + 1, sizeof(char)));
+			this->src = static_cast<T *>(std::calloc(str_len + 1, sizeof(T)));
 			exit_heap_fail(this->src);
 			this->fast_strncat(this->src, str, this->len);
 		}
@@ -1703,12 +1696,13 @@ namespace openutils
 		}
 	}
 
-	sstring::sstring(const char c, std::size_t n)
+	template <typename T>
+	sstring_t_view<T>::sstring_t_view(const T c, std::size_t n)
 	{
 		if (n != 0 && c != 0)
 		{
 			this->len = 0;
-			this->src = static_cast<char *>(std::calloc(n + 1, sizeof(char)));
+			this->src = static_cast<T *>(std::calloc(n + 1, sizeof(T)));
 			exit_heap_fail(this->src);
 			for (std::size_t i = 0; i < n; i++)
 				this->src[i] = c;
@@ -1721,13 +1715,14 @@ namespace openutils
 		}
 	}
 
-	sstring::sstring(const char *str, std::size_t n)
+	template <typename T>
+	sstring_t_view<T>::sstring_t_view(const T *str, std::size_t n)
 	{
 		if (n != 0 && str)
 		{
 			this->len = 0;
 			std::size_t str_len = this->sstr_strlen(str) * n;
-			this->src = static_cast<char *>(std::calloc(str_len + 1, sizeof(char)));
+			this->src = static_cast<T *>(std::calloc(str_len + 1, sizeof(T)));
 			exit_heap_fail(this->src);
 			for (std::size_t i = 0; i < n; i++)
 				this->fast_strncat(this->src, str, this->len);
@@ -1739,12 +1734,13 @@ namespace openutils
 		}
 	}
 
-	sstring::sstring(const sstring &other)
+	template <typename T>
+	sstring_t_view<T>::sstring_t_view(const sstring_t_view<T> &other)
 	{
 		if (other.src)
 		{
 			this->len = 0;
-			this->src = static_cast<char *>(std::calloc(other.len + 1, sizeof(char)));
+			this->src = static_cast<T *>(std::calloc(other.len + 1, sizeof(T)));
 			exit_heap_fail(this->src);
 			this->fast_strncat(this->src, other.src, this->len);
 		}
@@ -1755,7 +1751,8 @@ namespace openutils
 		}
 	}
 
-	sstring::sstring(sstring &&other) noexcept
+	template <typename T>
+	sstring_t_view<T>::sstring_t_view(sstring_t_view<T> &&other) noexcept
 	{
 		this->src = other.src;
 		this->len = other.len;
@@ -1763,30 +1760,32 @@ namespace openutils
 		other.len = 0;
 	}
 
-	sstring::sstring(std::initializer_list<char> list)
+	template <typename T>
+	sstring_t_view<T>::sstring_t_view(std::initializer_list<T> list)
 	{
 		this->len = 0;
 		std::size_t str_len = list.size();
-		this->src = static_cast<char *>(std::calloc(str_len + 1, sizeof(char)));
+		this->src = static_cast<T *>(std::calloc(str_len + 1, sizeof(T)));
 		exit_heap_fail(this->src);
-		for (std::initializer_list<char>::const_iterator i = list.begin(); i != list.end(); i++)
+		for (auto i = list.begin(); i != list.end(); i++)
 		{
 			if (*i != 0)
 				this->src[this->len++] = *i;
 		}
 	}
 
-	sstring::sstring(std::initializer_list<sstring> list)
+	template <typename T>
+	sstring_t_view<T>::sstring_t_view(std::initializer_list<sstring_t_view<T>> list)
 	{
 		this->len = 0;
 		std::size_t str_len = 0;
-		for (std::initializer_list<sstring>::const_iterator i = list.begin(); i != list.end(); i++)
+		for (auto i = list.begin(); i != list.end(); i++)
 			str_len += (*i).len;
 
-		this->src = static_cast<char *>(std::calloc(str_len + 1, sizeof(char)));
+		this->src = static_cast<T *>(std::calloc(str_len + 1, sizeof(T)));
 		exit_heap_fail(this->src);
 
-		for (std::initializer_list<sstring>::const_iterator i = list.begin(); i != list.end(); i++)
+		for (auto i = list.begin(); i != list.end(); i++)
 		{
 			if ((*i).src)
 			{
@@ -1796,7 +1795,8 @@ namespace openutils
 		}
 	}
 
-	sstring &sstring::set(const char *str)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::set(const T *str)
 	{
 		if (str)
 		{
@@ -1804,57 +1804,62 @@ namespace openutils
 				std::free(this->src);
 			this->len = 0;
 			std::size_t str_len = this->sstr_strlen(str);
-			this->src = static_cast<char *>(std::calloc(str_len + 1, sizeof(char)));
+			this->src = static_cast<T *>(std::calloc(str_len + 1, sizeof(T)));
 			exit_heap_fail(this->src);
 			this->fast_strncat(this->src, str, this->len);
 		}
 		return *this;
 	}
 
-	sstring &sstring::set(const sstring &str)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::set(const sstring_t_view<T> &str)
 	{
 		return this->set(str.src);
 	}
 
-	sstring &sstring::set_char(const char c)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::set_char(const T c)
 	{
 		if (c != 0)
 		{
 			if (this->src)
 				std::free(this->src);
-			this->src = static_cast<char *>(std::calloc(2, sizeof(char)));
+			this->src = static_cast<T *>(std::calloc(2, sizeof(T)));
 			exit_heap_fail(this->src);
 			this->src[this->len++] = c;
 		}
 		return *this;
 	}
 
-	sstring &sstring::set_upto(const char *str, std::size_t N)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::set_upto(const T *str, std::size_t N)
 	{
 		if (str && (N <= this->sstr_strlen(str)))
 		{
 			if (this->src)
 				std::free(this->src);
-			this->src = static_cast<char *>(std::calloc(N + 1, sizeof(char)));
+			this->src = static_cast<T *>(std::calloc(N + 1, sizeof(T)));
 			exit_heap_fail(this->src);
-			std::memmove(this->src, str, N);
+			std::memmove(this->src, str, N * sizeof(T));
 			this->len = N;
 		}
 		return *this;
 	}
 
-	sstring &sstring::set_upto(const sstring &str, std::size_t N)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::set_upto(const sstring_t_view<T> &str, std::size_t N)
 	{
 		return this->set_upto(str.src, N);
 	}
 
-	sstring &sstring::set_random(const std::size_t rnd_len)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::set_random(const std::size_t rnd_len)
 	{
 		if (rnd_len != 0)
 		{
 			if (this->src)
 				std::free(this->src);
-			this->src = static_cast<char *>(std::calloc(rnd_len + 1, sizeof(char)));
+			this->src = static_cast<T *>(std::calloc(rnd_len + 1, sizeof(T)));
 			exit_heap_fail(this->src);
 			for (std::size_t i = 0; i < rnd_len; i++)
 				this->src[i] = (rand() % (126 - 32 + 1)) + 32;
@@ -1863,7 +1868,8 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::set_array(const vector_t<char *> &vec, const char *between)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::set_array(const vector_t<T *> &vec, const T *between)
 	{
 		if (this->src)
 			std::free(this->src);
@@ -1883,7 +1889,7 @@ namespace openutils
 		if (between)
 			vec_str_len += vec.length() * bw_len;
 
-		this->src = static_cast<char *>(std::calloc(vec_str_len + 1, sizeof(char)));
+		this->src = static_cast<T *>(std::calloc(vec_str_len + 1, sizeof(T)));
 		exit_heap_fail(this->src);
 
 		for (std::size_t i = 0; i < vec.length(); i++)
@@ -1898,7 +1904,8 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::set_array(const vector_t<sstring> &vec, const char *between)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::set_array(const vector_t<sstring_t_view> &vec, const T *between)
 	{
 		if (this->src)
 			std::free(this->src);
@@ -1918,7 +1925,7 @@ namespace openutils
 		if (between)
 			vec_str_len += vec.length() * bw_len;
 
-		this->src = static_cast<char *>(std::calloc(vec_str_len + 1, sizeof(char)));
+		this->src = static_cast<T *>(std::calloc(vec_str_len + 1, sizeof(T)));
 		exit_heap_fail(this->src);
 
 		for (std::size_t i = 0; i < vec.length(); i++)
@@ -1933,34 +1940,38 @@ namespace openutils
 		return *this;
 	}
 
-	char *&sstring::get()
+	template <typename T>
+	T *&sstring_t_view<T>::get()
 	{
 		return this->src;
 	}
 
-	const char *sstring::c_str() const
+	template <typename T>
+	const T *sstring_t_view<T>::c_str() const
 	{
 		return this->src;
 	}
 
-	sstring &sstring::get_ref()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::get_ref()
 	{
 		return *this;
 	}
 
-	sstring &sstring::append(const char *str)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::append(const T *str)
 	{
 		if (str)
 		{
 			std::size_t str_len = this->sstr_strlen(str);
 			if (this->src)
 			{
-				this->src = static_cast<char *>(std::realloc(this->src, this->len + str_len + 1));
+				this->src = static_cast<T *>(std::realloc(this->src, sizeof(T) * (this->len + str_len + 1)));
 				exit_heap_fail(this->src);
 			}
 			else
 			{
-				this->src = static_cast<char *>(std::calloc(str_len + 1, sizeof(char)));
+				this->src = static_cast<T *>(std::calloc(str_len + 1, sizeof(T)));
 				exit_heap_fail(this->src);
 				this->len = 0;
 			}
@@ -1969,24 +1980,26 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::append(const sstring &str)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::append(const sstring_t_view<T> &str)
 	{
 		return this->append(str.src);
 	}
 
-	sstring &sstring::append_char(const char c)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::append_char(const T c)
 	{
 		if (c != 0)
 		{
 			if (this->src)
 			{
-				this->src = static_cast<char *>(std::realloc(this->src, this->len + 2));
+				this->src = static_cast<T *>(std::realloc(this->src, sizeof(T) * (this->len + 2)));
 				exit_heap_fail(this->src);
 				this->init_n_zeroes(this->src, this->len, this->len + 2);
 			}
 			else
 			{
-				this->src = static_cast<char *>(std::calloc(2, sizeof(char)));
+				this->src = static_cast<T *>(std::calloc(2, sizeof(T)));
 				exit_heap_fail(this->src);
 				this->len = 0;
 			}
@@ -1995,42 +2008,45 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::append_upto(const char *str, std::size_t N)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::append_upto(const T *str, std::size_t N)
 	{
 		if (str && (N <= this->sstr_strlen(str)))
 		{
 			if (this->src)
 			{
-				this->src = static_cast<char *>(std::realloc(this->src, this->len + N + 1));
+				this->src = static_cast<T *>(std::realloc(this->src, sizeof(T) * (this->len + N + 1)));
 				exit_heap_fail(this->src);
-				std::memmove(this->src + this->len, str, N);
+				std::memmove(this->src + this->len, str, N * sizeof(T));
 				this->len += N;
 			}
 			else
 			{
-				this->src = static_cast<char *>(std::calloc(N + 1, sizeof(char)));
+				this->src = static_cast<T *>(std::calloc(N + 1, sizeof(T)));
 				exit_heap_fail(this->src);
 				this->len = 0;
-				std::memmove(this->src, str, N);
+				std::memmove(this->src, str, N * sizeof(T));
 				this->len = N;
 			}
 		}
 		return *this;
 	}
 
-	sstring &sstring::append_upto(const sstring &str, std::size_t N)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::append_upto(const sstring_t_view<T> &str, std::size_t N)
 	{
 		return this->append_upto(str.src, N);
 	}
 
-	sstring &sstring::append_start(const char *str)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::append_start(const T *str)
 	{
 		if (str)
 		{
 			std::size_t str_len = this->sstr_strlen(str);
 			if (this->src)
 			{
-				char *buff = static_cast<char *>(std::calloc(str_len + this->len + 1, sizeof(char)));
+				T *buff = static_cast<T *>(std::calloc(str_len + this->len + 1, sizeof(T)));
 				exit_heap_fail(buff);
 				this->len = 0;
 				this->fast_strncat(buff, str, this->len);
@@ -2041,7 +2057,7 @@ namespace openutils
 			}
 			else
 			{
-				this->src = static_cast<char *>(std::calloc(str_len + 1, sizeof(char)));
+				this->src = static_cast<T *>(std::calloc(str_len + 1, sizeof(T)));
 				exit_heap_fail(this->src);
 				this->len = 0;
 				this->fast_strncat(this->src, str, this->len);
@@ -2050,21 +2066,23 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::append_start(const sstring &str)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::append_start(const sstring_t_view<T> &str)
 	{
 		return this->append_start(str.src);
 	}
 
-	sstring &sstring::append_start_char(const char c)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::append_start_char(const T c)
 	{
 		if (c != 0)
 		{
 			if (this->src)
 			{
-				char *buff = static_cast<char *>(std::calloc(this->len + 2, sizeof(char)));
+				T *buff = static_cast<T *>(std::calloc(this->len + 2, sizeof(T)));
 				exit_heap_fail(buff);
 				this->len = 1;
-				std::memmove(buff, &c, 1);
+				std::memmove(buff, &c, sizeof(T));
 				this->fast_strncat(buff, this->src, this->len);
 
 				std::free(this->src);
@@ -2072,25 +2090,26 @@ namespace openutils
 			}
 			else
 			{
-				this->src = static_cast<char *>(std::calloc(2, sizeof(char)));
+				this->src = static_cast<T *>(std::calloc(2, sizeof(T)));
 				exit_heap_fail(this->src);
-				std::memmove(this->src, &c, 1);
+				std::memmove(this->src, &c, sizeof(T));
 				this->len = 1;
 			}
 		}
 		return *this;
 	}
 
-	sstring &sstring::append_start_upto(const char *str, std::size_t N)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::append_start_upto(const T *str, std::size_t N)
 	{
 		if (str && (N <= this->sstr_strlen(str)))
 		{
 			if (this->src)
 			{
-				char *buff = static_cast<char *>(std::calloc(N + this->len + 1, sizeof(char)));
+				T *buff = static_cast<T *>(std::calloc(N + this->len + 1, sizeof(T)));
 				exit_heap_fail(buff);
 				this->len = N;
-				std::memmove(buff, str, N);
+				std::memmove(buff, str, N * sizeof(T));
 				this->fast_strncat(buff, this->src, this->len);
 
 				std::free(this->src);
@@ -2098,21 +2117,23 @@ namespace openutils
 			}
 			else
 			{
-				this->src = static_cast<char *>(std::calloc(N + 1, sizeof(char)));
+				this->src = static_cast<T *>(std::calloc(N + 1, sizeof(T)));
 				exit_heap_fail(this->src);
-				std::memmove(this->src, str, N);
+				std::memmove(this->src, str, N * sizeof(T));
 				this->len = N;
 			}
 		}
 		return *this;
 	}
 
-	sstring &sstring::append_start_upto(const sstring &str, std::size_t N)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::append_start_upto(const sstring_t_view<T> &str, std::size_t N)
 	{
 		return this->append_start_upto(str.src, N);
 	}
 
-	sstring &sstring::append_array(const vector_t<char *> &vec, const char *between)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::append_array(const vector_t<T *> &vec, const T *between)
 	{
 		if (this->src)
 		{
@@ -2130,7 +2151,7 @@ namespace openutils
 			if (between)
 				vec_str_len += vec.length() * bw_len;
 
-			this->src = static_cast<char *>(std::realloc(this->src, this->len + vec_str_len + 1));
+			this->src = static_cast<T *>(std::realloc(this->src, sizeof(T) * (this->len + vec_str_len + 1)));
 			exit_heap_fail(this->src);
 
 			for (std::size_t i = 0; i < vec.length(); i++)
@@ -2150,7 +2171,8 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::append_array(const vector_t<sstring> &vec, const char *between)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::append_array(const vector_t<sstring_t_view> &vec, const T *between)
 	{
 		if (this->src)
 		{
@@ -2168,7 +2190,7 @@ namespace openutils
 			if (between)
 				vec_str_len += vec.length() * bw_len;
 
-			this->src = static_cast<char *>(std::realloc(this->src, this->len + vec_str_len + 1));
+			this->src = static_cast<T *>(std::realloc(this->src, sizeof(T) * (this->len + vec_str_len + 1)));
 			exit_heap_fail(this->src);
 
 			for (std::size_t i = 0; i < vec.length(); i++)
@@ -2188,7 +2210,8 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::append_start_array(const vector_t<char *> &vec, const char *between)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::append_start_array(const vector_t<T *> &vec, const T *between)
 	{
 		if (this->src)
 		{
@@ -2206,7 +2229,7 @@ namespace openutils
 			if (between)
 				vec_str_len += vec.length() * bw_len;
 
-			char *buff = static_cast<char *>(std::calloc(this->len + vec_str_len + 1, sizeof(char)));
+			T *buff = static_cast<T *>(std::calloc(this->len + vec_str_len + 1, sizeof(T)));
 			exit_heap_fail(buff);
 			std::size_t track = 0;
 			this->fast_strncat(buff, this->src, track);
@@ -2229,7 +2252,8 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::append_start_array(const vector_t<sstring> &vec, const char *between)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::append_start_array(const vector_t<sstring_t_view> &vec, const T *between)
 	{
 		if (this->src)
 		{
@@ -2247,7 +2271,7 @@ namespace openutils
 			if (between)
 				vec_str_len += vec.length() * bw_len;
 
-			char *buff = static_cast<char *>(std::calloc(this->len + vec_str_len + 1, sizeof(char)));
+			T *buff = static_cast<T *>(std::calloc(this->len + vec_str_len + 1, sizeof(T)));
 			exit_heap_fail(buff);
 			std::size_t track = 0;
 			this->fast_strncat(buff, this->src, track);
@@ -2270,19 +2294,22 @@ namespace openutils
 		return *this;
 	}
 
-	bool sstring::is_empty() const
+	template <typename T>
+	bool sstring_t_view<T>::is_empty() const
 	{
 		return (this->len == 0);
 	}
 
-	bool sstring::is_null() const
+	template <typename T>
+	bool sstring_t_view<T>::is_null() const
 	{
 		if (this->src)
 			return false;
 		return true;
 	}
 
-	sstring &sstring::replace(const char *old, const char *new_)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::replace(const T *old, const T *new_)
 	{
 		if (old && new_ && this->src)
 		{
@@ -2304,7 +2331,7 @@ namespace openutils
 			// now we have got every points (indexes) where `old` is present
 
 			std::size_t buff_len = this->len + (new_len * indexes.length()) - (old_len * indexes.length());
-			char *buff = static_cast<char *>(std::calloc(buff_len + 1, sizeof(char)));
+			T *buff = static_cast<T *>(std::calloc(buff_len + 1, sizeof(T)));
 			exit_heap_fail(buff);
 
 			std::size_t track = 0;
@@ -2326,12 +2353,14 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::replace(const sstring &old, const sstring &new_)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::replace(const sstring_t_view<T> &old, const sstring_t_view<T> &new_)
 	{
 		return this->replace(old.src, new_.src);
 	}
 
-	sstring &sstring::replace_char(const char old, const char new_)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::replace_char(const T old, const T new_)
 	{
 		if (old != 0 && new_ != 0 && this->src)
 			for (std::size_t i = 0; this->src[i] != 0; i++)
@@ -2340,14 +2369,16 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::char_set(const char new_char, std::size_t nth)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::char_set(const T new_char, std::size_t nth)
 	{
 		if (this->len >= nth && new_char != 0 && this->src)
 			this->src[nth] = new_char;
 		return *this;
 	}
 
-	char sstring::char_get(std::size_t nth) const
+	template <typename T>
+	T sstring_t_view<T>::char_get(std::size_t nth) const
 	{
 		if (this->len >= nth && this->src)
 			return this->src[nth];
@@ -2358,7 +2389,8 @@ namespace openutils
 		}
 	}
 
-	char &sstring::char_get(std::size_t nth)
+	template <typename T>
+	T &sstring_t_view<T>::char_get(std::size_t nth)
 	{
 		if (this->len >= nth && this->src)
 			return this->src[nth];
@@ -2369,7 +2401,8 @@ namespace openutils
 		}
 	}
 
-	std::size_t sstring::index_of(char ch) const
+	template <typename T>
+	std::size_t sstring_t_view<T>::index_of(T ch) const
 	{
 		if (ch != 0 && this->src)
 		{
@@ -2380,7 +2413,8 @@ namespace openutils
 		return this->nerr();
 	}
 
-	std::size_t sstring::last_index_of(char ch) const
+	template <typename T>
+	std::size_t sstring_t_view<T>::last_index_of(T ch) const
 	{
 		if (ch != 0 && this->src)
 		{
@@ -2391,18 +2425,21 @@ namespace openutils
 		return this->nerr();
 	}
 
-	const std::size_t &sstring::length() const
+	template <typename T>
+	const std::size_t &sstring_t_view<T>::length() const
 	{
 		return this->len;
 	}
 
-	std::size_t &sstring::change_length(std::size_t new_length)
+	template <typename T>
+	std::size_t &sstring_t_view<T>::change_length(std::size_t new_length)
 	{
 		this->len = new_length;
 		return this->len;
 	}
 
-	bool sstring::compare(const char *T1) const
+	template <typename T>
+	bool sstring_t_view<T>::compare(const T *T1) const
 	{
 		if (T1 && this->src)
 			if (this->sstr_strcmp(this->src, T1) == 0)
@@ -2410,12 +2447,14 @@ namespace openutils
 		return false;
 	}
 
-	bool sstring::compare(const sstring &T1) const
+	template <typename T>
+	bool sstring_t_view<T>::compare(const sstring_t_view<T> &T1) const
 	{
 		return this->compare(T1.src);
 	}
 
-	bool sstring::compare_upto(const char *T1, std::size_t N) const
+	template <typename T>
+	bool sstring_t_view<T>::compare_upto(const T *T1, std::size_t N) const
 	{
 		if (T1 && this->src)
 			if (this->sstr_strncmp(this->src, T1, N) == 0)
@@ -2423,12 +2462,14 @@ namespace openutils
 		return false;
 	}
 
-	bool sstring::compare_upto(const sstring &T1, std::size_t N) const
+	template <typename T>
+	bool sstring_t_view<T>::compare_upto(const sstring_t_view<T> &T1, std::size_t N) const
 	{
 		return this->compare_upto(T1.src, N);
 	}
 
-	bool sstring::is_changed(sstring &obj)
+	template <typename T>
+	bool sstring_t_view<T>::is_changed(sstring_t_view<T> &obj)
 	{
 		// CASE 1: nullptr
 		if (this->src == nullptr && obj.src == nullptr)
@@ -2452,7 +2493,8 @@ namespace openutils
 		}
 	}
 
-	int sstring::lexicographical_comparison(const char *str) const
+	template <typename T>
+	int sstring_t_view<T>::lexicographical_comparison(const T *str) const
 	{
 		if (!this->src)
 			return this->len - this->sstr_strlen(str);
@@ -2466,54 +2508,21 @@ namespace openutils
 		return this->len - str_len;
 	}
 
-	int sstring::lexicographical_comparison(const sstring &str) const
+	template <typename T>
+	int sstring_t_view<T>::lexicographical_comparison(const sstring_t_view<T> &str) const
 	{
 		return this->lexicographical_comparison(str.src);
 	}
 
-	std::size_t sstring::print(bool add_next_line, const char *__format__, ...) const
-	{
-		if (!this->src)
-			return 0;
-		std::size_t LEN = 0;
-		if (__format__)
-		{
-			std::va_list ar;
-			va_start(ar, __format__);
-			LEN += std::printf("%s", this->src);
-			LEN += std::vprintf(__format__, ar);
-			va_end(ar);
-		}
-		else
-			LEN += printf("%s", this->src);
-		if (add_next_line)
-		{
-#if defined __linux__ || defined linux || defined __linux
-			std::printf("\n");
-#elif _WIN32 || defined _WIN64 || defined __CYGWIN__
-			std::printf("\r\n");
-#elif defined __unix__ || defined __unix || defined unix
-			std::printf("\n");
-#elif defined __APPLE__ || defined __MACH__
-			std::printf("\n");
-#elif defined __FreeBSD__
-			std::printf("\n");
-#elif defined __ANDROID__
-			std::printf("\n");
-#endif
-		}
-		fflush(stdout);
-		return LEN;
-	}
-
-	bool sstring::save(const char *location) const
+	template <typename T>
+	bool sstring_t_view<T>::save(const T *location) const
 	{
 		if (location && this->src)
 		{
 			std::FILE *f = std::fopen(location, "wb");
 			if (f != nullptr)
 			{
-				std::fwrite(this->src, this->len, sizeof(char), f);
+				std::fwrite(this->src, this->len, sizeof(T), f);
 				std::fclose(f);
 				return true;
 			}
@@ -2521,19 +2530,21 @@ namespace openutils
 		return false;
 	}
 
-	bool sstring::save(const sstring &location) const
+	template <typename T>
+	bool sstring_t_view<T>::save(const sstring_t_view<T> &location) const
 	{
 		return this->save(location.src);
 	}
 
-	bool sstring::append_file(const char *location) const
+	template <typename T>
+	bool sstring_t_view<T>::append_file(const T *location) const
 	{
 		if (location && this->src)
 		{
 			std::FILE *f = std::fopen(location, "ab");
 			if (f != nullptr)
 			{
-				std::fwrite(this->src, this->len, sizeof(char), f);
+				std::fwrite(this->src, this->len, sizeof(T), f);
 				std::fclose(f);
 				return true;
 			}
@@ -2541,12 +2552,14 @@ namespace openutils
 		return false;
 	}
 
-	bool sstring::append_file(const sstring &location) const
+	template <typename T>
+	bool sstring_t_view<T>::append_file(const sstring_t_view<T> &location) const
 	{
 		return this->append_file(location.src);
 	}
 
-	bool sstring::open(const char *location)
+	template <typename T>
+	bool sstring_t_view<T>::open(const T *location)
 	{
 		if (location)
 		{
@@ -2558,9 +2571,9 @@ namespace openutils
 				std::fseek(f, 0, SEEK_SET);
 				if (this->src)
 					std::free(this->src);
-				this->src = static_cast<char *>(std::calloc(file_len + 1, sizeof(char)));
+				this->src = static_cast<T *>(std::calloc(file_len + 1, sizeof(T)));
 				exit_heap_fail(this->src);
-				std::fread(this->src, file_len, sizeof(char), f);
+				std::fread(this->src, file_len, sizeof(T), f);
 				std::fclose(f);
 				this->len = file_len;
 				return true;
@@ -2569,12 +2582,14 @@ namespace openutils
 		return false;
 	}
 
-	bool sstring::open(const sstring &location)
+	template <typename T>
+	bool sstring_t_view<T>::open(const sstring_t_view<T> &location)
 	{
 		return this->open(location.src);
 	}
 
-	sstring &sstring::clear()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::clear()
 	{
 		if (this->src)
 			std::free(this->src);
@@ -2583,7 +2598,8 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::to_upper()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::to_upper()
 	{
 		if (this->src)
 		{
@@ -2596,7 +2612,8 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::to_lower()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::to_lower()
 	{
 		if (this->src)
 		{
@@ -2609,7 +2626,8 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::swap_case()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::swap_case()
 	{
 		if (this->src)
 		{
@@ -2624,12 +2642,13 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::to_binary()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::to_binary()
 	{
 		if (this->src)
 		{
 			std::size_t size = 0;
-			char *buff = static_cast<char *>(std::calloc((9 * this->len) + 1, sizeof(char)));
+			T *buff = static_cast<T *>(std::calloc((9 * this->len) + 1, sizeof(T)));
 			exit_heap_fail(buff);
 
 			for (std::size_t i = 0; i < this->len; ++i)
@@ -2645,14 +2664,15 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::from_binary()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::from_binary()
 	{
 		if (this->src)
 		{
-			char *buff = static_cast<char *>(std::calloc((this->len / 9) + 1, sizeof(char)));
+			T *buff = static_cast<T *>(std::calloc((this->len / 9) + 1, sizeof(T)));
 			exit_heap_fail(buff);
 
-			char bin[9] = {}, store[2] = {};
+			T bin[9] = {}, store[2] = {};
 			std::size_t z = 0;
 			for (std::size_t i = 0, j = 0; i < this->len; ++i, ++j)
 			{
@@ -2678,13 +2698,14 @@ namespace openutils
 		return *this;
 	}
 
-	double sstring::entropy() const
+	template <typename T>
+	double sstring_t_view<T>::entropy() const
 	{
 		if (this->src)
 		{
 			const std::size_t MAX = 1 << CHAR_BIT;
 			std::size_t frequencies[MAX] = {};
-			for (const char *p = this->src; *p != 0; p++)
+			for (const T *p = this->src; *p != 0; p++)
 			{
 				frequencies[*p - CHAR_MIN] += 1;
 			}
@@ -2703,7 +2724,8 @@ namespace openutils
 		return -1;
 	}
 
-	double sstring::password_entropy() const
+	template <typename T>
+	double sstring_t_view<T>::password_entropy() const
 	{
 		if (!this->src)
 			return 0;
@@ -2759,7 +2781,8 @@ namespace openutils
 		return (double)this->len * std::log2(R);
 	}
 
-	bool sstring::contains(const char *str) const
+	template <typename T>
+	bool sstring_t_view<T>::contains(const T *str) const
 	{
 		if (str && this->src)
 			if (this->fast_strstr(this->src, this->len, str) != nullptr)
@@ -2767,12 +2790,14 @@ namespace openutils
 		return false;
 	}
 
-	bool sstring::contains(const sstring &str) const
+	template <typename T>
+	bool sstring_t_view<T>::contains(const sstring_t_view<T> &str) const
 	{
 		return this->contains(str.src);
 	}
 
-	std::size_t sstring::contains_char(const char c) const
+	template <typename T>
+	std::size_t sstring_t_view<T>::contains_char(const T c) const
 	{
 		if (c != 0 && this->src)
 		{
@@ -2783,19 +2808,20 @@ namespace openutils
 		return this->nerr();
 	}
 
-	sstring &sstring::to_set()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::to_set()
 	{
 		if (this->src)
 		{
 			const std::size_t MAX = 1 << CHAR_BIT;
 			std::size_t frequencies[MAX] = {};
 
-			for (const char *p = this->src; *p != 0; p++)
+			for (const T *p = this->src; *p != 0; p++)
 			{
 				frequencies[*p - CHAR_MIN] += 1;
 			}
 
-			char *buff = static_cast<char *>(std::calloc(MAX, sizeof(char)));
+			T *buff = static_cast<T *>(std::calloc(MAX, sizeof(T)));
 			exit_heap_fail(buff);
 			std::size_t z = 0;
 			for (size_t i = 0; i < MAX; i++)
@@ -2810,11 +2836,12 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::to_hexadecimal()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::to_hexadecimal()
 	{
 		if (this->src)
 		{
-			char *buff = static_cast<char *>(std::calloc((this->len * 2) + 1, sizeof(char)));
+			T *buff = static_cast<T *>(std::calloc((this->len * 2) + 1, sizeof(T)));
 			exit_heap_fail(buff);
 
 			std::size_t i = 0, j = 0;
@@ -2830,14 +2857,15 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::from_hexadecimal()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::from_hexadecimal()
 	{
 		if (this->src)
 		{
-			char *buff = static_cast<char *>(std::calloc((this->len / 2) + 1, sizeof(char)));
+			T *buff = static_cast<T *>(std::calloc((this->len / 2) + 1, sizeof(T)));
 			exit_heap_fail(buff);
 
-			char hex[3] = {}, store[2] = {};
+			T hex[3] = {}, store[2] = {};
 			std::size_t z = 0;
 			for (std::size_t i = 0, j = 0; i < len; ++i)
 			{
@@ -2864,46 +2892,51 @@ namespace openutils
 		return *this;
 	}
 
-	std::size_t sstring::find(const char *sub) const
+	template <typename T>
+	std::size_t sstring_t_view<T>::find(const T *sub) const
 	{
 		if (sub && this->src)
 		{
-			char *buff = this->fast_strstr(this->src, this->len, sub);
+			T *buff = this->fast_strstr(this->src, this->len, sub);
 			if (buff)
 				return this->len - this->sstr_strlen(buff);
 		}
 		return this->nerr();
 	}
 
-	std::size_t sstring::find(const sstring &sub) const
+	template <typename T>
+	std::size_t sstring_t_view<T>::find(const sstring_t_view<T> &sub) const
 	{
 		return this->find(sub.src);
 	}
 
-	std::size_t sstring::find_next(std::size_t last_index, const char *sub) const
+	template <typename T>
+	std::size_t sstring_t_view<T>::find_next(std::size_t last_index, const T *sub) const
 	{
 		if (sub && this->src)
 		{
-			char *buff = this->fast_strstr(this->src + last_index, this->len - last_index, sub);
+			T *buff = this->fast_strstr(this->src + last_index, this->len - last_index, sub);
 			if (buff)
 				return this->len - this->sstr_strlen(buff);
 		}
 		return this->nerr();
 	}
 
-	std::size_t sstring::find_next(std::size_t last_index, const sstring &sub) const
+	template <typename T>
+	std::size_t sstring_t_view<T>::find_next(std::size_t last_index, const sstring_t_view<T> &sub) const
 	{
 		return this->find_next(last_index, sub.src);
 	}
 
-	sstring &sstring::in()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::in()
 	{
 		if (this->src)
 			std::free(this->src);
 
 		std::size_t cap = 64, len_input = 0;
-		char ch;
-		this->src = static_cast<char *>(std::calloc(cap, sizeof(char)));
+		T ch;
+		this->src = static_cast<T *>(std::calloc(cap, sizeof(T)));
 		exit_heap_fail(this->src);
 
 		while ((ch = std::getchar()))
@@ -2914,7 +2947,7 @@ namespace openutils
 			if (len_input == cap)
 			{
 				cap += 64;
-				this->src = static_cast<char *>(std::realloc(this->src, cap));
+				this->src = static_cast<T *>(std::realloc(this->src, sizeof(T) * cap));
 				exit_heap_fail(this->src);
 			}
 		}
@@ -2923,17 +2956,18 @@ namespace openutils
 		return *this;
 	}
 
-	sstring sstring::getline(const std::size_t line) const
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::getline(const std::size_t line) const
 	{
 		if (!this->src)
-			return sstring();
+			return sstring_t_view();
 
 		std::size_t cnt = 0;
-		char *temp = static_cast<char *>(std::calloc(len + 1, sizeof(char)));
+		T *temp = static_cast<T *>(std::calloc(len + 1, sizeof(T)));
 		exit_heap_fail(temp);
 
-		std::memmove(temp, this->src, this->len);
-		char *tok = this->fast_strtok(temp, "\n");
+		std::memmove(temp, this->src, this->len * sizeof(T));
+		T *tok = this->fast_strtok(temp, "\n");
 		while (tok)
 		{
 			if (cnt++ == line)
@@ -2943,20 +2977,21 @@ namespace openutils
 		if (cnt == 0 || tok == nullptr)
 		{
 			std::free(temp);
-			return sstring();
+			return sstring_t_view();
 		}
-		sstring res = sstring(tok);
+		sstring_t_view res = sstring_t_view(tok);
 		std::free(temp);
 		return std::move(res);
 	}
 
-	sstring &sstring::reverse()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::reverse()
 	{
 		if (this->src)
 		{
 			for (std::size_t i = 0; i < this->len / 2; i++)
 			{
-				char c = this->src[i];
+				T c = this->src[i];
 				this->src[i] = this->src[this->len - i - 1];
 				this->src[this->len - i - 1] = c;
 			}
@@ -2964,7 +2999,8 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::remove(const char *sub)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::remove(const T *sub)
 	{
 		if (sub && sub[0] != 0 && this->src)
 		{
@@ -2985,7 +3021,7 @@ namespace openutils
 			// now we have all indexes where sub has occurred
 
 			std::size_t buff_len = this->len - (sub_len * indexes.length());
-			char *buff = static_cast<char *>(std::calloc(buff_len + 1, sizeof(char)));
+			T *buff = static_cast<T *>(std::calloc(buff_len + 1, sizeof(T)));
 			exit_heap_fail(buff);
 
 			std::size_t track = 0;
@@ -3006,17 +3042,19 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::remove(const sstring &sub)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::remove(const sstring_t_view<T> &sub)
 	{
 		return this->remove(sub.src);
 	}
 
-	sstring &sstring::remove_char(const char c)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::remove_char(const T c)
 	{
 		if (c != 0 && this->src)
 		{
 			std::size_t z = this->count_char(c);
-			char *buff = static_cast<char *>(std::calloc(this->len - z + 1, sizeof(char)));
+			T *buff = static_cast<T *>(std::calloc(this->len - z + 1, sizeof(T)));
 			exit_heap_fail(buff);
 
 			std::size_t buff_len = 0;
@@ -3033,11 +3071,12 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::remove_extra_char(const char c)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::remove_extra_char(const T c)
 	{
 		if (c != 0 && this->src)
 		{
-			char *buff = static_cast<char *>(std::calloc(this->len + 1, sizeof(char)));
+			T *buff = static_cast<T *>(std::calloc(this->len + 1, sizeof(T)));
 			exit_heap_fail(buff);
 
 			std::size_t p = 0, i = 0;
@@ -3054,13 +3093,14 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::remove_range(std::size_t from, std::size_t till)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::remove_range(std::size_t from, std::size_t till)
 	{
 		if (!this->src)
 			return *this;
 		if (till > this->len || from > this->len || from > till || till == from)
 			return *this;
-		char *buff = static_cast<char *>(std::calloc(this->len - (till - from) + 1, sizeof(char)));
+		T *buff = static_cast<T *>(std::calloc(this->len - (till - from) + 1, sizeof(T)));
 		exit_heap_fail(buff);
 
 		std::size_t k = 0;
@@ -3077,13 +3117,14 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::intersect(std::size_t from, std::size_t till)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::intersect(std::size_t from, std::size_t till)
 	{
 		if (!this->src)
 			return *this;
 		if (till > this->len || from > this->len || from > till || till == from)
 			return *this;
-		char *buff = static_cast<char *>(std::calloc(till - from + 1, sizeof(char)));
+		T *buff = static_cast<T *>(std::calloc(till - from + 1, sizeof(T)));
 		exit_heap_fail(buff);
 
 		std::size_t k = 0;
@@ -3096,14 +3137,15 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::remove_first_char()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::remove_first_char()
 	{
 		if (!this->src)
 			return *this;
 		if (this->src[0] == 0)
 			return *this;
 
-		char *buff = static_cast<char *>(std::calloc(this->len, sizeof(char)));
+		T *buff = static_cast<T *>(std::calloc(this->len, sizeof(T)));
 		exit_heap_fail(buff);
 
 		std::size_t z = 0;
@@ -3116,7 +3158,8 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::remove_last_char()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::remove_last_char()
 	{
 		if (!this->src)
 			return *this;
@@ -3125,7 +3168,8 @@ namespace openutils
 		return *this;
 	}
 
-	std::size_t sstring::distance(const char *str) const
+	template <typename T>
+	std::size_t sstring_t_view<T>::distance(const T *str) const
 	{
 		if (str && this->src)
 		{
@@ -3141,7 +3185,8 @@ namespace openutils
 		return this->nerr();
 	}
 
-	std::size_t sstring::distance(const sstring &str) const
+	template <typename T>
+	std::size_t sstring_t_view<T>::distance(const sstring_t_view<T> &str) const
 	{
 		return this->distance(str.src);
 	}
@@ -3150,7 +3195,8 @@ namespace openutils
 #define MIN3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
 #endif
 
-	std::size_t sstring::edit_distance(const char *str) const
+	template <typename T>
+	std::size_t sstring_t_view<T>::edit_distance(const T *str) const
 	{
 		if (str && this->src)
 		{
@@ -3176,12 +3222,14 @@ namespace openutils
 		return this->nerr();
 	}
 
-	std::size_t sstring::edit_distance(const sstring &str) const
+	template <typename T>
+	std::size_t sstring_t_view<T>::edit_distance(const sstring_t_view<T> &str) const
 	{
 		return this->edit_distance(str.src);
 	}
 
-	double sstring::percentage_matched(const char *str) const
+	template <typename T>
+	double sstring_t_view<T>::percentage_matched(const T *str) const
 	{
 		if (str && this->src)
 		{
@@ -3193,17 +3241,19 @@ namespace openutils
 		return -1;
 	}
 
-	double sstring::percentage_matched(const sstring &str) const
+	template <typename T>
+	double sstring_t_view<T>::percentage_matched(const sstring_t_view<T> &str) const
 	{
 		return this->percentage_matched(str.src);
 	}
 
-	std::size_t sstring::count(const char *what) const
+	template <typename T>
+	std::size_t sstring_t_view<T>::count(const T *what) const
 	{
 		if (what && this->src)
 		{
 			std::size_t cnt = 0, what_len = this->sstr_strlen(what);
-			const char *sub = this->src;
+			const T *sub = this->src;
 			while ((sub = this->fast_strstr(sub, this->sstr_strlen(sub), what)))
 			{
 				cnt++;
@@ -3214,12 +3264,14 @@ namespace openutils
 		return 0;
 	}
 
-	std::size_t sstring::count(const sstring &what) const
+	template <typename T>
+	std::size_t sstring_t_view<T>::count(const sstring_t_view<T> &what) const
 	{
 		return this->count(what.src);
 	}
 
-	std::size_t sstring::count_char(const char what) const
+	template <typename T>
+	std::size_t sstring_t_view<T>::count_char(const T what) const
 	{
 		if (what != 0 && this->src)
 		{
@@ -3232,7 +3284,8 @@ namespace openutils
 		return 0;
 	}
 
-	sstring sstring::soundex() const
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::soundex() const
 	{
 		if (this->src)
 		{
@@ -3266,17 +3319,18 @@ namespace openutils
 					s++;
 				}
 			}
-			return sstring(res);
+			return sstring_t_view(res);
 		}
-		return sstring();
+		return sstring_t_view();
 	}
 
-	sstring sstring::most_used(const char *dl) const
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::most_used(const T *dl) const
 	{
 		if (dl && this->src && dl[0] != 0)
 		{
-			vector_t<sstring> vec = this->split(dl);
-			map_t<sstring, std::size_t> map;
+			vector_t<sstring_t_view> vec = this->split(dl);
+			map_t<sstring_t_view, std::size_t> map;
 			for (std::size_t i = 0; i < vec.length(); i++)
 			{
 				if (map.add(vec[i], 1) == false)
@@ -3285,33 +3339,35 @@ namespace openutils
 				}
 			}
 
-			map.sort_values([](node_t<sstring, std::size_t> x, node_t<sstring, std::size_t> y)
+			map.sort_values([](node_t<sstring_t_view, std::size_t> x, node_t<sstring_t_view, std::size_t> y)
 							{ return x.value > y.value; });
 
-			sstring ret;
-			for (map_t<sstring, std::size_t>::iter i = map.iterator(); i.c_loop(); i.next())
+			sstring_t_view ret;
+			for (auto i = map.iterator(); i.c_loop(); i.next())
 			{
 				ret.set(i->key.c_str());
 				break;
 			}
 			return std::move(ret);
 		}
-		return sstring();
+		return sstring_t_view();
 	}
 
-	sstring sstring::most_used(const sstring &dl) const
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::most_used(const sstring_t_view<T> &dl) const
 	{
 		return this->most_used(dl.src);
 	}
 
-	char sstring::most_used_char() const
+	template <typename T>
+	T sstring_t_view<T>::most_used_char() const
 	{
 		if (this->src)
 		{
 			const std::size_t MAX = 1 << CHAR_BIT;
 			std::size_t frequencies[MAX] = {};
 
-			for (const char *p = this->src; *p != 0; p++)
+			for (const T *p = this->src; *p != 0; p++)
 			{
 				frequencies[*p - CHAR_MIN] += 1;
 			}
@@ -3325,23 +3381,24 @@ namespace openutils
 					nth = i;
 				}
 			}
-			return (char)(nth + CHAR_MIN);
+			return (T)(nth + CHAR_MIN);
 		}
 		return 0;
 	}
 
-	vector_t<sstring> sstring::split(const char *str) const
+	template <typename T>
+	vector_t<sstring_t_view<T>> sstring_t_view<T>::split(const T *str) const
 	{
 		if (this->src && str && str[0] != 0)
 		{
 			if (!this->contains(str))
-				return vector_t<sstring>(1);
+				return vector_t<sstring_t_view>(1);
 
-			char *temp = static_cast<char *>(std::calloc(this->len + 1, sizeof(char)));
+			T *temp = static_cast<T *>(std::calloc(this->len + 1, sizeof(T)));
 			exit_heap_fail(temp);
-			std::memmove(temp, this->src, this->len);
-			char *tok = this->fast_strtok(temp, str);
-			vector_t<sstring> x;
+			std::memmove(temp, this->src, this->len * sizeof(T));
+			T *tok = this->fast_strtok(temp, str);
+			vector_t<sstring_t_view> x;
 			while (tok)
 			{
 				x.add(tok);
@@ -3352,30 +3409,33 @@ namespace openutils
 			std::free(temp);
 			return std::move(x);
 		}
-		return vector_t<sstring>(1);
+		return vector_t<sstring_t_view>(1);
 	}
 
-	vector_t<sstring> sstring::split(const sstring &str) const
+	template <typename T>
+	vector_t<sstring_t_view<T>> sstring_t_view<T>::split(const sstring_t_view<T> &str) const
 	{
 		return this->split(str.src);
 	}
 
-	sstring &sstring::sort()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::sort()
 	{
 		if (this->src)
-			std::sort(this->src, this->src + this->len, [](char c1, char c2)
+			std::sort(this->src, this->src + this->len, [](T c1, T c2)
 					  { return c1 - c2; });
 		return *this;
 	}
 
-	bool sstring::save_binary(const char *location, std::size_t bin_len) const
+	template <typename T>
+	bool sstring_t_view<T>::save_binary(const T *location, std::size_t bin_len) const
 	{
 		if (location && this->src)
 		{
 			std::FILE *f = std::fopen(location, "wb");
 			if (f != nullptr)
 			{
-				std::fwrite(this->src, bin_len, sizeof(char), f);
+				std::fwrite(this->src, bin_len, sizeof(T), f);
 				std::fclose(f);
 				return true;
 			}
@@ -3383,14 +3443,15 @@ namespace openutils
 		return false;
 	}
 
-	bool sstring::append_binary(const char *location, std::size_t bin_len) const
+	template <typename T>
+	bool sstring_t_view<T>::append_binary(const T *location, std::size_t bin_len) const
 	{
 		if (location && this->src)
 		{
 			std::FILE *f = std::fopen(location, "ab");
 			if (f != nullptr)
 			{
-				std::fwrite(this->src, bin_len, sizeof(char), f);
+				std::fwrite(this->src, bin_len, sizeof(T), f);
 				std::fclose(f);
 				return true;
 			}
@@ -3398,43 +3459,35 @@ namespace openutils
 		return false;
 	}
 
-	sstring &sstring::add_binary(const char *data, std::size_t &bin_len)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::add_binary(const T *data, std::size_t &bin_len)
 	{
 		if (data)
 		{
 			if (!this->src)
 			{
 				this->len = 0;
-				this->src = static_cast<char *>(std::calloc(bin_len + 1, sizeof(char)));
+				this->src = static_cast<T *>(std::calloc(bin_len + 1, sizeof(T)));
 				exit_heap_fail(this->src);
 				this->fast_strncat(this->src, data, this->len);
 				return *this;
 			}
-			this->src = static_cast<char *>(std::realloc(this->src, this->len + bin_len + 1));
+			this->src = static_cast<T *>(std::realloc(this->src, sizeof(T) * (this->len + bin_len + 1)));
 			exit_heap_fail(this->src);
 			this->fast_strncat(this->src, data, this->len);
 		}
 		return *this;
 	}
 
-	std::size_t sstring::print_binary(std::size_t bin_len) const
-	{
-		if (!this->src)
-			return 0;
-		std::size_t x = 0;
-		while (x != bin_len)
-			std::printf("%c", this->src[x++]);
-		return x;
-	}
-
-	sstring &sstring::encrypt(const char *key)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::encrypt(const T *key)
 	{
 		if (key && this->src)
 		{
-			std::size_t val = sstring(key).hash() % 128;
+			std::size_t val = sstring_t_view(key).hash() % 128;
 			bool add = true;
 
-			char *buff = static_cast<char *>(std::calloc(this->len + 1, sizeof(char)));
+			T *buff = static_cast<T *>(std::calloc(this->len + 1, sizeof(T)));
 			exit_heap_fail(buff);
 
 			for (std::size_t i = 0; this->src[i] != 0; i++)
@@ -3462,19 +3515,21 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::encrypt(const sstring &key)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::encrypt(const sstring_t_view<T> &key)
 	{
 		return this->encrypt(key.src);
 	}
 
-	sstring &sstring::decrypt(const char *key)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::decrypt(const T *key)
 	{
 		if (key && this->src)
 		{
-			std::size_t val = sstring(key).hash() % 128;
+			std::size_t val = sstring_t_view(key).hash() % 128;
 			bool add_invr = true;
 
-			char *buff = static_cast<char *>(std::calloc(this->len + 1, sizeof(char)));
+			T *buff = static_cast<T *>(std::calloc(this->len + 1, sizeof(T)));
 			exit_heap_fail(buff);
 
 			for (std::size_t i = 0; this->src[i] != 0; i++)
@@ -3502,70 +3557,80 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::decrypt(const sstring &key)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::decrypt(const sstring_t_view<T> &key)
 	{
 		return this->decrypt(key.src);
 	}
 
-	const char *sstring::cbegin() const
+	template <typename T>
+	const T *sstring_t_view<T>::cbegin() const
 	{
 		if (this->src)
 			return this->src;
 		return nullptr;
 	}
 
-	const char *sstring::cend() const
+	template <typename T>
+	const T *sstring_t_view<T>::cend() const
 	{
 		if (this->src)
 			return this->src + this->len;
 		return nullptr;
 	}
 
-	char *sstring::begin()
+	template <typename T>
+	T *sstring_t_view<T>::begin()
 	{
 		if (this->src)
 			return this->src;
 		return nullptr;
 	}
 
-	char *sstring::end()
+	template <typename T>
+	T *sstring_t_view<T>::end()
 	{
 		if (this->src)
 			return this->src + this->len;
 		return nullptr;
 	}
 
-	const char *sstring::crbegin() const
+	template <typename T>
+	const T *sstring_t_view<T>::crbegin() const
 	{
 		if (this->src)
 			return this->src + this->len;
 		return nullptr;
 	}
 
-	const char *sstring::crend() const
+	template <typename T>
+	const T *sstring_t_view<T>::crend() const
 	{
 		if (this->src)
 			return this->src;
 		return nullptr;
 	}
 
-	char *sstring::rbegin()
+	template <typename T>
+	T *sstring_t_view<T>::rbegin()
 	{
 		if (this->src)
 			return this->src + this->len;
 		return nullptr;
 	}
 
-	char *sstring::rend()
+	template <typename T>
+	T *sstring_t_view<T>::rend()
 	{
 		if (this->src)
 			return this->src;
 		return nullptr;
 	}
 
-	sstring &sstring::swap(sstring &__x) noexcept
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::swap(sstring_t_view<T> &__x) noexcept
 	{
-		char *temp = this->src;
+		T *temp = this->src;
 		this->src = __x.src;
 		__x.src = temp;
 
@@ -3576,37 +3641,39 @@ namespace openutils
 		return *this;
 	}
 
-	sstring sstring::substr(std::size_t index, std::size_t sub_len) const
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::substr(std::size_t index, std::size_t sub_len) const
 	{
 		if (index >= this->len || !this->src)
-			return sstring();
+			return sstring_t_view();
 		if (sub_len == this->nerr() || index + sub_len > this->len)
 			sub_len = this->len - index;
-		char *buff = static_cast<char *>(std::calloc(sub_len + 1, sizeof(char)));
+		T *buff = static_cast<T *>(std::calloc(sub_len + 1, sizeof(T)));
 		exit_heap_fail(buff);
 
-		std::memmove(buff, this->src + index, sub_len);
+		std::memmove(buff, this->src + index, sub_len * sizeof(T));
 
-		sstring ret;
+		sstring_t_view ret;
 		ret.src = buff;
 		ret.len = sub_len;
 		return std::move(ret);
 	}
 
-	vector_t<sstring> sstring::to_argv(const char *argv0) const
+	template <typename T>
+	vector_t<sstring_t_view<T>> sstring_t_view<T>::to_argv(const T *argv0) const
 	{
 		if (!this->src)
-			return vector_t<sstring>(1);
+			return vector_t<sstring_t_view>(1);
 
-		vector_t<sstring> spt = this->split(" ");
-		vector_t<sstring> args;
+		vector_t<sstring_t_view> spt = this->split(" ");
+		vector_t<sstring_t_view> args;
 		if (argv0)
 			args.add(argv0);
 		for (std::size_t i = 0; i < spt.length();)
 		{
 			if (spt[i][0] == '"')
 			{
-				sstring temp;
+				sstring_t_view temp;
 				for (; spt[i][spt[i].len - 1] != '"' && i < spt.length(); i++)
 					temp.append(spt[i] + " ");
 				temp.append(spt[i++]).remove_first_char().remove_last_char();
@@ -3618,21 +3685,22 @@ namespace openutils
 		return std::move(args);
 	}
 
-	sstring &sstring::to_morse_code()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::to_morse_code()
 	{
 		if (!this->src)
 			return *this;
 		for (std::size_t i = 0; i < this->len; i++)
-			if (!std::isdigit((unsigned char)this->src[i]) && !std::isalpha((unsigned char)this->src[i]) && this->src[i] != ' ')
+			if (!std::isdigit(this->src[i]) && !std::isalpha(this->src[i]) && this->src[i] != ' ')
 				return *this;
 
-		char *buff = static_cast<char *>(std::calloc((this->len * 8) + 1, sizeof(char)));
+		T *buff = static_cast<T *>(std::calloc((this->len * 8) + 1, sizeof(T)));
 		exit_heap_fail(buff);
 		std::size_t track = 0;
 
 		for (std::size_t i = 0; i < this->len; i++)
 		{
-			if (std::isdigit((unsigned char)this->src[i]))
+			if (std::isdigit(this->src[i]))
 				this->fast_strncat(buff, morse_code[(std::size_t)this->src[i] - 48].code, track);
 			else if (this->src[i] == ' ')
 				this->fast_strncat(buff, morse_code[36].code, track);
@@ -3653,7 +3721,8 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::from_morse_code()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::from_morse_code()
 	{
 		if (!this->src)
 			return *this;
@@ -3670,9 +3739,9 @@ namespace openutils
 			}
 		}
 
-		char *buff = static_cast<char *>(std::calloc(this->len + 1, sizeof(char)));
+		T *buff = static_cast<T *>(std::calloc(this->len + 1, sizeof(T)));
 		exit_heap_fail(buff);
-		char temp[9] = {}, arr[2] = {};
+		T temp[9] = {}, arr[2] = {};
 
 		std::size_t track = 0, x = 0;
 		for (std::size_t i = 0, k = 0; i < this->len; i++, k++)
@@ -3693,7 +3762,7 @@ namespace openutils
 					x++;
 				arr[0] = morse_code[x].character;
 				this->fast_strncat(buff, arr, track);
-				std::memset(temp, 0, 9);
+				this->init_n_zeroes(temp, 0, 9);
 				k = 0;
 			}
 			temp[k] = this->src[i];
@@ -3704,7 +3773,8 @@ namespace openutils
 		return *this;
 	}
 
-	bool sstring::is_digit() const
+	template <typename T>
+	bool sstring_t_view<T>::is_digit() const
 	{
 		if (this->src)
 		{
@@ -3716,7 +3786,8 @@ namespace openutils
 		return false;
 	}
 
-	bool sstring::is_decimal() const
+	template <typename T>
+	bool sstring_t_view<T>::is_decimal() const
 	{
 		if (this->src)
 		{
@@ -3738,7 +3809,8 @@ namespace openutils
 		return false;
 	}
 
-	bool sstring::is_ascii() const
+	template <typename T>
+	bool sstring_t_view<T>::is_ascii() const
 	{
 		if (this->src)
 		{
@@ -3750,7 +3822,8 @@ namespace openutils
 		return false;
 	}
 
-	bool sstring::is_alphabetic() const
+	template <typename T>
+	bool sstring_t_view<T>::is_alphabetic() const
 	{
 		if (this->src)
 		{
@@ -3762,7 +3835,8 @@ namespace openutils
 		return false;
 	}
 
-	sstring &sstring::format_escape_sequence()
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::format_escape_sequence()
 	{
 		this->replace("\\", "\\\\");
 		this->replace("\a", "\\a");
@@ -3778,12 +3852,13 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::insert(const char *str, std::size_t index)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::insert(const T *str, std::size_t index)
 	{
 		if (str && this->src && index <= this->len)
 		{
 			std::size_t str_len = this->sstr_strlen(str);
-			this->src = static_cast<char *>(std::realloc(this->src, this->len + str_len + 1));
+			this->src = static_cast<T *>(std::realloc(this->src, sizeof(T) * (this->len + str_len + 1)));
 			exit_heap_fail(this->src);
 
 			for (std::size_t i = this->len; i >= index; i--)
@@ -3793,18 +3868,20 @@ namespace openutils
 				if (i == 0)
 					break;
 			}
-			std::memmove(this->src + index, str, str_len);
+			std::memmove(this->src + index, str, str_len * sizeof(T));
 			this->len += str_len;
 		}
 		return *this;
 	}
 
-	sstring &sstring::insert(const sstring &str, std::size_t index)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::insert(const sstring_t_view<T> &str, std::size_t index)
 	{
 		return this->insert(str.src, index);
 	}
 
-	bool sstring::starts_with(const char *str) const
+	template <typename T>
+	bool sstring_t_view<T>::starts_with(const T *str) const
 	{
 		if (str && this->src)
 		{
@@ -3818,12 +3895,14 @@ namespace openutils
 		return false;
 	}
 
-	bool sstring::starts_with(const sstring &str) const
+	template <typename T>
+	bool sstring_t_view<T>::starts_with(const sstring_t_view<T> &str) const
 	{
 		return this->starts_with(str.src);
 	}
 
-	bool sstring::ends_with(const char *str) const
+	template <typename T>
+	bool sstring_t_view<T>::ends_with(const T *str) const
 	{
 		if (str && this->src)
 		{
@@ -3838,15 +3917,17 @@ namespace openutils
 		return false;
 	}
 
-	bool sstring::ends_with(const sstring &str) const
+	template <typename T>
+	bool sstring_t_view<T>::ends_with(const sstring_t_view<T> &str) const
 	{
 		return this->ends_with(str.src);
 	}
 
-	vector_t<heap_pair<sstring, enum lexer_token>> sstring::lexer() const
+	template <typename T>
+	vector_t<heap_pair<sstring_t_view<T>, enum lexer_token>> sstring_t_view<T>::lexer() const
 	{
-		vector_t<heap_pair<sstring, enum lexer_token>> vec;
-		sstring toks;
+		vector_t<heap_pair<sstring_t_view, enum lexer_token>> vec;
+		sstring_t_view toks;
 		for (std::size_t i = 0; i < this->len;)
 		{
 			if ((this->src[i] >= 97 && this->src[i] <= 122) || (this->src[i] >= 65 && this->src[i] <= 90))
@@ -3862,10 +3943,10 @@ namespace openutils
 				toks.append_char(this->src[i++]);
 				vec.add({toks, lexer_token::WHITESPACE});
 			}
-			else if (std::isdigit((unsigned char)this->src[i]))
+			else if (std::isdigit(this->src[i]))
 			{
 				toks.clear();
-				while (std::isdigit((unsigned char)this->src[i]))
+				while (std::isdigit(this->src[i]))
 					toks.append_char(this->src[i++]);
 				vec.add({toks, lexer_token::INTEGER});
 			}
@@ -3890,13 +3971,14 @@ namespace openutils
 				}
 			}
 			else
-				return vector_t<heap_pair<sstring, enum lexer_token>>(1);
+				return vector_t<heap_pair<sstring_t_view, enum lexer_token>>(1);
 		}
-		vec.add({sstring("\0"), lexer_token::NULL_END});
+		vec.add({sstring_t_view("\0"), lexer_token::NULL_END});
 		return std::move(vec);
 	}
 
-	sstring &sstring::from_lexer(const vector_t<heap_pair<sstring, enum lexer_token>> &toks)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::from_lexer(const vector_t<heap_pair<sstring_t_view, enum lexer_token>> &toks)
 	{
 		if (toks.length() != 0)
 		{
@@ -3908,7 +3990,7 @@ namespace openutils
 			for (std::size_t i = 0; i < toks.length(); i++)
 				buff_len += toks[i].first().len;
 
-			this->src = static_cast<char *>(std::calloc(buff_len + 1, sizeof(char)));
+			this->src = static_cast<T *>(std::calloc(buff_len + 1, sizeof(T)));
 			exit_heap_fail(this->src);
 
 			for (std::size_t i = 0; i < toks.length(); i++)
@@ -3917,12 +3999,13 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::set_formatted(std::size_t buffer_length, const char *__format__, ...)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::set_formatted(std::size_t buffer_length, const char *__format__, ...)
 	{
 		if (!__format__)
 			return *this;
 
-		char *buff = static_cast<char *>(std::calloc(buffer_length + 1, sizeof(char)));
+		T *buff = static_cast<T *>(std::calloc(buffer_length + 1, sizeof(T)));
 		exit_heap_fail(buff);
 
 		std::va_list ar;
@@ -3938,12 +4021,13 @@ namespace openutils
 		return *this;
 	}
 
-	sstring &sstring::append_formatted(std::size_t buffer_length, const char *__format__, ...)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::append_formatted(std::size_t buffer_length, const char *__format__, ...)
 	{
 		if (!__format__)
 			return *this;
 
-		char *buff = static_cast<char *>(std::calloc(buffer_length + 1, sizeof(char)));
+		T *buff = static_cast<T *>(std::calloc(buffer_length + 1, sizeof(T)));
 		exit_heap_fail(buff);
 
 		std::va_list ar;
@@ -3961,19 +4045,20 @@ namespace openutils
 		return *this;
 	}
 
-	bool sstring::resize(std::size_t new_len)
+	template <typename T>
+	bool sstring_t_view<T>::resize(std::size_t new_len)
 	{
 		if (new_len > 0 && new_len > this->len)
 		{
 			if (this->src)
 			{
-				this->src = static_cast<char *>(std::realloc(this->src, new_len));
+				this->src = static_cast<T *>(std::realloc(this->src, sizeof(T) * new_len));
 				exit_heap_fail(this->src);
 				this->init_n_zeroes(this->src, this->len, new_len);
 			}
 			else
 			{
-				this->src = static_cast<char *>(std::calloc(new_len, sizeof(char)));
+				this->src = static_cast<T *>(std::calloc(new_len, sizeof(T)));
 				exit_heap_fail(this->src);
 			}
 			return true;
@@ -3981,7 +4066,8 @@ namespace openutils
 		return false;
 	}
 
-	std::size_t sstring::hash() const
+	template <typename T>
+	std::size_t sstring_t_view<T>::hash() const
 	{
 		std::size_t p = 53;
 		std::size_t m = 1e9 + 9;
@@ -3996,7 +4082,8 @@ namespace openutils
 		return (hash_val % m + m) % m;
 	}
 
-	char sstring::operator[](std::size_t n) const
+	template <typename T>
+	T sstring_t_view<T>::operator[](std::size_t n) const
 	{
 		if (this->len >= n && this->src)
 			return this->src[n];
@@ -4007,7 +4094,8 @@ namespace openutils
 		}
 	}
 
-	char &sstring::operator[](std::size_t n)
+	template <typename T>
+	T &sstring_t_view<T>::operator[](std::size_t n)
 	{
 		if (this->len >= n && this->src)
 			return this->src[n];
@@ -4018,74 +4106,86 @@ namespace openutils
 		}
 	}
 
-	sstring sstring::operator+(const char c) const
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::operator+(const T c) const
 	{
-		sstring x = sstring(this->src);
+		sstring_t_view x = sstring_t_view(this->src);
 		x.append_char(c);
 		return std::move(x);
 	}
 
-	sstring sstring::operator+(const char *str) const
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::operator+(const T *str) const
 	{
-		sstring x = sstring(this->src);
+		sstring_t_view x = sstring_t_view(this->src);
 		x.append(str);
 		return std::move(x);
 	}
 
-	sstring sstring::operator+(const sstring &str) const
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::operator+(const sstring_t_view<T> &str) const
 	{
-		sstring x = sstring(this->src);
+		sstring_t_view x = sstring_t_view(this->src);
 		x.append(str.src);
 		return std::move(x);
 	}
 
-	sstring &sstring::operator+=(const char c)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::operator+=(const T c)
 	{
 		return this->append_char(c);
 	}
 
-	sstring &sstring::operator+=(const char *str)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::operator+=(const T *str)
 	{
 		return this->append(str);
 	}
 
-	sstring &sstring::operator+=(const sstring &str)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::operator+=(const sstring_t_view<T> &str)
 	{
 		return this->append(str.src);
 	}
 
-	sstring &sstring::operator+=(std::initializer_list<char> list)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::operator+=(std::initializer_list<T> list)
 	{
 		for (auto &i : list)
 			this->append_char(i);
 		return *this;
 	}
 
-	sstring &sstring::operator+=(std::initializer_list<sstring> list)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::operator+=(std::initializer_list<sstring_t_view<T>> list)
 	{
 		for (auto &i : list)
 			this->append(i.src);
 		return *this;
 	}
 
-	sstring &sstring::operator=(const char c)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::operator=(const T c)
 	{
 		return this->set_char(c);
 	}
 
-	sstring &sstring::operator=(const char *str)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::operator=(const T *str)
 	{
 		return this->set(str);
 	}
 
-	sstring &sstring::operator=(const sstring &str)
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::operator=(const sstring_t_view<T> &str)
 	{
 		if (this != &str)
 			return this->set(str.src);
 		return *this;
 	}
 
-	sstring &sstring::operator=(sstring &&__s) noexcept
+	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::operator=(sstring_t_view<T> &&__s) noexcept
 	{
 		if (this != &__s)
 		{
@@ -4099,94 +4199,116 @@ namespace openutils
 		return *this;
 	}
 
-	bool sstring::operator==(const char *str) const
+	template <typename T>
+	bool sstring_t_view<T>::operator==(const T *str) const
 	{
 		return this->compare(str);
 	}
 
-	bool sstring::operator==(const sstring &str) const
+	template <typename T>
+	bool sstring_t_view<T>::operator==(const sstring_t_view<T> &str) const
 	{
 		return this->compare(str.src);
 	}
 
-	bool sstring::operator<(const char *str) const
+	template <typename T>
+	bool sstring_t_view<T>::operator<(const T *str) const
 	{
 		if (this->lexicographical_comparison(str) < 0)
 			return true;
 		return false;
 	}
 
-	bool sstring::operator<(const sstring &str) const
+	template <typename T>
+	bool sstring_t_view<T>::operator<(const sstring_t_view<T> &str) const
 	{
 		if (this->lexicographical_comparison(str.src) < 0)
 			return true;
 		return false;
 	}
 
-	bool sstring::operator>(const char *str) const
+	template <typename T>
+	bool sstring_t_view<T>::operator>(const T *str) const
 	{
 		if (this->lexicographical_comparison(str) > 0)
 			return true;
 		return false;
 	}
 
-	bool sstring::operator>(const sstring &str) const
+	template <typename T>
+	bool sstring_t_view<T>::operator>(const sstring_t_view<T> &str) const
 	{
 		if (this->lexicographical_comparison(str.src) > 0)
 			return true;
 		return false;
 	}
 
-	bool sstring::operator<=(const char *str) const
+	template <typename T>
+	bool sstring_t_view<T>::operator<=(const T *str) const
 	{
 		if (this->lexicographical_comparison(str) <= 0)
 			return true;
 		return false;
 	}
 
-	bool sstring::operator<=(const sstring &str) const
+	template <typename T>
+	bool sstring_t_view<T>::operator<=(const sstring_t_view<T> &str) const
 	{
 		if (this->lexicographical_comparison(str.src) <= 0)
 			return true;
 		return false;
 	}
 
-	bool sstring::operator>=(const char *str) const
+	template <typename T>
+	bool sstring_t_view<T>::operator>=(const T *str) const
 	{
 		if (this->lexicographical_comparison(str) >= 0)
 			return true;
 		return false;
 	}
 
-	bool sstring::operator>=(const sstring &str) const
+	template <typename T>
+	bool sstring_t_view<T>::operator>=(const sstring_t_view<T> &str) const
 	{
 		if (this->lexicographical_comparison(str.src) >= 0)
 			return true;
 		return false;
 	}
 
-	bool sstring::operator!=(const char *str) const
+	template <typename T>
+	bool sstring_t_view<T>::operator!=(const T *str) const
 	{
 		return !(this->compare(str));
 	}
 
-	bool sstring::operator!=(const sstring &str) const
+	template <typename T>
+	bool sstring_t_view<T>::operator!=(const sstring_t_view<T> &str) const
 	{
 		return !(this->compare(str.src));
 	}
 
-	constexpr inline std::size_t sstring::nerr() const noexcept
+	template <typename T>
+	constexpr inline std::size_t sstring_t_view<T>::nerr() const noexcept
 	{
 		return (std::size_t)-1;
 	}
 
-	std::ostream &operator<<(std::ostream &out, const sstring &obj)
+	template <typename T>
+	std::ostream &operator<<(std::ostream &out, const sstring_t_view<T> &obj)
 	{
-		out << obj.src;
+		out << obj.c_str();
 		return out;
 	}
 
-	sstring::~sstring()
+	template <typename T>
+	std::wostream &operator<<(std::wostream &out, const sstring_t_view<T> &obj)
+	{
+		out << obj.c_str();
+		return out;
+	}
+
+	template <typename T>
+	sstring_t_view<T>::~sstring_t_view()
 	{
 		if (this->src)
 			std::free(this->src);
@@ -4194,27 +4316,31 @@ namespace openutils
 		this->len = 0;
 	}
 
-	void sstring::sort(sstring *arr, const std::size_t len)
+	template <typename T>
+	void sstring_t_view<T>::sort(sstring_t_view *arr, const std::size_t len)
 	{
 		std::sort(arr, arr + len);
 	}
 
-	void sstring::sort(char **arr, const std::size_t len)
+	template <typename T>
+	void sstring_t_view<T>::sort(T **arr, const std::size_t len)
 	{
-		std::sort(arr, arr + len, [](char *a, char *b)
-				  { return sstring(a) < sstring(b); });
+		std::sort(arr, arr + len, [](T *a, T *b)
+				  { return sstring_t_view(a) < sstring_t_view(b); });
 	}
 
-	sstring sstring::to_sstring(char c)
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::to_sstring(T c)
 	{
-		sstring x;
+		sstring_t_view x;
 		x.set_char(c);
 		return std::move(x);
 	}
 
-	sstring sstring::to_sstring(bool boolean)
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::to_sstring(bool boolean)
 	{
-		sstring x;
+		sstring_t_view x;
 		if (boolean)
 			x = "true";
 		else
@@ -4222,147 +4348,180 @@ namespace openutils
 		return std::move(x);
 	}
 
-	sstring sstring::to_sstring(const char *str)
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::to_sstring(const T *str)
 	{
-		sstring x = str;
+		sstring_t_view x = str;
 		return std::move(x);
 	}
 
-	sstring sstring::to_sstring(void *ptr)
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::to_sstring(void *ptr)
 	{
 		char s[std::numeric_limits<std::size_t>::digits + 1] = {};
 		std::snprintf(s, std::numeric_limits<std::size_t>::digits + 1, "%p", ptr);
-		return sstring(s);
+		return sstring_t_view(s);
 	}
 
-	sstring sstring::to_sstring(signed short int x)
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::to_sstring(signed short int x)
 	{
 		char s[std::numeric_limits<signed short int>::digits + 2] = {};
 		std::snprintf(s, std::numeric_limits<signed short int>::digits + 2, "%hi", x);
-		return sstring(s);
+		return sstring_t_view(s);
 	}
 
-	sstring sstring::to_sstring(unsigned short int x)
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::to_sstring(unsigned short int x)
 	{
 		char s[std::numeric_limits<unsigned short int>::digits + 1] = {};
 		std::snprintf(s, std::numeric_limits<unsigned short int>::digits + 1, "%hu", x);
-		return sstring(s);
+		return sstring_t_view(s);
 	}
 
-	sstring sstring::to_sstring(signed int x)
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::to_sstring(signed int x)
 	{
 		char s[std::numeric_limits<signed int>::digits + 2] = {};
 		std::snprintf(s, std::numeric_limits<signed int>::digits + 2, "%d", x);
-		return sstring(s);
+		return sstring_t_view(s);
 	}
 
-	sstring sstring::to_sstring(unsigned int x)
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::to_sstring(unsigned int x)
 	{
 		char s[std::numeric_limits<unsigned int>::digits + 1] = {};
 		std::snprintf(s, std::numeric_limits<unsigned int>::digits + 1, "%i", x);
-		return sstring(s);
+		return sstring_t_view(s);
 	}
 
-	sstring sstring::to_sstring(signed long int x)
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::to_sstring(signed long int x)
 	{
 		char s[std::numeric_limits<signed long int>::digits + 2] = {};
 		std::snprintf(s, std::numeric_limits<signed long int>::digits + 2, "%ld", x);
-		return sstring(s);
+		return sstring_t_view(s);
 	}
 
-	sstring sstring::to_sstring(unsigned long int x)
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::to_sstring(unsigned long int x)
 	{
 		char s[std::numeric_limits<unsigned long int>::digits + 1] = {};
 		std::snprintf(s, std::numeric_limits<unsigned long int>::digits + 1, "%lu", x);
-		return sstring(s);
+		return sstring_t_view(s);
 	}
 
-	sstring sstring::to_sstring(signed long long int x)
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::to_sstring(signed long long int x)
 	{
 		char s[std::numeric_limits<signed long long int>::digits + 2] = {};
 		std::snprintf(s, std::numeric_limits<signed long long int>::digits + 2, "%lld", x);
-		return sstring(s);
+		return sstring_t_view(s);
 	}
 
-	sstring sstring::to_sstring(unsigned long long int x)
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::to_sstring(unsigned long long int x)
 	{
 		char s[std::numeric_limits<unsigned long long int>::digits + 1] = {};
 		std::snprintf(s, std::numeric_limits<unsigned long long int>::digits + 1, "%llu", x);
-		return sstring(s);
+		return sstring_t_view(s);
 	}
 
-	sstring sstring::to_sstring(float x)
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::to_sstring(float x)
 	{
 		char s[std::numeric_limits<float>::digits + 2] = {};
 		std::snprintf(s, std::numeric_limits<float>::digits + 2, "%f", x);
-		return sstring(s);
+		return sstring_t_view(s);
 	}
 
-	sstring sstring::to_sstring(double x)
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::to_sstring(double x)
 	{
 		char s[std::numeric_limits<double>::digits + 2];
 		std::snprintf(s, std::numeric_limits<double>::digits + 2, "%lf", x);
-		return sstring(s);
+		return sstring_t_view(s);
 	}
 
-	sstring sstring::to_sstring(long double x)
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::to_sstring(long double x)
 	{
 		char s[std::numeric_limits<long double>::digits + 2];
 		std::snprintf(s, std::numeric_limits<long double>::digits + 2, "%Lf", x);
-		return sstring(s);
+		return sstring_t_view(s);
 	}
 
-	sstring sstring::get_random(const std::size_t &len)
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::get_random(const std::size_t &len)
 	{
-		sstring x;
+		sstring_t_view x;
 		x.set_random(len);
 		return std::move(x);
 	}
 
-	sstring sstring::get_input()
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::get_input()
 	{
-		sstring x;
+		sstring_t_view x;
 		x.in();
 		return std::move(x);
 	}
 
-	sstring sstring::open_file(const sstring &location)
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::open_file(const sstring_t_view<T> &location)
 	{
-		sstring x;
+		sstring_t_view x;
 		x.open(location.c_str());
 		return std::move(x);
 	}
 
-	sstring sstring::end_line()
+	template <typename T>
+	sstring_t_view<T> sstring_t_view<T>::end_line()
 	{
 #if defined __linux__ || defined linux || defined __linux
-		return sstring("\n");
+		return sstring_t_view("\n");
 #elif _WIN32 || defined _WIN64 || defined __CYGWIN__
-		return sstring("\r\n");
+		return sstring_t_view("\r\n");
 #elif defined __unix__ || defined __unix || defined unix
-		return sstring("\n");
+		return sstring_t_view("\n");
 #elif defined __APPLE__ || defined __MACH__
-		return sstring("\n");
+		return sstring_t_view("\n");
 #elif defined __FreeBSD__
-		return sstring("\n");
+		return sstring_t_view("\n");
 #elif defined __ANDROID__
-		return sstring("\n");
+		return sstring_t_view("\n");
 #else
-		return sstring("\n");
+		return sstring_t_view("\n");
 #endif
 	}
 }
 
 namespace std
 {
-	template <>
-	struct hash<openutils::sstring>
+	template <typename T>
+	struct hash<openutils::sstring_t_view<T>>
 	{
-		std::size_t operator()(const openutils::sstring &str) const
+		std::size_t operator()(const openutils::sstring_t_view<T> &str) const
 		{
 			return str.hash();
 		}
 	};
 };
+
+typedef openutils::sstring_t_view<char> sstring;
+typedef openutils::sstring_t_view<unsigned char> usstring;
+typedef openutils::sstring_t_view<wchar_t> wsstring;
+#if defined(__cpp_char8_t)
+typedef openutils::sstring_t_view<char8_t> u8sstring;
+#endif
+typedef openutils::sstring_t_view<char16_t> u16sstring;
+typedef openutils::sstring_t_view<char32_t> u32sstring;
+
+// sizeof(char) = 1 byte(s)
+// sizeof(unsigned char) = 1 byte(s)
+// sizeof(wchar_t) = 4 byte(s)
+// sizeof(char8_t) = 1 byte(s)
+// sizeof(char16_t) = 2 byte(s)
+// sizeof(char32_t) = 4 byte(s)
 
 #endif
