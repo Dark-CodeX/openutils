@@ -147,9 +147,10 @@ namespace openutils
 		 * @brief Divide `str` into tokens separated by characters in `delim`.
 		 * @param str string to tokenize
 		 * @param delim separator
+		 * @param delim_length separator's length
 		 * @return separated string
 		 */
-		static inline T *fast_strtok(T *str, const T *delim);
+		static inline T *fast_strtok(T *str, const T *delim, std::size_t delim_length);
 
 	public:
 		/**
@@ -265,7 +266,7 @@ namespace openutils
 		 * @param between if `nullptr` then, nothing is added between each iteration
 		 * @return sstring_t_view& reference to current object
 		 */
-		sstring_t_view<T> &set_array(const vector_t<sstring_t_view> &vec, const T *between = nullptr);
+		sstring_t_view<T> &set_array(const vector_t<sstring_t_view<T>> &vec, const T *between = nullptr);
 
 		/**
 		 * @brief Returns `this->src` by reference, and it can be modified [UNSAFE]
@@ -373,7 +374,7 @@ namespace openutils
 		 * @param between if `nullptr` then, nothing is added between each iteration
 		 * @return sstring_t_view& reference to current object
 		 */
-		sstring_t_view<T> &append_array(const vector_t<sstring_t_view> &vec, const T *between = nullptr);
+		sstring_t_view<T> &append_array(const vector_t<sstring_t_view<T>> &vec, const T *between = nullptr);
 
 		/**
 		 * @brief Appends `vec` with `between` between each iteration at index 0
@@ -389,7 +390,7 @@ namespace openutils
 		 * @param between if `nullptr` then, nothing is added between each iteration
 		 * @return sstring_t_view& reference to current object
 		 */
-		sstring_t_view<T> &append_start_array(const vector_t<sstring_t_view> &vec, const T *between = nullptr);
+		sstring_t_view<T> &append_start_array(const vector_t<sstring_t_view<T>> &vec, const T *between = nullptr);
 
 		/**
 		 * @brief Tells whether `this->len` is 0 or not
@@ -893,14 +894,14 @@ namespace openutils
 		 * @param str separator string
 		 * @return vector of sstring_t_view separated by `str`
 		 */
-		vector_t<sstring_t_view> split(const T *str) const;
+		vector_t<sstring_t_view<T>> split(const T *str) const;
 
 		/**
 		 * @brief Splits `this->src` using `str`
 		 * @param str separator string
 		 * @return vector of sstring_t_view separated by `str`
 		 */
-		vector_t<sstring_t_view> split(const sstring_t_view<T> &str) const;
+		vector_t<sstring_t_view<T>> split(const sstring_t_view<T> &str) const;
 
 		/**
 		 * @brief Sorts `this->src` using `std::sort`
@@ -1030,7 +1031,7 @@ namespace openutils
 		 * @param argv0 first argument of `T **argv` in `main()` function, default value is `nullptr`
 		 * @return arguments
 		 */
-		vector_t<sstring_t_view> to_argv(const T *argv0 = nullptr) const;
+		vector_t<sstring_t_view<T>> to_argv(const T *argv0 = nullptr) const;
 
 		/**
 		 * @brief Converts normal text to morse code
@@ -1130,14 +1131,14 @@ namespace openutils
 		 * @brief Tokenize `this->src`.
 		 * @return returns tokenized vector with it's respective token
 		 */
-		vector_t<heap_pair<sstring_t_view, enum lexer_token>> lexer() const;
+		vector_t<heap_pair<sstring_t_view<T>, enum lexer_token>> lexer() const;
 
 		/**
 		 * @brief Converts tokens to concentrated string
 		 * @param toks tokens
 		 * @return sstring_t_view& reference to current object
 		 */
-		sstring_t_view<T> &from_lexer(const vector_t<heap_pair<sstring_t_view, enum lexer_token>> &toks);
+		sstring_t_view<T> &from_lexer(const vector_t<heap_pair<sstring_t_view<T>, enum lexer_token>> &toks);
 
 		/**
 		 * @brief Assigns `__format__` to `this->src` with formatting.
@@ -1166,6 +1167,12 @@ namespace openutils
 		bool resize(std::size_t new_len);
 
 		/**
+		 * @brief Shrinks any extra memory allocation.
+		 * @return sstring_t_view& reference to current object
+		 */
+		sstring_t_view<T> &shrink_to_fit();
+
+		/**
 		 * @brief Returns hash of `this->src`
 		 * @return hash of `this->src`
 		 */
@@ -1176,7 +1183,7 @@ namespace openutils
 		 * @param n index of character
 		 * @return character at `n`
 		 */
-		T operator[](std::size_t n) const;
+		const T &operator[](std::size_t n) const;
 
 		/**
 		 * @brief Returns reference of character at `n` index
@@ -1629,7 +1636,7 @@ namespace openutils
 	}
 
 	template <typename T>
-	inline T *sstring_t_view<T>::fast_strtok(T *str, const T *delim)
+	inline T *sstring_t_view<T>::fast_strtok(T *str, const T *delim, std::size_t delim_length)
 	{
 		if (!delim)
 			return nullptr;
@@ -1643,7 +1650,7 @@ namespace openutils
 		{
 			*p = 0;
 			T *tmp = token;
-			token = p + sstring_t_view<T>::sstr_strlen(delim);
+			token = p + delim_length;
 			return tmp;
 		}
 		else
@@ -1905,7 +1912,7 @@ namespace openutils
 	}
 
 	template <typename T>
-	sstring_t_view<T> &sstring_t_view<T>::set_array(const vector_t<sstring_t_view> &vec, const T *between)
+	sstring_t_view<T> &sstring_t_view<T>::set_array(const vector_t<sstring_t_view<T>> &vec, const T *between)
 	{
 		if (this->src)
 			std::free(this->src);
@@ -2172,7 +2179,7 @@ namespace openutils
 	}
 
 	template <typename T>
-	sstring_t_view<T> &sstring_t_view<T>::append_array(const vector_t<sstring_t_view> &vec, const T *between)
+	sstring_t_view<T> &sstring_t_view<T>::append_array(const vector_t<sstring_t_view<T>> &vec, const T *between)
 	{
 		if (this->src)
 		{
@@ -2253,7 +2260,7 @@ namespace openutils
 	}
 
 	template <typename T>
-	sstring_t_view<T> &sstring_t_view<T>::append_start_array(const vector_t<sstring_t_view> &vec, const T *between)
+	sstring_t_view<T> &sstring_t_view<T>::append_start_array(const vector_t<sstring_t_view<T>> &vec, const T *between)
 	{
 		if (this->src)
 		{
@@ -2960,24 +2967,24 @@ namespace openutils
 	sstring_t_view<T> sstring_t_view<T>::getline(const std::size_t line) const
 	{
 		if (!this->src)
-			return sstring_t_view();
+			return sstring_t_view<T>();
 
 		std::size_t cnt = 0;
 		T *temp = static_cast<T *>(std::calloc(len + 1, sizeof(T)));
 		exit_heap_fail(temp);
 
 		std::memmove(temp, this->src, this->len * sizeof(T));
-		T *tok = this->fast_strtok(temp, "\n");
+		T *tok = this->fast_strtok(temp, "\n", 2);
 		while (tok)
 		{
 			if (cnt++ == line)
 				break;
-			tok = this->fast_strtok(nullptr, "\n");
+			tok = this->fast_strtok(nullptr, "\n", 2);
 		}
 		if (cnt == 0 || tok == nullptr)
 		{
 			std::free(temp);
-			return sstring_t_view();
+			return sstring_t_view<T>();
 		}
 		sstring_t_view res = sstring_t_view(tok);
 		std::free(temp);
@@ -3321,7 +3328,7 @@ namespace openutils
 			}
 			return sstring_t_view(res);
 		}
-		return sstring_t_view();
+		return sstring_t_view<T>();
 	}
 
 	template <typename T>
@@ -3329,8 +3336,8 @@ namespace openutils
 	{
 		if (dl && this->src && dl[0] != 0)
 		{
-			vector_t<sstring_t_view> vec = this->split(dl);
-			map_t<sstring_t_view, std::size_t> map;
+			vector_t<sstring_t_view<T>> vec = this->split(dl);
+			map_t<sstring_t_view<T>, std::size_t> map;
 			for (std::size_t i = 0; i < vec.length(); i++)
 			{
 				if (map.add(vec[i], 1) == false)
@@ -3339,7 +3346,7 @@ namespace openutils
 				}
 			}
 
-			map.sort_values([](node_t<sstring_t_view, std::size_t> x, node_t<sstring_t_view, std::size_t> y)
+			map.sort_values([](node_t<sstring_t_view<T>, std::size_t> x, node_t<sstring_t_view<T>, std::size_t> y)
 							{ return x.value > y.value; });
 
 			sstring_t_view ret;
@@ -3350,7 +3357,7 @@ namespace openutils
 			}
 			return std::move(ret);
 		}
-		return sstring_t_view();
+		return sstring_t_view<T>();
 	}
 
 	template <typename T>
@@ -3391,25 +3398,23 @@ namespace openutils
 	{
 		if (this->src && str && str[0] != 0)
 		{
-			if (!this->contains(str))
-				return vector_t<sstring_t_view>(1);
-
 			T *temp = static_cast<T *>(std::calloc(this->len + 1, sizeof(T)));
 			exit_heap_fail(temp);
 			std::memmove(temp, this->src, this->len * sizeof(T));
-			T *tok = this->fast_strtok(temp, str);
-			vector_t<sstring_t_view> x;
+			std::size_t str_len = this->sstr_strlen(str);
+			T *tok = this->fast_strtok(temp, str, str_len);
+			vector_t<sstring_t_view<T>> x;
 			while (tok)
 			{
 				x.add(tok);
-				tok = this->fast_strtok(nullptr, str);
+				tok = this->fast_strtok(nullptr, str, str_len);
 				if (!tok)
 					break;
 			}
 			std::free(temp);
 			return std::move(x);
 		}
-		return vector_t<sstring_t_view>(1);
+		return vector_t<sstring_t_view<T>>(1);
 	}
 
 	template <typename T>
@@ -3645,7 +3650,7 @@ namespace openutils
 	sstring_t_view<T> sstring_t_view<T>::substr(std::size_t index, std::size_t sub_len) const
 	{
 		if (index >= this->len || !this->src)
-			return sstring_t_view();
+			return sstring_t_view<T>();
 		if (sub_len == this->nerr() || index + sub_len > this->len)
 			sub_len = this->len - index;
 		T *buff = static_cast<T *>(std::calloc(sub_len + 1, sizeof(T)));
@@ -3663,17 +3668,17 @@ namespace openutils
 	vector_t<sstring_t_view<T>> sstring_t_view<T>::to_argv(const T *argv0) const
 	{
 		if (!this->src)
-			return vector_t<sstring_t_view>(1);
+			return vector_t<sstring_t_view<T>>(1);
 
-		vector_t<sstring_t_view> spt = this->split(" ");
-		vector_t<sstring_t_view> args;
+		vector_t<sstring_t_view<T>> spt = this->split(" ");
+		vector_t<sstring_t_view<T>> args;
 		if (argv0)
 			args.add(argv0);
 		for (std::size_t i = 0; i < spt.length();)
 		{
 			if (spt[i][0] == '"')
 			{
-				sstring_t_view temp;
+				sstring_t_view<T> temp;
 				for (; spt[i][spt[i].len - 1] != '"' && i < spt.length(); i++)
 					temp.append(spt[i] + " ");
 				temp.append(spt[i++]).remove_first_char().remove_last_char();
@@ -3926,8 +3931,8 @@ namespace openutils
 	template <typename T>
 	vector_t<heap_pair<sstring_t_view<T>, enum lexer_token>> sstring_t_view<T>::lexer() const
 	{
-		vector_t<heap_pair<sstring_t_view, enum lexer_token>> vec;
-		sstring_t_view toks;
+		vector_t<heap_pair<sstring_t_view<T>, enum lexer_token>> vec;
+		sstring_t_view<T> toks;
 		for (std::size_t i = 0; i < this->len;)
 		{
 			if ((this->src[i] >= 97 && this->src[i] <= 122) || (this->src[i] >= 65 && this->src[i] <= 90))
@@ -3950,10 +3955,10 @@ namespace openutils
 					toks.append_char(this->src[i++]);
 				vec.add({toks, lexer_token::INTEGER});
 			}
-			else if (this->src[i] == '\\' || this->src[i] == '\a' || this->src[i] == '\b' || this->src[i] == '\f' || this->src[i] == '\n' || this->src[i] == '\r' || this->src[i] == '\t' || this->src[i] == '\v' || this->src[i] == '\"' || this->src[i] == '\'' || this->src[i] == '\?')
+			else if (this->src[i] == 92 || this->src[i] == 7 || this->src[i] == 8 || this->src[i] == 12 || this->src[i] == 10 || this->src[i] == 13 || this->src[i] == 9 || this->src[i] == 11 || this->src[i] == 34 || this->src[i] == 39 || this->src[i] == 63)
 			{
 				toks.clear();
-				while (this->src[i] == '\\' || this->src[i] == '\a' || this->src[i] == '\b' || this->src[i] == '\f' || this->src[i] == '\n' || this->src[i] == '\r' || this->src[i] == '\t' || this->src[i] == '\v' || this->src[i] == '\"' || this->src[i] == '\'' || this->src[i] == '\?')
+				while (this->src[i] == 92 || this->src[i] == 7 || this->src[i] == 8 || this->src[i] == 12 || this->src[i] == 10 || this->src[i] == 13 || this->src[i] == 9 || this->src[i] == 11 || this->src[i] == 34 || this->src[i] == 39 || this->src[i] == 63)
 				{
 					toks.clear();
 					toks.set_char(this->src[i++]);
@@ -3971,14 +3976,19 @@ namespace openutils
 				}
 			}
 			else
-				return vector_t<heap_pair<sstring_t_view, enum lexer_token>>(1);
+			{
+				toks.clear();
+				while (!(this->src[i] > 0 && this->src[i] <= 127)) // while (not ascii) -> for non ascii characters
+					toks.append_char(this->src[i++]);
+				vec.add({toks, lexer_token::WORD});
+			}
 		}
-		vec.add({sstring_t_view("\0"), lexer_token::NULL_END});
+		vec.add({sstring_t_view<T>(), lexer_token::NULL_END});
 		return std::move(vec);
 	}
 
 	template <typename T>
-	sstring_t_view<T> &sstring_t_view<T>::from_lexer(const vector_t<heap_pair<sstring_t_view, enum lexer_token>> &toks)
+	sstring_t_view<T> &sstring_t_view<T>::from_lexer(const vector_t<heap_pair<sstring_t_view<T>, enum lexer_token>> &toks)
 	{
 		if (toks.length() != 0)
 		{
@@ -4067,6 +4077,20 @@ namespace openutils
 	}
 
 	template <typename T>
+	sstring_t_view<T> &sstring_t_view<T>::shrink_to_fit()
+	{
+		if (!this->src)
+			return *this;
+		T *buff = static_cast<T *>(std::calloc(this->len + 1, sizeof(T)));
+		exit_heap_fail(buff);
+		std::size_t tempLen = 0;
+		this->fast_strncat(buff, this->src, tempLen);
+		std::free(this->src);
+		this->src = buff;
+		this->len = tempLen; // same though
+	}
+
+	template <typename T>
 	std::size_t sstring_t_view<T>::hash() const
 	{
 		std::size_t p = 53;
@@ -4083,7 +4107,7 @@ namespace openutils
 	}
 
 	template <typename T>
-	T sstring_t_view<T>::operator[](std::size_t n) const
+	const T &sstring_t_view<T>::operator[](std::size_t n) const
 	{
 		if (this->len >= n && this->src)
 			return this->src[n];
