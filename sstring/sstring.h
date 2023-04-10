@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.h" under "sstring" directory
- * sstring: version 2.1.5
+ * sstring: version 2.5.0
  * BSD 3-Clause License
  *
  * Copyright (c) 2023, Tushar Chaurasia
@@ -42,7 +42,7 @@
 
 typedef struct __string__ sstring;
 
-#define sstring_version "2.1.5"
+#define sstring_version "2.5.0"
 
 #include <stdio.h>
 #include <stdlib.h>
