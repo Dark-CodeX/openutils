@@ -5,7 +5,7 @@
 	* #### **This library has 91 pre-defined functions.**
 	* #### This header file is *cross-platform*, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (91/91) functions passed.*
 	* #### Documents are in the header(`"sstring/sstring.h"` and `"sstring/sstring.hh"`) file itself. Be sure to suggest any changes.
-* ## Functions Defined v:2.1.0
+* ## Functions Defined v:2.1.5
 ```
 set
 set_char
