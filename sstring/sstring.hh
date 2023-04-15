@@ -38,18 +38,14 @@
 #ifndef SSTRING_DEFINED
 #define SSTRING_DEFINED
 
-#include "binary.h"
-#include "morse_code.h"
 #include <cassert>
 #include <climits>
 #include <cmath>
 #include <cstdarg>
 #include <cstdlib>
 #include <cstring>
-#include <functional>
-#include <numeric>
-#include <cwchar>
-#include <cuchar>
+#include <limits>
+#include <algorithm>
 #include <openutils/heap-pair/heap-pair.hh>
 #include <openutils/vector/vector.hh>
 #include <openutils/map/map.hh>
@@ -71,6 +67,36 @@ namespace openutils
 	}
 #endif
 
+	/**
+	 * @brief This function converts <char_type> to <another_char_type>, where `char_type` could be `char`, `unsigned char`, `wchar_t`, `char8_t`, `char16_t` and `char32_t`.
+	 * @brief NOTE: Information may lose.
+	 * @tparam TO returning `char_type`
+	 * @tparam FROM converting `char_type`
+	 */
+	template <typename TO, typename FROM>
+	class convert_sstring
+	{
+	private:
+		TO *src;
+		std::size_t len;
+
+	public:
+		convert_sstring();
+		convert_sstring(const FROM *str);
+		convert_sstring(FROM c);
+		convert_sstring(const convert_sstring &cs);
+		convert_sstring(convert_sstring &&cs) noexcept;
+
+		const TO *get() const;
+		convert_sstring &set(const FROM *str);
+		convert_sstring &set(FROM c);
+
+		convert_sstring &operator=(const convert_sstring &cs);
+		convert_sstring &operator=(convert_sstring &&cs) noexcept;
+
+		~convert_sstring() noexcept;
+	};
+
 	enum lexer_token
 	{
 		WORD,
@@ -83,7 +109,7 @@ namespace openutils
 
 	/**
 	 * @brief sstring_t_view for using same class for every character data type. NOTE: Every data type ends at 0 or NULL
-	 * @tparam T char, signed char, unsigned char, wchar_t, char8_t, char16_t and char32_t
+	 * @tparam T char, unsigned char, wchar_t, char8_t, char16_t and char32_t
 	 */
 	template <typename T>
 	class sstring_t_view
@@ -91,6 +117,8 @@ namespace openutils
 	private:
 		T *src;
 		std::size_t len;
+		template <typename TO, typename FROM>
+		friend class convert_sstring;
 
 		/**
 		 * Linear time complexity = O(n), where n is the length of `src`. NOTE: `dest` must have enough space for `src`.
@@ -270,6 +298,7 @@ namespace openutils
 
 		/**
 		 * @brief Returns `this->src` by reference, and it can be modified [UNSAFE]
+		 * NOTE: In case of modification, the new string must to stored on heap memory.
 		 * @return reference to `this->src`
 		 */
 		T *&get();
@@ -285,6 +314,12 @@ namespace openutils
 		 * @return sstring_t_view& `*this`
 		 */
 		sstring_t_view<T> &get_ref();
+
+		/**
+		 * @brief Get the pointer to the current object
+		 * @return sstring_t_view* `this`
+		 */
+		sstring_t_view<T> *get_ptr();
 
 		/**
 		 * @brief Appends `str`
@@ -443,7 +478,7 @@ namespace openutils
 		 * @param nth index of character
 		 * @return character at `nth`
 		 */
-		T char_get(std::size_t nth) const;
+		const T &char_get(std::size_t nth) const;
 
 		/**
 		 * @brief Returns reference of character at `nth` index
@@ -477,7 +512,7 @@ namespace openutils
 		 * @param new_length new length that has to be assigned
 		 * @return sstring_t_view& reference to current object
 		 */
-		std::size_t &change_length(std::size_t new_length);
+		const std::size_t &change_length(std::size_t new_length);
 
 		/**
 		 * @brief Compares `T1` to `this->src`
@@ -541,7 +576,7 @@ namespace openutils
 		 * @return true file saved successfully
 		 * @return false file was NOT saved
 		 */
-		bool save(const T *location) const;
+		bool save(const char *location) const;
 
 		/**
 		 * @brief Saves `this->src` at `location` in the filesystem
@@ -549,7 +584,7 @@ namespace openutils
 		 * @return true file saved successfully
 		 * @return false file was NOT saved
 		 */
-		bool save(const sstring_t_view<T> &location) const;
+		bool save(const sstring_t_view<char> &location) const;
 
 		/**
 		 * @brief Appends `this->src` at `location` in the filesystem
@@ -557,7 +592,7 @@ namespace openutils
 		 * @return true file appended successfully
 		 * @return false file was NOT appended
 		 */
-		bool append_file(const T *location) const;
+		bool append_file(const char *location) const;
 
 		/**
 		 * @brief Appends `this->src` at `location` in the filesystem
@@ -565,7 +600,7 @@ namespace openutils
 		 * @return true file appended successfully
 		 * @return false file was NOT appended
 		 */
-		bool append_file(const sstring_t_view<T> &location) const;
+		bool append_file(const sstring_t_view<char> &location) const;
 
 		/**
 		 * @brief Opens `location` from the filesystem and assigns it's data to `this->src` and it's length to `this->len`
@@ -573,7 +608,7 @@ namespace openutils
 		 * @return true if file opened successfully
 		 * @return false if file was NOT opened
 		 */
-		bool open(const T *location);
+		bool open(const char *location);
 
 		/**
 		 * @brief Opens `location` from the filesystem and assigns it's data to `this->src` and it's length to `this->len`
@@ -581,7 +616,7 @@ namespace openutils
 		 * @return true if file opened successfully
 		 * @return false if file was NOT opened
 		 */
-		bool open(const sstring_t_view<T> &location);
+		bool open(const sstring_t_view<char> &location);
 
 		/**
 		 * @brief Clears `this->src` and assigns it's value to `nullptr`
@@ -606,18 +641,6 @@ namespace openutils
 		 * @return sstring_t_view& reference to current object
 		 */
 		sstring_t_view<T> &swap_case();
-
-		/**
-		 * @brief Converts `this->src` to binary representation
-		 * @return sstring_t_view& reference to current object
-		 */
-		sstring_t_view<T> &to_binary();
-
-		/**
-		 * @brief Converts binary representation to it's readable form
-		 * @return sstring_t_view& reference to current object
-		 */
-		sstring_t_view<T> &from_binary();
 
 		/**
 		 * @brief Calculates the entropy using `Shannon's entropy` formula, which was introduced in his 1948 paper "A Mathematical Theory of Communication". For more information https://en.wikipedia.org/wiki/Entropy_(information_theory)
@@ -684,18 +707,6 @@ namespace openutils
 		sstring_t_view<T> &to_set();
 
 		/**
-		 * @brief Converts `this->src` (as string) to base 16 (as hexadecimal)
-		 * @return sstring_t_view& reference to current object
-		 */
-		sstring_t_view<T> &to_hexadecimal();
-
-		/**
-		 * @brief Converts `this->src` from base 16 (as hexadecimal) to string
-		 * @return sstring_t_view& reference to current object
-		 */
-		sstring_t_view<T> &from_hexadecimal();
-
-		/**
 		 * @brief Returns the index of first occurrence of `sub`
 		 * @param sub string to find
 		 * @return std::size_t index of `sub` if found, else `this->nerr()`
@@ -708,6 +719,20 @@ namespace openutils
 		 * @return std::size_t index of `sub` if found, else `this->nerr()`
 		 */
 		std::size_t find(const sstring_t_view<T> &sub) const;
+
+		/**
+		 * @brief Returns the index of last occurrence of `sub`
+		 * @param sub string to find
+		 * @return std::size_t index of `sub` if found, else `this->nerr()`
+		 */
+		std::size_t rfind(const T *sub) const;
+
+		/**
+		 * @brief Returns the index of last occurrence of `sub`
+		 * @param sub string to find
+		 * @return std::size_t index of `sub` if found, else `this->nerr()`
+		 */
+		std::size_t rfind(const sstring_t_view<T> &sub) const;
 
 		/**
 		 * @brief Returns the index of nth occurrence of `sub`
@@ -867,7 +892,7 @@ namespace openutils
 		 * @brief Encodes `this->src` to 4 characters long string which can be compared to other `soundex` returned value.
 		 * @return sstring_t_view generated by this function
 		 */
-		sstring_t_view soundex() const;
+		sstring_t_view<char> soundex() const;
 
 		/**
 		 * @brief Returns the most occurred string in `this->src` separated by `dl`
@@ -916,7 +941,7 @@ namespace openutils
 		 * @return true if saved
 		 * @return false if was NOT saved
 		 */
-		bool save_binary(const T *location, std::size_t bin_len) const;
+		bool save_binary(const char *location, std::size_t bin_len) const;
 
 		/**
 		 * @brief Appends the content of `this->src` to the file at `location`.
@@ -925,7 +950,7 @@ namespace openutils
 		 * @return true if appended
 		 * @return false if was NOT appended
 		 */
-		bool append_binary(const T *location, std::size_t bin_len) const;
+		bool append_binary(const char *location, std::size_t bin_len) const;
 
 		/**
 		 * @brief Appends the content of `data` to `this->src`
@@ -962,6 +987,18 @@ namespace openutils
 		 * @return sstring_t_view& reference to current object
 		 */
 		sstring_t_view<T> &decrypt(const sstring_t_view<T> &key);
+
+		/**
+		 * @brief Encodes a string to base64.
+		 * @return encoded string
+		 */
+		sstring_t_view<char> encode_base64() const;
+
+		/**
+		 * @brief Decodes a base64 encoded string to it's original form.
+		 * @return original decoded string, if invalid base64 string is provided it will return `nullptr`
+		 */
+		sstring_t_view<char> decode_base64() const;
 
 		/**
 		 * @brief Returns const iterator for beginning
@@ -1032,18 +1069,6 @@ namespace openutils
 		 * @return arguments
 		 */
 		vector_t<sstring_t_view<T>> to_argv(const T *argv0 = nullptr) const;
-
-		/**
-		 * @brief Converts normal text to morse code
-		 * @return sstring_t_view& reference to current object
-		 */
-		sstring_t_view<T> &to_morse_code();
-
-		/**
-		 * @brief Converts morse code to normal text
-		 * @return sstring_t_view& reference to current object
-		 */
-		sstring_t_view<T> &from_morse_code();
 
 		/**
 		 * @brief Checks if `this->src` is only digits or not
@@ -1381,7 +1406,7 @@ namespace openutils
 		/**
 		 * @brief Destroy the sstring_t_view object. NOTE: Calling this function explicitly can cause double-free error
 		 */
-		~sstring_t_view();
+		~sstring_t_view() noexcept;
 
 		/**
 		 * @brief Sorts `arr`
@@ -1520,7 +1545,7 @@ namespace openutils
 		 * @param location location of file
 		 * @return content of file at `location` in the filesystem
 		 */
-		static sstring_t_view open_file(const sstring_t_view<T> &location);
+		static sstring_t_view open_file(const sstring_t_view<char> &location);
 
 		/**
 		 * @brief Returns end line character with respect to operating system in use.
@@ -1530,6 +1555,155 @@ namespace openutils
 	};
 
 	// definitions
+
+	template <typename TO, typename FROM>
+	convert_sstring<TO, FROM>::convert_sstring()
+	{
+		this->src = nullptr;
+		this->len = 0;
+	}
+
+	template <typename TO, typename FROM>
+	convert_sstring<TO, FROM>::convert_sstring(const FROM *str)
+	{
+		if (str)
+		{
+			this->len = 0;
+
+			while (str[this->len] != 0)
+				this->len++;
+
+			this->src = static_cast<TO *>(std::calloc(this->len + 1, sizeof(TO)));
+			exit_heap_fail(this->src);
+
+			for (std::size_t i = 0; i < this->len; i++)
+				this->src[i] = static_cast<TO>(str[i]);
+		}
+		else
+		{
+			this->src = nullptr;
+			this->len = 0;
+		}
+	}
+
+	template <typename TO, typename FROM>
+	convert_sstring<TO, FROM>::convert_sstring(FROM c)
+	{
+		if (c != 0)
+		{
+			this->len = 1;
+			this->src = static_cast<TO *>(std::calloc(this->len + 1, sizeof(TO)));
+			exit_heap_fail(this->src);
+			this->src[0] = static_cast<TO>(c);
+		}
+		else
+		{
+			this->src = nullptr;
+			this->len = 0;
+		}
+	}
+
+	template <typename TO, typename FROM>
+	convert_sstring<TO, FROM>::convert_sstring(const convert_sstring &cs)
+	{
+		if (cs.src)
+		{
+			this->len = cs.len;
+			this->src = static_cast<TO *>(std::calloc(this->len + 1, sizeof(TO)));
+			exit_heap_fail(this->src);
+			for (std::size_t i = 0; i < this->len; i++)
+				this->src[i] = cs.src[i];
+		}
+		else
+		{
+			this->src = nullptr;
+			this->len = 0;
+		}
+	}
+
+	template <typename TO, typename FROM>
+	convert_sstring<TO, FROM>::convert_sstring(convert_sstring &&cs) noexcept
+	{
+		this->len = cs.len;
+		this->src = cs.src;
+
+		cs.len = 0;
+		cs.src = nullptr;
+	}
+
+	template <typename TO, typename FROM>
+	const TO *convert_sstring<TO, FROM>::get() const
+	{
+		return this->src;
+	}
+
+	template <typename TO, typename FROM>
+	convert_sstring<TO, FROM> &convert_sstring<TO, FROM>::set(const FROM *str)
+	{
+		if (str)
+		{
+			if (this->src)
+				std::free(this->src);
+			this->len = 0;
+
+			while (str[this->len] != 0)
+				this->len++;
+
+			this->src = static_cast<TO *>(std::calloc(this->len + 1, sizeof(TO)));
+			exit_heap_fail(this->src);
+
+			for (std::size_t i = 0; i < this->len; i++)
+				this->src[i] = static_cast<TO>(str[i]);
+		}
+		return *this;
+	}
+
+	template <typename TO, typename FROM>
+	convert_sstring<TO, FROM> &convert_sstring<TO, FROM>::set(FROM c)
+	{
+		if (c != 0)
+		{
+			if (this->src)
+				std::free(this->src);
+			this->len = 1;
+			this->src = static_cast<TO *>(std::calloc(this->len + 1, sizeof(TO)));
+			exit_heap_fail(this->src);
+			this->src[0] = static_cast<TO>(c);
+		}
+		return *this;
+	}
+
+	template <typename TO, typename FROM>
+	convert_sstring<TO, FROM> &convert_sstring<TO, FROM>::operator=(const convert_sstring &cs)
+	{
+		if (this != &cs)
+			this->set(cs.src);
+		return *this;
+	}
+
+	template <typename TO, typename FROM>
+	convert_sstring<TO, FROM> &convert_sstring<TO, FROM>::operator=(convert_sstring &&cs) noexcept
+	{
+		if (this != &cs)
+		{
+			if (this->src)
+				std::free(this->src);
+			this->len = cs.len;
+			this->src = cs.src;
+
+			cs.len = 0;
+			cs.src = nullptr;
+		}
+		return *this;
+	}
+
+	template <typename TO, typename FROM>
+	convert_sstring<TO, FROM>::~convert_sstring() noexcept
+	{
+		if (this->src)
+			std::free(this->src);
+		this->len = 0;
+	}
 
 	template <typename T>
 	inline void sstring_t_view<T>::fast_strncat(T *dest, const T *src, std::size_t &size)
@@ -1609,7 +1783,7 @@ namespace openutils
 	{
 		if (!str1 || !str2)
 			return -1;
-		int i = 0;
+		std::size_t i = 0;
 		while (i < n && str1[i] != 0 && str2[i] != 0)
 		{
 			if (str1[i] != str2[i])
@@ -1963,6 +2137,12 @@ namespace openutils
 	sstring_t_view<T> &sstring_t_view<T>::get_ref()
 	{
 		return *this;
+	}
+
+	template <typename T>
+	sstring_t_view<T> *sstring_t_view<T>::get_ptr()
+	{
+		return this;
 	}
 
 	template <typename T>
@@ -2385,7 +2565,7 @@ namespace openutils
 	}
 
 	template <typename T>
-	T sstring_t_view<T>::char_get(std::size_t nth) const
+	const T &sstring_t_view<T>::char_get(std::size_t nth) const
 	{
 		if (this->len >= nth && this->src)
 			return this->src[nth];
@@ -2439,7 +2619,7 @@ namespace openutils
 	}
 
 	template <typename T>
-	std::size_t &sstring_t_view<T>::change_length(std::size_t new_length)
+	const std::size_t &sstring_t_view<T>::change_length(std::size_t new_length)
 	{
 		this->len = new_length;
 		return this->len;
@@ -2522,7 +2702,7 @@ namespace openutils
 	}
 
 	template <typename T>
-	bool sstring_t_view<T>::save(const T *location) const
+	bool sstring_t_view<T>::save(const char *location) const
 	{
 		if (location && this->src)
 		{
@@ -2538,13 +2718,13 @@ namespace openutils
 	}
 
 	template <typename T>
-	bool sstring_t_view<T>::save(const sstring_t_view<T> &location) const
+	bool sstring_t_view<T>::save(const sstring_t_view<char> &location) const
 	{
-		return this->save(location.src);
+		return this->save(location.c_str());
 	}
 
 	template <typename T>
-	bool sstring_t_view<T>::append_file(const T *location) const
+	bool sstring_t_view<T>::append_file(const char *location) const
 	{
 		if (location && this->src)
 		{
@@ -2560,13 +2740,13 @@ namespace openutils
 	}
 
 	template <typename T>
-	bool sstring_t_view<T>::append_file(const sstring_t_view<T> &location) const
+	bool sstring_t_view<T>::append_file(const sstring_t_view<char> &location) const
 	{
-		return this->append_file(location.src);
+		return this->append_file(location.c_str());
 	}
 
 	template <typename T>
-	bool sstring_t_view<T>::open(const T *location)
+	bool sstring_t_view<T>::open(const char *location)
 	{
 		if (location)
 		{
@@ -2590,9 +2770,9 @@ namespace openutils
 	}
 
 	template <typename T>
-	bool sstring_t_view<T>::open(const sstring_t_view<T> &location)
+	bool sstring_t_view<T>::open(const sstring_t_view<char> &location)
 	{
-		return this->open(location.src);
+		return this->open(location.c_str());
 	}
 
 	template <typename T>
@@ -2610,10 +2790,11 @@ namespace openutils
 	{
 		if (this->src)
 		{
+			std::locale loc = std::locale("");
 			for (std::size_t i = 0; this->src[i] != 0; ++i)
 			{
-				if (this->src[i] <= 122 && this->src[i] >= 97)
-					this->src[i] -= 32;
+				if (std::islower<T>(this->src[i], loc))
+					this->src[i] = std::toupper<T>(this->src[i], loc);
 			}
 		}
 		return *this;
@@ -2624,10 +2805,11 @@ namespace openutils
 	{
 		if (this->src)
 		{
+			std::locale loc = std::locale("");
 			for (std::size_t i = 0; this->src[i] != 0; ++i)
 			{
-				if (this->src[i] <= 90 && this->src[i] >= 65)
-					this->src[i] += 32;
+				if (std::isupper<T>(this->src[i], loc))
+					this->src[i] = std::tolower<T>(this->src[i], loc);
 			}
 		}
 		return *this;
@@ -2638,69 +2820,14 @@ namespace openutils
 	{
 		if (this->src)
 		{
+			std::locale loc = std::locale("");
 			for (std::size_t i = 0; this->src[i] != 0; ++i)
 			{
-				if (this->src[i] <= 90 && this->src[i] >= 65)
-					this->src[i] += 32;
-				else if (this->src[i] <= 122 && this->src[i] >= 97)
-					this->src[i] -= 32;
+				if (std::islower<T>(this->src[i], loc))
+					this->src[i] = std::toupper<T>(this->src[i], loc);
+				else if (std::isupper<T>(this->src[i], loc))
+					this->src[i] = std::tolower<T>(this->src[i], loc);
 			}
-		}
-		return *this;
-	}
-
-	template <typename T>
-	sstring_t_view<T> &sstring_t_view<T>::to_binary()
-	{
-		if (this->src)
-		{
-			std::size_t size = 0;
-			T *buff = static_cast<T *>(std::calloc((9 * this->len) + 1, sizeof(T)));
-			exit_heap_fail(buff);
-
-			for (std::size_t i = 0; i < this->len; ++i)
-			{
-				this->fast_strncat(buff, binary_data[(std::size_t)this->src[i]], size);
-				if (i < this->len - 1)
-					this->fast_strncat(buff, " ", size);
-			}
-			std::free(this->src);
-			this->src = buff;
-			this->len = size;
-		}
-		return *this;
-	}
-
-	template <typename T>
-	sstring_t_view<T> &sstring_t_view<T>::from_binary()
-	{
-		if (this->src)
-		{
-			T *buff = static_cast<T *>(std::calloc((this->len / 9) + 1, sizeof(T)));
-			exit_heap_fail(buff);
-
-			T bin[9] = {}, store[2] = {};
-			std::size_t z = 0;
-			for (std::size_t i = 0, j = 0; i < this->len; ++i, ++j)
-			{
-				if (this->src[i] == ' ')
-				{
-					store[0] = std::strtol(bin, nullptr, 2);
-					this->fast_strncat(buff, store, z);
-					j = 0;
-				}
-				if (i == this->len - 1)
-				{
-					bin[j] = this->src[i]; // append last character
-					store[0] = std::strtol(bin, nullptr, 2);
-					this->fast_strncat(buff, store, z);
-				}
-				bin[j] = this->src[i];
-			}
-
-			std::free(this->src);
-			this->src = buff;
-			this->len = z;
 		}
 		return *this;
 	}
@@ -2844,62 +2971,6 @@ namespace openutils
 	}
 
 	template <typename T>
-	sstring_t_view<T> &sstring_t_view<T>::to_hexadecimal()
-	{
-		if (this->src)
-		{
-			T *buff = static_cast<T *>(std::calloc((this->len * 2) + 1, sizeof(T)));
-			exit_heap_fail(buff);
-
-			std::size_t i = 0, j = 0;
-			while (this->src[i] != 0)
-			{
-				std::sprintf(buff + j, "%02X", this->src[i]);
-				i++, j += 2;
-			}
-			std::free(this->src);
-			this->src = buff;
-			this->len = j;
-		}
-		return *this;
-	}
-
-	template <typename T>
-	sstring_t_view<T> &sstring_t_view<T>::from_hexadecimal()
-	{
-		if (this->src)
-		{
-			T *buff = static_cast<T *>(std::calloc((this->len / 2) + 1, sizeof(T)));
-			exit_heap_fail(buff);
-
-			T hex[3] = {}, store[2] = {};
-			std::size_t z = 0;
-			for (std::size_t i = 0, j = 0; i < len; ++i)
-			{
-				if (i == len - 1)
-				{
-					hex[j] = this->src[i];
-					store[0] = std::strtol(hex, nullptr, 16);
-					this->fast_strncat(buff, store, z);
-				}
-				if (j == 2)
-				{
-					j = 0;
-					store[0] = std::strtol(hex, nullptr, 16);
-					this->fast_strncat(buff, store, z);
-				}
-				hex[j] = this->src[i];
-				j++;
-			}
-
-			std::free(this->src);
-			this->src = buff;
-			this->len = z;
-		}
-		return *this;
-	}
-
-	template <typename T>
 	std::size_t sstring_t_view<T>::find(const T *sub) const
 	{
 		if (sub && this->src)
@@ -2915,6 +2986,31 @@ namespace openutils
 	std::size_t sstring_t_view<T>::find(const sstring_t_view<T> &sub) const
 	{
 		return this->find(sub.src);
+	}
+
+	template <typename T>
+	std::size_t sstring_t_view<T>::rfind(const T *sub) const
+	{
+		if (sub && this->src)
+		{
+			const T *last = nullptr;
+			const T *cur = this->src;
+
+			while ((cur = this->fast_strstr(cur, this->sstr_strlen(cur), sub)) != nullptr)
+			{
+				last = cur;
+				cur++;
+			}
+
+			return last ? (std::size_t)(last - this->src) : this->nerr();
+		}
+		return this->nerr();
+	}
+
+	template <typename T>
+	std::size_t sstring_t_view<T>::rfind(const sstring_t_view<T> &sub) const
+	{
+		return this->rfind(sub.src);
 	}
 
 	template <typename T>
@@ -2974,12 +3070,12 @@ namespace openutils
 		exit_heap_fail(temp);
 
 		std::memmove(temp, this->src, this->len * sizeof(T));
-		T *tok = this->fast_strtok(temp, "\n", 2);
+		T *tok = this->fast_strtok(temp, convert_sstring<T, char>("\n").get(), 2);
 		while (tok)
 		{
 			if (cnt++ == line)
 				break;
-			tok = this->fast_strtok(nullptr, "\n", 2);
+			tok = this->fast_strtok(nullptr, convert_sstring<T, char>("\n").get(), 2);
 		}
 		if (cnt == 0 || tok == nullptr)
 		{
@@ -3292,13 +3388,13 @@ namespace openutils
 	}
 
 	template <typename T>
-	sstring_t_view<T> sstring_t_view<T>::soundex() const
+	sstring_t_view<char> sstring_t_view<T>::soundex() const
 	{
 		if (this->src)
 		{
 			std::size_t s = 1;
 			const char *map = "01230120022455012623010202"; // not stored in heap memory, do not free it
-			char c;
+			T c;
 			char res[5] = {};
 			res[0] = std::toupper(this->src[0]);
 			for (std::size_t i = 1; i < this->len; ++i)
@@ -3326,9 +3422,9 @@ namespace openutils
 					s++;
 				}
 			}
-			return sstring_t_view(res);
+			return sstring_t_view<char>(res);
 		}
-		return sstring_t_view<T>();
+		return sstring_t_view<char>();
 	}
 
 	template <typename T>
@@ -3433,7 +3529,7 @@ namespace openutils
 	}
 
 	template <typename T>
-	bool sstring_t_view<T>::save_binary(const T *location, std::size_t bin_len) const
+	bool sstring_t_view<T>::save_binary(const char *location, std::size_t bin_len) const
 	{
 		if (location && this->src)
 		{
@@ -3449,7 +3545,7 @@ namespace openutils
 	}
 
 	template <typename T>
-	bool sstring_t_view<T>::append_binary(const T *location, std::size_t bin_len) const
+	bool sstring_t_view<T>::append_binary(const char *location, std::size_t bin_len) const
 	{
 		if (location && this->src)
 		{
@@ -3569,6 +3665,115 @@ namespace openutils
 	}
 
 	template <typename T>
+	sstring_t_view<char> sstring_t_view<T>::encode_base64() const
+	{
+		if (this->src)
+		{
+			// some temps
+			const T *temp_src = this->src;
+			std::size_t temp_len = this->len;
+			// end temps
+
+			const char *base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+			sstring_t_view<char> ret;
+			std::size_t i = 0, j = 0;
+			unsigned char char_array_3[3] = {}, char_array_4[4] = {};
+
+			while (temp_len--)
+			{
+				char_array_3[i++] = *(temp_src++);
+				if (i == 3)
+				{
+					char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
+					char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
+					char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
+					char_array_4[3] = char_array_3[2] & 0x3f;
+
+					for (i = 0; i < 4; i++)
+						ret += base64_chars[char_array_4[i]];
+					i = 0;
+				}
+			}
+
+			if (i)
+			{
+				for (j = i; j < 3; j++)
+					char_array_3[j] = 0;
+
+				char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
+				char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
+				char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
+				char_array_4[3] = char_array_3[2] & 0x3f;
+
+				for (j = 0; j < i + 1; j++)
+					ret += base64_chars[char_array_4[j]];
+
+				while (i++ < 3)
+					ret += '=';
+			}
+
+			return std::move(ret);
+		}
+		return nullptr;
+	}
+
+	template <typename T>
+	sstring_t_view<char> sstring_t_view<T>::decode_base64() const
+	{
+		if (this->src)
+		{
+			// some temps
+			std::size_t temp_len = this->len;
+			const T *encoded_string = this->src;
+			std::locale loc = std::locale("");
+			// end temp
+
+			const sstring_t_view<char> base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+			std::size_t i = 0, j = 0, in_ = 0;
+			unsigned char char_array_4[4] = {}, char_array_3[3] = {};
+			sstring_t_view<char> ret;
+
+			while (temp_len-- && (encoded_string[in_] != '=') && (std::isalnum<T>(encoded_string[in_], loc) || (encoded_string[in_] == '+') || (encoded_string[in_] == '/')))
+			{
+				char_array_4[i++] = encoded_string[in_];
+				in_++;
+				if (i == 4)
+				{
+					for (i = 0; i < 4; i++)
+						char_array_4[i] = static_cast<unsigned char>(base64_chars.find(char_array_4[i]));
+
+					char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
+					char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
+					char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
+					for (i = 0; i < 3; i++)
+						ret += char_array_3[i];
+					i = 0;
+				}
+			}
+
+			if (i)
+			{
+				for (j = i; j < 4; j++)
+					char_array_4[j] = 0;
+
+				for (j = 0; j < 4; j++)
+					char_array_4[j] = static_cast<unsigned char>(base64_chars.find(char_array_4[j]));
+
+				char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
+				char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
+				char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
+
+				for (j = 0; j < i - 1; j++)
+					ret += char_array_3[j];
+			}
+
+			return std::move(ret);
+		}
+		return nullptr;
+	}
+
+	template <typename T>
 	const T *sstring_t_view<T>::cbegin() const
 	{
 		if (this->src)
@@ -3670,7 +3875,7 @@ namespace openutils
 		if (!this->src)
 			return vector_t<sstring_t_view<T>>(1);
 
-		vector_t<sstring_t_view<T>> spt = this->split(" ");
+		vector_t<sstring_t_view<T>> spt = this->split(convert_sstring<T, char>(" ").get());
 		vector_t<sstring_t_view<T>> args;
 		if (argv0)
 			args.add(argv0);
@@ -3679,8 +3884,8 @@ namespace openutils
 			if (spt[i][0] == '"')
 			{
 				sstring_t_view<T> temp;
-				for (; spt[i][spt[i].len - 1] != '"' && i < spt.length(); i++)
-					temp.append(spt[i] + " ");
+				for (; spt[i][spt[i].len - 1] != 34 && i < spt.length(); i++)
+					temp.append(spt[i] + convert_sstring<T, char>(" ").get());
 				temp.append(spt[i++]).remove_first_char().remove_last_char();
 				args.add(temp);
 			}
@@ -3691,100 +3896,13 @@ namespace openutils
 	}
 
 	template <typename T>
-	sstring_t_view<T> &sstring_t_view<T>::to_morse_code()
-	{
-		if (!this->src)
-			return *this;
-		for (std::size_t i = 0; i < this->len; i++)
-			if (!std::isdigit(this->src[i]) && !std::isalpha(this->src[i]) && this->src[i] != ' ')
-				return *this;
-
-		T *buff = static_cast<T *>(std::calloc((this->len * 8) + 1, sizeof(T)));
-		exit_heap_fail(buff);
-		std::size_t track = 0;
-
-		for (std::size_t i = 0; i < this->len; i++)
-		{
-			if (std::isdigit(this->src[i]))
-				this->fast_strncat(buff, morse_code[(std::size_t)this->src[i] - 48].code, track);
-			else if (this->src[i] == ' ')
-				this->fast_strncat(buff, morse_code[36].code, track);
-			else
-			{
-				if (this->src[i] >= 65 && this->src[i] <= 90)
-					this->fast_strncat(buff, morse_code[(std::size_t)this->src[i] - 55].code, track);
-				else
-					this->fast_strncat(buff, morse_code[(std::size_t)this->src[i] - 87].code, track);
-			}
-			if (i < this->len - 1)
-				this->fast_strncat(buff, " ", track);
-		}
-
-		std::free(this->src);
-		this->src = buff;
-		this->len = track;
-		return *this;
-	}
-
-	template <typename T>
-	sstring_t_view<T> &sstring_t_view<T>::from_morse_code()
-	{
-		if (!this->src)
-			return *this;
-		for (std::size_t i = 0; i < this->len; i++)
-		{
-			switch (this->src[i])
-			{
-			case '-':
-			case '.':
-			case ' ':
-				break;
-			default:
-				return *this;
-			}
-		}
-
-		T *buff = static_cast<T *>(std::calloc(this->len + 1, sizeof(T)));
-		exit_heap_fail(buff);
-		T temp[9] = {}, arr[2] = {};
-
-		std::size_t track = 0, x = 0;
-		for (std::size_t i = 0, k = 0; i < this->len; i++, k++)
-		{
-			if (i == this->len - 1)
-			{
-				x = 0;
-				temp[k] = this->src[i];
-				while ((this->sstr_strcmp(temp, morse_code[x].code)) != 0)
-					x++;
-				arr[0] = morse_code[x].character;
-				this->fast_strncat(buff, arr, track);
-			}
-			if (this->src[i] == ' ')
-			{
-				i++, x = 0;
-				while ((this->sstr_strcmp(temp, morse_code[x].code)) != 0)
-					x++;
-				arr[0] = morse_code[x].character;
-				this->fast_strncat(buff, arr, track);
-				this->init_n_zeroes(temp, 0, 9);
-				k = 0;
-			}
-			temp[k] = this->src[i];
-		}
-		std::free(this->src);
-		this->src = buff;
-		this->len = track;
-		return *this;
-	}
-
-	template <typename T>
 	bool sstring_t_view<T>::is_digit() const
 	{
 		if (this->src)
 		{
+			std::locale loc = std::locale("");
 			for (std::size_t i = 0; i < this->len; i++)
-				if (!std::isdigit((unsigned int)this->src[i]))
+				if (!std::isdigit<T>(this->src[i], loc))
 					return false;
 			return true;
 		}
@@ -3796,6 +3914,7 @@ namespace openutils
 	{
 		if (this->src)
 		{
+			std::locale loc = std::locale("");
 			std::size_t point_cnt = 0;
 			for (std::size_t i = 0; i < this->len; i++)
 			{
@@ -3805,7 +3924,7 @@ namespace openutils
 					if (point_cnt > 1)
 						return false;
 				}
-				else if (!std::isdigit((unsigned int)this->src[i]))
+				else if (!std::isdigit<T>(this->src[i], loc))
 					return false;
 			}
 			if (point_cnt == 1)
@@ -3820,7 +3939,7 @@ namespace openutils
 		if (this->src)
 		{
 			for (std::size_t i = 0; i < this->len; i++)
-				if (this->src[i] <= 0 || this->src[i] >= 127)
+				if (this->src[i] < 0 || this->src[i] > 127)
 					return false;
 			return true;
 		}
@@ -3832,8 +3951,9 @@ namespace openutils
 	{
 		if (this->src)
 		{
+			std::locale loc = std::locale("");
 			for (std::size_t i = 0; i < this->len; i++)
-				if (!std::isalpha((unsigned int)this->src[i]))
+				if (!std::isalpha<T>(this->src[i], loc))
 					return false;
 			return true;
 		}
@@ -3843,17 +3963,17 @@ namespace openutils
 	template <typename T>
 	sstring_t_view<T> &sstring_t_view<T>::format_escape_sequence()
 	{
-		this->replace("\\", "\\\\");
-		this->replace("\a", "\\a");
-		this->replace("\b", "\\b");
-		this->replace("\f", "\\f");
-		this->replace("\n", "\\n");
-		this->replace("\r", "\\r");
-		this->replace("\t", "\\t");
-		this->replace("\v", "\\v");
-		this->replace("\"", "\\\"");
-		this->replace("\'", "\\\'");
-		this->replace("\?", "\\\?");
+		this->replace(convert_sstring<T, char>("\\").get(), convert_sstring<T, char>("\\\\").get());
+		this->replace(convert_sstring<T, char>("\a").get(), convert_sstring<T, char>("\\a").get());
+		this->replace(convert_sstring<T, char>("\b").get(), convert_sstring<T, char>("\\b").get());
+		this->replace(convert_sstring<T, char>("\f").get(), convert_sstring<T, char>("\\f").get());
+		this->replace(convert_sstring<T, char>("\n").get(), convert_sstring<T, char>("\\n").get());
+		this->replace(convert_sstring<T, char>("\r").get(), convert_sstring<T, char>("\\r").get());
+		this->replace(convert_sstring<T, char>("\t").get(), convert_sstring<T, char>("\\t").get());
+		this->replace(convert_sstring<T, char>("\v").get(), convert_sstring<T, char>("\\v").get());
+		this->replace(convert_sstring<T, char>("\"").get(), convert_sstring<T, char>("\\\"").get());
+		this->replace(convert_sstring<T, char>("\'").get(), convert_sstring<T, char>("\\\'").get());
+		this->replace(convert_sstring<T, char>("\?").get(), convert_sstring<T, char>("\\\?").get());
 		return *this;
 	}
 
@@ -4015,7 +4135,7 @@ namespace openutils
 		if (!__format__)
 			return *this;
 
-		T *buff = static_cast<T *>(std::calloc(buffer_length + 1, sizeof(T)));
+		char *buff = static_cast<char *>(std::calloc(buffer_length + 1, sizeof(T)));
 		exit_heap_fail(buff);
 
 		std::va_list ar;
@@ -4026,8 +4146,10 @@ namespace openutils
 		if (this->src)
 			std::free(this->src);
 
-		this->src = buff;
-		this->len = this->sstr_strlen(buff);
+		this->src = reinterpret_cast<T *>(buff);
+		this->len = 0;
+		while (this->src[this->len] != 0)
+			this->len++;
 		return *this;
 	}
 
@@ -4037,7 +4159,7 @@ namespace openutils
 		if (!__format__)
 			return *this;
 
-		T *buff = static_cast<T *>(std::calloc(buffer_length + 1, sizeof(T)));
+		char *buff = static_cast<char *>(std::calloc(buffer_length + 1, sizeof(T)));
 		exit_heap_fail(buff);
 
 		std::va_list ar;
@@ -4047,11 +4169,16 @@ namespace openutils
 
 		if (!this->src)
 		{
-			this->src = buff;
-			this->len = this->sstr_strlen(buff);
+			this->src = reinterpret_cast<T *>(buff);
+			this->len = 0;
+			while (this->src[this->len] != 0)
+				this->len++;
 		}
 		else
-			this->append(buff);
+		{
+			this->append(convert_sstring<T, char>(buff).get());
+			std::free(buff);
+		}
 		return *this;
 	}
 
@@ -4088,6 +4215,7 @@ namespace openutils
 		std::free(this->src);
 		this->src = buff;
 		this->len = tempLen; // same though
+		return *this;
 	}
 
 	template <typename T>
@@ -4332,7 +4460,7 @@ namespace openutils
 	}
 
 	template <typename T>
-	sstring_t_view<T>::~sstring_t_view()
+	sstring_t_view<T>::~sstring_t_view() noexcept
 	{
 		if (this->src)
 			std::free(this->src);
@@ -4366,9 +4494,9 @@ namespace openutils
 	{
 		sstring_t_view x;
 		if (boolean)
-			x = "true";
+			x = convert_sstring<T, char>("true").get();
 		else
-			x = "false";
+			x = convert_sstring<T, char>("false").get();
 		return std::move(x);
 	}
 
@@ -4382,97 +4510,97 @@ namespace openutils
 	template <typename T>
 	sstring_t_view<T> sstring_t_view<T>::to_sstring(void *ptr)
 	{
-		char s[std::numeric_limits<std::size_t>::digits + 1] = {};
-		std::snprintf(s, std::numeric_limits<std::size_t>::digits + 1, "%p", ptr);
-		return sstring_t_view(s);
+		char s[std::numeric_limits<std::size_t>::digits10 + 1] = {};
+		std::snprintf(s, std::numeric_limits<std::size_t>::digits10 + 1, "%p", ptr);
+		return sstring_t_view(convert_sstring<T, char>(s).get());
 	}
 
 	template <typename T>
 	sstring_t_view<T> sstring_t_view<T>::to_sstring(signed short int x)
 	{
-		char s[std::numeric_limits<signed short int>::digits + 2] = {};
-		std::snprintf(s, std::numeric_limits<signed short int>::digits + 2, "%hi", x);
-		return sstring_t_view(s);
+		char s[std::numeric_limits<signed short int>::digits10 + 2] = {};
+		std::snprintf(s, std::numeric_limits<signed short int>::digits10 + 2, "%hi", x);
+		return sstring_t_view(convert_sstring<T, char>(s).get());
 	}
 
 	template <typename T>
 	sstring_t_view<T> sstring_t_view<T>::to_sstring(unsigned short int x)
 	{
-		char s[std::numeric_limits<unsigned short int>::digits + 1] = {};
-		std::snprintf(s, std::numeric_limits<unsigned short int>::digits + 1, "%hu", x);
-		return sstring_t_view(s);
+		char s[std::numeric_limits<unsigned short int>::digits10 + 1] = {};
+		std::snprintf(s, std::numeric_limits<unsigned short int>::digits10 + 1, "%hu", x);
+		return sstring_t_view(convert_sstring<T, char>(s).get());
 	}
 
 	template <typename T>
 	sstring_t_view<T> sstring_t_view<T>::to_sstring(signed int x)
 	{
-		char s[std::numeric_limits<signed int>::digits + 2] = {};
-		std::snprintf(s, std::numeric_limits<signed int>::digits + 2, "%d", x);
-		return sstring_t_view(s);
+		char s[std::numeric_limits<signed int>::digits10 + 2] = {};
+		std::snprintf(s, std::numeric_limits<signed int>::digits10 + 2, "%d", x);
+		return sstring_t_view(convert_sstring<T, char>(s).get());
 	}
 
 	template <typename T>
 	sstring_t_view<T> sstring_t_view<T>::to_sstring(unsigned int x)
 	{
-		char s[std::numeric_limits<unsigned int>::digits + 1] = {};
-		std::snprintf(s, std::numeric_limits<unsigned int>::digits + 1, "%i", x);
-		return sstring_t_view(s);
+		char s[std::numeric_limits<unsigned int>::digits10 + 1] = {};
+		std::snprintf(s, std::numeric_limits<unsigned int>::digits10 + 1, "%i", x);
+		return sstring_t_view(convert_sstring<T, char>(s).get());
 	}
 
 	template <typename T>
 	sstring_t_view<T> sstring_t_view<T>::to_sstring(signed long int x)
 	{
-		char s[std::numeric_limits<signed long int>::digits + 2] = {};
-		std::snprintf(s, std::numeric_limits<signed long int>::digits + 2, "%ld", x);
-		return sstring_t_view(s);
+		char s[std::numeric_limits<signed long int>::digits10 + 2] = {};
+		std::snprintf(s, std::numeric_limits<signed long int>::digits10 + 2, "%ld", x);
+		return sstring_t_view(convert_sstring<T, char>(s).get());
 	}
 
 	template <typename T>
 	sstring_t_view<T> sstring_t_view<T>::to_sstring(unsigned long int x)
 	{
-		char s[std::numeric_limits<unsigned long int>::digits + 1] = {};
-		std::snprintf(s, std::numeric_limits<unsigned long int>::digits + 1, "%lu", x);
-		return sstring_t_view(s);
+		char s[std::numeric_limits<unsigned long int>::digits10 + 1] = {};
+		std::snprintf(s, std::numeric_limits<unsigned long int>::digits10 + 1, "%lu", x);
+		return sstring_t_view(convert_sstring<T, char>(s).get());
 	}
 
 	template <typename T>
 	sstring_t_view<T> sstring_t_view<T>::to_sstring(signed long long int x)
 	{
-		char s[std::numeric_limits<signed long long int>::digits + 2] = {};
-		std::snprintf(s, std::numeric_limits<signed long long int>::digits + 2, "%lld", x);
-		return sstring_t_view(s);
+		char s[std::numeric_limits<signed long long int>::digits10 + 2] = {};
+		std::snprintf(s, std::numeric_limits<signed long long int>::digits10 + 2, "%lld", x);
+		return sstring_t_view(convert_sstring<T, char>(s).get());
 	}
 
 	template <typename T>
 	sstring_t_view<T> sstring_t_view<T>::to_sstring(unsigned long long int x)
 	{
-		char s[std::numeric_limits<unsigned long long int>::digits + 1] = {};
-		std::snprintf(s, std::numeric_limits<unsigned long long int>::digits + 1, "%llu", x);
-		return sstring_t_view(s);
+		char s[std::numeric_limits<unsigned long long int>::digits10 + 1] = {};
+		std::snprintf(s, std::numeric_limits<unsigned long long int>::digits10 + 1, "%llu", x);
+		return sstring_t_view(convert_sstring<T, char>(s).get());
 	}
 
 	template <typename T>
 	sstring_t_view<T> sstring_t_view<T>::to_sstring(float x)
 	{
-		char s[std::numeric_limits<float>::digits + 2] = {};
-		std::snprintf(s, std::numeric_limits<float>::digits + 2, "%f", x);
-		return sstring_t_view(s);
+		char s[std::numeric_limits<float>::digits10 + 4] = {};
+		std::snprintf(s, std::numeric_limits<float>::digits10 + 4, "%f", x);
+		return sstring_t_view(convert_sstring<T, char>(s).get());
 	}
 
 	template <typename T>
 	sstring_t_view<T> sstring_t_view<T>::to_sstring(double x)
 	{
-		char s[std::numeric_limits<double>::digits + 2];
-		std::snprintf(s, std::numeric_limits<double>::digits + 2, "%lf", x);
-		return sstring_t_view(s);
+		char s[std::numeric_limits<double>::digits10 + 2] = {};
+		std::snprintf(s, std::numeric_limits<double>::digits10 + 2, "%lf", x);
+		return sstring_t_view(convert_sstring<T, char>(s).get());
 	}
 
 	template <typename T>
 	sstring_t_view<T> sstring_t_view<T>::to_sstring(long double x)
 	{
-		char s[std::numeric_limits<long double>::digits + 2];
-		std::snprintf(s, std::numeric_limits<long double>::digits + 2, "%Lf", x);
-		return sstring_t_view(s);
+		char s[std::numeric_limits<long double>::digits10 + 2] = {};
+		std::snprintf(s, std::numeric_limits<long double>::digits10 + 2, "%Lf", x);
+		return sstring_t_view(convert_sstring<T, char>(s).get());
 	}
 
 	template <typename T>
@@ -4492,10 +4620,10 @@ namespace openutils
 	}
 
 	template <typename T>
-	sstring_t_view<T> sstring_t_view<T>::open_file(const sstring_t_view<T> &location)
+	sstring_t_view<T> sstring_t_view<T>::open_file(const sstring_t_view<char> &location)
 	{
 		sstring_t_view x;
-		x.open(location.c_str());
+		x.open(location);
 		return std::move(x);
 	}
 
@@ -4503,30 +4631,30 @@ namespace openutils
 	sstring_t_view<T> sstring_t_view<T>::end_line()
 	{
 #if defined __linux__ || defined linux || defined __linux
-		return sstring_t_view("\n");
+		return sstring_t_view(convert_sstring<T, char>("\n").get());
 #elif _WIN32 || defined _WIN64 || defined __CYGWIN__
-		return sstring_t_view("\r\n");
+		return sstring_t_view(convert_sstring<T, char>("\r\n").get());
 #elif defined __unix__ || defined __unix || defined unix
-		return sstring_t_view("\n");
+		return sstring_t_view(convert_sstring<T, char>("\n").get());
 #elif defined __APPLE__ || defined __MACH__
-		return sstring_t_view("\n");
+		return sstring_t_view(convert_sstring<T, char>("\n").get());
 #elif defined __FreeBSD__
-		return sstring_t_view("\n");
+		return sstring_t_view(convert_sstring<T, char>("\n").get());
 #elif defined __ANDROID__
-		return sstring_t_view("\n");
+		return sstring_t_view(convert_sstring<T, char>("\n").get());
 #else
-		return sstring_t_view("\n");
+		return sstring_t_view(convert_sstring<T, char>("\n").get());
 #endif
 	}
 
-	typedef openutils::sstring_t_view<char> sstring;
-	typedef openutils::sstring_t_view<unsigned char> usstring;
-	typedef openutils::sstring_t_view<wchar_t> wsstring;
+	using sstring = sstring_t_view<char>;
+	using usstring = sstring_t_view<unsigned char>;
+	using wsstring = sstring_t_view<wchar_t>;
 #if defined(__cpp_char8_t)
-	typedef openutils::sstring_t_view<char8_t> u8sstring;
+	using u8sstring = sstring_t_view<char8_t>;
 #endif
-	typedef openutils::sstring_t_view<char16_t> u16sstring;
-	typedef openutils::sstring_t_view<char32_t> u32sstring;
+	using u16sstring = sstring_t_view<char16_t>;
+	using u32sstring = sstring_t_view<char32_t>;
 
 	// sizeof(char) = 1 byte(s)
 	// sizeof(unsigned char) = 1 byte(s)
