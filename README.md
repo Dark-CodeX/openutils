@@ -45,7 +45,7 @@ The motivation to create this library was quite simple as I couldn't find any si
 
 ## Usage
 
-Usage of this project is very broad and wide, as it can be used in any condition.
+Usage of this project is very practical and useful, whenever you encounter with storing, formatting and validating date and time data.
 
 ### Example 1:
 ```cpp
