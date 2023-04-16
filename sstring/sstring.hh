@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.hh" under "sstring" directory
- * sstring: version 2.5.0
+ * sstring: version 2.7.0
  * BSD 3-Clause License
  *
  * Copyright (c) 2023, Tushar Chaurasia
@@ -51,7 +51,7 @@
 #include <openutils/map/map.hh>
 #include <ostream>
 
-#define sstring_version "2.5.0"
+#define sstring_version "2.7.0"
 
 namespace openutils
 {
@@ -661,6 +661,10 @@ namespace openutils
          *		</tr>
          *		<tr>
          *			<td>29 - 35</td>
+         *			<td>Weak</td>
+         *		</tr>
+         *		<tr>
+         *			<td>36 - 59</td>
          *			<td>Medium</td>
          *		</tr>
          *		<tr>
