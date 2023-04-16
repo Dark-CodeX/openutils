@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/date-time.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "time.hh" under "date-time" directory
- * date-time: version 1.0.1
+ * date-time: version 1.1.0
  * BSD 3-Clause License
  *
  * Copyright (c) 2023, Tushar Chaurasia
@@ -36,8 +36,8 @@
 
  */
 
-#ifndef TIME_H
-#define TIME_H
+#ifndef TIME_DEFINED
+#define TIME_DEFINED
 
 #include <ctime>
 #include <cstdio>
@@ -45,20 +45,20 @@
 #include <openutils/sstring/sstring.hh>
 #include <iostream>
 
-#define date_time_version "1.0.1"
+#define date_time_version "1.1.0"
 
 namespace openutils
 {
 	class time
 	{
 	private:
-		unsigned int hour, minute, second;
+		unsigned hour, minute, second;
 
 	public:
 		time();
 		time(const time &t);
-		time(time &&t);
-		time(const unsigned int &hour_, const unsigned int &minute_, const unsigned int &second_);
+		time(time &&t) noexcept;
+		time(const unsigned &hour_, const unsigned &minute_, const unsigned &second_);
 		time(const openutils::sstring &str);
 		time &add(const time &t);
 		time &add(const unsigned long &skip_sec);
@@ -77,7 +77,7 @@ namespace openutils
 		time &operator-=(const time &dt);
 		time &operator-=(const unsigned long &skip_sec);
 		time &operator=(const time &dt);
-		time &operator=(time &&dt);
+		time &operator=(time &&dt) noexcept;
 		bool operator>(const time &dt) const;
 		bool operator<(const time &dt) const;
 		bool operator>=(const time &dt) const;
@@ -104,28 +104,28 @@ namespace openutils
 		this->second = dt.second;
 	}
 
-	time::time(time &&dt)
+	time::time(time &&dt) noexcept
 	{
 		this->hour = dt.hour;
 		this->minute = dt.minute;
 		this->second = dt.second;
 	}
 
-	time::time(const unsigned int &hour_, const unsigned int &minute_, const unsigned int &second_)
+	time::time(const unsigned &hour_, const unsigned &minute_, const unsigned &second_)
 	{
 		if (hour_ > 24)
 		{
-			std::fprintf(stderr, "err: %i is a hour and should not be greater than 24.\n", hour_);
+			std::fprintf(stderr, "err: %u is a hour and should not be greater than 24.\n", hour_);
 			std::exit(EXIT_FAILURE);
 		}
 		if (minute_ > 60)
 		{
-			std::fprintf(stderr, "err: %i is a minute and should not be greater than 60.\n", minute_);
+			std::fprintf(stderr, "err: %u is a minute and should not be greater than 60.\n", minute_);
 			std::exit(EXIT_FAILURE);
 		}
 		if (second_ > 60)
 		{
-			std::fprintf(stderr, "err: %i is a second and should not be greater than 60.\n", second_);
+			std::fprintf(stderr, "err: %u is a second and should not be greater than 60.\n", second_);
 			std::exit(EXIT_FAILURE);
 		}
 		std::tm i_tm = {};
@@ -141,7 +141,7 @@ namespace openutils
 
 	time::time(const openutils::sstring &str)
 	{
-		unsigned int h = 0, m = 0, s = 0;
+		unsigned h = 0, m = 0, s = 0;
 		vector_t<heap_pair<sstring, enum lexer_token>> parse = str.lexer();
 		std::size_t n = 0;
 		while (parse.get(n).second() != openutils::lexer_token::NULL_END)
@@ -293,11 +293,11 @@ namespace openutils
 		sstring x;
 		if (AMPM)
 		{
-			x.set_formatted(1024, "%i:%i:%i %s", ((this->hour + 11) % 12 + 1), this->minute, this->second, ((this->hour >= 12) ? "PM" : "AM"));
+			x.set_formatted(1024, "%u:%u:%u %s", ((this->hour + 11) % 12 + 1), this->minute, this->second, ((this->hour >= 12) ? "PM" : "AM"));
 			return x;
 		}
-		x.set_formatted(1024, "%i:%i:%i", this->hour, this->minute, this->second);
-		return std::move(x);
+		x.set_formatted(1024, "%u:%u:%u", this->hour, this->minute, this->second);
+		return x;
 	}
 
 	time time::operator+(const time &dt) const
@@ -363,7 +363,7 @@ namespace openutils
 		return *this;
 	}
 
-	time &time::operator=(time &&dt)
+	time &time::operator=(time &&dt) noexcept
 	{
 		if (this != &dt)
 		{

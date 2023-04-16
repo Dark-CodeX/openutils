@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/date-time.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "date.hh" under "date-time" directory
- * date-time: version 1.0.1
+ * date-time: version 1.1.0
  * BSD 3-Clause License
  *
  * Copyright (c) 2023, Tushar Chaurasia
@@ -36,50 +36,50 @@
 
  */
 
-#ifndef DATE_H
-#define DATE_H
+#ifndef DATE_DEFINED
+#define DATE_DEFINED
 
 #include <ctime>
 #include <cstdio>
 #include <cstdlib>
 #include <openutils/sstring/sstring.hh>
 
-#define date_time_version "1.0.1"
+#define date_time_version "1.1.0"
 
 namespace openutils
 {
 	class date
 	{
 	private:
-		unsigned int year, month, day;
-		bool is_leap(const unsigned int &y) const;
-		const unsigned int month_day_count[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+		unsigned year, month, day;
+		constexpr static inline bool is_leap(const unsigned &y);
+		const unsigned month_day_count[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 	public:
 		date();
 		date(const date &dt);
-		date(date &&dt);
-		date(const unsigned int &day_, const unsigned int &month_, const unsigned int &year_);
+		date(date &&dt) noexcept;
+		date(const unsigned &day_, const unsigned &month_, const unsigned &year_);
 		date(const openutils::sstring &str);
-		signed long long int days_between(const date &dt) const;
-		unsigned int days_beginning() const;
+		int days_between(const date &dt) const;
+		unsigned days_beginning() const;
 		date &add(const date &dt);
-		date &add(const signed long long int &skip_days);
+		date &add(const int &skip_days);
 		date &substract(const date &dt);
-		date &substract(const signed long long int &skip_days);
+		date &substract(const int &skip_days);
 		bool is_leap() const;
 		date get_ctime() const;
 		sstring to_string() const;
 		date operator+(const date &dt) const;
-		date operator+(const signed long long int &skip_days) const;
+		date operator+(const int &skip_days) const;
 		date operator-(const date &dt) const;
-		date operator-(const signed long long int &skip_days) const;
+		date operator-(const int &skip_days) const;
 		date &operator+=(const date &dt);
-		date &operator+=(const signed long long int &skip_days);
+		date &operator+=(const int &skip_days);
 		date &operator-=(const date &dt);
-		date &operator-=(const signed long long int &skip_days);
+		date &operator-=(const int &skip_days);
 		date &operator=(const date &dt);
-		date &operator=(date &&dt);
+		date &operator=(date &&dt) noexcept;
 		bool operator>(const date &dt) const;
 		bool operator<(const date &dt) const;
 		bool operator>=(const date &dt) const;
@@ -89,7 +89,7 @@ namespace openutils
 		~date();
 	};
 
-	bool date::is_leap(const unsigned int &y) const
+	constexpr inline bool date::is_leap(const unsigned &y)
 	{
 		if ((y % 4 == 0 && y % 100 != 0) || y % 400 == 0)
 			return true;
@@ -113,36 +113,36 @@ namespace openutils
 		this->day = dt.day;
 	}
 
-	date::date(date &&dt)
+	date::date(date &&dt) noexcept
 	{
 		this->year = dt.year;
 		this->month = dt.month;
 		this->day = dt.day;
 	}
 
-	date::date(const unsigned int &day_, const unsigned int &month_, const unsigned int &year_)
+	date::date(const unsigned &day_, const unsigned &month_, const unsigned &year_)
 	{
 		if (!this->is_leap(year_) && month_ == 2)
 		{
 			if (day_ >= 29)
 			{
-				std::fprintf(stderr, "err: %i is greater than or equal to 29 in the February month of a non-leap year (%i).\n", day_, year_);
+				std::fprintf(stderr, "err: %u is greater than or equal to 29 in the February month of a non-leap year (%u).\n", day_, year_);
 				std::exit(EXIT_FAILURE);
 			}
 		}
 		if (day_ > 31)
 		{
-			std::fprintf(stderr, "err: %i is a day and should not be greater than 31.\n", day_);
+			std::fprintf(stderr, "err: %u is a day and should not be greater than 31.\n", day_);
 			std::exit(EXIT_FAILURE);
 		}
 		if (month_ > 12)
 		{
-			std::fprintf(stderr, "err: %i is a month and should not be greater than 12.\n", month_);
+			std::fprintf(stderr, "err: %u is a month and should not be greater than 12.\n", month_);
 			std::exit(EXIT_FAILURE);
 		}
 		if (year_ < 1000 || year_ > 9999)
 		{
-			std::fprintf(stderr, "err: %i is a year and should be in-between 1000 and 9999.\n", year_);
+			std::fprintf(stderr, "err: %u is a year and should be in-between 1000 and 9999.\n", year_);
 			std::exit(EXIT_FAILURE);
 		}
 
@@ -159,7 +159,7 @@ namespace openutils
 
 	date::date(const openutils::sstring &str)
 	{
-		unsigned int m = 0, d = 0, y = 0;
+		unsigned m = 0, d = 0, y = 0;
 		vector_t<heap_pair<sstring, enum lexer_token>> parse = str.lexer();
 		std::size_t n = 0;
 		while (parse.get(n).second() != openutils::lexer_token::NULL_END)
@@ -217,22 +217,22 @@ namespace openutils
 		*this = date(d, m, y);
 	}
 
-	signed long long int date::days_between(const date &dt) const
+	int date::days_between(const date &dt) const
 	{
-		signed long long int n1 = this->year * 365 + this->day;
-		for (unsigned int i = 0; i < this->month - 1; i++)
+		int n1 = this->year * 365 + this->day;
+		for (unsigned i = 0; i < this->month - 1; i++)
 			n1 += this->month_day_count[i];
 
-		unsigned int yrs = this->year;
+		unsigned yrs = this->year;
 		if (this->month <= 2)
 			yrs--;
 		n1 += (yrs / 4) - (yrs / 100) + (yrs / 400);
 
-		signed long long int n2 = dt.year * 365 + dt.day;
-		for (unsigned int i = 0; i < dt.month - 1; i++)
+		int n2 = dt.year * 365 + dt.day;
+		for (unsigned i = 0; i < dt.month - 1; i++)
 			n2 += dt.month_day_count[i];
 
-		unsigned int yrs2 = dt.year;
+		unsigned yrs2 = dt.year;
 		if (dt.month <= 2)
 			yrs2--;
 		n2 += (yrs2 / 4) - (yrs2 / 100) + (yrs2 / 400);
@@ -240,9 +240,9 @@ namespace openutils
 		return (n1 - n2);
 	}
 
-	unsigned int date::days_beginning() const
+	unsigned date::days_beginning() const
 	{
-		unsigned int os = this->day;
+		unsigned os = this->day;
 		switch (this->month - 1)
 		{
 		case 11:
@@ -301,7 +301,7 @@ namespace openutils
 		return *this;
 	}
 
-	date &date::add(const signed long long int &skip_days)
+	date &date::add(const int &skip_days)
 	{
 		std::tm ti = {};
 		ti.tm_year = this->year - 1900;
@@ -334,7 +334,7 @@ namespace openutils
 		return *this;
 	}
 
-	date &date::substract(const signed long long int &skip_days)
+	date &date::substract(const int &skip_days)
 	{
 		std::tm ti = {};
 		ti.tm_year = this->year - 1900;
@@ -364,8 +364,8 @@ namespace openutils
 	openutils::sstring date::to_string() const
 	{
 		openutils::sstring x;
-		x.set_formatted(1024, "%i/%i/%i", this->day, this->month, this->year);
-		return std::move(x);
+		x.set_formatted(1024, "%u/%u/%u", this->day, this->month, this->year);
+		return x;
 	}
 
 	date date::operator+(const date &dt) const
@@ -375,7 +375,7 @@ namespace openutils
 		return d;
 	}
 
-	date date::operator+(const signed long long int &skip_days) const
+	date date::operator+(const int &skip_days) const
 	{
 		date d = date(*this);
 		d.add(skip_days);
@@ -389,7 +389,7 @@ namespace openutils
 		return d;
 	}
 
-	date date::operator-(const signed long long int &skip_days) const
+	date date::operator-(const int &skip_days) const
 	{
 		date d = date(*this);
 		d.substract(skip_days);
@@ -402,7 +402,7 @@ namespace openutils
 		return *this;
 	}
 
-	date &date::operator+=(const signed long long int &skip_days)
+	date &date::operator+=(const int &skip_days)
 	{
 		this->add(skip_days);
 		return *this;
@@ -414,7 +414,7 @@ namespace openutils
 		return *this;
 	}
 
-	date &date::operator-=(const signed long long int &skip_days)
+	date &date::operator-=(const int &skip_days)
 	{
 		this->substract(skip_days);
 		return *this;
@@ -431,7 +431,7 @@ namespace openutils
 		return *this;
 	}
 
-	date &date::operator=(date &&dt)
+	date &date::operator=(date &&dt) noexcept
 	{
 		if (this != &dt)
 		{

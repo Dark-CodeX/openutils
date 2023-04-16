@@ -1,5 +1,5 @@
 pkgname="openutils-date_time"
-pkgver="1.0.1"
+pkgver="1.1.0"
 pkgrel="1"
 pkgdesc="Date and time classes for C++."
 arch=("x86_64" "i686")
@@ -11,8 +11,8 @@ source=(
 	"https://raw.githubusercontent.com/Dark-CodeX/date-time/main/date-time/time.hh")
 
 sha512sums=(
-	"9a1b463ba237c6a5d0ab634c942d4039f683292507da4ebf4ec5f3cd62538dd7fde0103edc8e17b413d0a494258f95f1f336e7ae481e884b5abce275665c6a23"
-	"f50fa42101ab01bf81e63d899af6e2b541cc57aeeb9d3be95cc7752318c21acf1932a14042a3e609743e1082b029520175809350bc7dd42af0b987b9dc8985c8")
+	"31e8b9b91910d78e836097c616adb72dbbcadf7fc32ae5323def8b109fe1cdee3072e3e8b19d9a003ba78c57c243ebdd6de6c07ac245f6d5a60e8389115e9a74"
+	"a4d3ba59c89badd8c3196ef8a58ee0d359a01a93bd19a0f27aaab2e982c89c5860c1f80ef428fe0f129ec52ae86a6f6af8256a3542010e9767a5b3c14eec7199")
 
 package() {
 	echo "Date and time classes for C++."
