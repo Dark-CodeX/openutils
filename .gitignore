@@ -44,3 +44,6 @@ build
 
 #Executable Files
 *.exe
+
+#Installation
+package
