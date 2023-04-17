@@ -5,41 +5,41 @@
 ## Table of Contents
 
 - [Installation](#installation)
-	- [Prerequisites](#prerequisites)
-	- [Install `heap-pair` Header Files](#install-heap-pair-header-files)
+    - [Prerequisites](#prerequisites)
+    - [Install `heap-pair` Header Files](#install-heap-pair-header-files)
 - [Usage](#usage)
-	- [Example 1](#example-1)
-	- [Example 2](#example-2)
+    - [Example 1](#example-1)
+    - [Example 2](#example-2)
 - [Contributing](#contributing)
-	- [Reporting Bugs](#reporting-bugs)
-	- [Suggesting Enhancements](#suggesting-enhancements)
+    - [Reporting Bugs](#reporting-bugs)
+    - [Suggesting Enhancements](#suggesting-enhancements)
 - [License](#license)
 
 ## Installation
 
 - ### Prerequisites
-	- On Debian and its derivatives
-	```bash
-	$ sudo apt update
-	$ sudo apt install build-essential
-	```
-	- On Arch and its derivatives
-	```bash
-	$ sudo pacman -Sy gcc
-	```
+    - On Debian and its derivatives
+    ```bash
+    $ sudo apt update
+    $ sudo apt install build-essential
+    ```
+    - On Arch and its derivatives
+    ```bash
+    $ sudo pacman -Sy gcc
+    ```
 - ### Install `heap-pair` Header Files
-	- On Arch and its derivatives
-	```bash
-	$ git clone https://github.com/Dark-CodeX/heap-pair.git && cd ./heap-pair
-	$ mkdir -p package && cp PKGBUILD ./package && cd ./package && makepkg -si
-	```
-	- On any other operating system
-		 - Download [InstallReposGUI.jar](https://github.com/Dark-CodeX/InstallRepos/releases/download/v1.1.0/InstallReposGUI.jar) or [InstallReposCLI.jar](https://github.com/Dark-CodeX/InstallRepos/releases/download/v1.1.0/InstallReposCLI.jar)
-		 - Run them as `administrator` or `sudo`
-		 ```bash
-		 $ java -jar ./InstallRepos<CLI/GUI>.jar
-		 ```
-		 - Once, they open up enter your installation directory and install `heap-pair` library.
+    - On Arch and its derivatives
+    ```bash
+    $ git clone https://github.com/Dark-CodeX/heap-pair.git && cd ./heap-pair
+    $ mkdir -p package && cp PKGBUILD ./package && cd ./package && makepkg -si
+    ```
+    - On any other operating system
+         - Download [InstallReposGUI.jar](https://github.com/Dark-CodeX/InstallRepos/releases/download/v1.1.0/InstallReposGUI.jar) or [InstallReposCLI.jar](https://github.com/Dark-CodeX/InstallRepos/releases/download/v1.1.0/InstallReposCLI.jar)
+         - Run them as `administrator` or `sudo`
+         ```bash
+         $ java -jar ./InstallRepos<CLI/GUI>.jar
+         ```
+         - Once, they open up enter your installation directory and install `heap-pair` library.
 
 ## Usage
 
@@ -50,12 +50,12 @@
 
 int main()
 {
-	openutils::heap_pair<char *, int> pair; // for default ctor
+    openutils::heap_pair<char *, int> pair; // for default ctor
 
-	openutils::heap_pair<char *, int> pair_2("OPENUTILS", 100);
-	std::cout << "Value of FIRST = `" << pair_2.first() << "`\n";
-	std::cout << "Value of SECOND = `" << pair_2.second() << "`\n";
-	return 0;
+    openutils::heap_pair<char *, int> pair_2("OPENUTILS", 100);
+    std::cout << "Value of FIRST = `" << pair_2.first() << "`\n";
+    std::cout << "Value of SECOND = `" << pair_2.second() << "`\n";
+    return 0;
 }
 ```
 
@@ -79,17 +79,17 @@ Value of SECOND = `100`
 
 int main()
 {
-	std::cout << "NAME 1:\n";
-	openutils::heap_pair<openutils::sstring, openutils::sstring> name1("Ram", "Krishna"); 
-	std::cout << "    First name = `" << name1.first() << "`\n";
-	std::cout << "    Last name = `" << name1.second() << "`\n\n";
+    std::cout << "NAME 1:\n";
+    openutils::heap_pair<openutils::sstring, openutils::sstring> name1("Ram", "Krishna"); 
+    std::cout << "    First name = `" << name1.first() << "`\n";
+    std::cout << "    Last name = `" << name1.second() << "`\n\n";
 
 
-	openutils::heap_pair<openutils::sstring, openutils::sstring> name2 = openutils::heap_pair<openutils::sstring, openutils::sstring>::make_heap_pair("Tushar", "Chaurasia");
-	std::cout << "NAME 2:\n";
-	std::cout << "    First name = `" << name2.first() << "`\n";
-	std::cout << "    Last name = `" << name2.second() << "`" << std::endl;
-	return 0;
+    openutils::heap_pair<openutils::sstring, openutils::sstring> name2 = openutils::heap_pair<openutils::sstring, openutils::sstring>::make_heap_pair("Tushar", "Chaurasia");
+    std::cout << "NAME 2:\n";
+    std::cout << "    First name = `" << name2.first() << "`\n";
+    std::cout << "    Last name = `" << name2.second() << "`" << std::endl;
+    return 0;
 }
 ```
 
