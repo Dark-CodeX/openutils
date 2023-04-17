@@ -6,7 +6,7 @@
 
 - [Installation](#installation)
 	- [Prerequisites](#prerequisites)
-	- [Install Header Files](#install-header-files)
+	- [Install Header Files](#install-heap-pair-header-files)
 - [Usage](#usage)
 	- [Example 1](#example-1)
 	- [Example 2](#example-2)
@@ -27,7 +27,7 @@
 	```bash
 	$ sudo pacman -Sy gcc
 	```
-- ### Install Header Files
+- ### Install `heap-pair` Header Files
 	- On Arch and its derivatives
 	```bash
 	$ git clone https://github.com/Dark-CodeX/heap-pair.git && cd ./heap-pair
