@@ -8,7 +8,7 @@ The motivation to create this library was quite simple as I couldn't find any si
 
 - [Installation](#installation)
 	- [Prerequisites](#prerequisites)
-	- [Install Header Files](#install-date-time-header-files)
+	- [Install `date-time` Header Files](#install-date-time-header-files)
 - [Usage](#usage)
 	- [Example 1](#example-1)
 	- [Example 2](#example-2)
