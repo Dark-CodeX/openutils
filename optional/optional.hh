@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/optional.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "optional.hh" under "optional" directory
- * optional version: 1.5.0
+ * optional version: 1.6.0
  * BSD 3-Clause License
  *
  * Copyright (c) 2023, Tushar Chaurasia
@@ -38,10 +38,11 @@
 #ifndef OPTIONAL_DEFINED
 #define OPTIONAL_DEFINED
 
-#define returns_version "1.5.0"
+#define optional_version "1.6.0"
 
 #include <cstdlib>
 #include <cstdio>
+#include <functional>
 
 namespace openutils
 {
@@ -85,6 +86,8 @@ namespace openutils
 		bool is_null() const;
 		const T &get() const;
 		T &get();
+		optional_t &swap(optional_t &opt);
+		std::size_t hash() const;
 
 		optional_t &operator=(const optional_t &opt);
 		optional_t &operator=(optional_t &&opt);
@@ -168,6 +171,26 @@ namespace openutils
 	}
 
 	template <typename T>
+	optional_t<T> &optional_t<T>::swap(optional_t<T> &opt)
+	{
+		if (opt.value && this->value)
+		{
+			T *temp = this->value;
+			this->value = opt.value;
+			opt.value = temp;
+		}
+		return *this;
+	}
+
+	template <typename T>
+	std::size_t optional_t<T>::hash() const
+	{
+		if (this->value)
+			return std::hash<T>()(*this->value);
+		return 0;
+	}
+
+	template <typename T>
 	optional_t<T> &optional_t<T>::operator=(const optional_t &opt)
 	{
 		if (*this != &opt)
@@ -223,6 +246,18 @@ namespace openutils
 		if (this->value)
 			delete this->value;
 	}
+}
+
+namespace std
+{
+	template <typename T>
+	struct hash<openutils::optional_t<T>>
+	{
+		std::size_t operator()(const openutils::optional_t<T> &opt) const
+		{
+			return opt.hash();
+		}
+	};
 };
 
 #endif
