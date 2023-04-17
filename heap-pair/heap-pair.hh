@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/heap-pair.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "heap-pair.hh" under "heap-pair" directory
- * heap-pair: version 1.0.1
+ * heap-pair: version 1.2.0
  * BSD 3-Clause License
  *
  * Copyright (c) 2023, Tushar Chaurasia
@@ -44,7 +44,7 @@
 #include <utility>
 #include <functional>
 
-#define heap_pair_version "1.0.1"
+#define heap_pair_version "1.2.0"
 
 namespace openutils
 {
@@ -80,6 +80,7 @@ namespace openutils
         FIRST &first();
         SECOND &second();
         std::size_t hash() const;
+        heap_pair &swap(heap_pair &hp) noexcept;
         heap_pair &operator=(const heap_pair &pair);
         heap_pair &operator=(heap_pair &&pair) noexcept;
         ~heap_pair();
@@ -199,6 +200,18 @@ namespace openutils
             return this->hash_combine(*this->t1, *this->t2);
         else
             return 0;
+    }
+
+    template <typename FIRST, typename SECOND>
+    heap_pair<FIRST, SECOND> &heap_pair<FIRST, SECOND>::swap(heap_pair<FIRST, SECOND> &hp) noexcept
+    {
+        FIRST *temp_first = this->t1;
+        this->t1 = hp.t1;
+        hp.t1 = temp_first;
+
+        SECOND *temp_second = this->t2;
+        this->t2 = hp.t2;
+        hp.t2 = temp_second;
     }
 
     template <typename FIRST, typename SECOND>
