@@ -7,41 +7,41 @@ I have created the entire library for various reasons, some of which were to ext
 ## Table of Contents
 
 - [Installation](#installation)
-	- [Prerequisites](#prerequisites)
-	- [Install `sstring` Header Files](#install-sstring-header-files)
+    - [Prerequisites](#prerequisites)
+    - [Install `sstring` Header Files](#install-sstring-header-files)
 - [Usage](#usage)
-	- [Example 1](#example-1)
-	- [Example 2](#example-2)
+    - [Example 1](#example-1)
+    - [Example 2](#example-2)
 - [Contributing](#contributing)
-	- [Reporting Bugs](#reporting-bugs)
-	- [Suggesting Enhancements](#suggesting-enhancements)
+    - [Reporting Bugs](#reporting-bugs)
+    - [Suggesting Enhancements](#suggesting-enhancements)
 - [License](#license)
 
 ## Installation
 
 - ### Prerequisites
-	- On Debian and its derivatives
-	```bash
-	$ sudo apt update
-	$ sudo apt install build-essential
-	```
-	- On Arch and its derivatives
-	```bash
-	$ sudo pacman -Sy gcc
-	```
+    - On Debian and its derivatives
+    ```bash
+    $ sudo apt update
+    $ sudo apt install build-essential
+    ```
+    - On Arch and its derivatives
+    ```bash
+    $ sudo pacman -Sy gcc
+    ```
 - ### Install `sstring` Header Files
-	- On Arch and its derivatives
-	```bash
-	$ git clone https://github.com/Dark-CodeX/sstring.git && cd ./sstring
-	$ mkdir -p package && cp PKGBUILD ./package && cd ./package && makepkg -si
-	```
-	- On any other operating system
-		 - Download [InstallReposGUI.jar](https://github.com/Dark-CodeX/InstallRepos/releases/download/v1.1.0/InstallReposGUI.jar) or [InstallReposCLI.jar](https://github.com/Dark-CodeX/InstallRepos/releases/download/v1.1.0/InstallReposCLI.jar)
-		 - Run them as `administrator` or `sudo`
-		 ```bash
-		 $ java -jar ./InstallRepos<CLI/GUI>.jar
-		 ```
-		 - Once, they open up enter your installation directory and install `sstring` library.
+    - On Arch and its derivatives
+    ```bash
+    $ git clone https://github.com/Dark-CodeX/sstring.git && cd ./sstring
+    $ mkdir -p package && cp PKGBUILD ./package && cd ./package && makepkg -si
+    ```
+    - On any other operating system
+         - Download [InstallReposGUI.jar](https://github.com/Dark-CodeX/InstallRepos/releases/download/v1.1.0/InstallReposGUI.jar) or [InstallReposCLI.jar](https://github.com/Dark-CodeX/InstallRepos/releases/download/v1.1.0/InstallReposCLI.jar)
+         - Run them as `administrator` or `sudo`
+         ```bash
+         $ java -jar ./InstallRepos<CLI/GUI>.jar
+         ```
+         - Once, they open up enter your installation directory and install `sstring` library.
 
 ## Usage
 
