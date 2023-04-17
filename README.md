@@ -8,7 +8,7 @@ The motivation to create this library was quite simple as I couldn't find any si
 
 - [Installation](#installation)
 	- [Prerequisites](#prerequisites)
-	- [Install Header Files](#install-header-files)
+	- [Install Header Files](#install-date-time-header-files)
 - [Usage](#usage)
 	- [Example 1](#example-1)
 	- [Example 2](#example-2)
@@ -29,7 +29,7 @@ The motivation to create this library was quite simple as I couldn't find any si
 	```bash
 	$ sudo pacman -Sy gcc
 	```
-- ### Install Header Files
+- ### Install `date-time` Header Files
 	- On Arch and its derivatives
 	```bash
 	$ git clone https://github.com/Dark-CodeX/date-time.git && cd ./date-time
