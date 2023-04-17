@@ -8,7 +8,7 @@ depends=(gcc)
 license=("BSD 3-Clause License")
 source=("https://raw.githubusercontent.com/Dark-CodeX/sstring/main/sstring/sstring.hh")
 
-sha512sums=("1996ecfc1f2e4aa2cc30370f9f864f7f7083a63fe7f78090355609b75bac68abf2d9399aee15ef37632891e4508cffaa0a8fbec5a9b61925203d34f04b0821b9")
+sha512sums=("bb1c7d5af4cafc13583e40d82f9b5072a46d63511410de17728ecabcae0b5b32a294df84aa091a5ee0693dc939a57155d50e6861129b02d3d929297ddf50aa96")
 
 package() {
 	echo "Memory Safe String Library in C++ language."

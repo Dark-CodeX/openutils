@@ -1,4 +1,4 @@
-#include <openutils/sstring/sstring.hh>
+#include "../sstring/sstring.hh"
 #include <iostream>
 
 constexpr static inline bool is_between(double value, double lower_bound, double upper_bound)

@@ -3088,7 +3088,7 @@ namespace openutils
         }
         sstring_t_view res = sstring_t_view(tok);
         std::free(temp);
-        return std::move(res);
+        return res;
     }
 
     template <typename T>
@@ -3455,7 +3455,7 @@ namespace openutils
                 ret.set(i->key.c_str());
                 break;
             }
-            return std::move(ret);
+            return ret;
         }
         return sstring_t_view<T>();
     }
@@ -3512,7 +3512,7 @@ namespace openutils
                     break;
             }
             std::free(temp);
-            return std::move(x);
+            return x;
         }
         return vector_t<sstring_t_view<T>>(1);
     }
@@ -3716,7 +3716,7 @@ namespace openutils
                     ret += '=';
             }
 
-            return std::move(ret);
+            return ret;
         }
         return nullptr;
     }
@@ -3772,7 +3772,7 @@ namespace openutils
                     ret += char_array_3[j];
             }
 
-            return std::move(ret);
+            return ret;
         }
         return nullptr;
     }
@@ -3870,7 +3870,7 @@ namespace openutils
         sstring_t_view ret;
         ret.src = buff;
         ret.len = sub_len;
-        return std::move(ret);
+        return ret;
     }
 
     template <typename T>
@@ -3896,7 +3896,7 @@ namespace openutils
             else
                 args.add(spt[i++]);
         }
-        return std::move(args);
+        return args;
     }
 
     template <typename T>
@@ -4108,7 +4108,7 @@ namespace openutils
             }
         }
         vec.add({sstring_t_view<T>(), lexer_token::NULL_END});
-        return std::move(vec);
+        return vec;
     }
 
     template <typename T>
@@ -4267,7 +4267,7 @@ namespace openutils
     {
         sstring_t_view x = sstring_t_view(this->src);
         x.append_char(c);
-        return std::move(x);
+        return x;
     }
 
     template <typename T>
@@ -4275,7 +4275,7 @@ namespace openutils
     {
         sstring_t_view x = sstring_t_view(this->src);
         x.append(str);
-        return std::move(x);
+        return x;
     }
 
     template <typename T>
@@ -4283,7 +4283,7 @@ namespace openutils
     {
         sstring_t_view x = sstring_t_view(this->src);
         x.append(str.src);
-        return std::move(x);
+        return x;
     }
 
     template <typename T>
@@ -4490,7 +4490,7 @@ namespace openutils
     {
         sstring_t_view x;
         x.set_char(c);
-        return std::move(x);
+        return x;
     }
 
     template <typename T>
@@ -4501,14 +4501,14 @@ namespace openutils
             x = convert_sstring<T, char>("true").get();
         else
             x = convert_sstring<T, char>("false").get();
-        return std::move(x);
+        return x;
     }
 
     template <typename T>
     sstring_t_view<T> sstring_t_view<T>::to_sstring(const T *str)
     {
         sstring_t_view x = str;
-        return std::move(x);
+        return x;
     }
 
     template <typename T>
@@ -4612,7 +4612,7 @@ namespace openutils
     {
         sstring_t_view x;
         x.set_random(len);
-        return std::move(x);
+        return x;
     }
 
     template <typename T>
@@ -4620,7 +4620,7 @@ namespace openutils
     {
         sstring_t_view x;
         x.in();
-        return std::move(x);
+        return x;
     }
 
     template <typename T>
@@ -4628,7 +4628,7 @@ namespace openutils
     {
         sstring_t_view x;
         x.open(location);
-        return std::move(x);
+        return x;
     }
 
     template <typename T>
