@@ -42,6 +42,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <utility>
+#include <functional>
 
 #define heap_pair_version "1.0.1"
 
