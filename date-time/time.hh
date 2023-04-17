@@ -68,6 +68,7 @@ namespace openutils
         time get_ctime() const;
         bool is_am() const;
         sstring to_string(bool AMPM = true) const;
+        time &swap(time &t) noexcept;
         std::size_t hash() const;
         time operator+(const time &dt) const;
         time operator+(const unsigned long &skip_sec) const;
@@ -299,6 +300,14 @@ namespace openutils
         }
         x.set_formatted(1024, "%u:%u:%u", this->hour, this->minute, this->second);
         return x;
+    }
+
+    time &time::swap(time &t) noexcept
+    {
+        std::swap(this->hour, t.hour);
+        std::swap(this->minute, t.minute);
+        std::swap(this->second, t.second);
+        return *this;
     }
 
     std::size_t time::hash() const

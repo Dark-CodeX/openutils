@@ -70,6 +70,7 @@ namespace openutils
         bool is_leap() const;
         date get_ctime() const;
         sstring to_string() const;
+        date &swap(date &dt) noexcept;
         std::size_t hash() const;
         date operator+(const date &dt) const;
         date operator+(const int &skip_days) const;
@@ -367,6 +368,14 @@ namespace openutils
         openutils::sstring x;
         x.set_formatted(1024, "%u/%u/%u", this->day, this->month, this->year);
         return x;
+    }
+
+    date &date::swap(date &dt) noexcept
+    {
+        std::swap(this->year, dt.year);
+        std::swap(this->month, dt.month);
+        std::swap(this->day, dt.day);
+        return *this;
     }
 
     std::size_t date::hash() const
