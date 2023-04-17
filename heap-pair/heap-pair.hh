@@ -212,6 +212,7 @@ namespace openutils
         SECOND *temp_second = this->t2;
         this->t2 = hp.t2;
         hp.t2 = temp_second;
+        return *this;
     }
 
     template <typename FIRST, typename SECOND>
