@@ -1,5 +1,5 @@
 pkgname="openutils-heap_pair"
-pkgver="1.0.1"
+pkgver="1.2.0"
 pkgrel="1"
 pkgdesc="heap-pair template class for C++."
 arch=("x86_64" "i686")
@@ -9,7 +9,7 @@ license=("BSD 3-Clause License")
 source=(
 	"https://raw.githubusercontent.com/Dark-CodeX/heap-pair/main/heap-pair/heap-pair.hh")
 
-sha512sums=("23e6c5e01922aad325b3e4c1cf4c6b2c22b775f148a475a2bcfdd6d4ebac85f3f971369d6ef39b7698afa7c3ddd39338ded1a3060707f28d2f11dca034afa5bb")
+sha512sums=("15d6d4a2cc8a4023bafa60470205d8d42474a11653645d4f687e54a1dab613ea6170c1f4ef7430cf4ee26d4938c3646a3382fdb412462727a17093cd4f70b35d")
 
 package() {
 	echo "heap-pair template class for C++."
