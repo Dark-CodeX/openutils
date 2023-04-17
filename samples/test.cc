@@ -2,7 +2,7 @@
 #include <openutils/sstring/sstring.hh>
 #include <iostream>
 
-openutils::optional_t<openutils::sstring> test(const openutils::sstring &input)
+openutils::optional_t<openutils::sstring> get_soundex(const openutils::sstring &input)
 {
 	if (input.length() != 0)
 		return input.soundex();
@@ -11,7 +11,7 @@ openutils::optional_t<openutils::sstring> test(const openutils::sstring &input)
 
 int main()
 {
-	openutils::optional_t<openutils::sstring> y = test(openutils::sstring::get_input());
+	openutils::optional_t<openutils::sstring> y = get_soundex(openutils::sstring::get_input());
 	if (y)
 		std::cout << y.get() << std::endl;
 	else
