@@ -70,6 +70,7 @@ namespace openutils
 		bool is_leap() const;
 		date get_ctime() const;
 		sstring to_string() const;
+		std::size_t hash() const;
 		date operator+(const date &dt) const;
 		date operator+(const int &skip_days) const;
 		date operator-(const date &dt) const;
@@ -368,6 +369,16 @@ namespace openutils
 		return x;
 	}
 
+	std::size_t date::hash() const
+	{
+		std::size_t h1 = std::hash<unsigned>()(this->year);
+		std::size_t h2 = std::hash<unsigned>()(this->month);
+		std::size_t h3 = std::hash<unsigned>()(this->day);
+
+		h1 ^= (h2 << 1) ^ (h3 << 2);
+		return h1;
+	}
+
 	date date::operator+(const date &dt) const
 	{
 		date d = date(*this);
@@ -549,6 +560,18 @@ namespace openutils
 	}
 
 	date::~date() = default;
+}
+
+namespace std
+{
+	template <>
+	struct hash<openutils::date>
+	{
+		std::size_t operator()(const openutils::date &d) const
+		{
+			return d.hash();
+		}
+	};
 };
 
 #endif

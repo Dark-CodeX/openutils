@@ -68,6 +68,7 @@ namespace openutils
 		time get_ctime() const;
 		bool is_am() const;
 		sstring to_string(bool AMPM = true) const;
+		std::size_t hash() const;
 		time operator+(const time &dt) const;
 		time operator+(const unsigned long &skip_sec) const;
 		time operator-(const time &dt) const;
@@ -300,6 +301,16 @@ namespace openutils
 		return x;
 	}
 
+	std::size_t time::hash() const
+	{
+		std::size_t h1 = std::hash<unsigned>()(this->hour);
+		std::size_t h2 = std::hash<unsigned>()(this->minute);
+		std::size_t h3 = std::hash<unsigned>()(this->second);
+
+		h1 ^= (h2 << 1) ^ (h3 << 2);
+		return h1;
+	}
+
 	time time::operator+(const time &dt) const
 	{
 		time d = time(*this);
@@ -482,5 +493,17 @@ namespace openutils
 
 	time::~time() = default;
 }
+
+namespace std
+{
+	template <>
+	struct hash<openutils::time>
+	{
+		std::size_t operator()(const openutils::time &t) const
+		{
+			return t.hash();
+		}
+	};
+};
 
 #endif
