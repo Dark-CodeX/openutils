@@ -9,7 +9,7 @@ license=("BSD 3-Clause License")
 source=(
 	"https://raw.githubusercontent.com/Dark-CodeX/heap-pair/main/heap-pair/heap-pair.hh")
 
-sha512sums=("e8d47f9868f90651e4bf87c0a19653ff8b173cabbfec66004148a5a1ac9ea807fd949d2bf0db83ff3d2a7bab07fdb2c09d5c30d17b44caf6d9065696cf21f6ff")
+sha512sums=("23e6c5e01922aad325b3e4c1cf4c6b2c22b775f148a475a2bcfdd6d4ebac85f3f971369d6ef39b7698afa7c3ddd39338ded1a3060707f28d2f11dca034afa5bb")
 
 package() {
 	echo "heap-pair template class for C++."
