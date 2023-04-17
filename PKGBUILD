@@ -1,7 +1,7 @@
 pkgname="openutils-date_time"
 pkgver="1.1.0"
 pkgrel="1"
-pkgdesc="Date and time classes for C++."
+pkgdesc="DATE-TIME : The Date/Time Management Library"
 arch=("x86_64" "i686")
 conflicts=('openutils-date_time')
 depends=(gcc)
@@ -15,7 +15,7 @@ sha512sums=(
 	"073fd6bb6a7549afe5c5e27511950a32b4fd734f65365ce742135d80b008156ad2883d83e951bbc1f4bbb43891adf8277f94a4c8405672e1a772afcd1b68c5f1")
 
 package() {
-	echo "Date and time classes for C++."
+	echo "DATE-TIME : The Date/Time Management Library"
 	mkdir -p "${pkgdir}/usr/include/openutils/date-time"
 	cp "${srcdir}/date.hh" "${pkgdir}/usr/include/openutils/date-time/date.hh"
 	cp "${srcdir}/time.hh" "${pkgdir}/usr/include/openutils/date-time/time.hh"
