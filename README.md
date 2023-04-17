@@ -6,7 +6,7 @@
 
 - [Installation](#installation)
 	- [Prerequisites](#prerequisites)
-	- [Install Header Files](#install-heap-pair-header-files)
+	- [Install `heap-pair` Header Files](#install-heap-pair-header-files)
 - [Usage](#usage)
 	- [Example 1](#example-1)
 	- [Example 2](#example-2)
