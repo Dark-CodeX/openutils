@@ -66,6 +66,7 @@ namespace openutils
 	private:
 		FIRST *t1;
 		SECOND *t2;
+		static inline std::size_t hash_combine(const FIRST &fir, const SECOND &sec);
 
 	public:
 		heap_pair();
@@ -77,6 +78,7 @@ namespace openutils
 		const SECOND &second() const;
 		FIRST &first();
 		SECOND &second();
+		std::size_t hash() const;
 		heap_pair &operator=(const heap_pair &pair);
 		heap_pair &operator=(heap_pair &&pair) noexcept;
 		~heap_pair();
@@ -84,6 +86,14 @@ namespace openutils
 		static heap_pair make_heap_pair(const FIRST &T1, const SECOND &T2);
 		static heap_pair make_heap_pair(FIRST &&T1, SECOND &&T2);
 	};
+
+	template <typename FIRST, typename SECOND>
+	static inline std::size_t hash_combine(const FIRST &fir, const SECOND &sec)
+	{
+		std::size_t seed = 0;
+		seed ^= (std::hash<FIRST>()(fir) + std::hash<SECOND>(sec)) + static_cast<std::size_t>(0xc70f6907UL) + (seed << 7) + (seed >> 3);
+		return seed;
+	}
 
 	template <typename FIRST, typename SECOND>
 	heap_pair<FIRST, SECOND>::heap_pair()
@@ -182,6 +192,15 @@ namespace openutils
 	}
 
 	template <typename FIRST, typename SECOND>
+	std::size_t heap_pair<FIRST, SECOND>::hash() const
+	{
+		if (this->t1 && this->t2)
+			return this->hash_combine(*this->t1, *this->t2);
+		else
+			return 0;
+	}
+
+	template <typename FIRST, typename SECOND>
 	heap_pair<FIRST, SECOND> &heap_pair<FIRST, SECOND>::operator=(const heap_pair &pair)
 	{
 		if (this != &pair)
@@ -248,5 +267,17 @@ namespace openutils
 		return std::move(x);
 	}
 }
+
+namespace std
+{
+	template <typename FIRST, typename SECOND>
+	struct hash<openutils::heap_pair<FIRST, SECOND>>
+	{
+		std::size_t operator()(const openutils::heap_pair<FIRST, SECOND> &__pair) const
+		{
+			return __pair.hash();
+		}
+	};
+};
 
 #endif
