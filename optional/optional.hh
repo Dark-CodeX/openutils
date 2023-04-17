@@ -79,18 +79,18 @@ namespace openutils
 		optional_t();
 		optional_t(optnull_t);
 		optional_t(const T &val);
-		optional_t(T &&val);
+		optional_t(T &&val) noexcept;
 		optional_t(const optional_t &opt);
 		optional_t(optional_t &&opt);
 
 		bool is_null() const;
 		const T &get() const;
 		T &get();
-		optional_t &swap(optional_t &opt);
+		optional_t &swap(optional_t &opt) noexcept;
 		std::size_t hash() const;
 
 		optional_t &operator=(const optional_t &opt);
-		optional_t &operator=(optional_t &&opt);
+		optional_t &operator=(optional_t &&opt) noexcept;
 		bool operator==(optnull_t) const;
 		bool operator!=(optnull_t) const;
 		operator const void *() const;
@@ -117,7 +117,7 @@ namespace openutils
 	}
 
 	template <typename T>
-	optional_t<T>::optional_t(T &&val)
+	optional_t<T>::optional_t(T &&val) noexcept
 	{
 		this->value = new T(val);
 		exit_heap_fail(this->value);
@@ -171,14 +171,11 @@ namespace openutils
 	}
 
 	template <typename T>
-	optional_t<T> &optional_t<T>::swap(optional_t<T> &opt)
+	optional_t<T> &optional_t<T>::swap(optional_t<T> &opt) noexcept
 	{
-		if (opt.value && this->value)
-		{
-			T *temp = this->value;
-			this->value = opt.value;
-			opt.value = temp;
-		}
+		T *temp = this->value;
+		this->value = opt.value;
+		opt.value = temp;
 		return *this;
 	}
 
@@ -207,7 +204,7 @@ namespace openutils
 	}
 
 	template <typename T>
-	optional_t<T> &optional_t<T>::operator=(optional_t &&opt)
+	optional_t<T> &optional_t<T>::operator=(optional_t &&opt) noexcept
 	{
 		if (*this != &opt)
 		{
