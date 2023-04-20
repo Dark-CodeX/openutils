@@ -51,10 +51,10 @@ namespace openutils
 {
     class time
     {
-    private:
+      private:
         unsigned hour, minute, second;
 
-    public:
+      public:
         time();
         time(const time &t);
         time(time &&t) noexcept;

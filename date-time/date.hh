@@ -50,12 +50,12 @@ namespace openutils
 {
     class date
     {
-    private:
+      private:
         unsigned year, month, day;
         constexpr static inline bool is_leap(const unsigned &y);
         const unsigned month_day_count[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
-    public:
+      public:
         date();
         date(const date &dt);
         date(date &&dt) noexcept;

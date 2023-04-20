@@ -11,8 +11,8 @@ source=(
 	"https://raw.githubusercontent.com/Dark-CodeX/date-time/main/date-time/time.hh")
 
 sha512sums=(
-	"80e982f8d5a2bbd765983674d701e30e3050520820000fb01a42be02fd1875fc81e606f02e237815c0bd83252c666d52f23ccf942c0ee0ac0f1f525bb0368173"
-	"073fd6bb6a7549afe5c5e27511950a32b4fd734f65365ce742135d80b008156ad2883d83e951bbc1f4bbb43891adf8277f94a4c8405672e1a772afcd1b68c5f1")
+	"e8045e99f72a9d1dbf52b2419dc3151e2892c1f810d82620fde72b7b4bde1d0412cae820a99b67c0e67315fe37a23b5f4b98bb34b7498d91fdce837773ebbea4"
+	"1c5059a4d5dadfb9b85a981d702899c7989937e314f0d6feb7424efeae4c48560b7e5ecab1ff57cbf7f0b2d082efbf950d4fc9dc68ddf4d37ccd00a816e81ed5")
 
 package() {
 	echo "DATE-TIME : The Date/Time Management Library"
