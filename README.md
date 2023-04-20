@@ -84,7 +84,6 @@ int main()
     std::cout << "    First name = `" << name1.first() << "`\n";
     std::cout << "    Last name = `" << name1.second() << "`\n\n";
 
-
     openutils::heap_pair<openutils::sstring, openutils::sstring> name2 = openutils::heap_pair<openutils::sstring, openutils::sstring>::make_heap_pair("Tushar", "Chaurasia");
     std::cout << "NAME 2:\n";
     std::cout << "    First name = `" << name2.first() << "`\n";

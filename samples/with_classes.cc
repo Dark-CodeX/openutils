@@ -11,7 +11,6 @@ int main()
     std::cout << "    First name = `" << name1.first() << "`\n";
     std::cout << "    Last name = `" << name1.second() << "`\n\n";
 
-
     heap_pair<sstring, sstring> name2 = heap_pair<sstring, sstring>::make_heap_pair("Tushar", "Chaurasia"); // 2nd implementation
     std::cout << "NAME 2:\n";
     std::cout << "    First name = `" << name2.first() << "`\n";

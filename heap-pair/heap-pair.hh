@@ -64,12 +64,12 @@ namespace openutils
     template <typename FIRST, typename SECOND>
     class heap_pair
     {
-    private:
+      private:
         FIRST *t1;
         SECOND *t2;
         static inline std::size_t hash_combine(const FIRST &fir, const SECOND &sec);
 
-    public:
+      public:
         heap_pair();
         heap_pair(const FIRST &T1, const SECOND &T2);
         heap_pair(FIRST &&T1, SECOND &&T2);
