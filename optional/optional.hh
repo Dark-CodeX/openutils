@@ -72,10 +72,10 @@ namespace openutils
     template <typename T>
     class optional_t
     {
-    private:
+      private:
         T *value;
 
-    public:
+      public:
         optional_t();
         optional_t(optnull_t);
         optional_t(const T &val);
