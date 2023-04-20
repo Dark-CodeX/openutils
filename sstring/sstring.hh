@@ -76,11 +76,11 @@ namespace openutils
     template <typename TO, typename FROM>
     class convert_sstring
     {
-    private:
+      private:
         TO *src;
         std::size_t len;
 
-    public:
+      public:
         convert_sstring();
         convert_sstring(const FROM *str);
         convert_sstring(FROM c);
@@ -114,7 +114,7 @@ namespace openutils
     template <typename T>
     class sstring_t_view
     {
-    private:
+      private:
         T *src;
         std::size_t len;
         template <typename TO, typename FROM>
@@ -180,7 +180,7 @@ namespace openutils
          */
         static inline T *fast_strtok(T *str, const T *delim, std::size_t delim_length);
 
-    public:
+      public:
         /**
          * @brief Default constructor of sstring_t_view, it assigns nullptr to src and 0 to len
          */
