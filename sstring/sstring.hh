@@ -96,6 +96,8 @@ namespace openutils
         ~convert_sstring();
     };
 
+#ifndef LEXER_TOKEN_DEFINED
+#define LEXER_TOKEN_DEFINED
     enum lexer_token
     {
         WORD,
@@ -105,6 +107,7 @@ namespace openutils
         WHITESPACE,
         NULL_END
     } lexer_token;
+#endif
 
     /**
      * @brief sstring_t_view for using same class for every character data type. NOTE: Every data type ends at 0 or NULL
