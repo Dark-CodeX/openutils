@@ -116,9 +116,9 @@ namespace openutils
     template <typename FIRST, typename SECOND>
     heap_pair<FIRST, SECOND>::heap_pair(FIRST &&T1, SECOND &&T2)
     {
-        this->t1 = new FIRST(T1);
+        this->t1 = new FIRST(std::move(T1));
         exit_heap_fail(this->t1);
-        this->t2 = new SECOND(T2);
+        this->t2 = new SECOND(std::move(T2));
         exit_heap_fail(this->t2);
     }
 
@@ -271,15 +271,13 @@ namespace openutils
     template <typename FIRST, typename SECOND>
     heap_pair<FIRST, SECOND> heap_pair<FIRST, SECOND>::make_heap_pair(const FIRST &T1, const SECOND &T2)
     {
-        heap_pair<FIRST, SECOND> x = heap_pair<FIRST, SECOND>(T1, T2);
-        return x;
+        return heap_pair<FIRST, SECOND>(T1, T2);
     }
 
     template <typename FIRST, typename SECOND>
     heap_pair<FIRST, SECOND> heap_pair<FIRST, SECOND>::make_heap_pair(FIRST &&T1, SECOND &&T2)
     {
-        heap_pair<FIRST, SECOND> x = heap_pair<FIRST, SECOND>(T1, T2);
-        return x;
+        return heap_pair<FIRST, SECOND>(std::move(T1), std::move(T2));
     }
 }
 
