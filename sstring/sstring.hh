@@ -1071,7 +1071,7 @@ namespace openutils
          * @param sub_len length of new content
          * @return content from `index` to `index` + `sub_len`
          */
-        sstring_t_view substr(std::size_t index, std::size_t sub_len = (std::size_t)-1) const;
+        sstring_t_view substr(std::size_t index, std::size_t sub_len = static_cast<std::size_t>(-1)) const;
 
         /**
          * @brief Parses `this->src` as C-style argv in `main()` function
@@ -2634,7 +2634,7 @@ namespace openutils
     {
         if (ch != 0 && this->src)
         {
-            for (std::size_t i = this->len - 1; i != (std::size_t)-1; i--)
+            for (std::size_t i = this->len - 1; i != static_cast<std::size_t>(-1); i--)
                 if (this->src[i] == ch)
                     return i;
         }
@@ -3031,7 +3031,7 @@ namespace openutils
                 cur++;
             }
 
-            return last ? (std::size_t)(last - this->src) : this->nerr();
+            return last ? static_cast<std::size_t>(last - this->src) : this->nerr();
         }
         return this->nerr();
     }
@@ -3431,11 +3431,11 @@ namespace openutils
                 c = std::toupper(this->src[i]) - 65;
                 if (c >= 0 && c <= 25) // from ASCII table
                 {
-                    if (map[(std::size_t)c] != 0)
+                    if (map[static_cast<std::size_t>(c)] != 0)
                     {
-                        if (map[(std::size_t)c] != res[s - 1])
+                        if (map[static_cast<std::size_t>(c)] != res[s - 1])
                         {
-                            res[s] = map[(std::size_t)c];
+                            res[s] = map[static_cast<std::size_t>(c)];
                             s++;
                         }
                         if (s > 3)
@@ -4471,7 +4471,7 @@ namespace openutils
     template <typename T>
     constexpr inline std::size_t sstring_t_view<T>::nerr() const noexcept
     {
-        return (std::size_t)-1;
+        return static_cast<std::size_t>(-1);
     }
 
     template <typename T>
