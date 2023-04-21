@@ -8,7 +8,7 @@ depends=(gcc)
 license=("BSD 3-Clause License")
 source=("https://raw.githubusercontent.com/Dark-CodeX/optional/master/optional/optional.hh")
 
-sha512sums=("1449950d1ce36d85f98267521244150654c0c7fee6d4782cc7f6ef785ffb1a3b7a96fd93813202265884d41fd6a9b1c7a71733d2d63b8277881253bb0f9a7328")
+sha512sums=("e24a223584270e385682da96a10cd08c63cf5d7bd63a9ce3c2c9166ffcfda5bc152f2c09fe0c6a77076855a8a07d64bf2750c3fe4a433a9fc090957bc30963f2")
 
 package() {
 	echo "OPTIONAL : The Error Handling Library"
