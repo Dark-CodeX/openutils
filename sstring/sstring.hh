@@ -106,7 +106,7 @@ namespace openutils
         SPECIAL_CHAR,
         WHITESPACE,
         NULL_END
-    } lexer_token;
+    };
 #endif
 
     /**
