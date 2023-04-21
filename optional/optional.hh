@@ -79,9 +79,9 @@ namespace openutils
         optional_t();
         optional_t(optnull_t);
         optional_t(const T &val);
-        optional_t(T &&val) noexcept;
+        optional_t(T &&val);
         optional_t(const optional_t &opt);
-        optional_t(optional_t &&opt);
+        optional_t(optional_t &&opt) noexcept;
 
         bool is_null() const;
         const T &get() const;
@@ -93,6 +93,8 @@ namespace openutils
         optional_t &operator=(optional_t &&opt) noexcept;
         bool operator==(optnull_t) const;
         bool operator!=(optnull_t) const;
+        bool operator==(const optional_t &opt) const;
+        bool operator!=(const optional_t &opt) const;
         operator const void *() const;
         ~optional_t();
     };
@@ -119,7 +121,7 @@ namespace openutils
     template <typename T>
     optional_t<T>::optional_t(T &&val) noexcept
     {
-        this->value = new T(val);
+        this->value = new T(std::move(val));
         exit_heap_fail(this->value);
     }
 
@@ -136,7 +138,7 @@ namespace openutils
     }
 
     template <typename T>
-    optional_t<T>::optional_t(optional_t &&opt)
+    optional_t<T>::optional_t(optional_t &&opt) noexcept
     {
         this->value = opt.value;
         opt.value = nullptr;
@@ -145,7 +147,7 @@ namespace openutils
     template <typename T>
     bool optional_t<T>::is_null() const
     {
-        return !(this->value);
+        return this->value == nullptr;
     }
 
     template <typename T>
@@ -229,6 +231,26 @@ namespace openutils
     bool optional_t<T>::operator!=(optnull_t) const
     {
         return !this->is_null();
+    }
+
+    template <typename T>
+    bool optional_t<T>::operator==(const optional_t &opt) const
+    {
+        if (this->value && opt.value)
+        {
+            return *this->value == *opt.value;
+        }
+        return false;
+    }
+
+    template <typename T>
+    bool optional_t<T>::operator!=(const optional_t &opt) const
+    {
+        if (this->value && opt.value)
+        {
+            return *this->value != *opt.value;
+        }
+        return true;
     }
 
     template <typename T>
