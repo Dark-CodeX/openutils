@@ -90,7 +90,7 @@ namespace openutils
     };
 
     template <typename FIRST, typename SECOND>
-    static inline std::size_t hash_combine(const FIRST &fir, const SECOND &sec)
+    inline std::size_t heap_pair<FIRST, SECOND>::hash_combine(const FIRST &fir, const SECOND &sec)
     {
         std::size_t seed = 0;
         seed ^= (std::hash<FIRST>()(fir) + std::hash<SECOND>(sec)) + static_cast<std::size_t>(0xc70f6907UL) + (seed << 7) + (seed >> 3);

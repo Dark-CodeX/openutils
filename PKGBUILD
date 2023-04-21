@@ -9,7 +9,7 @@ license=("BSD 3-Clause License")
 source=(
 	"https://raw.githubusercontent.com/Dark-CodeX/heap-pair/main/heap-pair/heap-pair.hh")
 
-sha512sums=("538c3f84b87db519774ff876bdff90527a28b264e9da29c213c4cbfdceb0df0c1c1d373dcf9302442e4227435e434576aad1c119d7a9c39b799856c6ba69452e")
+sha512sums=("56dfe97df2a3ef6a3688e9f9008baf57a256dd2420607e50b9d7f4205f563401e20109fffafdc884f05da0d5aaee8e55bdf2273e326b24d9846091c7736b3677")
 
 package() {
 	echo "HEAP-PAIR : The Pair Management Library"
