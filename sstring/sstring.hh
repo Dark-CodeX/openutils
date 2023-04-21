@@ -133,7 +133,7 @@ namespace openutils
         /**
          * @brief Searches and returns the first occurrence of `needle` in `haystack`.
          * @brief Time comeplexity of this function is O(m + n), where m is the length of `haystack` and n is the length of `needle`.
-         * @brief This function uses the Knuth–Morris–Pratt or KMP algorithm, for more information visit: https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm#
+         * @brief This function uses the Knuth-Morris-Pratt or KMP algorithm, for more information visit: https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm#
          * @param haystack string to search for the substring
          * @param haystack_len length of `haystack`
          * @param needle substring to search for within `haystack`
