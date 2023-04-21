@@ -38,7 +38,6 @@
 #ifndef SSTRING_DEFINED
 #define SSTRING_DEFINED
 
-#include <cassert>
 #include <climits>
 #include <cmath>
 #include <cstdarg>
@@ -94,7 +93,7 @@ namespace openutils
         convert_sstring &operator=(const convert_sstring &cs);
         convert_sstring &operator=(convert_sstring &&cs) noexcept;
 
-        ~convert_sstring() noexcept;
+        ~convert_sstring();
     };
 
     enum lexer_token
@@ -197,6 +196,13 @@ namespace openutils
          * @param str string
          */
         sstring_t_view(const T *str);
+
+        /**
+         * @brief Assigns character between `ptr_begin` and `ptr_end`
+         * @param ptr_begin starting pointer
+         * @param ptr_end ending pointer
+         */
+        sstring_t_view(T *ptr_begin, T *ptr_end);
 
         /**
          * @brief Assigns `c`, `n` times
@@ -1410,7 +1416,7 @@ namespace openutils
         /**
          * @brief Destroy the sstring_t_view object. NOTE: Calling this function explicitly can cause double-free error
          */
-        ~sstring_t_view() noexcept;
+        ~sstring_t_view();
 
         /**
          * @brief Sorts `arr`
@@ -1702,7 +1708,7 @@ namespace openutils
     }
 
     template <typename TO, typename FROM>
-    convert_sstring<TO, FROM>::~convert_sstring() noexcept
+    convert_sstring<TO, FROM>::~convert_sstring()
     {
         if (this->src)
             std::free(this->src);
@@ -1873,6 +1879,25 @@ namespace openutils
             this->src = static_cast<T *>(std::calloc(str_len + 1, sizeof(T)));
             exit_heap_fail(this->src);
             this->fast_strncat(this->src, str, this->len);
+        }
+        else
+        {
+            this->len = 0;
+            this->src = nullptr;
+        }
+    }
+
+    template <typename T>
+    sstring_t_view<T>::sstring_t_view(T *ptr_begin, T *ptr_end)
+    {
+        if (ptr_begin && ptr_end)
+        {
+            this->len = static_cast<std::size_t>(ptr_end - ptr_begin);
+            this->src = static_cast<T *>(std::calloc(this->len + 1, sizeof(T)));
+            exit_heap_fail(this->src);
+            std::size_t i = 0;
+            for (const T *ptr = ptr_begin; ptr != ptr_end; ptr++)
+                this->src[i++] = *ptr;
         }
         else
         {
@@ -4464,7 +4489,7 @@ namespace openutils
     }
 
     template <typename T>
-    sstring_t_view<T>::~sstring_t_view() noexcept
+    sstring_t_view<T>::~sstring_t_view()
     {
         if (this->src)
             std::free(this->src);
