@@ -1,18 +1,17 @@
 pkgname="openutils-vector"
-pkgver="1.6.2"
+pkgver="2.0.0"
 pkgrel="4"
-pkgdesc="Vectors in C language."
+pkgdesc="Vectors in C/C++ language."
 arch=("x86_64" "i686")
 conflicts=('openutils-vector')
 depends=(gcc)
-license=("MIT")
-source=("https://raw.githubusercontent.com/Dark-CodeX/vector/main/vector/vector.h" "https://raw.githubusercontent.com/Dark-CodeX/vector/main/vector/vector.hh")
-sha512sums=("11c79add1d7e28e543ed9ad13c92f69ebbc79fcd5449cee5a37a898dd96cd542d1ed8f228131267877df6f44fe1013504a09810b757860c6b17b69d1aab3dabd" "fbef1829c6de3c0b5ffad67066850cf24d6b0b70c6eb6884111f9e635718472695968c1d96a25b5c3b7374138d4cc7d626e709b97f03ed4b166800bba0df57ea")
+license=("BSD 3-Clause License")
+source=("https://raw.githubusercontent.com/Dark-CodeX/vector/main/vector/vector.hh")
+sha512sums=("d2b59dcfacc89ee238b904f195f0e3d3786a256243d1c31e80df1e01544b78ff09138d2a490c7af8306c3fae00c469bc8ec86bf55cc4d1db10b8d68212bebb27")
 
 package() {
-	echo "Vectors in C language."
+	echo "Vectors in C/C++ language."
 	mkdir -p "${pkgdir}/usr/include/openutils/vector"
-	cp "${srcdir}/vector.h" "${pkgdir}/usr/include/openutils/vector/vector.h"
 	cp "${srcdir}/vector.hh" "${pkgdir}/usr/include/openutils/vector/vector.hh"
 	echo "Done!"
 }
