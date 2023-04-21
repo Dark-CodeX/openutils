@@ -113,7 +113,7 @@ $ ./test.out
 24
 ```
 
- Contributing
+## Contributing
 
 ### Reporting Bugs
 
