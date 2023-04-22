@@ -37,3 +37,6 @@ build
 # VS Code Settings Folder and Visual Studio Settings Folder
 .vscode
 .vs
+
+# installations
+package
