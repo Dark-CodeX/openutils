@@ -2,22 +2,12 @@
 #include <openutils/sstring/sstring.hh>
 #include <iostream>
 
-int main(void)
+int main()
 {
-    openutils::array_t<openutils::sstring, 5> arr;
-    arr.add(openutils::sstring::get_random(5));
-    arr.add(openutils::sstring::get_random(5));
-    arr.add(openutils::sstring::get_random(5));
-    arr.add(openutils::sstring::get_random(5));
-    arr.add(openutils::sstring::get_random(5));
-    for (int i = 0; i < arr.length(); i++)
-        std::cout << arr[i] << std::endl;
-
-    std::cout << std::endl;
-    std::cout << std::endl;
-    arr.sort([](auto a, auto b)
-             { return a < b; });
-    for (int i = 0; i < arr.length(); i++)
-        std::cout
-            << arr[i] << std::endl;
+    openutils::array_t<int, 6> a1 = {1, -43, -2, 100, 14, 0};
+    a1.sort([](auto x, auto y)
+            { return x < y; });
+    for (auto i : a1)
+        std::cout << i << "\n";
+    return 0;
 }
