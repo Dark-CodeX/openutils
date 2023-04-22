@@ -1,42 +1,122 @@
-* # MAP: The Safe C/C++ Map / Linked List Library ![license-status](https://img.shields.io/github/license/Dark-CodeX/map)
-	* #### **Safe map in C/C++, with huge amount of in-built functions.**
-	* #### **This library has 19 pre-defined functions.**
-	* #### **This library can be used in both C and C++.**
-	* #### This header file is *cross-platform*, but tested only on Windows 10, Windows 11, Arch Linux, Debian Linux, WSL 2 only. (But will work on macOS also). *And checked memory leak using **`valgrind`** in which (19/19) functions passed.*
+# MAP : The Unique Element Container Library
 
-* # Functions Defined v:1.6.6
-```
-add(key, value)
-add(node<key, value> *)
-add(node<key, value> &)
-remove
-contains
-get
-get_node
-get_index
-erase
-sort_key
-sort_values
-empty
-length
-capacity
-error_rate
-iterator
-hash
-compare
-comapre_hash
-max_depth
-```
-* # SOME RESULTS:
-	* #### Added 466474 words from the dictionary to the map, with 0% error rate, 0 memory leaks and 0 errors from valgrind. On a Intel Core i5-7200U CPU @ 2.50 GHz processor with 8GB RAM, it took only 0.34 seconds to add the dictionary to the map.
-	* ![app.png](./img/app.png)
-	
-	* ![heap_alloc.png](./img/heap_alloc.png)
-* # BUILD
-	* #### **For testing use:** *`g++ -g -W -Wall -Wextra -std=c++20 ./samples/test.cc -o test` **and then** `valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file=valgrind-out.txt ./samples/test "Hello" "World" "123" "map"`*
-* # Installation
-	* #### To install on *arch linux* use **`PKGBUILD`**.
-	* #### To install on **any Operating System** use:
-		* #### [**GUI** Download Jar File (Cross-Platform)](https://github.com/Dark-CodeX/InstallRepos/releases/download/v1.1.0/InstallReposGUI.jar)
+[![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-orange.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
-		* #### [**CLI** Download Jar File (Cross-Platform)](https://github.com/Dark-CodeX/InstallRepos/releases/download/v1.1.0/InstallReposCLI.jar)
+## Table of Contents
+
+- [Installation](#installation)
+    - [Prerequisites](#prerequisites)
+    - [Install `map` Header Files](#install-map-header-files)
+- [Usage](#usage)
+    - [Example 1](#example-1)
+    - [Example 2](#example-2)
+- [Results]()
+- [Contributing](#contributing)
+    - [Reporting Bugs](#reporting-bugs)
+    - [Suggesting Enhancements](#suggesting-enhancements)
+- [License](#license)
+
+## Installation
+
+- ### Prerequisites
+    - On Debian and its derivatives
+    ```bash
+    $ sudo apt update
+    $ sudo apt install build-essential
+    ```
+    - On Arch and its derivatives
+    ```bash
+    $ sudo pacman -Sy gcc
+    ```
+- ### Install `map` Header Files
+    - On Arch and its derivatives
+    ```bash
+    $ git clone https://github.com/Dark-CodeX/map.git && cd ./map
+    $ mkdir -p package && cp PKGBUILD ./package && cd ./package && makepkg -si
+    ```
+    - On any other operating system
+         - Download [InstallReposGUI.jar](https://github.com/Dark-CodeX/InstallRepos/releases/download/v1.1.0/InstallReposGUI.jar) or [InstallReposCLI.jar](https://github.com/Dark-CodeX/InstallRepos/releases/download/v1.1.0/InstallReposCLI.jar)
+         - Run them as `administrator` or `sudo`
+         ```bash
+         $ java -jar ./InstallRepos<CLI/GUI>.jar
+         ```
+         - Once, they open up enter your installation directory and install `map` library.
+
+## Usage
+
+This project can be used whenever you have to manage a unique pair of KEY and VALUE whose length is undetermined at compile time.
+
+### Example 1:
+```cpp
+
+```
+
+You can compile the above code as:
+```bash
+$ g++ -std=c++23 -g -Wall ./test.cc -o test.out
+```
+
+Now, execute the file as:
+```bash
+$ ./test.out
+
+```
+
+### Example 2:
+```cpp
+
+```
+
+You can compile the above code as:
+```bash
+$ g++ -std=c++23 -g -Wall ./test.cc -o test.out
+```
+
+Now, execute the file as:
+```bash
+$ ./test.out
+
+```
+
+## Contributing
+
+### Reporting Bugs
+
+If you find a bug, please open an issue on the GitHub repository with a clear description of the problem. Please include any relevant information such as error messages, steps to reproduce the problem, and your operating system and compiler version.
+
+### Suggesting Enhancements
+
+If you have an idea for how to improve the project, please open an issue on the GitHub repository with a clear description of your proposed enhancement. Please include any relevant information such as use cases, code examples, and any related issues or pull requests.
+
+## License
+
+<pre>
+BSD 3-Clause License
+
+Copyright (c) 2023, Tushar Chaurasia
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+</pre>
