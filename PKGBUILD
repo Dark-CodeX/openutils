@@ -8,7 +8,7 @@ depends=(gcc)
 license=("BSD 3-Clause License")
 source=("https://raw.githubusercontent.com/Dark-CodeX/array/master/array/array.hh")
 
-sha512sums=("bf1c1f51a39340645a540eba22f2614be3729c4f8d3ddb8fcd8c3a0bb4aca21631644a029a0ae43669cfee951008cd67999fccb3d24f02599929e668af58ea1b")
+sha512sums=("8652685eaf38dbdab076c05fc7e36b726a2f55c4ce382e08ddb38a4c80d228419658e0fc8144125fe716ed07f642a3d6ef4e9d14331d09a551b316a18840b848")
 
 package() {
 	echo "ARRAY : The Non-Resizable Array Library"
