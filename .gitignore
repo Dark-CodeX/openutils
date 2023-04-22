@@ -34,3 +34,6 @@
 #Visual Studio and VSCODE config files
 .vs
 .vscode
+
+# installations
+package
