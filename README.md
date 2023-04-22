@@ -10,7 +10,7 @@
 - [Usage](#usage)
     - [Example 1](#example-1)
     - [Example 2](#example-2)
-- [Results]()
+- [Result](#result)
 - [Contributing](#contributing)
     - [Reporting Bugs](#reporting-bugs)
     - [Suggesting Enhancements](#suggesting-enhancements)
@@ -77,6 +77,10 @@ Now, execute the file as:
 $ ./test.out
 
 ```
+
+## Result
+
+
 
 ## Contributing
 
