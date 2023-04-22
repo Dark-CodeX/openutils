@@ -35,8 +35,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef __cplusplus
-
 #ifndef ARRAY_DEFINED
 #define ARRAY_DEFINED
 
@@ -494,5 +492,4 @@ namespace openutils
     array_t<T, cap>::~array_t() = default;
 };
 
-#endif
 #endif
