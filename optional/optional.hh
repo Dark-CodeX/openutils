@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/optional.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "optional.hh" under "optional" directory
- * optional version: 1.6.0
+ * optional: version 1.6.0
  * BSD 3-Clause License
  *
  * Copyright (c) 2023, Tushar Chaurasia
