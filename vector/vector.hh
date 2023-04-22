@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/vector.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "vector.hh" under "vector" directory
- * vector version: 2.0.0
+ * vector: version 2.0.0
  * BSD 3-Clause License
  *
  * Copyright (c) 2023, Tushar Chaurasia
