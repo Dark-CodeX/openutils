@@ -35,8 +35,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MAP_T
-#define MAP_T
+#ifndef MAP_DEFINED
+#define MAP_DEFINED
 
 #include <utility>
 #include <functional>

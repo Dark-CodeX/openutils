@@ -8,7 +8,7 @@ depends=(gcc)
 license=("BSD 3-Clause License")
 source=("https://raw.githubusercontent.com/Dark-CodeX/map/master/map/map.hh")
 
-sha512sums=("af7507d01b80674d9227cd4d20146f1b6263a0b49b73e58f21edace8e55b2d8d665265f3490f0037210e2779f084dcb710f0bba780beb227f48783d66f6167af")
+sha512sums=("3f77b4b5e454a823bbc2829f475f58c97463f5d6d35dfc634c322f26ec1b4794656dfc5fb4114678b8b57e5c04c3f196c05a64308ec53d68be107d2b0a721925")
 
 package() {
 	echo "MAP : The Unique Element Container Library [NOT-MAINTAINED]"
