@@ -7,7 +7,7 @@ conflicts=('openutils-vector')
 depends=(gcc)
 license=("BSD 3-Clause License")
 source=("https://raw.githubusercontent.com/Dark-CodeX/vector/main/vector/vector.hh")
-sha512sums=("41ba12bf2cd7a91bf8180934f1412ac082f0c8b271ec96e443c16d8f855eae0b301239189250fa1efa40ba40a31c294a8e7b54c7f158cd8b21cac286dd84d8db")
+sha512sums=("bb5233dbdc53900172d34a6a77ffd07851c0f7aa049fc9844c3714af7d85d843657ce0b6292612a8fadbfb07df1a32695383546adcd79ad20f6b8ff6779718d0")
 
 package() {
 	echo "VECTOR : The Resizable Array Library"

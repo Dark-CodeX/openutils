@@ -63,7 +63,7 @@ namespace openutils
     class vector_t
     {
       private:
-        inline void init(std::size_t max);
+        inline void init(const std::size_t &max);
         inline void resize();
         static inline void hash_combine(std::size_t &seed, const T &v);
         T *vec_data;
@@ -71,36 +71,37 @@ namespace openutils
 
       public:
         vector_t();
-        vector_t(T *ptr, std::size_t max_len, bool is_ptr_heap_allocated = false);
+        vector_t(T *ptr, const std::size_t &max_len, bool is_ptr_heap_allocated = false);
         vector_t(T *ptr_begin, T *ptr_end);
         vector_t(const vector_t &vec);
         vector_t(vector_t &&other) noexcept;
-        vector_t(std::initializer_list<T> __list);
-        vector_t(std::size_t max_capacity);
+        vector_t(const std::initializer_list<T> &__list);
+        vector_t(std::initializer_list<T> &&__list);
+        vector_t(const std::size_t &max_capacity);
         const std::size_t &length() const;
         const std::size_t &capacity() const;
         vector_t &add(const T &data);
         vector_t &add(T &&data);
         vector_t &remove();
-        vector_t &remove(std::size_t nth);
+        vector_t &remove(const std::size_t &nth);
         bool is_empty() const;
         bool is_null() const;
-        vector_t &insert(const T &data, std::size_t nth);
-        vector_t &insert(T &&data, std::size_t nth);
+        vector_t &insert(const T &data, const std::size_t &nth);
+        vector_t &insert(T &&data, const std::size_t &nth);
         std::size_t hash() const;
         bool compare(const vector_t &vec) const;
         bool compare_hash(const vector_t &vec) const;
         vector_t &erase();
-        const T &get(std::size_t nth) const;
-        T &get(std::size_t nth);
+        const T &get(const std::size_t &nth) const;
+        T &get(const std::size_t &nth);
         vector_t &get_ref();
         vector_t *get_ptr();
-        vector_t &set(const T &data, std::size_t nth);
-        vector_t &set(T &&data, std::size_t nth);
+        vector_t &set(const T &data, const std::size_t &nth);
+        vector_t &set(T &&data, const std::size_t &nth);
         vector_t &reverse();
         std::size_t find(const T &data) const;
         std::size_t rfind(const T &data) const;
-        vector_t &swap(std::size_t x1, std::size_t x2);
+        vector_t &swap(const std::size_t &x1, const std::size_t &x2);
         vector_t &swap(vector_t &vec) noexcept;
         const T *raw_data() const;
         T *&raw_data();
@@ -115,21 +116,22 @@ namespace openutils
         vector_t &shrink_to_fit();
         template <typename comp>
         vector_t &sort(comp c);
-        const T &operator[](std::size_t nth) const;
-        T &operator[](std::size_t nth);
+        const T &operator[](const std::size_t &nth) const;
+        T &operator[](const std::size_t &nth);
         vector_t &operator=(const vector_t &data);
         vector_t &operator=(vector_t &&__s) noexcept;
         bool operator!=(const vector_t &vec) const;
         bool operator==(const vector_t &vec) const;
         vector_t &operator+=(T &&data);
         vector_t &operator+=(const T &data);
-        vector_t &operator+=(std::initializer_list<T> __list);
+        vector_t &operator+=(const std::initializer_list<T> &__list);
+        vector_t &operator+=(std::initializer_list<T> &&__list);
         constexpr inline std::size_t nerr() const noexcept;
         ~vector_t();
     };
 
     template <typename T>
-    inline void vector_t<T>::init(std::size_t max)
+    inline void vector_t<T>::init(const std::size_t &max)
     {
         this->vec_data = new T[max]();
         exit_heap_fail(this->vec_data);
@@ -164,7 +166,7 @@ namespace openutils
     }
 
     template <typename T>
-    vector_t<T>::vector_t(T *ptr, std::size_t max_len, bool is_ptr_heap_allocated)
+    vector_t<T>::vector_t(T *ptr, const std::size_t &max_len, bool is_ptr_heap_allocated)
     {
         if (ptr && max_len != 0)
         {
@@ -236,15 +238,23 @@ namespace openutils
     }
 
     template <typename T>
-    vector_t<T>::vector_t(std::initializer_list<T> __list)
+    vector_t<T>::vector_t(const std::initializer_list<T> &__list)
     {
         this->init(__list.size());
-        for (auto i = __list.begin(); i != __list.end(); i++)
-            this->add(*i);
+        for (const auto &i : __list)
+            this->add(i);
     }
 
     template <typename T>
-    vector_t<T>::vector_t(std::size_t max_capacity)
+    vector_t<T>::vector_t(std::initializer_list<T> &&__list)
+    {
+        this->init(__list.size());
+        for (auto &&i : __list)
+            this->add(std::move(i));
+    }
+
+    template <typename T>
+    vector_t<T>::vector_t(const std::size_t &max_capacity)
     {
         this->init(max_capacity);
     }
@@ -293,7 +303,7 @@ namespace openutils
     }
 
     template <typename T>
-    vector_t<T> &vector_t<T>::remove(std::size_t nth)
+    vector_t<T> &vector_t<T>::remove(const std::size_t &nth)
     {
         if (!this->vec_data || this->len == 0 || this->len <= nth)
             return *this;
@@ -319,7 +329,7 @@ namespace openutils
     }
 
     template <typename T>
-    vector_t<T> &vector_t<T>::insert(const T &data, std::size_t nth)
+    vector_t<T> &vector_t<T>::insert(const T &data, const std::size_t &nth)
     {
         if (!this->vec_data)
             return *this;
@@ -338,7 +348,7 @@ namespace openutils
     }
 
     template <typename T>
-    vector_t<T> &vector_t<T>::insert(T &&data, std::size_t nth)
+    vector_t<T> &vector_t<T>::insert(T &&data, const std::size_t &nth)
     {
         if (!this->vec_data)
             return *this;
@@ -398,7 +408,7 @@ namespace openutils
     }
 
     template <typename T>
-    const T &vector_t<T>::get(std::size_t nth) const
+    const T &vector_t<T>::get(const std::size_t &nth) const
     {
         if (nth < this->len && this->vec_data)
             return this->vec_data[nth];
@@ -407,7 +417,7 @@ namespace openutils
     }
 
     template <typename T>
-    T &vector_t<T>::get(std::size_t nth)
+    T &vector_t<T>::get(const std::size_t &nth)
     {
         if (nth < this->len && this->vec_data)
             return this->vec_data[nth];
@@ -428,7 +438,7 @@ namespace openutils
     }
 
     template <typename T>
-    vector_t<T> &vector_t<T>::set(const T &data, std::size_t nth)
+    vector_t<T> &vector_t<T>::set(const T &data, const std::size_t &nth)
     {
         if (nth < this->len && this->vec_data)
             this->vec_data[nth] = data;
@@ -436,7 +446,7 @@ namespace openutils
     }
 
     template <typename T>
-    vector_t<T> &vector_t<T>::set(T &&data, std::size_t nth)
+    vector_t<T> &vector_t<T>::set(T &&data, const std::size_t &nth)
     {
         if (nth < this->len && this->vec_data)
             this->vec_data[nth] = std::move(data);
@@ -486,7 +496,7 @@ namespace openutils
     }
 
     template <typename T>
-    vector_t<T> &vector_t<T>::swap(std::size_t x1, std::size_t x2)
+    vector_t<T> &vector_t<T>::swap(const std::size_t &x1, const std::size_t &x2)
     {
         if (x1 < this->len && x2 < this->len && this->vec_data)
         {
@@ -607,7 +617,7 @@ namespace openutils
     }
 
     template <typename T>
-    const T &vector_t<T>::operator[](std::size_t nth) const
+    const T &vector_t<T>::operator[](const std::size_t &nth) const
     {
         if (nth < this->len && this->vec_data)
             return this->vec_data[nth];
@@ -616,7 +626,7 @@ namespace openutils
     }
 
     template <typename T>
-    T &vector_t<T>::operator[](std::size_t nth)
+    T &vector_t<T>::operator[](const std::size_t &nth)
     {
         if (nth < this->len && this->vec_data)
             return this->vec_data[nth];
@@ -683,10 +693,18 @@ namespace openutils
     }
 
     template <typename T>
-    vector_t<T> &vector_t<T>::operator+=(std::initializer_list<T> __list)
+    vector_t<T> &vector_t<T>::operator+=(const std::initializer_list<T> &__list)
     {
-        for (auto i = __list.begin(); i != __list.end(); i++)
-            this->add(*i);
+        for (const auto &i : __list)
+            this->add(i);
+        return *this;
+    }
+
+    template <typename T>
+    vector_t<T> &vector_t<T>::operator+=(std::initializer_list<T> &&__list)
+    {
+        for (auto &&i : __list)
+            this->add(std::move(i));
         return *this;
     }
 
