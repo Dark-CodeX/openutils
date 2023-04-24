@@ -1,4 +1,4 @@
-# MAP : The Unique Element Container Library
+# MAP : The Unique Element Container Library [NOT-MAINTAINED]
 
 [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-orange.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
@@ -10,7 +10,6 @@
 - [Usage](#usage)
     - [Example 1](#example-1)
     - [Example 2](#example-2)
-- [Result](#result)
 - [Contributing](#contributing)
     - [Reporting Bugs](#reporting-bugs)
     - [Suggesting Enhancements](#suggesting-enhancements)
@@ -48,7 +47,26 @@ This project can be used whenever you have to manage a unique pair of KEY and VA
 
 ### Example 1:
 ```cpp
+#include "../map/map.hh"
+#include <iostream>
+#include <openutils/sstring/sstring.hh>
 
+int main(int argc, char const **argv)
+{
+	using namespace openutils;
+	map_t<sstring, int> map;
+	for (std::size_t i = 1; i < (std::size_t)argc; ++i)
+		map.add(argv[i], i);
+	for (map_t<sstring, int>::iter i = map.iterator(); i.c_loop() != false; i.next())
+		std::cout << i->key << " " << i->value << std::endl;
+	std::cout << "------------------------------------------" << std::endl;
+	std::cout << "Length = " << map.length() << std::endl;
+	std::cout << "Capacity = " << map.capacity() << std::endl;
+	std::cout << "Max Depth = " << map.max_depth() << std::endl;
+	std::cout << "HASH = " << std::hash<map_t<sstring, int>>()(map) << std::endl;
+	std::cout << "Error Rate = " << map.error_rate(argc - 1) << "%" << std::endl;
+	return 0;
+}
 ```
 
 You can compile the above code as:
@@ -58,13 +76,45 @@ $ g++ -std=c++23 -g -Wall ./test.cc -o test.out
 
 Now, execute the file as:
 ```bash
-$ ./test.out
-
+$ ./test.out Tushar Chaurasia Hello World CPP C Damm Map
+Tushar 1
+Chaurasia 2
+Hello 3
+World 4
+CPP 5
+C 6
+Damm 7
+Map 8
+------------------------------------------
+Length = 8
+Capacity = 16
+Max Depth = 3
+HASH = 7478833748383764968
+Error Rate = 0%
 ```
 
 ### Example 2:
 ```cpp
+#include "../map/map.hh"
+#include <openutils/sstring/sstring.hh>
+#include <iostream>
 
+int main()
+{
+	using namespace openutils;
+	map_t<sstring, int> x = {{"Tushar", 2}, {"Chaurasia", 3}, {"Hello", 1}, {"Bye", 123}, {"TATA", 13}};
+	for (map_t<sstring, int>::iter i = x.iterator(); i.c_loop(); i.next())
+		std::cout << i->key << " :: " << i->value << "\n";
+
+	std::cout << std::endl;
+
+   x.sort_values([](node_t<sstring, int> a, node_t<sstring, int> b)
+				 { return a.value < b.value; });
+
+	for (map_t<sstring, int>::iter i = x.iterator(); i.c_loop(); i.next())
+		std::cout << i->key << "  :: " << i->value << "\n";
+	return EXIT_SUCCESS;
+}
 ```
 
 You can compile the above code as:
@@ -75,12 +125,18 @@ $ g++ -std=c++23 -g -Wall ./test.cc -o test.out
 Now, execute the file as:
 ```bash
 $ ./test.out
+Tushar :: 2
+Chaurasia :: 3
+Hello :: 1
+Bye :: 123
+TATA :: 13
 
+Hello  :: 1
+Tushar  :: 2
+Chaurasia  :: 3
+TATA  :: 13
+Bye  :: 123
 ```
-
-## Result
-
-
 
 ## Contributing
 

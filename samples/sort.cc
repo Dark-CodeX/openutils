@@ -2,7 +2,7 @@
 #include <openutils/sstring/sstring.hh>
 #include <iostream>
 
-int main(void)
+int main()
 {
 	using namespace openutils;
 	map_t<sstring, int> x = {{"Tushar", 2}, {"Chaurasia", 3}, {"Hello", 1}, {"Bye", 123}, {"TATA", 13}};
