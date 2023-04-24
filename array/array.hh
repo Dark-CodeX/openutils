@@ -62,27 +62,28 @@ namespace openutils
         array_t();
         array_t(const array_t &ar);
         array_t(array_t &&ar) noexcept;
-        array_t(std::initializer_list<T> __list);
+        array_t(const std::initializer_list<T> &__list);
+        array_t(std::initializer_list<T> &&__list);
         const std::size_t &length() const;
         std::size_t capacity() const;
         array_t &add(const T &data);
         array_t &add(T &&data);
         array_t &remove();
-        array_t &remove(std::size_t nth);
+        array_t &remove(const std::size_t &nth);
         bool is_empty() const;
         std::size_t hash() const;
         bool compare(const array_t &vec) const;
         bool compare_hash(const array_t &vec) const;
-        const T &get(std::size_t nth) const;
-        T &get(std::size_t nth);
+        const T &get(const std::size_t &nth) const;
+        T &get(const std::size_t &nth);
         array_t &get_ref();
         array_t *get_ptr();
-        array_t &set(const T &data, std::size_t nth);
-        array_t &set(T &&data, std::size_t nth);
+        array_t &set(const T &data, const std::size_t &nth);
+        array_t &set(T &&data, const std::size_t &nth);
         array_t &reverse();
         std::size_t find(const T &data) const;
         std::size_t rfind(const T &data) const;
-        array_t &swap(std::size_t x1, std::size_t x2);
+        array_t &swap(const std::size_t &x1, const std::size_t &x2);
         array_t &swap(array_t &vec) noexcept;
         const T *raw_data() const;
         T *raw_data();
@@ -96,8 +97,8 @@ namespace openutils
         T *rend();
         template <typename comp>
         array_t &sort(comp c);
-        const T &operator[](std::size_t nth) const;
-        T &operator[](std::size_t nth);
+        const T &operator[](const std::size_t &nth) const;
+        T &operator[](const std::size_t &nth);
         array_t &operator=(const array_t &data);
         array_t &operator=(array_t &&__s) noexcept;
         bool operator==(const array_t &vec) const;
@@ -136,7 +137,7 @@ namespace openutils
     }
 
     template <typename T, std::size_t cap>
-    array_t<T, cap>::array_t(std::initializer_list<T> __list)
+    array_t<T, cap>::array_t(const std::initializer_list<T> &__list)
     {
         if (cap < __list.size())
         {
@@ -144,8 +145,21 @@ namespace openutils
             std::exit(EXIT_FAILURE);
         }
         this->len = 0;
-        for (auto &i : __list)
+        for (const auto &i : __list)
             this->add(i);
+    }
+
+    template <typename T, std::size_t cap>
+    array_t<T, cap>::array_t(std::initializer_list<T> &&__list)
+    {
+        if (cap < __list.size())
+        {
+            std::fprintf(stderr, "err: length exceeds capacity\n");
+            std::exit(EXIT_FAILURE);
+        }
+        this->len = 0;
+        for (auto &&i : __list)
+            this->add(std::move(i));
     }
 
     template <typename T, std::size_t cap>
@@ -193,7 +207,7 @@ namespace openutils
     }
 
     template <typename T, std::size_t cap>
-    array_t<T, cap> &array_t<T, cap>::remove(std::size_t nth)
+    array_t<T, cap> &array_t<T, cap>::remove(const std::size_t &nth)
     {
         if (this->len == 0 || this->len <= nth)
             return *this;
@@ -241,7 +255,7 @@ namespace openutils
     }
 
     template <typename T, std::size_t cap>
-    const T &array_t<T, cap>::get(std::size_t nth) const
+    const T &array_t<T, cap>::get(const std::size_t &nth) const
     {
         if (nth < this->len)
             return this->arr[nth];
@@ -250,7 +264,7 @@ namespace openutils
     }
 
     template <typename T, std::size_t cap>
-    T &array_t<T, cap>::get(std::size_t nth)
+    T &array_t<T, cap>::get(const std::size_t &nth)
     {
         if (nth < this->len)
             return this->arr[nth];
@@ -271,7 +285,7 @@ namespace openutils
     }
 
     template <typename T, std::size_t cap>
-    array_t<T, cap> &array_t<T, cap>::set(const T &data, std::size_t nth)
+    array_t<T, cap> &array_t<T, cap>::set(const T &data, const std::size_t &nth)
     {
         if (nth < this->len)
             this->arr[nth] = data;
@@ -279,7 +293,7 @@ namespace openutils
     }
 
     template <typename T, std::size_t cap>
-    array_t<T, cap> &array_t<T, cap>::set(T &&data, std::size_t nth)
+    array_t<T, cap> &array_t<T, cap>::set(T &&data, const std::size_t &nth)
     {
         if (nth < this->len)
             this->arr[nth] = std::move(data);
@@ -323,7 +337,7 @@ namespace openutils
     }
 
     template <typename T, std::size_t cap>
-    array_t<T, cap> &array_t<T, cap>::swap(std::size_t x1, std::size_t x2)
+    array_t<T, cap> &array_t<T, cap>::swap(const std::size_t &x1, const std::size_t &x2)
     {
         if (x1 < this->len && x2 < this->len)
         {
@@ -427,7 +441,7 @@ namespace openutils
     }
 
     template <typename T, std::size_t cap>
-    const T &array_t<T, cap>::operator[](std::size_t nth) const
+    const T &array_t<T, cap>::operator[](const std::size_t &nth) const
     {
         if (nth < this->len)
             return this->arr[nth];
@@ -436,7 +450,7 @@ namespace openutils
     }
 
     template <typename T, std::size_t cap>
-    T &array_t<T, cap>::operator[](std::size_t nth)
+    T &array_t<T, cap>::operator[](const std::size_t &nth)
     {
         if (nth < this->len)
             return this->arr[nth];
