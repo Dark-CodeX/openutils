@@ -45,9 +45,9 @@
 #include <cstring>
 #include <limits>
 #include <algorithm>
+#include <unordered_map>
 #include <openutils/heap-pair/heap-pair.hh>
 #include <openutils/vector/vector.hh>
-#include <openutils/map/map.hh>
 #include <ostream>
 
 #define sstring_version "2.7.0"
@@ -86,6 +86,7 @@ namespace openutils
         convert_sstring(const convert_sstring &cs);
         convert_sstring(convert_sstring &&cs) noexcept;
 
+        const std::size_t &length() const;
         const TO *get() const;
         convert_sstring &set(const FROM *str);
         convert_sstring &set(FROM c);
@@ -237,13 +238,13 @@ namespace openutils
          * @brief Assigns list of characters
          * @param list list of characters
          */
-        sstring_t_view(std::initializer_list<T> list);
+        sstring_t_view(const std::initializer_list<T> &list);
 
         /**
          * @brief Assigns list of `sstring_t_view`s
          * @param list list of `sstring_t_view`s
          */
-        sstring_t_view(std::initializer_list<sstring_t_view> list);
+        sstring_t_view(const std::initializer_list<sstring_t_view> &list);
 
         /**
          * @brief Assigns `str`
@@ -287,7 +288,7 @@ namespace openutils
          * @param rnd_len length of random characters
          * @return sstring_t_view& reference to current object
          */
-        sstring_t_view<T> &set_random(const std::size_t rnd_len);
+        sstring_t_view<T> &set_random(std::size_t rnd_len);
 
         /**
          * @brief Assigns `vec` with `between` between each iteration
@@ -659,32 +660,13 @@ namespace openutils
 
         /**
          * @brief Password entropy is a measurement of how unpredictable a password is.
-         * <table>
-         *		<tr>
-         *			<th>Entropy Value Range</th>
-         *			<th>Strength</th>
-         *		</tr>
-         *		<tr>
-         *			<td>0 - 28</td>
-         *			<td>Very Weak</td>
-         *		</tr>
-         *		<tr>
-         *			<td>29 - 35</td>
-         *			<td>Weak</td>
-         *		</tr>
-         *		<tr>
-         *			<td>36 - 59</td>
-         *			<td>Medium</td>
-         *		</tr>
-         *		<tr>
-         *			<td>60 - 127</td>
-         *			<td>Strong</td>
-         *		</tr>
-         *		<tr>
-         *			<td>128 - ...</td>
-         *			<td>Very Strong</td>
-         *		</tr>
-         * </table>
+         * | Entropy Value Range | Strength       |
+         * | ------------------- | -------------- |
+         * | 0 - 28              | Very Weak      |
+         * | 29 - 35             | Weak           |
+         * | 36 - 59             | Medium         |
+         * | 60 - 127            | Strong         |
+         * | 128 - ...           | Very Strong    |
          * @return password entropy
          */
         double password_entropy() const;
@@ -774,7 +756,7 @@ namespace openutils
          * @param line line number
          * @return sstring_t_view content of `line`, `nullptr` if `line` does NOT exists
          */
-        sstring_t_view getline(const std::size_t line) const;
+        sstring_t_view getline(std::size_t line) const;
 
         /**
          * @brief Reverses `this->src`
@@ -1009,9 +991,17 @@ namespace openutils
 
         /**
          * @brief Decodes a base64 encoded string to it's original form.
+         * @param encoded convert encoded in base64 which has to be decoded
          * @return original decoded string, if invalid base64 string is provided it will return `nullptr`
          */
-        sstring_t_view<char> decode_base64() const;
+        sstring_t_view<T> decode_base64(const char *encoded) const;
+
+        /**
+         * @brief Decodes a base64 encoded string to it's original form.
+         * @param encoded convert encoded in base64 which has to be decoded
+         * @return original decoded string, if invalid base64 string is provided it will return `nullptr`
+         */
+        sstring_t_view<T> decode_base64(const sstring_t_view<char> &encoded) const;
 
         /**
          * @brief Returns const iterator for beginning
@@ -1277,14 +1267,14 @@ namespace openutils
          * @param list list of characters
          * @return sstring_t_view& reference to current object
          */
-        sstring_t_view<T> &operator+=(std::initializer_list<T> list);
+        sstring_t_view<T> &operator+=(const std::initializer_list<T> &list);
 
         /**
          * @brief Appends list of `sstring_t_view`s
          * @param list list of `sstring_t_view`s
          * @return sstring_t_view& reference to current object
          */
-        sstring_t_view<T> &operator+=(std::initializer_list<sstring_t_view> list);
+        sstring_t_view<T> &operator+=(const std::initializer_list<sstring_t_view> &list);
 
         /**
          * @brief Assigns `c`
@@ -1426,14 +1416,14 @@ namespace openutils
          * @param arr array of sstring_t_view
          * @param len length of `arr`
          */
-        static void sort(sstring_t_view *arr, const std::size_t len);
+        static void sort(sstring_t_view *arr, std::size_t len);
 
         /**
          * @brief Sorts `arr`
          * @param arr array of `T *`
          * @param len length of `arr`
          */
-        static void sort(T **arr, const std::size_t len);
+        static void sort(T **arr, std::size_t len);
 
         /**
          * @brief Returns `c` as sstring_t_view
@@ -1642,6 +1632,12 @@ namespace openutils
 
         cs.len = 0;
         cs.src = nullptr;
+    }
+
+    template <typename TO, typename FROM>
+    const std::size_t &convert_sstring<TO, FROM>::length() const
+    {
+        return this->len;
     }
 
     template <typename TO, typename FROM>
@@ -1974,7 +1970,7 @@ namespace openutils
     }
 
     template <typename T>
-    sstring_t_view<T>::sstring_t_view(std::initializer_list<T> list)
+    sstring_t_view<T>::sstring_t_view(const std::initializer_list<T> &list)
     {
         this->len = 0;
         std::size_t str_len = list.size();
@@ -1988,7 +1984,7 @@ namespace openutils
     }
 
     template <typename T>
-    sstring_t_view<T>::sstring_t_view(std::initializer_list<sstring_t_view<T>> list)
+    sstring_t_view<T>::sstring_t_view(const std::initializer_list<sstring_t_view<T>> &list)
     {
         this->len = 0;
         std::size_t str_len = 0;
@@ -2066,7 +2062,7 @@ namespace openutils
     }
 
     template <typename T>
-    sstring_t_view<T> &sstring_t_view<T>::set_random(const std::size_t rnd_len)
+    sstring_t_view<T> &sstring_t_view<T>::set_random(std::size_t rnd_len)
     {
         if (rnd_len != 0)
         {
@@ -2869,21 +2865,15 @@ namespace openutils
     {
         if (this->src)
         {
-            const std::size_t MAX = 1 << CHAR_BIT;
-            std::size_t frequencies[MAX] = {};
-            for (const T *p = this->src; *p != 0; p++)
-            {
-                frequencies[*p - CHAR_MIN] += 1;
-            }
+            std::unordered_map<T, std::size_t> freq;
+            for (std::size_t i = 0; i < this->len; i++)
+                freq[this->src[i]] += 1;
 
             double result = 0;
-            for (std::size_t i = 0; i < MAX; i++)
+            for (const auto &[key, value] : freq)
             {
-                if (frequencies[i] != 0)
-                {
-                    double freq = (double)frequencies[i] / (double)this->len;
-                    result -= freq * (log(freq) / log(2.0));
-                }
+                double f1 = static_cast<double>(value) / static_cast<double>(this->len);
+                result -= f1 * (std::log(f1) / std::log(2.0));
             }
             return result;
         }
@@ -2979,25 +2969,20 @@ namespace openutils
     {
         if (this->src)
         {
-            const std::size_t MAX = 1 << CHAR_BIT;
-            std::size_t frequencies[MAX] = {};
+            std::unordered_map<T, std::size_t> freq;
+            for (std::size_t i = 0; i < this->len; i++)
+                freq[this->src[i]] += 1;
 
-            for (const T *p = this->src; *p != 0; p++)
-            {
-                frequencies[*p - CHAR_MIN] += 1;
-            }
-
-            T *buff = static_cast<T *>(std::calloc(MAX, sizeof(T)));
-            exit_heap_fail(buff);
-            std::size_t z = 0;
-            for (size_t i = 0; i < MAX; i++)
-            {
-                if (frequencies[i] != 0)
-                    buff[z++] = i + CHAR_MIN;
-            }
             std::free(this->src);
-            this->src = buff;
-            this->len = z;
+            this->len = freq.size();
+            this->src = static_cast<T *>(std::calloc(this->len + 1, sizeof(T)));
+            exit_heap_fail(this->src);
+
+            this->len = 0;
+            for (const auto &[key, value] : freq)
+            {
+                this->src[this->len++] = key;
+            }
         }
         return *this;
     }
@@ -3092,31 +3077,17 @@ namespace openutils
     }
 
     template <typename T>
-    sstring_t_view<T> sstring_t_view<T>::getline(const std::size_t line) const
+    sstring_t_view<T> sstring_t_view<T>::getline(std::size_t line) const
     {
         if (!this->src)
-            return sstring_t_view<T>();
+            return nullptr;
 
-        std::size_t cnt = 0;
-        T *temp = static_cast<T *>(std::calloc(len + 1, sizeof(T)));
-        exit_heap_fail(temp);
-
-        std::memmove(temp, this->src, this->len * sizeof(T));
-        T *tok = this->fast_strtok(temp, convert_sstring<T, char>("\n").get(), 2);
-        while (tok)
-        {
-            if (cnt++ == line)
-                break;
-            tok = this->fast_strtok(nullptr, convert_sstring<T, char>("\n").get(), 2);
-        }
-        if (cnt == 0 || tok == nullptr)
-        {
-            std::free(temp);
-            return sstring_t_view<T>();
-        }
-        sstring_t_view res = sstring_t_view(tok);
-        std::free(temp);
-        return res;
+        vector_t<sstring_t_view<T>> vec_split = this->split(convert_sstring<T, char>("\n").get());
+        if (line >= vec_split.length())
+            return nullptr;
+        sstring_t_view<T> ret = std::move(vec_split[line]);
+        vec_split.erase();
+        return ret;
     }
 
     template <typename T>
@@ -3456,36 +3427,35 @@ namespace openutils
             }
             return sstring_t_view<char>(res);
         }
-        return sstring_t_view<char>();
+        return nullptr;
     }
 
     template <typename T>
     sstring_t_view<T> sstring_t_view<T>::most_used(const T *dl) const
     {
-        if (dl && this->src && dl[0] != 0)
+        if (dl && this->src)
         {
+            sstring_t_view ret;
             vector_t<sstring_t_view<T>> vec = this->split(dl);
-            map_t<sstring_t_view<T>, std::size_t> map;
+            std::unordered_map<sstring_t_view<T>, std::size_t> map;
             for (std::size_t i = 0; i < vec.length(); i++)
             {
-                if (map.add(vec[i], 1) == false)
-                {
-                    map[vec[i]] += 1;
-                }
+                map[std::move(vec[i])] += 1;
             }
+            vec.erase();
 
-            map.sort_values([](node_t<sstring_t_view<T>, std::size_t> x, node_t<sstring_t_view<T>, std::size_t> y)
-                            { return x.value > y.value; });
-
-            sstring_t_view ret;
-            for (auto i = map.iterator(); i.c_loop(); i.next())
+            std::size_t max = 0;
+            for (auto &&[key, value] : map)
             {
-                ret.set(i->key.c_str());
-                break;
+                if (max < value)
+                {
+                    max = value;
+                    ret = std::move(key);
+                }
             }
             return ret;
         }
-        return sstring_t_view<T>();
+        return nullptr;
     }
 
     template <typename T>
@@ -3499,24 +3469,21 @@ namespace openutils
     {
         if (this->src)
         {
-            const std::size_t MAX = 1 << CHAR_BIT;
-            std::size_t frequencies[MAX] = {};
+            std::unordered_map<T, std::size_t> freq;
+            for (std::size_t i = 0; i < this->len; i++)
+                freq[this->src[i]] += 1;
 
-            for (const T *p = this->src; *p != 0; p++)
+            T _char_t_ = 0;
+            std::size_t max = 0;
+            for (const auto &[key, value] : freq)
             {
-                frequencies[*p - CHAR_MIN] += 1;
-            }
-
-            std::size_t nth = 0;
-            for (std::size_t i = 1, max = frequencies[0]; i < MAX; i++)
-            {
-                if (frequencies[i] > max)
+                if (max < value)
                 {
-                    max = frequencies[i];
-                    nth = i;
+                    max = value;
+                    _char_t_ = key;
                 }
             }
-            return (T)(nth + CHAR_MIN);
+            return _char_t_;
         }
         return 0;
     }
@@ -3524,8 +3491,15 @@ namespace openutils
     template <typename T>
     vector_t<sstring_t_view<T>> sstring_t_view<T>::split(const T *str) const
     {
-        if (this->src && str && str[0] != 0)
+        if (this->src && str)
         {
+            if (str[0] == 0)
+            {
+                vector_t<sstring_t_view<T>> x(this->len);
+                for (std::size_t i = 0; i < this->len; i++)
+                    x.add(this->src[i]);
+                return x;
+            }
             T *temp = static_cast<T *>(std::calloc(this->len + 1, sizeof(T)));
             exit_heap_fail(temp);
             std::memmove(temp, this->src, this->len * sizeof(T));
@@ -3542,7 +3516,7 @@ namespace openutils
             std::free(temp);
             return x;
         }
-        return vector_t<sstring_t_view<T>>(1);
+        return vector_t<sstring_t_view<T>>();
     }
 
     template <typename T>
@@ -3750,13 +3724,13 @@ namespace openutils
     }
 
     template <typename T>
-    sstring_t_view<char> sstring_t_view<T>::decode_base64() const
+    sstring_t_view<T> sstring_t_view<T>::decode_base64(const char *encoded) const
     {
         if (this->src)
         {
             // some temps
-            std::size_t temp_len = this->len;
-            const T *encoded_string = this->src;
+            std::size_t temp_len = this->sstr_strlen(encoded);
+            const char *encoded_string = encoded;
             std::locale loc = std::locale("");
             // end temp
 
@@ -3764,9 +3738,9 @@ namespace openutils
 
             std::size_t i = 0, j = 0, in_ = 0;
             unsigned char char_array_4[4] = {}, char_array_3[3] = {};
-            sstring_t_view<char> ret;
+            sstring_t_view<T> ret;
 
-            while (temp_len-- && (encoded_string[in_] != '=') && (std::isalnum<T>(encoded_string[in_], loc) || (encoded_string[in_] == '+') || (encoded_string[in_] == '/')))
+            while (temp_len-- && (encoded_string[in_] != 61) && (std::isalnum<T>(encoded_string[in_], loc) || (encoded_string[in_] == 43) || (encoded_string[in_] == 47)))
             {
                 char_array_4[i++] = encoded_string[in_];
                 in_++;
@@ -3779,7 +3753,7 @@ namespace openutils
                     char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
                     char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
                     for (i = 0; i < 3; i++)
-                        ret += char_array_3[i];
+                        ret += static_cast<T>(char_array_3[i]);
                     i = 0;
                 }
             }
@@ -3797,12 +3771,18 @@ namespace openutils
                 char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
 
                 for (j = 0; j < i - 1; j++)
-                    ret += char_array_3[j];
+                    ret += static_cast<T>(char_array_3[j]);
             }
 
             return ret;
         }
         return nullptr;
+    }
+
+    template <typename T>
+    sstring_t_view<T> sstring_t_view<T>::decode_base64(const sstring_t_view<char> &encoded) const
+    {
+        return this->decode_base64(encoded.src);
     }
 
     template <typename T>
@@ -3887,7 +3867,7 @@ namespace openutils
     sstring_t_view<T> sstring_t_view<T>::substr(std::size_t index, std::size_t sub_len) const
     {
         if (index >= this->len || !this->src)
-            return sstring_t_view<T>();
+            return nullptr;
         if (sub_len == this->nerr() || index + sub_len > this->len)
             sub_len = this->len - index;
         T *buff = static_cast<T *>(std::calloc(sub_len + 1, sizeof(T)));
@@ -3905,7 +3885,7 @@ namespace openutils
     vector_t<sstring_t_view<T>> sstring_t_view<T>::to_argv(const T *argv0) const
     {
         if (!this->src)
-            return vector_t<sstring_t_view<T>>(1);
+            return vector_t<sstring_t_view<T>>();
 
         vector_t<sstring_t_view<T>> spt = this->split(convert_sstring<T, char>(" ").get());
         vector_t<sstring_t_view<T>> args;
@@ -4333,17 +4313,17 @@ namespace openutils
     }
 
     template <typename T>
-    sstring_t_view<T> &sstring_t_view<T>::operator+=(std::initializer_list<T> list)
+    sstring_t_view<T> &sstring_t_view<T>::operator+=(const std::initializer_list<T> &list)
     {
-        for (auto &i : list)
+        for (const auto &i : list)
             this->append_char(i);
         return *this;
     }
 
     template <typename T>
-    sstring_t_view<T> &sstring_t_view<T>::operator+=(std::initializer_list<sstring_t_view<T>> list)
+    sstring_t_view<T> &sstring_t_view<T>::operator+=(const std::initializer_list<sstring_t_view<T>> &list)
     {
-        for (auto &i : list)
+        for (const auto &i : list)
             this->append(i.src);
         return *this;
     }
@@ -4501,13 +4481,13 @@ namespace openutils
     }
 
     template <typename T>
-    void sstring_t_view<T>::sort(sstring_t_view *arr, const std::size_t len)
+    void sstring_t_view<T>::sort(sstring_t_view *arr, std::size_t len)
     {
         std::sort(arr, arr + len);
     }
 
     template <typename T>
-    void sstring_t_view<T>::sort(T **arr, const std::size_t len)
+    void sstring_t_view<T>::sort(T **arr, std::size_t len)
     {
         std::sort(arr, arr + len, [](T *a, T *b)
                   { return sstring_t_view(a) < sstring_t_view(b); });
@@ -4687,13 +4667,6 @@ namespace openutils
 #endif
     using u16sstring = sstring_t_view<char16_t>;
     using u32sstring = sstring_t_view<char32_t>;
-
-    // sizeof(char) = 1 byte(s)
-    // sizeof(unsigned char) = 1 byte(s)
-    // sizeof(wchar_t) = 4 byte(s)
-    // sizeof(char8_t) = 1 byte(s)
-    // sizeof(char16_t) = 2 byte(s)
-    // sizeof(char32_t) = 4 byte(s)
 }
 
 namespace std
