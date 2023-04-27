@@ -641,9 +641,9 @@ namespace openutils
         {
             if (this->vec_data)
                 delete[] this->vec_data;
-            this->len = data.len;
             this->cap = data.cap;
             this->init(this->cap);
+            this->len = data.len;
             for (std::size_t i = 0; i < data.len; i++)
                 this->vec_data[i] = data.vec_data[i];
         }
