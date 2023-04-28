@@ -80,7 +80,11 @@ namespace openutils
         FIRST &first();
         SECOND &second();
         std::size_t hash() const;
+        bool compare(const heap_pair &hp) const;
+        bool compare_hash(const heap_pair &hp) const;
         heap_pair &swap(heap_pair &hp) noexcept;
+        bool operator==(const heap_pair &hp) const;
+        bool operator!=(const heap_pair &hp) const;
         heap_pair &operator=(const heap_pair &pair);
         heap_pair &operator=(heap_pair &&pair) noexcept;
         ~heap_pair();
@@ -204,6 +208,22 @@ namespace openutils
     }
 
     template <typename FIRST, typename SECOND>
+    bool heap_pair<FIRST, SECOND>::compare(const heap_pair<FIRST, SECOND> &hp) const
+    {
+        if (this->t1 && this->t2 && hp.t1 && hp.t2)
+        {
+            return (*this->t1 == *hp.t1) && (*this->t2 == *hp.t2);
+        }
+        return false;
+    }
+
+    template <typename FIRST, typename SECOND>
+    bool heap_pair<FIRST, SECOND>::compare_hash(const heap_pair<FIRST, SECOND> &hp) const
+    {
+        return this->hash() == hp.hash();
+    }
+
+    template <typename FIRST, typename SECOND>
     heap_pair<FIRST, SECOND> &heap_pair<FIRST, SECOND>::swap(heap_pair<FIRST, SECOND> &hp) noexcept
     {
         FIRST *temp_first = this->t1;
@@ -214,6 +234,18 @@ namespace openutils
         this->t2 = hp.t2;
         hp.t2 = temp_second;
         return *this;
+    }
+
+    template <typename FIRST, typename SECOND>
+    bool heap_pair<FIRST, SECOND>::operator==(const heap_pair<FIRST, SECOND> &hp) const
+    {
+        return this->compare(hp);
+    }
+
+    template <typename FIRST, typename SECOND>
+    bool heap_pair<FIRST, SECOND>::operator!=(const heap_pair<FIRST, SECOND> &hp) const
+    {
+        return !this->compare(hp);
     }
 
     template <typename FIRST, typename SECOND>
