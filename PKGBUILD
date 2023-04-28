@@ -8,7 +8,7 @@ depends=(gcc)
 license=("BSD 3-Clause License")
 source=("https://raw.githubusercontent.com/Dark-CodeX/sstring/main/sstring/sstring.hh")
 
-sha512sums=("269e861d83355f32ff07c1eb42e0ff9cbaac6771f59d035b9264a5beb6689a9138d91749a2dd03c88069cb8c7fe697dbc9e45bee50add7667cd787748fb44ff7")
+sha512sums=("42688c0c317969e5930a643c9989323808f256555cc9537023ba7344571a03ec263484302e6d39cba532beb5ffc1442523ac6ae4d7fa340fc0469bf72ed836c1")
 
 package() {
 	echo "SSTRING : The String Manipulation Library"

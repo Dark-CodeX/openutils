@@ -3887,23 +3887,36 @@ namespace openutils
         if (!this->src)
             return vector_t<sstring_t_view<T>>();
 
-        vector_t<sstring_t_view<T>> spt = this->split(convert_sstring<T, char>(" ").get());
         vector_t<sstring_t_view<T>> args;
         if (argv0)
             args.add(argv0);
-        for (std::size_t i = 0; i < spt.length();)
+        sstring_t_view<T> arg;
+        bool in_quotes = false;
+
+        for (size_t i = 0; i < this->len; i++)
         {
-            if (spt[i][0] == '"')
+            T c = this->src[i];
+            if (c == 34)
+                in_quotes = !in_quotes;
+            else if (c == 32 && !in_quotes)
             {
-                sstring_t_view<T> temp;
-                for (; spt[i][spt[i].len - 1] != 34 && i < spt.length(); i++)
-                    temp.append(spt[i] + convert_sstring<T, char>(" ").get());
-                temp.append(spt[i++]).remove_first_char().remove_last_char();
-                args.add(temp);
+                if (!arg.is_empty())
+                {
+                    args.add(arg);
+                    arg.clear();
+                }
+            }
+            else if (c == 92)
+            {
+                if (in_quotes && i + 1 < this->len)
+                    arg.append_char(this->src[++i]);
             }
             else
-                args.add(spt[i++]);
+                arg.append_char(c);
         }
+        if (!arg.is_empty())
+            args.add(arg);
+
         return args;
     }
 
