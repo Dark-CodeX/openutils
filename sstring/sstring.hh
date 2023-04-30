@@ -4,7 +4,7 @@
  * Commit to this repository at https://github.com/Dark-CodeX/sstring.git
  * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
  * File: "sstring.hh" under "sstring" directory
- * sstring: version 2.7.0
+ * sstring: version 2.7.7
  * BSD 3-Clause License
  *
  * Copyright (c) 2023, Tushar Chaurasia
@@ -50,7 +50,7 @@
 #include <openutils/vector/vector.hh>
 #include <ostream>
 
-#define sstring_version "2.7.0"
+#define sstring_version "2.7.7"
 
 namespace openutils
 {
@@ -468,6 +468,22 @@ namespace openutils
         sstring_t_view<T> &replace(const sstring_t_view<T> &old, const sstring_t_view<T> &new_);
 
         /**
+         * @brief Replaces the content at line `line_no` with `new_` only
+         * @param line_no line number NOTE: line index starts from 0
+         * @param new_ replace with
+         * @return sstring_t_view<T>& reference to current object
+         */
+        sstring_t_view<T> &replace_line(std::size_t line_no, const T *new_);
+
+        /**
+         * @brief Replaces the content at line `line_no` with `new_` only
+         * @param line_no line number NOTE: line index starts from 0
+         * @param new_ replace with
+         * @return sstring_t_view<T>& reference to current object
+         */
+        sstring_t_view<T> &replace_line(std::size_t line_no, const sstring_t_view<T> &new_);
+
+        /**
          * @brief Replaces `old` with `new_`
          * @param old what to replace
          * @param new_ replace with
@@ -753,10 +769,56 @@ namespace openutils
 
         /**
          * @brief Returns content of `line` from `this->src`, if `line` does not exists it returns `nullptr`.
-         * @param line line number
+         * @param line line number NOTE: line index starts from 0
          * @return sstring_t_view content of `line`, `nullptr` if `line` does NOT exists
          */
         sstring_t_view getline(std::size_t line) const;
+
+        /**
+         * @brief Adds content of `prefix` and `suffix` at starting and ending respectively and returns a new sstring
+         * @param prefix string to add at starting
+         * @param suffix string to add at ending
+         * @return sstring_t_view<T> wraped sstring
+         */
+        sstring_t_view<T> wrap(const T *prefix, const T *suffix) const;
+
+        /**
+         * @brief Adds content of `prefix` and `suffix` at starting and ending respectively and returns a new sstring
+         * @param prefix string to add at starting
+         * @param suffix string to add at ending
+         * @return sstring_t_view<T> wraped sstring
+         */
+        sstring_t_view<T> wrap(const sstring_t_view<T> &prefix, const sstring_t_view<T> &suffix) const;
+
+        /**
+         * @brief Adds content of `str` at beginning and ending and returns a new sstring
+         * @param str string to add at beginning and ending
+         * @return sstring_t_view<T> wraped sstring
+         */
+        sstring_t_view<T> wrap(const T *str) const;
+
+        /**
+         * @brief Adds content of `str` at beginning and ending and returns a new sstring
+         * @param str string to add at beginning and ending
+         * @return sstring_t_view<T> wraped sstring
+         */
+        sstring_t_view<T> wrap(const sstring_t_view<T> &str) const;
+
+        /**
+         * @brief Centers content of current object and returns a new sstring
+         * @param col_size size of column
+         * @param padding text to be used as padding, if `nullptr` is given " " is used as padding
+         * @return sstring_t_view<T> centered string with content of current object
+         */
+        sstring_t_view<T> center(std::size_t col_size, const T *padding = nullptr) const;
+
+        /**
+         * @brief Centers content of current object and returns a new sstring
+         * @param col_size size of column
+         * @param padding text to be used as padding, if `nullptr` is given " " is used as padding
+         * @return sstring_t_view<T> centered string with content of current object
+         */
+        sstring_t_view<T> center(std::size_t col_size, const sstring_t_view<T> &padding = nullptr) const;
 
         /**
          * @brief Reverses `this->src`
@@ -2575,6 +2637,48 @@ namespace openutils
     }
 
     template <typename T>
+    sstring_t_view<T> &sstring_t_view<T>::replace_line(std::size_t line_no, const T *new_)
+    {
+        if (!new_ || !this->src || this->len == 0)
+            return *this;
+        vector_t<sstring_t_view<T>> vec_split = this->split(convert_sstring<T, char>("\n").get());
+        if (line_no >= vec_split.length())
+            return *this;
+        std::size_t nlen = this->sstr_strlen(new_);
+        sstring_t_view<T> buff;
+        std::size_t track = 0;
+
+        for (std::size_t i = 0; i < vec_split.length(); i++)
+        {
+            if (i == line_no)
+            {
+                for (std::size_t j = 0; j < nlen; j++)
+                    buff += new_[j];
+            }
+            else
+            {
+                for (std::size_t j = 0; j < vec_split[i].len; j++)
+                    buff += vec_split[i].src[j];
+            }
+            if(i != vec_split.length() - 1)
+                buff += 10;
+        }
+
+        std::free(this->src);
+        this->src = buff.src;
+        this->len = buff.len;
+        buff.src = nullptr;
+        buff.len = 0;
+        return *this;
+    }
+
+    template <typename T>
+    sstring_t_view<T> &sstring_t_view<T>::replace_line(std::size_t line_no, const sstring_t_view<T> &new_)
+    {
+        return this->replace_line(line_no, new_.src);
+    }
+
+    template <typename T>
     sstring_t_view<T> &sstring_t_view<T>::replace_char(const T old, const T new_)
     {
         if (old != 0 && new_ != 0 && this->src)
@@ -3088,6 +3192,84 @@ namespace openutils
         sstring_t_view<T> ret = std::move(vec_split[line]);
         vec_split.erase();
         return ret;
+    }
+
+    template <typename T>
+    sstring_t_view<T> sstring_t_view<T>::wrap(const T *prefix, const T *suffix) const
+    {
+        if (!prefix || !suffix || !this->src)
+            return nullptr;
+        std::size_t plen = this->sstr_strlen(prefix), slen = this->sstr_strlen(suffix);
+        T *buff = static_cast<T *>(std::calloc(this->len + plen + slen + 1, sizeof(T)));
+        exit_heap_fail(buff);
+        std::size_t track = 0;
+        this->fast_strncat(buff, prefix, track);
+        this->fast_strncat(buff, this->src, track);
+        this->fast_strncat(buff, suffix, track);
+        // done copying
+        sstring_t_view<T> ret;
+        ret.src = buff;
+        ret.len = track;
+        return ret;
+    }
+
+    template <typename T>
+    sstring_t_view<T> sstring_t_view<T>::wrap(const sstring_t_view<T> &prefix, const sstring_t_view<T> &suffix) const
+    {
+        return this->wrap(prefix.src, suffix.src);
+    }
+
+    template <typename T>
+    sstring_t_view<T> sstring_t_view<T>::wrap(const T *str) const
+    {
+        if (!str || !this->src)
+            return nullptr;
+        std::size_t pslen = this->sstr_strlen(str);
+        T *buff = static_cast<T *>(std::calloc(this->len + pslen + pslen + 1, sizeof(T)));
+        exit_heap_fail(buff);
+        std::size_t track = 0;
+        this->fast_strncat(buff, str, track);
+        this->fast_strncat(buff, this->src, track);
+        this->fast_strncat(buff, str, track);
+        // done copying
+        sstring_t_view<T> ret;
+        ret.src = buff;
+        ret.len = track;
+        return ret;
+    }
+
+    template <typename T>
+    sstring_t_view<T> sstring_t_view<T>::wrap(const sstring_t_view<T> &str) const
+    {
+        return this->wrap(str.src);
+    }
+
+    template <typename T>
+    sstring_t_view<T> sstring_t_view<T>::center(std::size_t col_size, const T *padding) const
+    {
+        if (!this->src)
+        {
+            if (!padding)
+                return sstring_t_view<T>(convert_sstring<T, char>(" ").get(), col_size);
+            return sstring_t_view<T>(padding, col_size);
+        }
+        if (col_size == 0 || col_size <= this->len)
+            return sstring_t_view<T>(this->src);
+        sstring_t_view<T> ret;
+        std::size_t temp_padding = (col_size - this->len) / 2;
+        convert_sstring<T, char> conversion((padding == nullptr ? " " : padding));
+        for (std::size_t i = 0; i < temp_padding; i++)
+            ret += conversion.get();
+        ret += *this;
+        for (std::size_t i = 0; i < temp_padding; i++)
+            ret += conversion.get();
+        return ret;
+    }
+
+    template <typename T>
+    sstring_t_view<T> sstring_t_view<T>::center(std::size_t col_size, const sstring_t_view<T> &padding) const
+    {
+        return this->center(col_size, padding.src);
     }
 
     template <typename T>
