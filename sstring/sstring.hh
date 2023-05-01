@@ -1269,6 +1269,12 @@ namespace openutils
         std::size_t hash() const;
 
         /**
+         * @brief It first calculates hash of current object then converts that into base64 encoded sstring
+         * @return sstring_t_view<char> base64 encoded hash of current object
+         */
+        sstring_t_view<char> hash_digest() const;
+
+        /**
          * @brief Returns character at `n` index
          * @param n index of character
          * @return character at `n`
@@ -4439,6 +4445,15 @@ namespace openutils
             power_of_p = (power_of_p * p) % m;
         }
         return (hash_val % m + m) % m;
+    }
+
+    template <typename T>
+    sstring_t_view<char> sstring_t_view<T>::hash_digest() const
+    {
+        std::size_t h = this->hash();
+        sstring_t_view<char> digest = this->to_sstring(h);
+        digest = digest.encode_base64();
+        return digest;
     }
 
     template <typename T>
