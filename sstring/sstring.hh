@@ -2928,11 +2928,10 @@ namespace openutils
     {
         if (this->src)
         {
-            std::locale loc = std::locale("");
             for (std::size_t i = 0; this->src[i] != 0; ++i)
             {
-                if (std::islower<T>(this->src[i], loc))
-                    this->src[i] = std::toupper<T>(this->src[i], loc);
+                if (std::islower(this->src[i]))
+                    this->src[i] = std::toupper(this->src[i]);
             }
         }
         return *this;
@@ -2943,11 +2942,10 @@ namespace openutils
     {
         if (this->src)
         {
-            std::locale loc = std::locale("");
             for (std::size_t i = 0; this->src[i] != 0; ++i)
             {
-                if (std::isupper<T>(this->src[i], loc))
-                    this->src[i] = std::tolower<T>(this->src[i], loc);
+                if (std::isupper(this->src[i]))
+                    this->src[i] = std::tolower(this->src[i]);
             }
         }
         return *this;
@@ -2958,13 +2956,12 @@ namespace openutils
     {
         if (this->src)
         {
-            std::locale loc = std::locale("");
             for (std::size_t i = 0; this->src[i] != 0; ++i)
             {
-                if (std::islower<T>(this->src[i], loc))
-                    this->src[i] = std::toupper<T>(this->src[i], loc);
-                else if (std::isupper<T>(this->src[i], loc))
-                    this->src[i] = std::tolower<T>(this->src[i], loc);
+                if (std::islower(this->src[i]))
+                    this->src[i] = std::toupper(this->src[i]);
+                else if (std::isupper(this->src[i]))
+                    this->src[i] = std::tolower(this->src[i]);
             }
         }
         return *this;
@@ -3919,7 +3916,6 @@ namespace openutils
             // some temps
             std::size_t temp_len = this->sstr_strlen(encoded);
             const char *encoded_string = encoded;
-            std::locale loc = std::locale("");
             // end temp
 
             const sstring_t_view<char> base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -3928,7 +3924,7 @@ namespace openutils
             unsigned char char_array_4[4] = {}, char_array_3[3] = {};
             sstring_t_view<T> ret;
 
-            while (temp_len-- && (encoded_string[in_] != 61) && (std::isalnum<T>(encoded_string[in_], loc) || (encoded_string[in_] == 43) || (encoded_string[in_] == 47)))
+            while (temp_len-- && (encoded_string[in_] != 61) && (std::isalnum(encoded_string[in_]) || (encoded_string[in_] == 43) || (encoded_string[in_] == 47)))
             {
                 char_array_4[i++] = encoded_string[in_];
                 in_++;
@@ -3970,7 +3966,7 @@ namespace openutils
     template <typename T>
     sstring_t_view<T> sstring_t_view<T>::decode_base64(const sstring_t_view<char> &encoded) const
     {
-        return this->decode_base64(encoded.src);
+        return this->decode_base64(encoded.c_str());
     }
 
     template <typename T>
@@ -4113,9 +4109,8 @@ namespace openutils
     {
         if (this->src)
         {
-            std::locale loc = std::locale("");
             for (std::size_t i = 0; i < this->len; i++)
-                if (!std::isdigit<T>(this->src[i], loc))
+                if (!std::isdigit(this->src[i]))
                     return false;
             return true;
         }
@@ -4127,7 +4122,6 @@ namespace openutils
     {
         if (this->src)
         {
-            std::locale loc = std::locale("");
             std::size_t point_cnt = 0;
             for (std::size_t i = 0; i < this->len; i++)
             {
@@ -4137,7 +4131,7 @@ namespace openutils
                     if (point_cnt > 1)
                         return false;
                 }
-                else if (!std::isdigit<T>(this->src[i], loc))
+                else if (!std::isdigit(this->src[i]))
                     return false;
             }
             if (point_cnt == 1)
@@ -4164,9 +4158,8 @@ namespace openutils
     {
         if (this->src)
         {
-            std::locale loc = std::locale("");
             for (std::size_t i = 0; i < this->len; i++)
-                if (!std::isalpha<T>(this->src[i], loc))
+                if (!std::isalpha(this->src[i]))
                     return false;
             return true;
         }
