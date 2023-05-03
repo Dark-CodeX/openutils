@@ -24,12 +24,12 @@ namespace openutils
     template <typename T, std::size_t cap>
     class array_t
     {
-      private:
+    private:
         T arr[cap];
         std::size_t len;
         static inline void hash_combine(std::size_t &seed, const T &v);
 
-      public:
+    public:
         array_t();
         array_t(const array_t &ar);
         array_t(array_t &&ar) noexcept;
