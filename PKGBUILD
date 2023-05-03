@@ -5,10 +5,10 @@ pkgdesc="ARRAY : The Non-Resizable Array Library"
 arch=("x86_64" "i686")
 conflicts=('openutils-array')
 depends=(gcc)
-license=("BSD 3-Clause License")
+license=("GNU GPL v3.0")
 source=("https://raw.githubusercontent.com/Dark-CodeX/array/master/array/array.hh")
 
-sha512sums=("c7ef8b56602c8466e036147dcda81d66281830f387cfdcf27249ca33ae073c1e4b47f56f22dd4531f4d033d5afc90eb8593106d17b7edfa17cd78973c0d4c54c")
+sha512sums=("0f3dcdb453c71e9dc7b4a74e74102fd26491b36f75ffccd4e623ffa2b0d618d6e3af9801ece077a6f2b568b82a843339e0082fe902f2df40afe57011e8f747e8")
 
 package() {
 	echo "ARRAY : The Non-Resizable Array Library"
