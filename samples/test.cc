@@ -1,5 +1,4 @@
 #include "../array/array.hh"
-#include <openutils/sstring/sstring.hh>
 #include <iostream>
 
 int main()
