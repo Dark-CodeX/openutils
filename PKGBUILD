@@ -5,14 +5,14 @@ pkgdesc="DATE-TIME : The Date/Time Management Library"
 arch=("x86_64" "i686")
 conflicts=('openutils-date_time')
 depends=(gcc)
-license=("BSD 3-Clause License")
+license=("GNU GPL v3.0")
 source=(
 	"https://raw.githubusercontent.com/Dark-CodeX/date-time/main/date-time/date.hh"
 	"https://raw.githubusercontent.com/Dark-CodeX/date-time/main/date-time/time.hh")
 
 sha512sums=(
-	"e8045e99f72a9d1dbf52b2419dc3151e2892c1f810d82620fde72b7b4bde1d0412cae820a99b67c0e67315fe37a23b5f4b98bb34b7498d91fdce837773ebbea4"
-	"1c5059a4d5dadfb9b85a981d702899c7989937e314f0d6feb7424efeae4c48560b7e5ecab1ff57cbf7f0b2d082efbf950d4fc9dc68ddf4d37ccd00a816e81ed5")
+	"3258442c155bc392ca1e6a48e95761dc181996689e5917daa73d53100c71cc8e70e84affba799b17c1db2c1b6cea798acc6885a118e843f49f9b51dcafbedcf3"
+	"44ff193040bb4a2ee0620d2ba0cc5f53987c1bacd958cc940694816c12fae9104a265c249496fcbf4fcd26c7d2afa07ac50076f4736a4e31ce5b736b59343c49")
 
 package() {
 	echo "DATE-TIME : The Date/Time Management Library"
