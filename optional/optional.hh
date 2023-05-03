@@ -1,38 +1,9 @@
 /**
- * This header file is written to return optional values from a function in C++.
- * Author: Tushar Chaurasia (https://github.com/Dark-CodeX/)
- * Commit to this repository at https://github.com/Dark-CodeX/optional.git
- * You can use this header file. Do not modify it locally, instead commit it on https://www.github.com
- * File: "optional.hh" under "optional" directory
- * optional: version 1.6.0
- * BSD 3-Clause License
- *
- * Copyright (c) 2023, Tushar Chaurasia
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * 3. Neither the name of the copyright holder nor the names of its
- *    contributors may be used to endorse or promote products derived from
- *    this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * @file optional.hh
+ * @brief This file contains declaration as well as definition of optional_t class.
+ * @license This file is licensed under the GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007. You may obtain a copy of this license at https://www.gnu.org/licenses/gpl-3.0.en.html.
+ * @version 1.6.0
+ * @author Tushar Chaurasia (Dark-CodeX)
  */
 
 #ifndef OPTIONAL_DEFINED
@@ -72,10 +43,10 @@ namespace openutils
     template <typename T>
     class optional_t
     {
-      private:
+    private:
         T *value;
 
-      public:
+    public:
         optional_t();
         optional_t(optnull_t);
         optional_t(const T &val);
