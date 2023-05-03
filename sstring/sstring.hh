@@ -1,7 +1,15 @@
+/**
+  * @file sstring.hh
+  * @brief This file includes all header files in one go, this file must be included if you want sstring library to work properly.
+  * @license This file is licensed under the GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007. You may obtain a copy of this license at https://www.gnu.org/licenses/gpl-3.0.en.html.
+  * @version 3.0.0
+  * @author Tushar Chaurasia (Dark-CodeX)
+*/
+
 #ifndef SSTRING_DEFINED
 #define SSTRING_DEFINED
 
-#define sstring_version "2.7.7"
+#define sstring_version "3.0.0"
 
 #include "./sstring_class.hh"
 #include "./sstring_boolean.hh"

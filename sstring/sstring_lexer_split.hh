@@ -1,3 +1,11 @@
+/**
+  * @file sstring_lexer_split.hh
+  * @brief This file contains definition of lexer and split functions. Do NOT directly include this file.
+  * @license This file is licensed under the GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007. You may obtain a copy of this license at https://www.gnu.org/licenses/gpl-3.0.en.html.
+  * @version 3.0.0
+  * @author Tushar Chaurasia (Dark-CodeX)
+*/
+
 #ifndef SSTRING_LEXER_SPLIT_DEFINED
 #define SSTRING_LEXER_SPLIT_DEFINED
 
