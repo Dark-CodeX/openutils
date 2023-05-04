@@ -38,6 +38,9 @@ build
 .vscode
 .vs
 
+#clion
+.idea
+
 #Assembly Files
 *.s
 *.asm
