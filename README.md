@@ -49,7 +49,44 @@ Usage of this project is very practical and useful, whenever you have to perform
 
 ### Example 1:
 ```cpp
+#include "../chunkio/chunkio_writer.hh"
+#include "../chunkio/chunkio_bytes_reader.hh"
+#include <iostream>
+#include <openutils/sstring/sstring.hh>
 
+int main()
+{
+    openutils::sstring loc = "./testing.txt";
+    openutils::sstring content = "Hello World";
+
+    openutils::chunkio_writer<char> write(loc.c_str());
+    if (!write.file_created())
+    {
+        std::fprintf(stderr, "err: invalid pointer\n");
+        return 1;
+    }
+    if (!write.append_or_save(content.c_str(), content.length()))
+    {
+        std::fprintf(stderr, "err: could not save file\n");
+        return 1;
+    }
+
+    openutils::chunkio_bytes_reader<char> read(loc.c_str(), 10);
+    if (!read.file_exists())
+    {
+        std::fprintf(stderr, "err: invalid pointer\n");
+        return 1;
+    }
+    char *temp_ptr = read.read_next();
+    while (temp_ptr != nullptr)
+    {
+        content += temp_ptr;
+        temp_ptr = read.read_next();
+    }
+    std::cout << content << "\n";
+
+    return 0;
+}
 ```
 
 You can compile the above code as:
@@ -60,12 +97,33 @@ $ g++ -std=c++23 -g -Wall ./test.cc -o test.out
 Now, execute the file as:
 ```bash
 $ ./test.out
-
+Hello World
 ```
 
 ### Example 2:
 ```cpp
+#include "../chunkio/chunkio_writer.hh"
+#include "../chunkio/chunkio_lines_reader.hh"
+#include <iostream>
+#include <openutils/sstring/sstring.hh>
 
+int main()
+{
+    openutils::chunkio_lines_reader<char> rl("./test_bytes.cc", 1);
+    if (!rl.file_exists())
+    {
+        std::fprintf(stderr, "err: invalid pointer\n");
+        return 1;
+    }
+    char *ptr = rl.read_next();
+
+    while (ptr)
+    {
+        std::cout << ptr << "\n";
+        ptr = rl.read_next();
+    }
+    return 0;
+}
 ```
 
 You can compile the above code as:
@@ -76,7 +134,7 @@ $ g++ -std=c++23 -g -Wall ./test.cc -o test.out
 Now, execute the file as:
 ```bash
 $ ./test.out
-
+<content of './test_bytes.cc' file>
 ```
 
 ## Contributing
