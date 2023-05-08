@@ -90,7 +90,7 @@ namespace openutils
     }
 
     template <typename T>
-    optional_t<T>::optional_t(T &&val) noexcept
+    optional_t<T>::optional_t(T &&val)
     {
         this->value = new T(std::move(val));
         exit_heap_fail(this->value);
