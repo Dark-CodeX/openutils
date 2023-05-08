@@ -1,10 +1,10 @@
 /**
-  * @file sstring_boolean.hh
-  * @brief This file contains definition of bool returning functions. Do NOT directly include this file.
-  * @license This file is licensed under the GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007. You may obtain a copy of this license at https://www.gnu.org/licenses/gpl-3.0.en.html.
-  * @version 3.0.0
-  * @author Tushar Chaurasia (Dark-CodeX)
-*/
+ * @file sstring_boolean.hh
+ * @brief This file contains definition of bool returning functions. Do NOT directly include this file.
+ * @license This file is licensed under the GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007. You may obtain a copy of this license at https://www.gnu.org/licenses/gpl-3.0.en.html.
+ * @version 3.0.0
+ * @author Tushar Chaurasia (Dark-CodeX)
+ */
 
 #ifndef SSTRING_BOOLEAN_DEFINED
 #define SSTRING_BOOLEAN_DEFINED
@@ -81,8 +81,8 @@ namespace openutils
             }
         }
     }
-    
-        template <typename T>
+
+    template <typename T>
     bool sstring_t_view<T>::contains(const T *str) const
     {
         if (str && this->src)

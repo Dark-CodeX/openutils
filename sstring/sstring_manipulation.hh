@@ -1,10 +1,10 @@
 /**
-  * @file sstring_manipulation.hh
-  * @brief This file contains definition of sstring manipulation functions. Do NOT directly include this file.
-  * @license This file is licensed under the GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007. You may obtain a copy of this license at https://www.gnu.org/licenses/gpl-3.0.en.html.
-  * @version 3.0.0
-  * @author Tushar Chaurasia (Dark-CodeX)
-*/
+ * @file sstring_manipulation.hh
+ * @brief This file contains definition of sstring manipulation functions. Do NOT directly include this file.
+ * @license This file is licensed under the GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007. You may obtain a copy of this license at https://www.gnu.org/licenses/gpl-3.0.en.html.
+ * @version 3.0.0
+ * @author Tushar Chaurasia (Dark-CodeX)
+ */
 
 #ifndef SSTRING_MANIPULATION_DEFINED
 #define SSTRING_MANIPULATION_DEFINED
