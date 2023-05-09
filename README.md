@@ -49,7 +49,34 @@ Usage of this project is very practical and useful, whenever you have to deal wi
 
 ### Example 1:
 ```cpp
+#include "../mthread/mthread.hh"
 
+int main()
+{
+    using namespace openutils;
+    mthread<int, std::pair<int, int>> thread;
+    thread.execute_processes
+    (
+        {
+            [](const std::pair<int, int> &x){ return x.first + x.second;},
+            [](const std::pair<int, int> &x){ return x.first - x.second;}
+        },
+
+        {
+            {20, 50}, {100, 19}
+        }
+    );
+
+    vector_t<int> vals = thread.get();
+    for(const int &i : vals)
+    {
+        std::printf("%d\n", i);
+    }
+
+    std::printf("MAX THREADS = %u\n", mthread<void *>::max_threads());
+
+    return 0;
+}
 ```
 
 You can compile the above code as:
@@ -60,12 +87,27 @@ $ g++ -std=c++23 -g -Wall ./test.cc -o test.out
 Now, execute the file as:
 ```bash
 $ ./test.out
-
+70
+81
+MAX THREADS = 16 // May vary on your system
 ```
 
 ### Example 2:
 ```cpp
+#include "../mthread/mthread.hh"
 
+void *print()
+{
+    std::printf("hello world\n");
+    return nullptr;
+}
+
+int main()
+{
+    using namespace openutils;
+    mthread<void *> thread;
+    thread.execute_processes({print});
+}
 ```
 
 You can compile the above code as:
@@ -76,7 +118,7 @@ $ g++ -std=c++23 -g -Wall ./test.cc -o test.out
 Now, execute the file as:
 ```bash
 $ ./test.out
-
+hello world
 ```
 
 ## Contributing
