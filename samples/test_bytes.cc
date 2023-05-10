@@ -26,11 +26,11 @@ int main()
         std::fprintf(stderr, "err: invalid pointer\n");
         return 1;
     }
-    char *temp_ptr = read.read_next();
+    char *temp_ptr = read.read_next().first;
     while (temp_ptr != nullptr)
     {
         content += temp_ptr;
-        temp_ptr = read.read_next();
+        temp_ptr = read.read_next().first;
     }
     std::cout << content << "\n";
 

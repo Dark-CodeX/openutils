@@ -11,12 +11,11 @@ int main()
         std::fprintf(stderr, "err: invalid pointer\n");
         return 1;
     }
-    char *ptr = rl.read_next();
-
+    char *ptr = rl.read_next().first;
     while (ptr)
     {
         std::cout << ptr << "\n";
-        ptr = rl.read_next();
+        ptr = rl.read_next().first;
     }
     return 0;
 }

@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <utility>
 
 namespace openutils
 {
@@ -43,7 +44,8 @@ namespace openutils
     public:
         chunkio_bytes_reader();
         chunkio_bytes_reader(const char *loc, std::size_t bytes_to_read);
-        T *&read_next();
+        std::pair<T *&, std::size_t> read_next();
+        void make_nullptr();
         bool file_exists() const;
         ~chunkio_bytes_reader();
     };
@@ -85,7 +87,7 @@ namespace openutils
     }
 
     template <typename T>
-    T *&chunkio_bytes_reader<T>::read_next()
+    std::pair<T *&, std::size_t> chunkio_bytes_reader<T>::read_next()
     {
         if (this->fptr)
         {
@@ -94,7 +96,7 @@ namespace openutils
                 if (this->ptr_data)
                     std::free(this->ptr_data);
                 this->ptr_data = nullptr;
-                return this->ptr_data;
+                return {this->ptr_data, 0};
             }
             if (this->ptr_data)
                 std::free(this->ptr_data);
@@ -104,8 +106,15 @@ namespace openutils
 
             std::size_t where_end = std::fread(this->ptr_data, sizeof(T), this->bytes, this->fptr);
             this->ptr_data[where_end] = 0;
+            return {this->ptr_data, where_end};
         }
-        return this->ptr_data;
+        return {this->ptr_data, 0};
+    }
+
+    template <typename T>
+    void chunkio_bytes_reader<T>::make_nullptr()
+    {
+        this->ptr_data = nullptr;
     }
 
     template <typename T>
