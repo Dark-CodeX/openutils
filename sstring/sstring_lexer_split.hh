@@ -22,7 +22,7 @@ namespace openutils
             {
                 vector_t<sstring_t_view<T>> x(this->len);
                 for (std::size_t i = 0; i < this->len; i++)
-                    x.add(this->src[i]);
+                    x.add(sstring_t_view<T>(this->src[i]));
                 return x;
             }
             T *temp = static_cast<T *>(std::calloc(this->len + 1, sizeof(T)));
