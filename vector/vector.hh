@@ -53,6 +53,8 @@ namespace openutils
         const std::size_t &capacity() const;
         vector_t &add(const T &data);
         vector_t &add(T &&data);
+        vector_t &add(const vector_t &vec);
+        vector_t &add(vector_t &&vec);
         vector_t &remove();
         vector_t &remove(const std::size_t &nth);
         bool is_empty() const;
@@ -97,6 +99,8 @@ namespace openutils
         vector_t &operator+=(const T &data);
         vector_t &operator+=(const std::initializer_list<T> &__list);
         vector_t &operator+=(std::initializer_list<T> &&__list);
+        vector_t &operator+=(const vector_t &vec);
+        vector_t &operator+=(vector_t &&vec);
         constexpr inline std::size_t nerr() const noexcept;
         ~vector_t();
     };
@@ -261,6 +265,40 @@ namespace openutils
         if (this->len == this->cap)
             this->resize();
         this->vec_data[this->len++] = std::move(data);
+        return *this;
+    }
+
+    template <typename T>
+    vector_t<T> &vector_t<T>::add(const vector_t &vec)
+    {
+        if (vec.vec_data)
+        {
+            if (!this->vec_data)
+                this->init(vec.len + 1);
+            for (std::size_t i = 0; i < vec.len; i++)
+            {
+                if (this->len == this->cap)
+                    this->resize();
+                this->vec_data[this->len++] = vec.vec_data[i];
+            }
+        }
+        return *this;
+    }
+
+    template <typename T>
+    vector_t<T> &vector_t<T>::add(vector_t &&vec)
+    {
+        if (vec.vec_data)
+        {
+            if (!this->vec_data)
+                this->init(vec.len + 1);
+            for (std::size_t i = 0; i < vec.len; i++)
+            {
+                if (this->len == this->cap)
+                    this->resize();
+                this->vec_data[this->len++] = std::move(vec.vec_data[i]);
+            }
+        }
         return *this;
     }
 
@@ -678,6 +716,18 @@ namespace openutils
         for (auto &&i : __list)
             this->add(std::move(i));
         return *this;
+    }
+
+    template <typename T>
+    vector_t<T> &vector_t<T>::operator+=(const vector_t &vec)
+    {
+        return this->add(vec);
+    }
+
+    template <typename T>
+    vector_t<T> &vector_t<T>::operator+=(vector_t &&vec)
+    {
+        return this->add(std::move(vec));
     }
 
     template <typename T>
