@@ -23,18 +23,10 @@ namespace openutils
     template <typename T>
     sstring_t_view<T>::sstring_t_view(const T c)
     {
-        if (c != 0)
-        {
-            this->len = 0;
-            this->src = static_cast<T *>(std::calloc(2, sizeof(T)));
-            exit_heap_fail(this->src);
-            this->src[this->len++] = c;
-        }
-        else
-        {
-            this->len = 0;
-            this->src = nullptr;
-        }
+        this->len = 0;
+        this->src = static_cast<T *>(std::calloc(2, sizeof(T)));
+        exit_heap_fail(this->src);
+        this->src[this->len++] = c;
     }
 
     template <typename T>
@@ -77,7 +69,7 @@ namespace openutils
     template <typename T>
     sstring_t_view<T>::sstring_t_view(const T c, std::size_t n)
     {
-        if (n != 0 && c != 0)
+        if (n != 0)
         {
             this->len = 0;
             this->src = static_cast<T *>(std::calloc(n + 1, sizeof(T)));
