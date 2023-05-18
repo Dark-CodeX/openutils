@@ -40,6 +40,7 @@ namespace openutils
         std::FILE *fptr;
         std::size_t lines;
         T *ptr_data;
+        bool is_bin;
 
     public:
         chunkio_lines_reader();
@@ -47,6 +48,7 @@ namespace openutils
         std::pair<T *&, std::size_t> read_next();
         void make_nullptr();
         bool file_exists() const;
+        bool is_file_binary() const;
         ~chunkio_lines_reader();
     };
 
@@ -56,6 +58,7 @@ namespace openutils
         this->fptr = nullptr;
         this->lines = 0;
         this->ptr_data = nullptr;
+        this->is_bin = false;
     }
 
     template <typename T>
@@ -69,11 +72,13 @@ namespace openutils
                 this->fptr = nullptr;
                 this->ptr_data = nullptr;
                 this->lines = 0;
+                this->is_bin = false;
             }
             else
             {
                 this->ptr_data = nullptr;
                 this->lines = lines_to_read;
+                this->is_bin = false;
 
                 std::fseek(this->fptr, 0, SEEK_SET);
             }
@@ -83,6 +88,7 @@ namespace openutils
             this->fptr = nullptr;
             this->ptr_data = nullptr;
             this->lines = 0;
+            this->is_bin = false;
         }
     }
 
@@ -111,6 +117,8 @@ namespace openutils
                 std::fread(this->ptr_data + len, sizeof(T), 1, this->fptr);
                 if (this->ptr_data[len] == 10)
                     curr_line++;
+                else if (this->ptr_data[len] == 0)
+                    this->is_bin = true;
                 len++;
                 if (len == cap)
                 {
@@ -138,6 +146,12 @@ namespace openutils
     }
 
     template <typename T>
+    bool chunkio_lines_reader<T>::is_file_binary() const
+    {
+        return this->is_bin;
+    }
+
+    template <typename T>
     chunkio_lines_reader<T>::~chunkio_lines_reader()
     {
         if (this->fptr)
@@ -145,6 +159,7 @@ namespace openutils
         if (this->ptr_data)
             std::free(this->ptr_data);
         this->lines = 0;
+        this->is_bin = false;
     }
 }
 
