@@ -117,7 +117,7 @@ namespace openutils
                 std::fread(this->ptr_data + len, sizeof(T), 1, this->fptr);
                 if (this->ptr_data[len] == 10)
                     curr_line++;
-                else if (this->ptr_data[len] == 0)
+                else if (((this->ptr_data[len] < 9) || (this->ptr_data[len] > 13 && this->ptr_data[len] < 32) || this->ptr_data[len] == 127) && (!std::feof(this->fptr))) // non-printable characters
                     this->is_bin = true;
                 len++;
                 if (len == cap)
