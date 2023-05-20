@@ -6,15 +6,16 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef VECTOR_DEFINED
-#define VECTOR_DEFINED
+#ifndef OPENUTILS_VECTOR_DEFINED
+#define OPENUTILS_VECTOR_DEFINED
 
 #include <utility>
 #include <initializer_list>
 #include <functional>
+#include <algorithm>
 #include <cstdio>
 
-#define vector_t_version "2.0.0"
+#define OPENUTILS_vector_t_version "2.0.0"
 
 namespace openutils
 {
