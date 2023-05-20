@@ -6,10 +6,10 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef CHUNKIO_WRITER_DEFINED
-#define CHUNKIO_WRITER_DEFINED
+#ifndef OPENUTILS_CHUNKIO_WRITER_DEFINED
+#define OPENUTILS_CHUNKIO_WRITER_DEFINED
 
-#define chunkio_version "1.0.0"
+#define OPENUTILS_chunkio_version "1.0.0"
 
 #include <cstdio>
 

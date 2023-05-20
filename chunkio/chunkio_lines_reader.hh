@@ -6,10 +6,10 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef CHUNKIO_LINES_READER_DEFINED
-#define CHUNKIO_LINES_READER_DEFINED
+#ifndef OPENUTILS_CHUNKIO_LINES_READER_DEFINED
+#define OPENUTILS_CHUNKIO_LINES_READER_DEFINED
 
-#define chunkio_version "1.0.0"
+#define OPENUTILS_chunkio_version "1.0.0"
 
 #include <cstdlib>
 #include <cstdio>
