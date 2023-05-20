@@ -9,7 +9,7 @@ license=("GNU GPL v3.0")
 source=(
 	"https://raw.githubusercontent.com/Dark-CodeX/heap-pair/main/heap-pair/heap-pair.hh")
 
-sha512sums=("2176fb586c91da56348d1030671425789955b69d6bfe3f25d6df66f81a33e0b76581d1cb152e3175581289c28a8cff8d4c5f450854be01ae0307412c03bb22d1")
+sha512sums=("14851260b5c23309afcc9506a8411c4d3d27bd281d62a6908884338263e8d946a4dc99172b22f0633a400eb21155e5dbd5e9227540673146f27dedc6b2fd288b")
 
 package() {
 	echo "HEAP-PAIR : The Pair Management Library"

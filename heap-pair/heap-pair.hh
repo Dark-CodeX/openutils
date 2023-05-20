@@ -6,15 +6,15 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef HEAP_PAIR_DEFINED
-#define HEAP_PAIR_DEFINED
+#ifndef OPENUTILS_HEAP_PAIR_DEFINED
+#define OPENUTILS_HEAP_PAIR_DEFINED
 
 #include <cstdio>
 #include <cstdlib>
 #include <utility>
 #include <functional>
 
-#define heap_pair_version "1.2.0"
+#define OPENUTILS_heap_pair_version "1.2.0"
 
 namespace openutils
 {
