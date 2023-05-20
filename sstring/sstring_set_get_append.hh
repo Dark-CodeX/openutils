@@ -6,8 +6,8 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef SSTRING_SET_GET_APPEND_DEFINED
-#define SSTRING_SET_GET_APPEND_DEFINED
+#ifndef OPENUTILS_SSTRING_SET_GET_APPEND_DEFINED
+#define OPENUTILS_SSTRING_SET_GET_APPEND_DEFINED
 
 #include "./sstring_class.hh"
 

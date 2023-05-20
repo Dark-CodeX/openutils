@@ -6,8 +6,8 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef SSTRING_FORMATTING_DEFINED
-#define SSTRING_FORMATTING_DEFINED
+#ifndef OPENUTILS_SSTRING_FORMATTING_DEFINED
+#define OPENUTILS_SSTRING_FORMATTING_DEFINED
 
 #include "./sstring_class.hh"
 

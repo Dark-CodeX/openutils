@@ -6,8 +6,8 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef SSTRING_REMOVE_DEFINED
-#define SSTRING_REMOVE_DEFINED
+#ifndef OPENUTILS_SSTRING_REMOVE_DEFINED
+#define OPENUTILS_SSTRING_REMOVE_DEFINED
 
 #include "./sstring_class.hh"
 

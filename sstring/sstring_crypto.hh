@@ -6,8 +6,8 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef SSTRING_CRYPTO_DEFINED
-#define SSTRING_CRYPTO_DEFINED
+#ifndef OPENUTILS_SSTRING_CRYPTO_DEFINED
+#define OPENUTILS_SSTRING_CRYPTO_DEFINED
 
 #include "./sstring_class.hh"
 

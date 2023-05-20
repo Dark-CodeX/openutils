@@ -6,8 +6,8 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef SSTRING_LEXER_SPLIT_DEFINED
-#define SSTRING_LEXER_SPLIT_DEFINED
+#ifndef OPENUTILS_SSTRING_LEXER_SPLIT_DEFINED
+#define OPENUTILS_SSTRING_LEXER_SPLIT_DEFINED
 
 #include "./sstring_class.hh"
 

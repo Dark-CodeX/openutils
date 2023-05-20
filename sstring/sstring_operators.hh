@@ -6,8 +6,8 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef SSTRING_OPERATORS_DEFINED
-#define SSTRING_OPERATORS_DEFINED
+#ifndef OPENUTILS_SSTRING_OPERATORS_DEFINED
+#define OPENUTILS_SSTRING_OPERATORS_DEFINED
 
 #include "./sstring_class.hh"
 

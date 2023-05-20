@@ -6,10 +6,10 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef SSTRING_DEFINED
-#define SSTRING_DEFINED
+#ifndef OPENUTILS_SSTRING_DEFINED
+#define OPENUTILS_SSTRING_DEFINED
 
-#define sstring_version "3.0.0"
+#define OPENUTILS_sstring_version "3.0.0"
 
 #include "./sstring_class.hh"
 #include "./sstring_boolean.hh"

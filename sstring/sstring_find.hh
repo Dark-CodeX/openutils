@@ -6,8 +6,8 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef SSTRING_FIND_DEFINED
-#define SSTRING_FIND_DEFINED
+#ifndef OPENUTILS_SSTRING_FIND_DEFINED
+#define OPENUTILS_SSTRING_FIND_DEFINED
 
 #include "./sstring_class.hh"
 

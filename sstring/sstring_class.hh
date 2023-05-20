@@ -6,8 +6,8 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef SSTRING_CLASS_DEFINED
-#define SSTRING_CLASS_DEFINED
+#ifndef OPENUTILS_SSTRING_CLASS_DEFINED
+#define OPENUTILS_SSTRING_CLASS_DEFINED
 
 #include <cstring>
 #include <climits>

@@ -6,8 +6,8 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef SSTRING_BOOLEAN_DEFINED
-#define SSTRING_BOOLEAN_DEFINED
+#ifndef OPENUTILS_SSTRING_BOOLEAN_DEFINED
+#define OPENUTILS_SSTRING_BOOLEAN_DEFINED
 
 #include "./sstring_class.hh"
 
