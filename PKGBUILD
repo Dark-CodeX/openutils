@@ -8,7 +8,7 @@ depends=(gcc)
 license=("GNU GPL v3.0")
 source=("https://raw.githubusercontent.com/Dark-CodeX/optional/master/optional/optional.hh")
 
-sha512sums=("a0eadaffbe3da4945741deacad236359e2ee1f8eab60e1d92099894cdc6a9e09f2ffdbebbb2c03881914a413c03887272c957a7aa8c315078fbd205427f5a058")
+sha512sums=("b7d4152782b8fceb4bf01c8ffef2a300593a18139109b1e3a457502934aa454a38bd3648c112ac08c7440c5da47a9bc1e126784d7cdaf1e70008a278fd19e71d")
 
 package() {
 	echo "OPTIONAL : The Error Handling Library"

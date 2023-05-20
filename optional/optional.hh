@@ -6,10 +6,10 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef OPTIONAL_DEFINED
-#define OPTIONAL_DEFINED
+#ifndef OPENUTILS_OPTIONAL_DEFINED
+#define OPENUTILS_OPTIONAL_DEFINED
 
-#define optional_version "1.6.0"
+#define OPENUTILS_optional_version "1.6.0"
 
 #include <cstdlib>
 #include <cstdio>
