@@ -6,8 +6,8 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef TIME_DEFINED
-#define TIME_DEFINED
+#ifndef OPENUTILS_TIME_DEFINED
+#define OPENUTILS_TIME_DEFINED
 
 #include <ctime>
 #include <cstdio>
@@ -15,7 +15,7 @@
 #include <openutils/sstring/sstring.hh>
 #include <iostream>
 
-#define date_time_version "1.1.0"
+#define OPENUTILS_date_time_version "1.1.0"
 
 namespace openutils
 {

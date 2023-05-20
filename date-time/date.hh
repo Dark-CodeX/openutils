@@ -6,15 +6,15 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef DATE_DEFINED
-#define DATE_DEFINED
+#ifndef OPENUTILS_DATE_DEFINED
+#define OPENUTILS_DATE_DEFINED
 
 #include <ctime>
 #include <cstdio>
 #include <cstdlib>
 #include <openutils/sstring/sstring.hh>
 
-#define date_time_version "1.1.0"
+#define OPENUTILS_date_time_version "1.1.0"
 
 namespace openutils
 {
