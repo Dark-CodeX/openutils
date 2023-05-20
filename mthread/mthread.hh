@@ -6,10 +6,10 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef MTHREAD_DEFINED
-#define MTHREAD_DEFINED
+#ifndef OPENUTILS_MTHREAD_DEFINED
+#define OPENUTILS_MTHREAD_DEFINED
 
-#define mthread_version "1.0.0"
+#define OPENUTILS_mthread_version "1.0.0"
 
 #include <cstdio>
 #include <cstdlib>
