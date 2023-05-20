@@ -6,15 +6,15 @@
  * @author Tushar Chaurasia (Dark-CodeX)
  */
 
-#ifndef ARRAY_DEFINED
-#define ARRAY_DEFINED
+#ifndef OPENUTILS_ARRAY_DEFINED
+#define OPENUTILS_ARRAY_DEFINED
 
 #include <utility>
 #include <initializer_list>
 #include <functional>
 #include <cstdio>
 
-#define array_version "2.0.0"
+#define OPENUTILS_array_version "2.0.0"
 
 namespace openutils
 {
