@@ -35,9 +35,9 @@ namespace openutils
     class vector_t
     {
     private:
-        inline void init(const std::size_t &max);
-        inline void resize();
-        static inline void hash_combine(std::size_t &seed, const T &v);
+        void init(const std::size_t &max);
+        void resize();
+        static void hash_combine(std::size_t &seed, const T &v);
         T *vec_data;
         std::size_t len, cap;
 
@@ -107,7 +107,7 @@ namespace openutils
     };
 
     template <typename T>
-    inline void vector_t<T>::init(const std::size_t &max)
+    void vector_t<T>::init(const std::size_t &max)
     {
         this->vec_data = new T[max]();
         exit_heap_fail(this->vec_data);
@@ -116,7 +116,7 @@ namespace openutils
     }
 
     template <typename T>
-    inline void vector_t<T>::resize()
+    void vector_t<T>::resize()
     {
         this->cap *= 2;
         T *temp = new T[this->cap]();
@@ -128,7 +128,7 @@ namespace openutils
     }
 
     template <typename T>
-    inline void vector_t<T>::hash_combine(std::size_t &seed, const T &v)
+    void vector_t<T>::hash_combine(std::size_t &seed, const T &v)
     {
         seed ^= std::hash<T>()(v) + static_cast<std::size_t>(0xc70f6907UL) + (seed << 7) + (seed >> 3);
     }
