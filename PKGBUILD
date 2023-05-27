@@ -1,3 +1,5 @@
+#Maintainer: Tushar Chaurasia ull0z27tj@mozmail.com
+
 pkgname="openutils"
 pkgver="1.5.0"
 pkgrel="2"
