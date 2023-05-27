@@ -1,4 +1,4 @@
-# OPENUTILS : The Open-Source Utility Library
+# OPENUTILS : The Open-Source Utility Library for C++
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
