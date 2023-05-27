@@ -1,9 +1,9 @@
-pkgname="openutils-sstring"
-pkgver="3.0.0"
-pkgrel="8"
-pkgdesc="SSTRING : The String Manipulation Library"
+pkgname="openutils"
+pkgver="1.5.0"
+pkgrel="2"
+pkgdesc="OPENUTILS : The Open-Source Utility Library for C++"
 arch=("x86_64" "i686")
-conflicts=('openutils-sstring')
+conflicts=('openutils')
 depends=(gcc)
 license=("GNU GPL v3.0")
 source=(
