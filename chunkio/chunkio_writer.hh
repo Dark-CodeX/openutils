@@ -19,13 +19,12 @@ namespace openutils
     class chunkio_writer
     {
     private:
-        mutable std::FILE *fptr;
+        std::FILE *fptr;
 
     public:
         chunkio_writer();
         chunkio_writer(const char *loc);
-        bool append_or_save(const T *data, std::size_t n = 1) const;
-        bool save_only(const char *loc, const T *data, std::size_t n = 1) const;
+        bool save_next(const T *data, std::size_t n = 1) const;
         bool file_created() const;
         ~chunkio_writer();
     };
@@ -41,7 +40,7 @@ namespace openutils
     {
         if (loc)
         {
-            this->fptr = std::fopen(loc, "ab");
+            this->fptr = std::fopen(loc, "wb");
             if (!this->fptr)
                 this->fptr = nullptr;
         }
@@ -50,29 +49,10 @@ namespace openutils
     }
 
     template <typename T>
-    bool chunkio_writer<T>::append_or_save(const T *data, std::size_t n) const
+    bool chunkio_writer<T>::save_next(const T *data, std::size_t n) const
     {
         if (!data || !this->fptr)
             return false;
-        if (std::fwrite(data, sizeof(T), n, this->fptr) == 0)
-            return false;
-        return true;
-    }
-
-    template <typename T>
-    bool chunkio_writer<T>::save_only(const char *loc, const T *data, std::size_t n) const
-    {
-        if (!data || !loc)
-            return false;
-        if (this->fptr)
-            std::fclose(this->fptr);
-        this->fptr = std::fopen(loc, "wb");
-        if (!this->fptr)
-        {
-            this->fptr = nullptr;
-            return false;
-        }
-
         if (std::fwrite(data, sizeof(T), n, this->fptr) == 0)
             return false;
         return true;
