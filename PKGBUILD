@@ -47,7 +47,7 @@ source=(
 	
 	"https://raw.githubusercontent.com/Dark-CodeX/openutils/main/mthread/mthread.hh"
 	
-	"https://raw.githubusercontent.com/Dark-CodeX/map/master/map/map.hh")
+	"https://raw.githubusercontent.com/Dark-CodeX/openutils/master/map/map.hh")
 	
 
 sha512sums=(
