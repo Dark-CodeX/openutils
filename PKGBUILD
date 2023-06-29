@@ -9,6 +9,7 @@ conflicts=('openutils')
 depends=(gcc)
 license=("GNU GPL v3.0")
 source=(
+	"https://raw.githubusercontent.com/Dark-CodeX/openutils/main/sstring/sstring.hh"
 	"https://raw.githubusercontent.com/Dark-CodeX/openutils/main/sstring/sstring_boolean.hh"
 	"https://raw.githubusercontent.com/Dark-CodeX/openutils/main/sstring/sstring_class.hh"
 	"https://raw.githubusercontent.com/Dark-CodeX/openutils/main/sstring/sstring_conversion.hh"
@@ -17,7 +18,6 @@ source=(
 	"https://raw.githubusercontent.com/Dark-CodeX/openutils/main/sstring/sstring_ctor.hh"
 	"https://raw.githubusercontent.com/Dark-CodeX/openutils/main/sstring/sstring_find.hh"
 	"https://raw.githubusercontent.com/Dark-CodeX/openutils/main/sstring/sstring_formatting.hh"
-	"https://raw.githubusercontent.com/Dark-CodeX/openutils/main/sstring/sstring.hh"
 	"https://raw.githubusercontent.com/Dark-CodeX/openutils/main/sstring/sstring_io.hh"
 	"https://raw.githubusercontent.com/Dark-CodeX/openutils/main/sstring/sstring_iterators.hh"
 	"https://raw.githubusercontent.com/Dark-CodeX/openutils/main/sstring/sstring_lexer_split.hh"
@@ -51,16 +51,16 @@ source=(
 	
 
 sha512sums=(
-    "b6b15cec3f84aa334649c1f14d7045f1f17e9d17709fc9b82aa23da3ff2d4a6c096e2f77ad16ad4ce572215760557e02a9308d8e31b2d7afdc8e682e2aa2682d"
-	"cc50351221e2cc145a3e5cfc8beab652bbc7c19569c2b372ea2d9946065b1e4d9bd1b0567b287328bf9de1a274018013cb4455fd8a75b8bf565bc3a4b2d8b445"
+	"a61aaddee3f5cdbd215b7c1cf0957691b4981c5657f464551e179a10a95905e0fa75fafba0133d65a49b14e26bdaa4821d9781612bb175441469dd344eedf181"
+	"b6b15cec3f84aa334649c1f14d7045f1f17e9d17709fc9b82aa23da3ff2d4a6c096e2f77ad16ad4ce572215760557e02a9308d8e31b2d7afdc8e682e2aa2682d"
+	"f2db2e185ee1d52f9f04f5e370be799845e3cb8a17e57688fb2e81d18665def666f7a1a83699157c5487e0764d05c3da3e2d038a911af80360d291a34e318809"
 	"a945bc0e1ec624a2d1f46f6f07ff695a21c25f2ee87b029adfcda49eb4c2a5cb2668a5fa9725fbf802c22206597244321a522b80a004a88dcb24ccdce8161246"
 	"049f3aa947d9384459403a5c63e1a78d4d5525e37b36da7d6d219fa9e7ee55de38be25d81ffad1b027c456e9445cc04206299dd74b96f8126f69724ddafcda8a"
 	"6ccc386cee7f583b72aefcf45a18c77f83a5151ee0816e1e8107f069641ff36f9a349f0a036b47d1613cd067217a39ad6e44ffc7473a73c3966d96a22907f19e"
 	"4b1369a430742f41a26b1f7666d71151b6247d6a4348e26e7f85b7f84ae01c9ab1059e4e7ceb77b672ded8d88c96541ecb21eddc1bbc44625b0ead64a704dc80"
 	"0c52c10f28ac6d5706927038c8ace6079a3b85fb3fb2eb9dc6ab485ac0f7497ab3e5e7671fa3a1764848f87279a0d1566fff99769ab4a41c01371e15c4162459"
 	"cfb7c1e99378a5e603e3786acb614a972e4a8b673759a5f26e6a9db40de402dc8afe502964c0a3b4f6cdaf8dd9de625b12d43a087a9a560665b77ccd166d55af"
-	"a61aaddee3f5cdbd215b7c1cf0957691b4981c5657f464551e179a10a95905e0fa75fafba0133d65a49b14e26bdaa4821d9781612bb175441469dd344eedf181"
-	"1f612abb491d96cf67d6a79e61827700de1598d42a00791a8d105bb47d64c10605fe2feab83252c00f2684f32d1f9cab860e4e07fb455f309312ead7ac221992"
+	"700f29a80e5c56db24d6ede979c6f5bc61ccb6f5026c9d49dec7dbb16b8f25b1c4f3e74ee1e06e16cc86a58fba164072690a6e16834ca0a8fad4a44d25a324f6"
 	"1aa90a1fa199c6208a0341ca3a1e57fc7377b543086bd4d6765e3bd0e33f26132d78027f899dffe4610c88a9ee9d83151c6f0f64da0df16ee614ab0abdaba44a"
 	"0cb793e8602483978fbb998d3170a3b0289a1c5436b850689696ed8047714820083ac79f1da6185287fbfe7d92bc6119d5ba454c05c0cd7b02601b9550a14a2b"
 	"6522eeefc0f2ae940e236d9b1e8805ae8a2f6137b0e852eb535e6dfda7f82ea355f4527451f38e5095cc79cf802d33c9ab5c27d746b37f5a2fb6422b32531edc"
