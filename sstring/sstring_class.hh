@@ -930,32 +930,6 @@ namespace openutils
         sstring_t_view<T> &sort();
 
         /**
-         * @brief Saves the content of `this->src` to the file at `location`.
-         * @param location file to be saved
-         * @param bin_len length of the data
-         * @return true if saved
-         * @return false if was NOT saved
-         */
-        bool save_binary(const char *location, std::size_t bin_len) const;
-
-        /**
-         * @brief Appends the content of `this->src` to the file at `location`.
-         * @param location file to be appended
-         * @param bin_len length of the data
-         * @return true if appended
-         * @return false if was NOT appended
-         */
-        bool append_binary(const char *location, std::size_t bin_len) const;
-
-        /**
-         * @brief Appends the content of `data` to `this->src`
-         * @param data data to append
-         * @param bin_len length of `data`
-         * @return sstring_t_view& reference to current object
-         */
-        sstring_t_view<T> &add_binary(const T *data, std::size_t &bin_len);
-
-        /**
          * @brief Encrypts `a` using hash of `key`
          * @param key key to encrypt
          * @return sstring_t_view& reference to current object

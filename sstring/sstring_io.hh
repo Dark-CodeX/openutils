@@ -21,7 +21,11 @@ namespace openutils
             std::FILE *f = std::fopen(location, "wb");
             if (f != nullptr)
             {
-                std::fwrite(this->src, this->len, sizeof(T), f);
+                if (std::fwrite(this->src, sizeof(T), this->len, f) != this->len)
+                {
+                    std::fclose(f);
+                    return false;
+                }
                 std::fclose(f);
                 return true;
             }
@@ -43,7 +47,11 @@ namespace openutils
             std::FILE *f = std::fopen(location, "ab");
             if (f != nullptr)
             {
-                std::fwrite(this->src, this->len, sizeof(T), f);
+                if (std::fwrite(this->src, sizeof(T), this->len, f) != this->len)
+                {
+                    std::fclose(f);
+                    return false;
+                }
                 std::fclose(f);
                 return true;
             }
@@ -72,7 +80,11 @@ namespace openutils
                     std::free(this->src);
                 this->src = static_cast<T *>(std::calloc(file_len + 1, sizeof(T)));
                 exit_heap_fail(this->src);
-                std::fread(this->src, file_len, sizeof(T), f);
+                if (std::fread(this->src, sizeof(T), file_len, f) != file_len)
+                {
+                    std::fclose(f);
+                    return false;
+                }
                 std::fclose(f);
                 this->len = file_len;
                 return true;
@@ -85,58 +97,6 @@ namespace openutils
     bool sstring_t_view<T>::open(const sstring_t_view<char> &location)
     {
         return this->open(location.c_str());
-    }
-
-    template <typename T>
-    bool sstring_t_view<T>::save_binary(const char *location, std::size_t bin_len) const
-    {
-        if (location && this->src)
-        {
-            std::FILE *f = std::fopen(location, "wb");
-            if (f != nullptr)
-            {
-                std::fwrite(this->src, bin_len, sizeof(T), f);
-                std::fclose(f);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    template <typename T>
-    bool sstring_t_view<T>::append_binary(const char *location, std::size_t bin_len) const
-    {
-        if (location && this->src)
-        {
-            std::FILE *f = std::fopen(location, "ab");
-            if (f != nullptr)
-            {
-                std::fwrite(this->src, bin_len, sizeof(T), f);
-                std::fclose(f);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    template <typename T>
-    sstring_t_view<T> &sstring_t_view<T>::add_binary(const T *data, std::size_t &bin_len)
-    {
-        if (data)
-        {
-            if (!this->src)
-            {
-                this->len = 0;
-                this->src = static_cast<T *>(std::calloc(bin_len + 1, sizeof(T)));
-                exit_heap_fail(this->src);
-                this->fast_strncat(this->src, data, this->len);
-                return *this;
-            }
-            this->src = static_cast<T *>(std::realloc(this->src, sizeof(T) * (this->len + bin_len + 1)));
-            exit_heap_fail(this->src);
-            this->fast_strncat(this->src, data, this->len);
-        }
-        return *this;
     }
 
     template <typename T>
