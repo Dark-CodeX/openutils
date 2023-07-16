@@ -45,8 +45,6 @@ source=(
 	"https://raw.githubusercontent.com/Dark-CodeX/openutils/main/chunkio/chunkio_lines_reader.hh"
 	"https://raw.githubusercontent.com/Dark-CodeX/openutils/main/chunkio/chunkio_writer.hh"
 	
-	"https://raw.githubusercontent.com/Dark-CodeX/openutils/main/mthread/mthread.hh"
-	
 	"https://raw.githubusercontent.com/Dark-CodeX/openutils/master/map/map.hh")
 	
 
@@ -86,8 +84,6 @@ sha512sums=(
 	"7658215dbef10de7deb448219caa684e58cdbc56aeb0fbd301fca301cfb77b1cb2073af3d4d8fa66f13312312007b6964493c656e62f64970b603275ca89b68e"
 	"221da63962fc9c681190d64857d7b4616708415204844ea17c5664044b1ddcacd8fd12ebdbc69cd940c2ae6b5621189de77921ef7fad809b9b844468fc2830e5"
 	"05413f77874099333a17f4f5542ed9e75ca5e25f66ef2ee7358f0823772c7d9694e8dce87e60bc3eec93c8fc0d215d09197e6a891bdff89cd59cd5ad2a2343f7"
-	
-	"f5e652a0cdfcef2c6d835616884e90cd5198475111a746c0f5e72120cf98b748493cbf7fd114b162b67b110eb02e49c35579f6ca01f87f4e6119ebb948675a7f"
 	
 	"5b8ba008bbcebd2e8bbde677b5aa7e28e725db3ca2a7f7927e0affc0bb5b44ee47b48b6c26c25b2032514cd52cda4b306df6f8d1470c1c54d91453953cc22cda")
 
@@ -141,10 +137,6 @@ package() {
 	cp "${srcdir}/chunkio_bytes_reader.hh" "${pkgdir}/usr/include/openutils/chunkio/chunkio_bytes_reader.hh"
 	cp "${srcdir}/chunkio_lines_reader.hh" "${pkgdir}/usr/include/openutils/chunkio/chunkio_lines_reader.hh"
 	cp "${srcdir}/chunkio_writer.hh" "${pkgdir}/usr/include/openutils/chunkio/chunkio_writer.hh"
-
-	echo "MTHREAD : The Multi-Threading Library"
-	mkdir -p "${pkgdir}/usr/include/openutils/mthread"
-	cp "${srcdir}/mthread.hh" "${pkgdir}/usr/include/openutils/mthread/mthread.hh"
 
 	echo "MAP : The Unique Element Container Library"
 	mkdir -p "${pkgdir}/usr/include/openutils/map"
