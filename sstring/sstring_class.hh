@@ -20,14 +20,13 @@
 #include <limits>
 #include <algorithm>
 #include <unordered_map>
-#include <openutils/heap-pair/heap-pair.hh>
 #include <openutils/vector/vector.hh>
 
 namespace openutils
 {
 #ifndef LEXER_TOKEN_DEFINED
 #define LEXER_TOKEN_DEFINED
-    enum lexer_token
+    enum class sstring_lexer_token : unsigned char
     {
         WORD,
         INTEGER,
@@ -1133,14 +1132,14 @@ namespace openutils
          * @brief Tokenize `this->src`.
          * @return returns tokenized vector with it's respective token
          */
-        vector_t<heap_pair<sstring_t_view<T>, enum lexer_token>> lexer() const;
+        vector_t<std::pair<sstring_t_view<T>, sstring_lexer_token>> lexer() const;
 
         /**
          * @brief Converts tokens to concentrated string
          * @param toks tokens
          * @return sstring_t_view& reference to current object
          */
-        sstring_t_view<T> &from_lexer(const vector_t<heap_pair<sstring_t_view<T>, enum lexer_token>> &toks);
+        sstring_t_view<T> &from_lexer(const vector_t<std::pair<sstring_t_view<T>, sstring_lexer_token>> &toks);
 
         /**
          * @brief Assigns `__format__` to `this->src` with formatting.

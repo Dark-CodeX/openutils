@@ -51,9 +51,9 @@ namespace openutils
     }
 
     template <typename T>
-    vector_t<heap_pair<sstring_t_view<T>, enum lexer_token>> sstring_t_view<T>::lexer() const
+    vector_t<std::pair<sstring_t_view<T>, sstring_lexer_token>> sstring_t_view<T>::lexer() const
     {
-        vector_t<heap_pair<sstring_t_view<T>, enum lexer_token>> vec;
+        vector_t<std::pair<sstring_t_view<T>, sstring_lexer_token>> vec;
         sstring_t_view<T> toks;
         for (std::size_t i = 0; i < this->len;)
         {
@@ -62,20 +62,20 @@ namespace openutils
                 toks.clear();
                 while ((this->src[i] >= 97 && this->src[i] <= 122) || (this->src[i] >= 65 && this->src[i] <= 90))
                     toks.append_char(this->src[i++]);
-                vec.add({toks, lexer_token::WORD});
+                vec.add({toks, sstring_lexer_token::WORD});
             }
             else if (this->src[i] == 32)
             {
                 toks.clear();
                 toks.append_char(this->src[i++]);
-                vec.add({toks, lexer_token::WHITESPACE});
+                vec.add({toks, sstring_lexer_token::WHITESPACE});
             }
             else if (std::isdigit(this->src[i]))
             {
                 toks.clear();
                 while (std::isdigit(this->src[i]))
                     toks.append_char(this->src[i++]);
-                vec.add({toks, lexer_token::INTEGER});
+                vec.add({toks, sstring_lexer_token::INTEGER});
             }
             else if (this->src[i] == 92 || this->src[i] == 7 || this->src[i] == 8 || this->src[i] == 12 || this->src[i] == 10 || this->src[i] == 13 || this->src[i] == 9 || this->src[i] == 11 || this->src[i] == 34 || this->src[i] == 39 || this->src[i] == 63)
             {
@@ -84,7 +84,7 @@ namespace openutils
                 {
                     toks.clear();
                     toks.set_char(this->src[i++]);
-                    vec.add({toks, lexer_token::ESC_SEQ});
+                    vec.add({toks, sstring_lexer_token::ESC_SEQ});
                 }
             }
             else if ((this->src[i] == 33) || (this->src[i] >= 35 && this->src[i] <= 38) || (this->src[i] >= 40 && this->src[i] <= 47) || (this->src[i] >= 58 && this->src[i] <= 62) || (this->src[i] == 64) || (this->src[i] == 91) || (this->src[i] >= 93 && this->src[i] <= 96) || (this->src[i] >= 123 && this->src[i] <= 126))
@@ -94,7 +94,7 @@ namespace openutils
                 {
                     toks.clear();
                     toks.set_char(this->src[i++]);
-                    vec.add({toks, lexer_token::SPECIAL_CHAR});
+                    vec.add({toks, sstring_lexer_token::SPECIAL_CHAR});
                 }
             }
             else
@@ -102,15 +102,15 @@ namespace openutils
                 toks.clear();
                 while (!(this->src[i] > 0 && this->src[i] <= 127)) // while (not ascii) -> for non ascii characters
                     toks.append_char(this->src[i++]);
-                vec.add({toks, lexer_token::WORD});
+                vec.add({toks, sstring_lexer_token::WORD});
             }
         }
-        vec.add({sstring_t_view<T>(), lexer_token::NULL_END});
+        vec.add({sstring_t_view<T>(), sstring_lexer_token::NULL_END});
         return vec;
     }
 
     template <typename T>
-    sstring_t_view<T> &sstring_t_view<T>::from_lexer(const vector_t<heap_pair<sstring_t_view<T>, enum lexer_token>> &toks)
+    sstring_t_view<T> &sstring_t_view<T>::from_lexer(const vector_t<std::pair<sstring_t_view<T>, sstring_lexer_token>> &toks)
     {
         if (toks.length() != 0)
         {
@@ -120,13 +120,13 @@ namespace openutils
 
             std::size_t buff_len = 0;
             for (std::size_t i = 0; i < toks.length(); i++)
-                buff_len += toks[i].first().len;
+                buff_len += toks[i].first.len;
 
             this->src = static_cast<T *>(std::calloc(buff_len + 1, sizeof(T)));
             exit_heap_fail(this->src);
 
             for (std::size_t i = 0; i < toks.length(); i++)
-                this->fast_strncat(this->src, toks[i].first().src, this->len);
+                this->fast_strncat(this->src, toks[i].first.src, this->len);
         }
         return *this;
     }
