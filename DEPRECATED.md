@@ -5,3 +5,4 @@
 3. map
 4. optional
 5. array
+6. date-time
