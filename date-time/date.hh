@@ -30,7 +30,6 @@ namespace openutils
         date(const date &dt);
         date(date &&dt) noexcept;
         date(const unsigned &day_, const unsigned &month_, const unsigned &year_);
-        date(const openutils::sstring &str);
         int days_between(const date &dt) const;
         unsigned days_beginning() const;
         date &add(const date &dt);
@@ -40,6 +39,7 @@ namespace openutils
         bool is_leap() const;
         date get_ctime() const;
         sstring to_string() const;
+        bool from_string(const openutils::sstring &str);
         date &swap(date &dt) noexcept;
         std::size_t hash() const;
         date operator+(const date &dt) const;
@@ -127,66 +127,6 @@ namespace openutils
         this->day = i_tm.tm_mday;
         this->month = i_tm.tm_mon;
         this->year = i_tm.tm_year;
-    }
-
-    date::date(const openutils::sstring &str)
-    {
-        unsigned m = 0, d = 0, y = 0;
-        vector_t<heap_pair<sstring, enum lexer_token>> parse = str.lexer();
-        std::size_t n = 0;
-        while (parse.get(n).second() != openutils::lexer_token::NULL_END)
-        {
-            if (parse.get(n).second() == openutils::lexer_token::INTEGER && n == 0)
-            {
-                d = std::strtoull(parse[n].first().c_str(), nullptr, 10);
-                n++;
-            }
-            else
-            {
-                std::fprintf(stderr, "err: `%s` in `%s` should be a day (integer).\n", parse[n].first().c_str(), str.c_str());
-                std::exit(EXIT_FAILURE);
-            }
-            if (parse.get(n).second() != openutils::lexer_token::SPECIAL_CHAR && n == 1)
-            {
-                std::fprintf(stderr, "err: `%s` in `%s` should be a separator between day and month.\n", parse[n].first().c_str(), str.c_str());
-                std::exit(EXIT_FAILURE);
-            }
-            else
-                n++;
-            if (parse.get(n).second() == openutils::lexer_token::INTEGER && n == 2)
-            {
-                m = std::strtoull(parse[n].first().c_str(), nullptr, 10);
-                n++;
-            }
-            else
-            {
-                std::fprintf(stderr, "err: `%s` in `%s` should be a month (integer).\n", parse[n].first().c_str(), str.c_str());
-                std::exit(EXIT_FAILURE);
-            }
-            if (parse.get(n).second() != openutils::lexer_token::SPECIAL_CHAR && n == 3)
-            {
-                std::fprintf(stderr, "err: `%s` in `%s` should be a separator between month and year.\n", parse[n].first().c_str(), str.c_str());
-                std::exit(EXIT_FAILURE);
-            }
-            else
-                n++;
-            if (parse.get(n).second() == openutils::lexer_token::INTEGER && n == 4)
-            {
-                y = std::strtoull(parse[n].first().c_str(), nullptr, 10);
-                n++;
-            }
-            else
-            {
-                std::fprintf(stderr, "err: `%s` in `%s` should be a year (integer).\n", parse[n].first().c_str(), str.c_str());
-                std::exit(EXIT_FAILURE);
-            }
-            if (parse.length() != n + 1)
-            {
-                std::fprintf(stderr, "err: `%s` in `%s` is exceeding the date format (DD/MM/YYYY).\n", parse[n].first().c_str(), str.c_str());
-                std::exit(EXIT_FAILURE);
-            }
-        }
-        *this = date(d, m, y);
     }
 
     int date::days_between(const date &dt) const
@@ -338,6 +278,68 @@ namespace openutils
         openutils::sstring x;
         x.set_formatted(1024, "%u/%u/%u", this->day, this->month, this->year);
         return x;
+    }
+
+    bool date::from_string(const openutils::sstring &str)
+    {
+
+        unsigned m = 0, d = 0, y = 0;
+        vector_t<std::pair<sstring, sstring_lexer_token>> parse = str.lexer();
+        std::size_t n = 0;
+        while (parse.get(n).second != sstring_lexer_token::NULL_END)
+        {
+            if (parse.get(n).second == sstring_lexer_token::INTEGER && n == 0)
+            {
+                d = std::strtoull(parse[n].first.c_str(), nullptr, 10);
+                n++;
+            }
+            else
+            {
+                std::fprintf(stderr, "err: `%s` in `%s` should be a day (integer).\n", parse[n].first.c_str(), str.c_str());
+                return false;
+            }
+            if (parse.get(n).second != sstring_lexer_token::SPECIAL_CHAR && n == 1)
+            {
+                std::fprintf(stderr, "err: `%s` in `%s` should be a separator between day and month.\n", parse[n].first.c_str(), str.c_str());
+                return false;
+            }
+            else
+                n++;
+            if (parse.get(n).second == sstring_lexer_token::INTEGER && n == 2)
+            {
+                m = std::strtoull(parse[n].first.c_str(), nullptr, 10);
+                n++;
+            }
+            else
+            {
+                std::fprintf(stderr, "err: `%s` in `%s` should be a month (integer).\n", parse[n].first.c_str(), str.c_str());
+                return false;
+            }
+            if (parse.get(n).second != sstring_lexer_token::SPECIAL_CHAR && n == 3)
+            {
+                std::fprintf(stderr, "err: `%s` in `%s` should be a separator between month and year.\n", parse[n].first.c_str(), str.c_str());
+                return false;
+            }
+            else
+                n++;
+            if (parse.get(n).second == sstring_lexer_token::INTEGER && n == 4)
+            {
+                y = std::strtoull(parse[n].first.c_str(), nullptr, 10);
+                n++;
+            }
+            else
+            {
+                std::fprintf(stderr, "err: `%s` in `%s` should be a year (integer).\n", parse[n].first.c_str(), str.c_str());
+                return false;
+            }
+            if (parse.length() != n + 1)
+            {
+                std::fprintf(stderr, "err: `%s` in `%s` is exceeding the date format (DD/MM/YYYY).\n", parse[n].first.c_str(), str.c_str());
+                return false;
+            }
+        }
+        *this = date(d, m, y);
+        return true;
     }
 
     date &date::swap(date &dt) noexcept

@@ -29,7 +29,6 @@ namespace openutils
         time(const time &t);
         time(time &&t) noexcept;
         time(const unsigned &hour_, const unsigned &minute_, const unsigned &second_);
-        time(const openutils::sstring &str);
         time &add(const time &t);
         time &add(const unsigned long &skip_sec);
         time &substract(const time &t);
@@ -38,6 +37,7 @@ namespace openutils
         time get_ctime() const;
         bool is_am() const;
         sstring to_string(bool AMPM = true) const;
+        bool from_string(const openutils::sstring &str);
         time &swap(time &t) noexcept;
         std::size_t hash() const;
         time operator+(const time &dt) const;
@@ -109,66 +109,6 @@ namespace openutils
         this->hour = i_tm.tm_hour;
         this->minute = i_tm.tm_min;
         this->second = i_tm.tm_sec;
-    }
-
-    time::time(const openutils::sstring &str)
-    {
-        unsigned h = 0, m = 0, s = 0;
-        vector_t<heap_pair<sstring, enum lexer_token>> parse = str.lexer();
-        std::size_t n = 0;
-        while (parse.get(n).second() != openutils::lexer_token::NULL_END)
-        {
-            if (parse.get(n).second() == openutils::lexer_token::INTEGER && n == 0)
-            {
-                h = std::strtoull(parse[n].first().c_str(), nullptr, 10);
-                n++;
-            }
-            else
-            {
-                std::fprintf(stderr, "err: `%s` in `%s` should be a hour (integer).\n", parse[n].first().c_str(), str.c_str());
-                std::exit(EXIT_FAILURE);
-            }
-            if (parse.get(n).second() != openutils::lexer_token::SPECIAL_CHAR && n == 1)
-            {
-                std::fprintf(stderr, "err: `%s` in `%s` should be a separator between hour and minute.\n", parse[n].first().c_str(), str.c_str());
-                std::exit(EXIT_FAILURE);
-            }
-            else
-                n++;
-            if (parse.get(n).second() == openutils::lexer_token::INTEGER && n == 2)
-            {
-                m = std::strtoull(parse[n].first().c_str(), nullptr, 10);
-                n++;
-            }
-            else
-            {
-                std::fprintf(stderr, "err: `%s` in `%s` should be a minute (integer).\n", parse[n].first().c_str(), str.c_str());
-                std::exit(EXIT_FAILURE);
-            }
-            if (parse.get(n).second() != openutils::lexer_token::SPECIAL_CHAR && n == 3)
-            {
-                std::fprintf(stderr, "err: `%s` in `%s` should be a separator between minute and second.\n", parse[n].first().c_str(), str.c_str());
-                std::exit(EXIT_FAILURE);
-            }
-            else
-                n++;
-            if (parse.get(n).second() == openutils::lexer_token::INTEGER && n == 4)
-            {
-                s = std::strtoull(parse[n].first().c_str(), nullptr, 10);
-                n++;
-            }
-            else
-            {
-                std::fprintf(stderr, "err: `%s` in `%s` should be a second (integer).\n", parse[n].first().c_str(), str.c_str());
-                std::exit(EXIT_FAILURE);
-            }
-            if (parse.length() != n + 1)
-            {
-                std::fprintf(stderr, "err: `%s` in `%s` is exceeding the time format (HH:MM:SS).\n", parse[n].first().c_str(), str.c_str());
-                std::exit(EXIT_FAILURE);
-            }
-        }
-        *this = time(h, m, s);
     }
 
     time &time::add(const time &t)
@@ -270,6 +210,67 @@ namespace openutils
         }
         x.set_formatted(1024, "%u:%u:%u", this->hour, this->minute, this->second);
         return x;
+    }
+
+    bool time::from_string(const openutils::sstring &str)
+    {
+        unsigned h = 0, m = 0, s = 0;
+        vector_t<std::pair<sstring, sstring_lexer_token>> parse = str.lexer();
+        std::size_t n = 0;
+        while (parse.get(n).second != sstring_lexer_token::NULL_END)
+        {
+            if (parse.get(n).second == sstring_lexer_token::INTEGER && n == 0)
+            {
+                h = std::strtoull(parse[n].first.c_str(), nullptr, 10);
+                n++;
+            }
+            else
+            {
+                std::fprintf(stderr, "err: `%s` in `%s` should be a hour (integer).\n", parse[n].first.c_str(), str.c_str());
+                return false;
+            }
+            if (parse.get(n).second != sstring_lexer_token::SPECIAL_CHAR && n == 1)
+            {
+                std::fprintf(stderr, "err: `%s` in `%s` should be a separator between hour and minute.\n", parse[n].first.c_str(), str.c_str());
+                return false;
+            }
+            else
+                n++;
+            if (parse.get(n).second == sstring_lexer_token::INTEGER && n == 2)
+            {
+                m = std::strtoull(parse[n].first.c_str(), nullptr, 10);
+                n++;
+            }
+            else
+            {
+                std::fprintf(stderr, "err: `%s` in `%s` should be a minute (integer).\n", parse[n].first.c_str(), str.c_str());
+                return false;
+            }
+            if (parse.get(n).second != sstring_lexer_token::SPECIAL_CHAR && n == 3)
+            {
+                std::fprintf(stderr, "err: `%s` in `%s` should be a separator between minute and second.\n", parse[n].first.c_str(), str.c_str());
+                return false;
+            }
+            else
+                n++;
+            if (parse.get(n).second == sstring_lexer_token::INTEGER && n == 4)
+            {
+                s = std::strtoull(parse[n].first.c_str(), nullptr, 10);
+                n++;
+            }
+            else
+            {
+                std::fprintf(stderr, "err: `%s` in `%s` should be a second (integer).\n", parse[n].first.c_str(), str.c_str());
+                return false;
+            }
+            if (parse.length() != n + 1)
+            {
+                std::fprintf(stderr, "err: `%s` in `%s` is exceeding the time format (HH:MM:SS).\n", parse[n].first.c_str(), str.c_str());
+                return false;
+            }
+        }
+        *this = time(h, m, s);
+        return true;
     }
 
     time &time::swap(time &t) noexcept
