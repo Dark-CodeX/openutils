@@ -100,8 +100,7 @@ namespace openutils
             else
             {
                 toks.clear();
-                while (!(this->src[i] > 0 && this->src[i] <= 127)) // while (not ascii) -> for non ascii characters
-                    toks.append_char(this->src[i++]);
+                toks.append_char(this->src[i++]);
                 vec.add({toks, sstring_lexer_token::WORD});
             }
         }
